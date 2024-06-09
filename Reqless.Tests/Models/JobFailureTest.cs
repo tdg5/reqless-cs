@@ -143,7 +143,7 @@ public class JobFailureTest
             {
                 "group": "{{group}}",
                 "message": "{{message}}",
-                "when": {{when}}, 
+                "when": {{when}},
                 "worker": "{{workerName}}"
             }
             """;
