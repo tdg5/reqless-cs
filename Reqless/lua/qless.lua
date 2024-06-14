@@ -1,4 +1,4 @@
--- Current SHA: 62857f66dee92b76fc8b0e12ca6d588feba2d225
+-- Current SHA: 805da1206503c5c792219f61d2dac63b6250b36b
 -- This is a generated file
 local Qless = {
   ns = 'ql:'
@@ -493,7 +493,7 @@ function QlessJob:complete(now, worker, queue_name, raw_data, ...)
       to = next_queue_name,
     }))
 
-    self:history(now, 'put', {q = next_queue_name})
+    self:history(now, 'put', {queue = next_queue_name})
 
     if redis.call('zscore', 'ql:queues', next_queue_name) == false then
       redis.call('zadd', 'ql:queues', now, next_queue_name)
@@ -652,10 +652,10 @@ function QlessJob:fail(now, worker, group, message, data)
     'worker', '',
     'expires', '',
     'failure', cjson.encode({
-      ['group']   = group,
-      ['message'] = message,
-      ['when']    = math.floor(now),
-      ['worker']  = worker
+      group   = group,
+      message = message,
+      when    = math.floor(now),
+      worker  = worker
     }))
 
   self:throttles_release(now)
@@ -697,7 +697,7 @@ function QlessJob:retry(now, queue_name, worker, delay, group, message)
 
   if remaining < 0 then
     local group = group or 'failed-retries-' .. queue_name
-    self:history(now, 'failed', {['group'] = group})
+    self:history(now, 'failed-retries', {group = group})
 
     redis.call('hmset', QlessJob.ns .. self.jid, 'state', 'failed',
       'worker', '',
@@ -705,20 +705,19 @@ function QlessJob:retry(now, queue_name, worker, delay, group, message)
     if group ~= nil and message ~= nil then
       redis.call('hset', QlessJob.ns .. self.jid,
         'failure', cjson.encode({
-          ['group']   = group,
-          ['message'] = message,
-          ['when']    = math.floor(now),
-          ['worker']  = worker
+          group   = group,
+          message = message,
+          when    = math.floor(now),
+          worker  = worker
         })
       )
     else
       redis.call('hset', QlessJob.ns .. self.jid,
       'failure', cjson.encode({
-        ['group']   = group,
-        ['message'] =
-          'Job exhausted retries in queue "' .. old_queue_name .. '"',
-        ['when']    = now,
-        ['worker']  = unpack(self:data('worker'))
+        group   = group,
+        message = 'Job exhausted retries in queue "' .. old_queue_name .. '"',
+        when    = now,
+        worker  = unpack(self:data('worker'))
       }))
     end
 
@@ -740,10 +739,10 @@ function QlessJob:retry(now, queue_name, worker, delay, group, message)
     if group ~= nil and message ~= nil then
       redis.call('hset', QlessJob.ns .. self.jid,
         'failure', cjson.encode({
-          ['group']   = group,
-          ['message'] = message,
-          ['when']    = math.floor(now),
-          ['worker']  = worker
+          group   = group,
+          message = message,
+          when    = math.floor(now),
+          worker  = worker
         })
       )
     end
@@ -918,7 +917,7 @@ function QlessJob:history(now, what, item)
     history = cjson.decode(history)
     for _, value in ipairs(history) do
       redis.call('rpush', QlessJob.ns .. self.jid .. '-history',
-        cjson.encode({math.floor(value.put), 'put', {q = value.q}}))
+        cjson.encode({math.floor(value.put), 'put', {queue = value.queue}}))
 
       if value.popped then
         redis.call('rpush', QlessJob.ns .. self.jid .. '-history',
@@ -1475,7 +1474,7 @@ function QlessQueue:put(now, worker, jid, klass, raw_data, delay, ...)
     queue = self.name
   }))
 
-  job:history(now, 'put', {q = self.name})
+  job:history(now, 'put', {queue = self.name})
 
   if oldqueue then
     local queue_obj = Qless.queue(oldqueue)
@@ -1590,7 +1589,7 @@ function QlessQueue:unfail(now, group, count)
   for _, jid in ipairs(jids) do
     local job = Qless.job(jid)
     local data = job:data()
-    job:history(now, 'put', {q = self.name})
+    job:history(now, 'put', {queue = self.name})
     redis.call('hmset', QlessJob.ns .. data.jid,
       'state'    , 'waiting',
       'worker'   , '',
@@ -1752,7 +1751,7 @@ function QlessQueue:check_recurring(now, count)
         'throttles', throttles,
         'spawned_from_jid', jid)
 
-      Qless.job(child_jid):history(score, 'put', {q = self.name})
+      Qless.job(child_jid):history(score, 'put', {queue = self.name})
 
       self.work.add(score, priority, child_jid)
 
@@ -1842,11 +1841,10 @@ function QlessQueue:invalidate_locks(now, count)
           'expires', '')
         redis.call('hset', QlessJob.ns .. jid,
         'failure', cjson.encode({
-          ['group']   = group,
-          ['message'] =
-            'Job exhausted retries in queue "' .. self.name .. '"',
-          ['when']    = now,
-          ['worker']  = unpack(job:data('worker'))
+          group   = group,
+          message = 'Job exhausted retries in queue "' .. self.name .. '"',
+          when    = now,
+          worker  = unpack(job:data('worker'))
         }))
 
         redis.call('sadd', 'ql:failures', group)
