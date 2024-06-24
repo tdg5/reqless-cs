@@ -9,6 +9,8 @@ namespace Reqless.Tests.TestHelpers;
 /// </summary>
 public abstract class Maybe<T>
 {
+    private static readonly Maybe<T> NoneSingleton = new Options.None();
+
     /// <summary>
     /// Casts a value of type T to a Maybe of type T. Some represents a value
     /// that exists or is defined, though that value could be null.
@@ -30,7 +32,7 @@ public abstract class Maybe<T>
     /// of a value, and is used to indicate that no value is present.
     /// </summary>
     /// <returns>A Maybe representing the absence of a value of type T.</returns>
-    public static Maybe<T> None { get; } = new Options.None();
+    public static Maybe<T> None { get; } = NoneSingleton;
 
     /// <summary>
     /// Returns the value of the Maybe if it is present (i.e., a Some of type
@@ -79,7 +81,8 @@ public abstract class Maybe<T>
     /// if the Maybe is present (i.e., a Some of type T), or a Maybe of type R
     /// with no value present (i.e., a None of type R) if the Maybe has no value
     /// (i.e., a None of type T).</returns>
-    public Maybe<R> Map<R>(Func<T, R> mapFunc) {
+    public Maybe<R> Map<R>(Func<T, R> mapFunc)
+    {
         return Match(
             v => Maybe<R>.Some(mapFunc(v)),
             () => Maybe<R>.None
@@ -95,6 +98,7 @@ public abstract class Maybe<T>
             public override T GetOrDefault(T defaultValue) => Value;
 
             public override bool HasValue { get; } = true;
+
             public override R Match<R>(Func<T, R> someFunc, Func<R> noneFunc)
             {
                 return someFunc(Value);
