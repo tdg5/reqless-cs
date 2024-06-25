@@ -102,7 +102,11 @@ public class JobJsonConverter : JsonConverter<Job>
                         : JsonSerializer.Deserialize<string[]>(ref reader);
                     break;
                 case "expires":
-                    expires = reader.GetInt64();
+                    var expiresIsValid = reader.TryGetInt64(out var expiresValue);
+                    if (expiresIsValid && expiresValue > 0)
+                    {
+                        expires = expiresValue;
+                    }
                     break;
                 case "failure":
                     var readerClone = reader;
@@ -187,6 +191,10 @@ public class JobJsonConverter : JsonConverter<Job>
                     break;
                 case "worker":
                     worker = reader.GetString();
+                    if (string.IsNullOrWhiteSpace(worker))
+                    {
+                        worker = null;
+                    }
                     break;
                 default:
                     Console.WriteLine($"Unknown property: {propertyName}");
@@ -208,7 +216,7 @@ public class JobJsonConverter : JsonConverter<Job>
             data: data!,
             dependencies: dependencies!,
             dependents: dependents!,
-            expires: expires!.Value,
+            expires: expires,
             failure: failure,
             history: history!,
             jid: jid!,
@@ -273,7 +281,14 @@ public class JobJsonConverter : JsonConverter<Job>
         writer.WriteString("data", value.Data);
         WriteStringArray(writer, "dependencies", value.Dependencies);
         WriteStringArray(writer, "dependents", value.Dependents);
-        writer.WriteNumber("expires", value.Expires);
+        if (value.Expires is null)
+        {
+            writer.WriteNull("expires");
+        }
+        else
+        {
+            writer.WriteNumber("expires", value.Expires.Value);
+        }
         WriteObject(writer, "failure", value.Failure);
         WriteHistoryArray(writer, "history", value.History);
         writer.WriteString("jid", value.Jid);

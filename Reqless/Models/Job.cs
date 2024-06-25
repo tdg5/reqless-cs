@@ -36,7 +36,7 @@ public class Job
     /// The time at which the lease on the job will expire causing the job to
     /// be considered lost and become eligible for scheduling again.
     /// </summary>
-    public long Expires { get; }
+    public long? Expires { get; }
 
     /// <summary>
     /// Information about the last time the job failed, if any.
@@ -108,7 +108,7 @@ public class Job
     /// <summary>
     /// The name of the worker that is currently working on the job, if any.
     /// </summary>
-    public string WorkerName { get; }
+    public string? WorkerName { get; }
 
     /// <summary>
     /// Fully construct an instance of a job, tyically from a JSON payload given
@@ -156,7 +156,7 @@ public class Job
         string data,
         string[] dependencies,
         string[] dependents,
-        long expires,
+        long? expires,
         JobFailure? failure,
         JobEvent[] history,
         string jid,
@@ -169,7 +169,7 @@ public class Job
         string[] tags,
         string[] throttles,
         bool tracked,
-        string workerName
+        string? workerName
     )
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(className, nameof(className));
@@ -186,7 +186,10 @@ public class Job
         ArgumentException.ThrowIfNullOrWhiteSpace(state, nameof(state));
         ArgumentNullException.ThrowIfNull(tags, nameof(tags));
         ArgumentNullException.ThrowIfNull(throttles, nameof(throttles));
-        ArgumentException.ThrowIfNullOrWhiteSpace(workerName, nameof(workerName));
+        if (workerName is not null)
+        {
+            ArgumentException.ThrowIfNullOrWhiteSpace(workerName, nameof(workerName));
+        }
         if (expires <= 0)
         {
             throw new ArgumentOutOfRangeException(
