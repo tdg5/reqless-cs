@@ -591,14 +591,15 @@ public class JobJsonConverterTest
     }
 
     /// <summary>
-    /// Read should throw an error if the JSON has a null worker property.
+    /// Read should allow worker to have a null value.
     /// </summary>
     [Fact]
-    public void Read_Worker_ThrowsWhenNull()
+    public void Read_Worker_ToleratesNull()
     {
         var json = JobJson(workerName: Maybe<string?>.Some(null));
-        var exception = Assert.Throws<ArgumentNullException>(() => JsonSerializer.Deserialize<Job>(json));
-        Assert.Equal("Value cannot be null. (Parameter 'workerName')", exception.Message);
+        var job = JsonSerializer.Deserialize<Job>(json);
+        Assert.NotNull(job);
+        Assert.Null(job.WorkerName);
     }
 
     /// <summary>
