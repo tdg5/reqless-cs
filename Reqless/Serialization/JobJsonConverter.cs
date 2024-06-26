@@ -281,14 +281,7 @@ public class JobJsonConverter : JsonConverter<Job>
         writer.WriteString("data", value.Data);
         WriteStringArray(writer, "dependencies", value.Dependencies);
         WriteStringArray(writer, "dependents", value.Dependents);
-        if (value.Expires is null)
-        {
-            writer.WriteNull("expires");
-        }
-        else
-        {
-            writer.WriteNumber("expires", value.Expires.Value);
-        }
+        writer.WriteNumber("expires", value.Expires ?? 0);
         WriteObject(writer, "failure", value.Failure);
         WriteHistoryArray(writer, "history", value.History);
         writer.WriteString("jid", value.Jid);

@@ -69,6 +69,26 @@ public class JobEventJsonConverterTest
     }
 
     /// <summary>
+    /// Read should throw if the given JSON object contains a "what" property
+    /// with an unknown value.
+    /// </summary>
+    [Fact]
+    public void Read_ThrowsIfJsonIncludesUnknownWhatProperty()
+    {
+        var what = "unknown";
+        var exception = Assert.Throws<JsonException>(
+            () => JsonSerializer.Deserialize<JobEvent>(
+                $$"""{"what": "{{what}}", "when": 123}""",
+                _jsonSerializerOptions
+            )
+        );
+        Assert.Equal(
+            $"Unknown job event type: {what}.",
+            exception.Message
+        );
+    }
+
+    /// <summary>
     /// Read should only read "what" from the root of the JSON object.
     /// </summary>
     [Fact]
