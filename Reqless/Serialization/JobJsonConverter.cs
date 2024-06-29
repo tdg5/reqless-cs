@@ -73,7 +73,7 @@ public class JobJsonConverter : JsonConverter<Job>
             // Now move on to the property value.
             reader.Read();
 
-            var wasDegenerateObject = false;
+            bool wasDegenerateObject;
 
             switch (propertyName)
             {
@@ -263,9 +263,11 @@ public class JobJsonConverter : JsonConverter<Job>
         }
 
         var unexpectedObject = JsonSerializer.Deserialize<Dictionary<string, object>>(ref reader);
-        var messageConclusion = unexpectedObject is null ? "null" : $"object with {unexpectedObject.Count} properties";
+        // We can forgive null here because the reader will throw if the object
+        // isn't a dictionary.
+        var propertyCount = unexpectedObject!.Count;
         throw new JsonException(
-            $"Expected '{propertyName}' to be {expectedType} or empty object but encountered {messageConclusion}."
+            $"Expected '{propertyName}' to be {expectedType} or empty object but encountered object with {propertyCount} properties."
         );
     }
 
