@@ -234,6 +234,21 @@ public class JobJsonConverterTest
     }
 
     /// <summary>
+    /// Read handles a positive expires value by keeping it as is.
+    /// </summary>
+    [Fact]
+    public void Read_Expires_PositiveValuesAreKeptAsIs()
+    {
+        foreach (var positiveExpires in new long[] { 1, 100 })
+        {
+            var json = JobFactory.JobJson(expires: Maybe<long?>.Some(positiveExpires));
+            var job = JsonSerializer.Deserialize<Job>(json);
+            Assert.NotNull(job);
+            Assert.Equal(positiveExpires, job.Expires);
+        }
+    }
+
+    /// <summary>
     /// Read should be able to handle a failure property with a value that is
     /// an empty object and translate it to null.
     /// </summary>

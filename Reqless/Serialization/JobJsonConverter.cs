@@ -102,8 +102,8 @@ public class JobJsonConverter : JsonConverter<Job>
                         : JsonSerializer.Deserialize<string[]>(ref reader);
                     break;
                 case "expires":
-                    var expiresIsValid = reader.TryGetInt64(out var expiresValue);
-                    if (expiresIsValid && expiresValue > 0)
+                    reader.TryGetInt64(out var expiresValue);
+                    if (expiresValue > 0)
                     {
                         expires = expiresValue;
                     }
