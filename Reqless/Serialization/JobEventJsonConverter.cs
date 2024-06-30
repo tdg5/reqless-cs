@@ -9,23 +9,26 @@ namespace Reqless.Serialization;
 /// </summary>
 public class JobEventJsonConverter : JsonConverter<JobEvent>
 {
+    /// <summary>
+    /// A dictionary mapping event names to their corresponding types.
+    /// </summary>
+    protected static Dictionary<string, Type> EventTypesByName { get; } = new()
+    {
+        { "done", typeof(DoneEvent) },
+        { "failed", typeof(FailedEvent) },
+        { "failed-retries", typeof(FailedRetriesEvent) },
+        { "popped", typeof(PoppedEvent) },
+        { "put", typeof(PutEvent) },
+        { "throttled", typeof(ThrottledEvent) },
+        { "timed-out", typeof(TimedOutEvent) }
+    };
+
     /// <inheritdoc/>
     public override JobEvent Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
     {
         var jobEventType = GetJobEventType(reader);
-
-        JobEvent jobEvent = jobEventType switch
-        {
-            "done" => JsonSerializer.Deserialize<DoneEvent>(ref reader, options)!,
-            "failed" => JsonSerializer.Deserialize<FailedEvent>(ref reader, options)!,
-            "failed-retries" => JsonSerializer.Deserialize<FailedRetriesEvent>(ref reader, options)!,
-            "popped" => JsonSerializer.Deserialize<PoppedEvent>(ref reader, options)!,
-            "put" => JsonSerializer.Deserialize<PutEvent>(ref reader, options)!,
-            "throttled" => JsonSerializer.Deserialize<ThrottledEvent>(ref reader, options)!,
-            "timed-out" => JsonSerializer.Deserialize<TimedOutEvent>(ref reader, options)!,
-            _ => throw new JsonException($"Unknown job event type: {jobEventType}.")
-        };
-        return jobEvent!;
+        var jobEvent = JsonSerializer.Deserialize(ref reader, jobEventType, options);
+        return (JobEvent)jobEvent!;
     }
 
     /// <inheritdoc/>
@@ -39,38 +42,15 @@ public class JobEventJsonConverter : JsonConverter<JobEvent>
     /// property.
     /// </summary>
     /// <param name="reader">The JSON reader to read from.</param>
-    private static string GetJobEventType(Utf8JsonReader reader)
+    private static Type GetJobEventType(Utf8JsonReader reader)
     {
         if (reader.TokenType != JsonTokenType.StartObject)
         {
             throw new JsonException("Expected reader to begin with start of object.");
         }
-        var currentDepth = 0;
+
         while (reader.Read())
         {
-            if (
-                reader.TokenType == JsonTokenType.StartObject
-                || reader.TokenType == JsonTokenType.StartArray
-            )
-            {
-                currentDepth++;
-                continue;
-            }
-
-            if (
-                reader.TokenType == JsonTokenType.EndObject
-                || reader.TokenType == JsonTokenType.EndArray
-            )
-            {
-                currentDepth--;
-                continue;
-            }
-
-            if (currentDepth > 0)
-            {
-                continue;
-            }
-
             if (
                 reader.TokenType == JsonTokenType.PropertyName
                 && reader.GetString() == "what"
@@ -81,8 +61,14 @@ public class JobEventJsonConverter : JsonConverter<JobEvent>
                     ?? throw new JsonException(
                         "Expected a string value for the 'what' property, got null."
                     );
-                return what;
+                if (EventTypesByName.TryGetValue(what, out Type? value))
+                {
+                    return value;
+                }
+                throw new JsonException($"Unknown job event type: {what}.");
             }
+
+            reader.Skip();
         }
         throw new JsonException("Expected 'what' property in JSON object, but none was found.");
     }
