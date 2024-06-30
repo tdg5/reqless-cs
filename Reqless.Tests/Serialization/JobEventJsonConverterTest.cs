@@ -1,5 +1,6 @@
 using Reqless.Models.JobEvents;
 using Reqless.Serialization;
+using System.Text;
 using System.Text.Json;
 
 namespace Reqless.Tests.Serialization;
@@ -69,23 +70,23 @@ public class JobEventJsonConverterTest
     }
 
     /// <summary>
-    /// Read should throw if the given JSON object contains a "what" property
-    /// with an unknown value.
+    /// Read should return an instance of <see cref="LogEvent"/> if the given
+    /// JSON object contains a "what" property with an unknown value.
     /// </summary>
     [Fact]
-    public void Read_ThrowsIfJsonIncludesUnknownWhatProperty()
+    public void Read_ReturnsLogEventIfJsonIncludesUnknownWhatProperty()
     {
         var what = "unknown";
-        var exception = Assert.Throws<JsonException>(
-            () => JsonSerializer.Deserialize<JobEvent>(
-                $$"""{"what": "{{what}}", "when": 123}""",
-                _jsonSerializerOptions
-            )
+        var when = 123;
+        var other = "other";
+        var jobEvent = JsonSerializer.Deserialize<JobEvent>(
+            $$"""{"what": "{{what}}", "when": {{when}}, "other": "{{other}}"}""",
+            _jsonSerializerOptions
         );
-        Assert.Equal(
-            $"Unknown job event type: {what}.",
-            exception.Message
-        );
+        var logEvent = Assert.IsType<LogEvent>(jobEvent);
+        Assert.Equal(what, logEvent.What);
+        Assert.Equal(when, logEvent.When);
+        Assert.Equal(other, logEvent.Data["other"].GetString());
     }
 
     /// <summary>
@@ -321,6 +322,35 @@ public class JobEventJsonConverterTest
         Assert.Equal(failedRetriesEvent.What, failedRetriesEventFromJson.What);
         Assert.Equal(failedRetriesEvent.When, failedRetriesEventFromJson.When);
         Assert.Equal(failedRetriesEvent.Group, failedRetriesEventFromJson.Group);
+    }
+
+    /// <summary>
+    /// Write should be able to serialize a <see cref="LogEvent"/> event.
+    /// </summary>
+    [Fact]
+    public void Write_CanSerializeLogEvent()
+    {
+        var extra = "\"extra\"";
+        var when = 123;
+        var what = "what";
+        var extraJsonElement = JsonDocument.Parse(extra).RootElement;
+        var logEvent = new LogEvent(
+            data: new Dictionary<string, JsonElement>
+            {
+                ["extra"] = extraJsonElement
+            },
+            what: what,
+            when: when
+        );
+        var json = JsonSerializer.Serialize(logEvent, _jsonSerializerOptions);
+        var jobEventFromJson = JsonSerializer.Deserialize<JobEvent>(json, _jsonSerializerOptions);
+        var logEventFromJson = Assert.IsType<LogEvent>(jobEventFromJson);
+        Assert.Equal(logEvent.What, logEventFromJson.What);
+        Assert.Equal(logEvent.When, logEventFromJson.When);
+        Assert.Equal(
+            logEvent.Data["extra"].GetString(),
+            logEventFromJson.Data["extra"].GetString()
+        );
     }
 
     /// <summary>
