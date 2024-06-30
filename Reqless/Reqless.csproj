@@ -13,4 +13,9 @@
     <Content Remove="lua/reqless.lua" />
     <EmbeddedResource Include="lua/reqless.lua" />
   </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="StackExchange.Redis" Version="2.7.33" />
+  </ItemGroup>
+
 </Project>

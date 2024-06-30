@@ -65,7 +65,7 @@ public class JobEventJsonConverter : JsonConverter<JobEvent>
                 {
                     return value;
                 }
-                throw new JsonException($"Unknown job event type: {what}.");
+                return typeof(LogEvent);
             }
 
             reader.Skip();

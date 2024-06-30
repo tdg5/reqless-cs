@@ -59,12 +59,6 @@ public class JobJsonConverter : JsonConverter<Job>
             }
 
             // If we're within an object, we expect to start with a property name.
-            if (reader.TokenType != JsonTokenType.PropertyName)
-            {
-                throw new JsonException($"Expected a property name but got {reader.TokenType}.");
-            }
-
-
             // We can forgive null here because the reader will throw if the
             // property name isn't a string, so null is impossible here.
             var propertyName = reader.GetString()!;
