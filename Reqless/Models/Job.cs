@@ -55,9 +55,10 @@ public class Job
     public string Jid { get; }
 
     /// <summary>
-    /// The priority of the job, which determines the order in which jobs are
-    /// popped off the queue, with a lower value representing a more urgent
-    /// priority.
+    /// The priority of the job, which, ignoring other factors like throttles,
+    /// determines the order in which jobs are popped off the queue. A lower
+    /// value represents a less urgent priority and a higher value represents a
+    /// more urgent priority.
     /// </summary>
     public int Priority { get; }
 
