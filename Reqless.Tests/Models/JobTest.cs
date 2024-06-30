@@ -240,21 +240,21 @@ public class JobTest
 
     /// <summary>
     /// The constructor should throw an exception if the given remaining argument
-    /// is negative.
+    /// is less than -1.
     /// </summary>
     [Fact]
-    public void Constructor_Remaining_ThrowsWhenNegative()
+    public void Constructor_Remaining_ThrowsWhenLessThanMinusOne()
     {
-        foreach (var negativeValue in new int[] { -100, -1 })
+        foreach (var invalidValue in new int[] { -100, -2 })
         {
             var exception = Assert.Throws<ArgumentOutOfRangeException>(
-                () => MakeJob(remaining: Maybe<int>.Some(negativeValue))
+                () => MakeJob(remaining: Maybe<int>.Some(invalidValue))
             );
             Assert.Equal("remaining", exception.ParamName);
             Assert.Equal(
                 $"""
-                remaining must be a non-negative whole number. (Parameter 'remaining')
-                Actual value was {negativeValue}.
+                remaining must be a whole number greater than or equal to -1. (Parameter 'remaining')
+                Actual value was {invalidValue}.
                 """,
                 exception.Message
             );

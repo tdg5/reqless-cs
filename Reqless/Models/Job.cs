@@ -207,12 +207,12 @@ public class Job
                 "priority must be a non-negative whole number."
             );
         }
-        if (remaining < 0)
+        if (remaining < -1)
         {
             throw new ArgumentOutOfRangeException(
                 nameof(remaining),
                 remaining,
-                "remaining must be a non-negative whole number."
+                "remaining must be a whole number greater than or equal to -1."
             );
         }
         if (retries < 0)
