@@ -9,10 +9,10 @@ public class ResourceHelperTest
     /// The emebdded Lua script should be readable and contain expected text.
     /// </summary>
     [Fact]
-    public void ReadTextResource_CanFetchTheQlessLuaScript()
+    public void ReadTextResource_CanFetchTheReqlessLuaScript()
     {
-        var luaScript = ResourceHelper.ReadTextResource("lua/qless.lua");
-        Assert.Contains("QlessAPI", luaScript);
+        var luaScript = ResourceHelper.ReadTextResource("lua/reqless.lua");
+        Assert.Contains("ReqlessAPI", luaScript);
     }
 
     /// <summary>

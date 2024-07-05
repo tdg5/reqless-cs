@@ -1,3 +1,3 @@
-[submodule "Reqless/qless-core"]
-	path = Reqless/qless-core
-	url = https://github.com/tdg5/qless-core.git
+[submodule "Reqless/reqless-core"]
+	path = Reqless/reqless-core
+	url = https://github.com/tdg5/reqless-core.git

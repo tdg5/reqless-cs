@@ -10,7 +10,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Content Remove="lua/qless.lua" />
-    <EmbeddedResource Include="lua/qless.lua" />
+    <Content Remove="lua/reqless.lua" />
+    <EmbeddedResource Include="lua/reqless.lua" />
   </ItemGroup>
 </Project>
