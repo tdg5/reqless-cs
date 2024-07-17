@@ -304,6 +304,37 @@ public class ReqlessClient : IClient, IDisposable
     }
 
     /// <inheritdoc/>
+    public async Task<JidsResult> GetFailedJobsByGroupAsync(
+        string group,
+        int limit = 25,
+        int offset = 0
+    )
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(group, nameof(group));
+
+        var result = await _executor.ExecuteAsync([
+            "jobs.failedByGroup",
+            Now(),
+            group,
+            offset,
+            limit
+        ]);
+
+        var failedJobsByGroupJson = (string?)result
+            ?? throw new InvalidOperationException(
+                "Server returned unexpected null result."
+            );
+
+        var failedJobsByGroupResponse = JsonSerializer.Deserialize<JidsResult>(
+            failedJobsByGroupJson
+        ) ?? throw new JsonException(
+            $"Failed to deserialize failed jobs by group JSON: {failedJobsByGroupJson}"
+        );
+
+        return failedJobsByGroupResponse;
+    }
+
+    /// <inheritdoc/>
     public async Task<Job?> GetJobAsync(string jid)
     {
         RedisResult result = await _executor.ExecuteAsync(["job.get", Now(), jid]);

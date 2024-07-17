@@ -9,8 +9,6 @@ namespace Reqless.Tests.Models;
 /// </summary>
 public class JobTest
 {
-    static readonly string[] EmptyStrings = ["", " ", "\t"];
-
     /// <summary>
     /// The constructor should throw an exception if the given className
     /// argument is null.
@@ -35,7 +33,7 @@ public class JobTest
     [Fact]
     public void Constructor_ClassName_ThrowsWhenEmptyOrWhitespace()
     {
-        foreach (var invalidClassName in EmptyStrings)
+        foreach (var invalidClassName in TestConstants.EmptyStrings)
         {
             var exception = Assert.Throws<ArgumentException>(
                 () => MakeJob(className: invalidClassName)
@@ -69,7 +67,7 @@ public class JobTest
     [Fact]
     public void Constructor_Data_ThrowsWhenEmptyOrWhitespace()
     {
-        foreach (var invalidData in EmptyStrings)
+        foreach (var invalidData in TestConstants.EmptyStrings)
         {
             var exception = Assert.Throws<ArgumentException>(
                 () => MakeJob(data: invalidData)
@@ -168,7 +166,7 @@ public class JobTest
     [Fact]
     public void Constructor_Jid_ThrowsWhenEmptyOrWhitespace()
     {
-        foreach (var invalidJid in EmptyStrings)
+        foreach (var invalidJid in TestConstants.EmptyStrings)
         {
             var exception = Assert.Throws<ArgumentException>(
                 () => MakeJob(jid: invalidJid)
@@ -225,7 +223,7 @@ public class JobTest
     [Fact]
     public void Constructor_QueueName_ThrowsWhenEmptyOrWhitespace()
     {
-        foreach (var invalidQueueName in EmptyStrings)
+        foreach (var invalidQueueName in TestConstants.EmptyStrings)
         {
             var exception = Assert.Throws<ArgumentException>(
                 () => MakeJob(queueName: invalidQueueName)
@@ -316,7 +314,7 @@ public class JobTest
     [Fact]
     public void Constructor_SpawnedFromJid_ThrowsWhenEmptyOrWhitespace()
     {
-        foreach (var invalidSpawnedFromJid in EmptyStrings)
+        foreach (var invalidSpawnedFromJid in TestConstants.EmptyStrings)
         {
             var exception = Assert.Throws<ArgumentException>(
                 () => MakeJob(spawnedFromJid: invalidSpawnedFromJid)
@@ -350,7 +348,7 @@ public class JobTest
     [Fact]
     public void Constructor_State_ThrowsWhenEmptyOrWhitespace()
     {
-        foreach (var invalidState in EmptyStrings)
+        foreach (var invalidState in TestConstants.EmptyStrings)
         {
             var exception = Assert.Throws<ArgumentException>(
                 () => MakeJob(state: invalidState)
@@ -408,7 +406,7 @@ public class JobTest
     [Fact]
     public void Constructor_WorkerName_ThrowsWhenEmptyOrWhitespace()
     {
-        foreach (var invalidWorkerName in EmptyStrings)
+        foreach (var invalidWorkerName in TestConstants.EmptyStrings)
         {
             var exception = Assert.Throws<ArgumentException>(
                 () => MakeJob(workerName: invalidWorkerName)

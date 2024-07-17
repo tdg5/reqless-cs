@@ -2,7 +2,6 @@ using Reqless.Models;
 using Reqless.Models.JobEvents;
 using Reqless.Tests.TestHelpers;
 using Reqless.Tests.TestHelpers.Factories;
-using System.Text;
 using System.Text.Json;
 
 namespace Reqless.Tests.Serialization;

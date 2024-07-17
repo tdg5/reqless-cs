@@ -139,6 +139,20 @@ public interface IClient
     );
 
     /// <summary>
+    /// Gets the IDs of jobs that have failed with the given failure group.
+    /// </summary>
+    /// <param name="group">The name of the failure group to retrieve job
+    /// failures for.</param>
+    /// <param name="limit">The maximum number of job IDs to retrieve.</param>
+    /// <param name="offset">The number of job IDs to skip before returning
+    /// results.</param>
+    Task<JidsResult> GetFailedJobsByGroupAsync(
+        string group,
+        int limit = 25,
+        int offset = 0
+    );
+
+    /// <summary>
     /// Get all Reqless configuration values.
     /// </summary>
     /// <returns>Zero or more job IDs of completed jobs.</returns>

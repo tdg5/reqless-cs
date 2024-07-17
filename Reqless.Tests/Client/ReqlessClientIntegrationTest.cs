@@ -495,6 +495,52 @@ public class ReqlessClientIntegrationTest
     }
 
     /// <summary>
+    /// <see cref="ReqlessClient.GetFailedJobsByGroupAsync"/> should return an
+    /// empty list when no matching jobs are found.
+    /// </summary>
+    [Fact]
+    public async void GetFailedJobsByGroupAsync_ReturnsEmptyListWhenNoSuchJobs()
+    {
+        var failedJobsByGroup = await _client.GetFailedJobsByGroupAsync("no-such-group");
+        Assert.Empty(failedJobsByGroup.Jids);
+        Assert.Equal(0, failedJobsByGroup.Total);
+    }
+
+    /// <summary>
+    /// <see cref="ReqlessClient.GetFailedJobsByGroupAsync"/> should return
+    /// expected jids when matching jobs exist.
+    /// </summary>
+    [Fact]
+    public async void GetFailedJobsByGroupAsync_ReturnsMatchingJidsWhenJobsExist()
+    {
+        var failedJobCount = 5;
+        var failedJids = new string[5];
+
+        for (var index = 0; index < failedJobCount; index++)
+        {
+            var jid = await PutJobAsync(
+                _client,
+                queueName: Maybe<string>.Some(ExampleQueueName),
+                workerName: Maybe<string>.Some(ExampleWorkerName)
+            );
+            Job? job = await _client.PopJobAsync(ExampleQueueName, ExampleWorkerName);
+            Assert.NotNull(job);
+            Assert.Equal(jid, job.Jid);
+            var failedSuccessfully = await _client.FailJobAsync(
+                jid,
+                ExampleWorkerName,
+                ExampleGroup,
+                ExampleMessage
+            );
+            Assert.True(failedSuccessfully);
+            failedJids[index] = jid;
+        }
+        var failedJobsByGroup = await _client.GetFailedJobsByGroupAsync(ExampleGroup);
+        Assert.Equivalent(failedJids, failedJobsByGroup.Jids);
+        Assert.Equal(failedJobCount, failedJobsByGroup.Total);
+    }
+
+    /// <summary>
     /// <see cref="ReqlessClient.GetJobAsync "/>should return null when the job
     /// does not exist.
     /// </summary>
