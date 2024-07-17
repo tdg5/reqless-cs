@@ -16,7 +16,8 @@ public class JobEventJsonConverterTest
     };
 
     /// <summary>
-    /// Read should throw if the given JSON isn't an object.
+    /// <see cref="JobEventJsonConverter.Read"/> should throw if the given JSON
+    /// isn't an object.
     /// </summary>
     [Fact]
     public void Read_ThrowsIfJsonDoesNotStartWithObjectStart()
@@ -34,7 +35,8 @@ public class JobEventJsonConverterTest
     }
 
     /// <summary>
-    /// Read should throw if the given JSON object has a null "what" property.
+    /// <see cref="JobEventJsonConverter.Read"/> should throw if the given JSON
+    /// object has a null "what" property.
     /// </summary>
     [Fact]
     public void Read_ThrowsIfJsonHasNullWhatProperty()
@@ -52,7 +54,8 @@ public class JobEventJsonConverterTest
     }
 
     /// <summary>
-    /// Read should throw if the given JSON object doesn't have a "what" property.
+    /// <see cref="JobEventJsonConverter.Read"/> should throw if the given JSON
+    /// object doesn't have a "what" property.
     /// </summary>
     [Fact]
     public void Read_ThrowsIfJsonDoesNotIncludeWhatProperty()
@@ -70,8 +73,9 @@ public class JobEventJsonConverterTest
     }
 
     /// <summary>
-    /// Read should return an instance of <see cref="LogEvent"/> if the given
-    /// JSON object contains a "what" property with an unknown value.
+    /// <see cref="JobEventJsonConverter.Read"/> should return an instance of
+    /// <see cref="LogEvent"/> if the given JSON object contains a "what"
+    /// property with an unknown value.
     /// </summary>
     [Fact]
     public void Read_ReturnsLogEventIfJsonIncludesUnknownWhatProperty()
@@ -90,7 +94,8 @@ public class JobEventJsonConverterTest
     }
 
     /// <summary>
-    /// Read should only read "what" from the root of the JSON object.
+    /// <see cref="JobEventJsonConverter.Read"/> should only read "what" from
+    /// the root of the JSON object.
     /// </summary>
     [Fact]
     public void Read_CanDetermineWhatInSpiteOfNestedStructures()
@@ -111,7 +116,8 @@ public class JobEventJsonConverterTest
     }
 
     /// <summary>
-    /// Read should be able to deserialize a <see cref="DoneEvent"/>  event.
+    /// <see cref="JobEventJsonConverter.Read"/> should be able to deserialize a
+    /// <see cref="DoneEvent"/> event.
     /// </summary>
     [Fact]
     public void Read_CanDeserializeDoneEvent()
@@ -128,7 +134,8 @@ public class JobEventJsonConverterTest
     }
 
     /// <summary>
-    /// Read should be able to deserialize a <see cref="FailedEvent"/>  event.
+    /// <see cref="JobEventJsonConverter.Read"/> should be able to deserialize a
+    /// <see cref="FailedEvent"/> event.
     /// </summary>
     [Fact]
     public void Read_CanDeserializeFailedEvent()
@@ -156,8 +163,8 @@ public class JobEventJsonConverterTest
     }
 
     /// <summary>
-    /// Read should be able to deserialize a <see cref="FailedRetriesEvent"/>
-    /// event.
+    /// <see cref="JobEventJsonConverter.Read"/> should be able to deserialize a
+    /// <see cref="FailedRetriesEvent"/> event.
     /// </summary>
     [Fact]
     public void Read_CanDeserializeFailedRetriesEvent()
@@ -182,7 +189,8 @@ public class JobEventJsonConverterTest
     }
 
     /// <summary>
-    /// Read should be able to deserialize a <see cref="PoppedEvent"/> event.
+    /// <see cref="JobEventJsonConverter.Read"/> should be able to deserialize a
+    /// <see cref="PoppedEvent"/> event.
     /// </summary>
     [Fact]
     public void Read_CanDeserializePoppedEvent()
@@ -207,7 +215,8 @@ public class JobEventJsonConverterTest
     }
 
     /// <summary>
-    /// Read should be able to deserialize a <see cref="PutEvent"/> event.
+    /// <see cref="JobEventJsonConverter.Read"/> should be able to deserialize a
+    /// <see cref="PutEvent"/> event.
     /// </summary>
     [Fact]
     public void Read_CanDeserializePutEvent()
@@ -232,7 +241,8 @@ public class JobEventJsonConverterTest
     }
 
     /// <summary>
-    /// Read should be able to deserialize a <see cref="ThrottledEvent"/> event.
+    /// <see cref="JobEventJsonConverter.Read"/> should be able to deserialize a
+    /// <see cref="ThrottledEvent"/> event.
     /// </summary>
     [Fact]
     public void Read_CanDeserializeThrottledEvent()
@@ -257,7 +267,8 @@ public class JobEventJsonConverterTest
     }
 
     /// <summary>
-    /// Read should be able to deserialize a <see cref="TimedOutEvent"/> event.
+    /// <see cref="JobEventJsonConverter.Read"/> should be able to deserialize a
+    /// <see cref="TimedOutEvent"/> event.
     /// </summary>
     [Fact]
     public void Read_CanDeserializeTimedOutEvent()
@@ -274,7 +285,8 @@ public class JobEventJsonConverterTest
     }
 
     /// <summary>
-    /// Write should be able to serialize a <see cref="DoneEvent"/> event.
+    /// <see cref="JobEventJsonConverter.Write"/> should be able to serialize a
+    /// <see cref="DoneEvent"/> event.
     /// </summary>
     [Fact]
     public void Write_CanSerializeDoneEvent()
@@ -289,7 +301,8 @@ public class JobEventJsonConverterTest
     }
 
     /// <summary>
-    /// Write should be able to serialize a <see cref="FailedEvent"/> event.
+    /// <see cref="JobEventJsonConverter.Write"/> should be able to serialize a
+    /// <see cref="FailedEvent"/> event.
     /// </summary>
     [Fact]
     public void Write_CanSerializeFailedEvent()
@@ -308,7 +321,8 @@ public class JobEventJsonConverterTest
     }
 
     /// <summary>
-    /// Write should be able to serialize a <see cref="FailedRetriesEvent"/> event.
+    /// <see cref="JobEventJsonConverter.Write"/> should be able to serialize a
+    /// <see cref="FailedRetriesEvent"/> event.
     /// </summary>
     [Fact]
     public void Write_CanSerializeFailedRetriesEvent()
@@ -325,7 +339,8 @@ public class JobEventJsonConverterTest
     }
 
     /// <summary>
-    /// Write should be able to serialize a <see cref="LogEvent"/> event.
+    /// <see cref="JobEventJsonConverter.Write"/> should be able to serialize a
+    /// <see cref="LogEvent"/> event.
     /// </summary>
     [Fact]
     public void Write_CanSerializeLogEvent()
@@ -354,7 +369,8 @@ public class JobEventJsonConverterTest
     }
 
     /// <summary>
-    /// Write should be able to serialize a <see cref="PoppedEvent"/> event.
+    /// <see cref="JobEventJsonConverter.Write"/> should be able to serialize a
+    /// <see cref="PoppedEvent"/> event.
     /// </summary>
     [Fact]
     public void Write_CanSerializePoppedEvent()
@@ -371,7 +387,8 @@ public class JobEventJsonConverterTest
     }
 
     /// <summary>
-    /// Write should be able to serialize a <see cref="PutEvent"/> event.
+    /// <see cref="JobEventJsonConverter.Write"/> should be able to serialize a
+    /// <see cref="PutEvent"/> event.
     /// </summary>
     [Fact]
     public void Write_CanSerializePutEvent()
@@ -388,7 +405,8 @@ public class JobEventJsonConverterTest
     }
 
     /// <summary>
-    /// Write should be able to serialize a <see cref="ThrottledEvent"/> event.
+    /// <see cref="JobEventJsonConverter.Write"/> should be able to serialize a
+    /// <see cref="ThrottledEvent"/> event.
     /// </summary>
     [Fact]
     public void Write_CanSerializeThrottledEvent()
@@ -405,7 +423,8 @@ public class JobEventJsonConverterTest
     }
 
     /// <summary>
-    /// Write should be able to serialize a <see cref="TimedOutEvent"/> event.
+    /// <see cref="JobEventJsonConverter.Write"/> should be able to serialize a
+    /// <see cref="TimedOutEvent"/> event.
     /// </summary>
     [Fact]
     public void Write_CanSerializeTimedOutEvent()
