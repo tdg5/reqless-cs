@@ -7,52 +7,52 @@ using StackExchange.Redis;
 namespace Reqless.Tests.Client.ReqlessClientTests;
 
 /// <summary>
-/// Unit tests for <see cref="ReqlessClient.GetFailedJobsByGroupAsync"/>.
+/// Unit tests for <see cref="ReqlessClient.GetJobsByTagAsync"/>.
 /// </summary>
-public class GetFailedJobsByGroupTest : BaseReqlessClientTest
+public class GetJobsByTagTest : BaseReqlessClientTest
 {
     /// <summary>
-    /// <see cref="ReqlessClient.GetFailedJobsByGroupAsync"/> should throw if group
-    /// is null.
+    /// <see cref="ReqlessClient.GetJobsByTagAsync"/> should throw if tag is
+    /// null.
     /// </summary>
     [Fact]
-    public async void ShouldThrowIfGroupIsNull()
+    public async void ShouldThrowIfTagIsNull()
     {
         var exception = await Assert.ThrowsAsync<ArgumentNullException>(
             () => WithClientWithExecutorMockForExpectedArguments(
-                subject => subject.GetFailedJobsByGroupAsync(group: null!)
+                subject => subject.GetJobsByTagAsync(tag: null!)
             )
         );
         Assert.Equal(
-            "Value cannot be null. (Parameter 'group')",
+            "Value cannot be null. (Parameter 'tag')",
             exception.Message
         );
     }
 
     /// <summary>
-    /// <see cref="ReqlessClient.GetFailedJobsByGroupAsync"/> should throw if group
-    /// is empty or only whitespace.
+    /// <see cref="ReqlessClient.GetJobsByTagAsync"/> should throw if tag is
+    /// empty or only whitespace.
     /// </summary>
     [Fact]
-    public async void ShouldThrowIfGroupIsEmptyOrOnlyWhitespace()
+    public async void ShouldThrowIfTagIsEmptyOrOnlyWhitespace()
     {
         foreach (var emptyString in TestConstants.EmptyStrings)
         {
             var exception = await Assert.ThrowsAsync<ArgumentException>(
                 () => WithClientWithExecutorMockForExpectedArguments(
-                    subject => subject.GetFailedJobsByGroupAsync(group: emptyString)
+                    subject => subject.GetJobsByTagAsync(tag: emptyString)
                 )
             );
             Assert.Equal(
-                "The value cannot be an empty string or composed entirely of whitespace. (Parameter 'group')",
+                "The value cannot be an empty string or composed entirely of whitespace. (Parameter 'tag')",
                 exception.Message
             );
         }
     }
 
     /// <summary>
-    /// <see cref="ReqlessClient.GetFailedJobsByGroupAsync"/> should throw if
-    /// server returns null.
+    /// <see cref="ReqlessClient.GetJobsByTagAsync"/> should throw if server
+    /// returns null.
     /// </summary>
     [Fact]
     public async void ShouldThrowIfServerReturnsNull()
@@ -61,15 +61,15 @@ public class GetFailedJobsByGroupTest : BaseReqlessClientTest
         var offset = 0;
         var exception = await Assert.ThrowsAsync<InvalidOperationException>(
             () => WithClientWithExecutorMockForExpectedArguments(
-                subject => subject.GetFailedJobsByGroupAsync(
-                    group: ExampleGroup,
+                subject => subject.GetJobsByTagAsync(
+                    tag: ExampleTag,
                     limit: limit,
                     offset: offset
                 ),
                 expectedArguments: [
-                    "jobs.failedByGroup",
+                    "jobs.tagged",
                     0,
-                    ExampleGroup,
+                    ExampleTag,
                     offset,
                     limit
                 ],
@@ -83,8 +83,8 @@ public class GetFailedJobsByGroupTest : BaseReqlessClientTest
     }
 
     /// <summary>
-    /// <see cref="ReqlessClient.GetFailedJobsByGroupAsync"/> should throw if
-    /// JSON can't be deserialized.
+    /// <see cref="ReqlessClient.GetJobsByTagAsync"/> should throw if JSON can't
+    /// be deserialized.
     /// </summary>
     [Fact]
     public async void ShouldThrowIfJsonCannotBeDeserialized()
@@ -93,15 +93,15 @@ public class GetFailedJobsByGroupTest : BaseReqlessClientTest
         var offset = 0;
         var exception = await Assert.ThrowsAsync<JsonException>(
             () => WithClientWithExecutorMockForExpectedArguments(
-                subject => subject.GetFailedJobsByGroupAsync(
-                    group: ExampleGroup,
+                subject => subject.GetJobsByTagAsync(
+                    tag: ExampleTag,
                     limit: limit,
                     offset: offset
                 ),
                 expectedArguments: [
-                    "jobs.failedByGroup",
+                    "jobs.tagged",
                     0,
-                    ExampleGroup,
+                    ExampleTag,
                     offset,
                     limit
                 ],
@@ -115,8 +115,7 @@ public class GetFailedJobsByGroupTest : BaseReqlessClientTest
     }
 
     /// <summary>
-    /// <see cref="ReqlessClient.GetFailedJobsByGroupAsync"/> should return
-    /// JidsResult.
+    /// <see cref="ReqlessClient.GetJobsByTagAsync"/> should return JidsResult.
     /// </summary>
     [Fact]
     public async void ShouldReturnJidsResult()
@@ -129,8 +128,8 @@ public class GetFailedJobsByGroupTest : BaseReqlessClientTest
         await WithClientWithExecutorMockForExpectedArguments(
             async subject =>
             {
-                var result = await subject.GetFailedJobsByGroupAsync(
-                    group: ExampleGroup,
+                var result = await subject.GetJobsByTagAsync(
+                    tag: ExampleTag,
                     limit: limit,
                     offset: offset
                 );
@@ -139,9 +138,9 @@ public class GetFailedJobsByGroupTest : BaseReqlessClientTest
                 Assert.Equal(jids, result.Jids);
             },
             expectedArguments: [
-                "jobs.failedByGroup",
+                "jobs.tagged",
                 0,
-                ExampleGroup,
+                ExampleTag,
                 offset,
                 limit
             ],

@@ -501,9 +501,9 @@ public class ReqlessClientIntegrationTest
     [Fact]
     public async void GetFailedJobsByGroupAsync_ReturnsEmptyListWhenNoSuchJobs()
     {
-        var failedJobsByGroup = await _client.GetFailedJobsByGroupAsync("no-such-group");
-        Assert.Empty(failedJobsByGroup.Jids);
-        Assert.Equal(0, failedJobsByGroup.Total);
+        var jidsResult = await _client.GetFailedJobsByGroupAsync("no-such-group");
+        Assert.Empty(jidsResult.Jids);
+        Assert.Equal(0, jidsResult.Total);
     }
 
     /// <summary>
@@ -535,9 +535,16 @@ public class ReqlessClientIntegrationTest
             Assert.True(failedSuccessfully);
             failedJids[index] = jid;
         }
-        var failedJobsByGroup = await _client.GetFailedJobsByGroupAsync(ExampleGroup);
-        Assert.Equivalent(failedJids, failedJobsByGroup.Jids);
-        Assert.Equal(failedJobCount, failedJobsByGroup.Total);
+        var jidsResult = await _client.GetFailedJobsByGroupAsync(ExampleGroup);
+        Assert.Equivalent(failedJids, jidsResult.Jids);
+        Assert.Equal(failedJobCount, jidsResult.Total);
+
+        jidsResult = await _client.GetFailedJobsByGroupAsync(
+            ExampleGroup,
+            offset: failedJobCount
+        );
+        Assert.Empty(jidsResult.Jids);
+        Assert.Equal(failedJobCount, jidsResult.Total);
     }
 
     /// <summary>
@@ -627,6 +634,50 @@ public class ReqlessClientIntegrationTest
         var job = await _client.PopJobAsync(ExampleQueueName, ExampleWorkerName);
         var jobs = await _client.GetJobsByStateAsync("running", ExampleQueueName);
         Assert.Equal(jid, jobs[0]);
+    }
+
+    /// <summary>
+    /// <see cref="ReqlessClient.GetJobsByTagAsync"/> should return an
+    /// empty list when no matching jobs are found.
+    /// </summary>
+    [Fact]
+    public async void GetJobsByTagAsync_ReturnsEmptyListWhenNoSuchJobs()
+    {
+        var jidsResult = await _client.GetJobsByTagAsync("no-such-tag");
+        Assert.Empty(jidsResult.Jids);
+        Assert.Equal(0, jidsResult.Total);
+    }
+
+    /// <summary>
+    /// <see cref="ReqlessClient.GetJobsByTagAsync"/> should return
+    /// expected jids when matching jobs exist.
+    /// </summary>
+    [Fact]
+    public async void GetJobsByTagAsync_ReturnsMatchingJidsWhenJobsExist()
+    {
+        var taggedJobCount = 5;
+        var taggedJids = new string[5];
+        var tag = "get-jobs-by-tag-tag";
+
+        string[] expectedTags = [tag];
+        for (var index = 0; index < taggedJobCount; index++)
+        {
+            var jid = await PutJobAsync(
+                _client,
+                queueName: Maybe<string>.Some(ExampleQueueName),
+                workerName: Maybe<string>.Some(ExampleWorkerName)
+            );
+            var jobTags = await _client.AddTagToJobAsync(jid, tag);
+            Assert.Equal(expectedTags, jobTags);
+            taggedJids[index] = jid;
+        }
+        var jidsResult = await _client.GetJobsByTagAsync(tag);
+        Assert.Equivalent(taggedJids, jidsResult.Jids);
+        Assert.Equal(taggedJobCount, jidsResult.Total);
+
+        jidsResult = await _client.GetJobsByTagAsync(tag, offset: taggedJobCount);
+        Assert.Empty(jidsResult.Jids);
+        Assert.Equal(taggedJobCount, jidsResult.Total);
     }
 
     /// <summary>

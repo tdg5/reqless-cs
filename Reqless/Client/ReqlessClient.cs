@@ -304,7 +304,7 @@ public class ReqlessClient : IClient, IDisposable
     }
 
     /// <inheritdoc/>
-    public async Task<JidsResult> GetFailedJobsByGroupAsync(
+    public Task<JidsResult> GetFailedJobsByGroupAsync(
         string group,
         int limit = 25,
         int offset = 0
@@ -312,26 +312,7 @@ public class ReqlessClient : IClient, IDisposable
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(group, nameof(group));
 
-        var result = await _executor.ExecuteAsync([
-            "jobs.failedByGroup",
-            Now(),
-            group,
-            offset,
-            limit
-        ]);
-
-        var failedJobsByGroupJson = (string?)result
-            ?? throw new InvalidOperationException(
-                "Server returned unexpected null result."
-            );
-
-        var failedJobsByGroupResponse = JsonSerializer.Deserialize<JidsResult>(
-            failedJobsByGroupJson
-        ) ?? throw new JsonException(
-            $"Failed to deserialize failed jobs by group JSON: {failedJobsByGroupJson}"
-        );
-
-        return failedJobsByGroupResponse;
+        return ExecuteJobsQuery("jobs.failedByGroup", group, limit, offset);
     }
 
     /// <inheritdoc/>
@@ -421,6 +402,18 @@ public class ReqlessClient : IClient, IDisposable
         ).ToList();
 
         return jids;
+    }
+
+    /// <inheritdoc/>
+    public Task<JidsResult> GetJobsByTagAsync(
+        string tag,
+        int limit = 25,
+        int offset = 0
+    )
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(tag, nameof(tag));
+
+        return ExecuteJobsQuery("jobs.tagged", tag, limit, offset);
     }
 
     /// <inheritdoc/>
@@ -759,6 +752,38 @@ public class ReqlessClient : IClient, IDisposable
         );
 
         return removedCount == 1;
+    }
+
+    /// <inheritdoc/>
+    public async Task<JidsResult> ExecuteJobsQuery(
+        string queryCommand,
+        string query,
+        int limit = 25,
+        int offset = 0
+    )
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(query, nameof(query));
+
+        var result = await _executor.ExecuteAsync([
+            queryCommand,
+            Now(),
+            query,
+            offset,
+            limit
+        ]);
+
+        var queryResultsJson = (string?)result
+            ?? throw new InvalidOperationException(
+                "Server returned unexpected null result."
+            );
+
+        var queryResults = JsonSerializer.Deserialize<JidsResult>(
+            queryResultsJson
+        ) ?? throw new JsonException(
+            $"Failed to deserialize failed jobs query result JSON: {queryResultsJson}"
+        );
+
+        return queryResults;
     }
 
     /// <summary>

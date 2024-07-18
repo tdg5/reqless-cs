@@ -190,6 +190,19 @@ public interface IClient
     );
 
     /// <summary>
+    /// Gets the IDs of jobs that have the given tag.
+    /// </summary>
+    /// <param name="tag">The name of the tag to retrieve jobs for.</param>
+    /// <param name="limit">The maximum number of job IDs to retrieve.</param>
+    /// <param name="offset">The number of job IDs to skip before returning
+    /// results.</param>
+    Task<JidsResult> GetJobsByTagAsync(
+        string tag,
+        int limit = 25,
+        int offset = 0
+    );
+
+    /// <summary>
     /// Get the count of jobs in the given queue.
     /// </summary>
     /// <param name="queueName">The name of the queue to get the count of.</param>
