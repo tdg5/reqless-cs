@@ -28,18 +28,7 @@ public class JidsResult
     /// possibly incomplete.</param>
     public JidsResult(string[] jids, int total)
     {
-        ArgumentNullException.ThrowIfNull(jids, nameof(jids));
-
-        foreach (var jid in jids)
-        {
-            if (string.IsNullOrWhiteSpace(jid))
-            {
-                throw new ArgumentException(
-                    "Value cannot include null, empty string, or strings composed entirely of whitespace.",
-                    nameof(jids)
-                );
-            }
-        }
+        ValidationHelper.ThrowIfAnyNullOrWhitespace(jids, nameof(jids));
 
         Jids = jids;
         Total = total;

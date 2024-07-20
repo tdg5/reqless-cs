@@ -95,6 +95,26 @@ public class JobTest
     }
 
     /// <summary>
+    /// The constructor should throw an exception if the given dependencies
+    /// include values that are null, empty, or only whitespace.
+    /// </summary>
+    [Fact]
+    public void Constructor_Dependencies_ThrowsWhenAnyValueIsNullEmptyOrOnlyWhitespace()
+    {
+        foreach (var invalidValue in TestConstants.EmptyStringsWithNull)
+        {
+            var exception = Assert.Throws<ArgumentException>(
+                () => MakeJob(dependencies: Maybe<string[]?>.Some([invalidValue!]))
+            );
+            Assert.Equal("dependencies", exception.ParamName);
+            Assert.Equal(
+                "Value cannot include null, empty string, or strings composed entirely of whitespace. (Parameter 'dependencies')",
+                exception.Message
+            );
+        }
+    }
+
+    /// <summary>
     /// The constructor should throw an exception if the given dependents
     /// argument is null.
     /// </summary>
@@ -106,6 +126,26 @@ public class JobTest
         );
         Assert.Equal("dependents", exception.ParamName);
         Assert.Equal("Value cannot be null. (Parameter 'dependents')", exception.Message);
+    }
+
+    /// <summary>
+    /// The constructor should throw an exception if the given dependencies
+    /// include values that are null, empty, or only whitespace.
+    /// </summary>
+    [Fact]
+    public void Constructor_Dependents_ThrowsWhenAnyValueIsNullEmptyOrOnlyWhitespace()
+    {
+        foreach (var invalidValue in TestConstants.EmptyStringsWithNull)
+        {
+            var exception = Assert.Throws<ArgumentException>(
+                () => MakeJob(dependents: Maybe<string[]?>.Some([invalidValue!]))
+            );
+            Assert.Equal("dependents", exception.ParamName);
+            Assert.Equal(
+                "Value cannot include null, empty string, or strings composed entirely of whitespace. (Parameter 'dependents')",
+                exception.Message
+            );
+        }
     }
 
     /// <summary>
@@ -143,6 +183,20 @@ public class JobTest
         );
         Assert.Equal("history", exception.ParamName);
         Assert.Equal("Value cannot be null. (Parameter 'history')", exception.Message);
+    }
+
+    /// <summary>
+    /// The constructor should throw an exception if the given history
+    /// includes any null values.
+    /// </summary>
+    [Fact]
+    public void Constructor_History_ThrowsWhenAnyValueIsNull()
+    {
+        var exception = Assert.Throws<ArgumentException>(
+            () => MakeJob(history: Maybe<JobEvent[]?>.Some([null!]))
+        );
+        Assert.Equal("history", exception.ParamName);
+        Assert.Equal("Value cannot include null. (Parameter 'history')", exception.Message);
     }
 
     /// <summary>
@@ -372,6 +426,26 @@ public class JobTest
     }
 
     /// <summary>
+    /// The constructor should throw an exception if the given tags include
+    /// values that are null, empty, or only whitespace.
+    /// </summary>
+    [Fact]
+    public void Constructor_Tags_ThrowsWhenAnyValueIsNullEmptyOrOnlyWhitespace()
+    {
+        foreach (var invalidValue in TestConstants.EmptyStringsWithNull)
+        {
+            var exception = Assert.Throws<ArgumentException>(
+                () => MakeJob(tags: Maybe<string[]?>.Some([invalidValue!]))
+            );
+            Assert.Equal("tags", exception.ParamName);
+            Assert.Equal(
+                "Value cannot include null, empty string, or strings composed entirely of whitespace. (Parameter 'tags')",
+                exception.Message
+            );
+        }
+    }
+
+    /// <summary>
     /// The constructor should throw an exception if the given throttles
     /// argument is null.
     /// </summary>
@@ -379,10 +453,30 @@ public class JobTest
     public void Constructor_Throttles_ThrowsWhenNull()
     {
         var exception = Assert.Throws<ArgumentNullException>(
-            () => MakeJob(dependents: Maybe<string[]?>.Some(null))
+            () => MakeJob(throttles: Maybe<string[]?>.Some(null))
         );
-        Assert.Equal("dependents", exception.ParamName);
-        Assert.Equal("Value cannot be null. (Parameter 'dependents')", exception.Message);
+        Assert.Equal("throttles", exception.ParamName);
+        Assert.Equal("Value cannot be null. (Parameter 'throttles')", exception.Message);
+    }
+
+    /// <summary>
+    /// The constructor should throw an exception if the given throttles include
+    /// values that are null, empty, or only whitespace.
+    /// </summary>
+    [Fact]
+    public void Constructor_Throttles_ThrowsWhenAnyValueIsNullEmptyOrOnlyWhitespace()
+    {
+        foreach (var invalidValue in TestConstants.EmptyStringsWithNull)
+        {
+            var exception = Assert.Throws<ArgumentException>(
+                () => MakeJob(throttles: Maybe<string[]?>.Some([invalidValue!]))
+            );
+            Assert.Equal("throttles", exception.ParamName);
+            Assert.Equal(
+                "Value cannot include null, empty string, or strings composed entirely of whitespace. (Parameter 'throttles')",
+                exception.Message
+            );
+        }
     }
 
     /// <summary>

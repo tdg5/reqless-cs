@@ -1,4 +1,5 @@
 using Reqless.Models;
+using Reqless.Tests.TestHelpers;
 using System.Text.Json;
 
 namespace Reqless.Tests.Models;
@@ -8,8 +9,6 @@ namespace Reqless.Tests.Models;
 /// </summary>
 public class JobFailureTest
 {
-    static readonly string[] EMPTY_STRINGS = ["", " ", "\t"];
-
     /// <summary>
     /// Constructor should throw when group is null.
     /// </summary>
@@ -29,7 +28,7 @@ public class JobFailureTest
     [Fact]
     public void Constructor_ThrowsWhenGroupIsEmptyOrOnlyWhitespace()
     {
-        foreach (var emptyString in EMPTY_STRINGS)
+        foreach (var emptyString in TestConstants.EmptyStrings)
         {
             var exception = Assert.Throws<ArgumentException>(
                 () => new JobFailure(emptyString, "message", 123, "workerName")
@@ -58,7 +57,7 @@ public class JobFailureTest
     [Fact]
     public void Constructor_ThrowsWhenMessageIsEmptyOrOnlyWhitespace()
     {
-        foreach (var emptyString in EMPTY_STRINGS)
+        foreach (var emptyString in TestConstants.EmptyStrings)
         {
             var exception = Assert.Throws<ArgumentException>(
                 () => new JobFailure("group", emptyString, 123, "workerName")
@@ -103,7 +102,7 @@ public class JobFailureTest
     [Fact]
     public void Constructor_ThrowsWhenWorkerNameIsEmptyOrOnlyWhitespace()
     {
-        foreach (var emptyString in EMPTY_STRINGS)
+        foreach (var emptyString in TestConstants.EmptyStrings)
         {
             var exception = Assert.Throws<ArgumentException>(
                 () => new JobFailure("group", "message", 123, emptyString)

@@ -175,26 +175,17 @@ public class Job
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(className, nameof(className));
         ArgumentException.ThrowIfNullOrWhiteSpace(data, nameof(data));
-        ArgumentNullException.ThrowIfNull(dependencies, nameof(dependencies));
-        ArgumentNullException.ThrowIfNull(dependents, nameof(dependents));
-        ArgumentNullException.ThrowIfNull(history, nameof(history));
+        ValidationHelper.ThrowIfAnyNullOrWhitespace(dependencies, nameof(dependencies));
+        ValidationHelper.ThrowIfAnyNullOrWhitespace(dependents, nameof(dependents));
+        ValidationHelper.ThrowIfAnyNull(history, nameof(history));
         ArgumentException.ThrowIfNullOrWhiteSpace(jid, nameof(jid));
         // Queue name can be null when a job is completed and no longer in a queue.
-        if (queueName is not null)
-        {
-            ArgumentException.ThrowIfNullOrWhiteSpace(queueName, nameof(queueName));
-        }
-        if (spawnedFromJid is not null)
-        {
-            ArgumentException.ThrowIfNullOrWhiteSpace(spawnedFromJid, nameof(spawnedFromJid));
-        }
+        ValidationHelper.ThrowIfNotNullAndEmptyOrWhitespace(queueName, nameof(queueName));
+        ValidationHelper.ThrowIfNotNullAndEmptyOrWhitespace(spawnedFromJid, nameof(spawnedFromJid));
         ArgumentException.ThrowIfNullOrWhiteSpace(state, nameof(state));
-        ArgumentNullException.ThrowIfNull(tags, nameof(tags));
-        ArgumentNullException.ThrowIfNull(throttles, nameof(throttles));
-        if (workerName is not null)
-        {
-            ArgumentException.ThrowIfNullOrWhiteSpace(workerName, nameof(workerName));
-        }
+        ValidationHelper.ThrowIfAnyNullOrWhitespace(tags, nameof(tags));
+        ValidationHelper.ThrowIfAnyNullOrWhitespace(throttles, nameof(throttles));
+        ValidationHelper.ThrowIfNotNullAndEmptyOrWhitespace(workerName, nameof(workerName));
         if (expires <= 0)
         {
             throw new ArgumentOutOfRangeException(
