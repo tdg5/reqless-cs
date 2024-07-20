@@ -209,6 +209,11 @@ public interface IClient
     Task<int> GetQueueLengthAsync(string queueName);
 
     /// <summary>
+    /// Gets the details of all currently traced jobs.
+    /// </summary>
+    Task<TrackedJobsResult> GetTrackedJobsAsync();
+
+    /// <summary>
     /// Renew the lease on the job with the given jid. Throws if the job does
     /// not exist, is not running, or is not locked by the given worker.
     /// </summary>

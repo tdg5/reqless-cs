@@ -430,6 +430,31 @@ public class ReqlessClient : IClient, IDisposable
         return length;
     }
 
+    private JsonSerializerOptions _jsonOptions = new()
+    {
+        PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+    };
+
+    /// <inheritdoc/>
+    public async Task<TrackedJobsResult> GetTrackedJobsAsync()
+    {
+        var result = await _executor.ExecuteAsync(["jobs.tracked", Now()]);
+
+        var trackedJobsJson = (string?)result ??
+            throw new InvalidOperationException(
+                "Server returned unexpected null result."
+            );
+
+        var trackedJobsResult = JsonSerializer.Deserialize<TrackedJobsResult>(
+            trackedJobsJson,
+            _jsonOptions
+        ) ?? throw new JsonException(
+            $"Failed to deserialize tracked jobs JSON: {trackedJobsJson}"
+        );
+
+        return trackedJobsResult;
+    }
+
     /// <inheritdoc/>
     public async Task<long> HeartbeatJobAsync(
         string jid,

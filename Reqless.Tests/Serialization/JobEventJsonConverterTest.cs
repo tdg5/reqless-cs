@@ -10,7 +10,7 @@ namespace Reqless.Tests.Serialization;
 /// </summary>
 public class JobEventJsonConverterTest
 {
-    JsonSerializerOptions _jsonSerializerOptions = new JsonSerializerOptions
+    private readonly JsonSerializerOptions _jsonSerializerOptions = new JsonSerializerOptions
     {
         Converters = { new JobEventJsonConverter() }
     };

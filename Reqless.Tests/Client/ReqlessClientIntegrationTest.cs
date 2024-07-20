@@ -708,6 +708,57 @@ public class ReqlessClientIntegrationTest
     }
 
     /// <summary>
+    /// <see cref="ReqlessClient.GetTrackedJobsAsync"/> should return an empty
+    /// result when no jobs are tracked.
+    /// </summary>
+    [Fact]
+    public async void GetTrackedJobsAsync_ReturnsEmptyListWhenNoJobs()
+    {
+        var trackedJobs = await _client.GetTrackedJobsAsync();
+        Assert.Empty(trackedJobs.Jobs);
+        Assert.Empty(trackedJobs.ExpiredJids);
+    }
+
+    /// <summary>
+    /// <see cref="ReqlessClient.GetTrackedJobsAsync"/> should return expected
+    /// jobs when jobs are tracked.
+    /// </summary>
+    [Fact]
+    public async void GetTrackedJobsAsync_ReturnsExpectedJobsWhenJobsAreTracked()
+    {
+        var count = 10;
+        var trackedJids = new string[count];
+        for (var index = 0; index < count; index++)
+        {
+            var jid = await PutJobAsync(_client,
+                queueName: Maybe<string>.Some(ExampleQueueName)
+            );
+            await _client.TrackJobAsync(jid);
+            trackedJids[index] = jid;
+            if (index * 2 < count)
+            {
+                // Pop the job to simulate a worker processing it
+                var job = await _client.PopJobAsync(ExampleQueueName, ExampleWorkerName);
+                Assert.NotNull(job);
+                Assert.Equal(jid, job.Jid);
+                bool completedSuccessfully = await _client.CompleteJobAsync(
+                    data: ExampleData,
+                    jid: jid,
+                    queueName: ExampleQueueName,
+                    workerName: ExampleWorkerName
+                );
+                Assert.True(completedSuccessfully);
+            }
+        }
+        var trackedJobs = await _client.GetTrackedJobsAsync();
+        foreach (var trackedJob in trackedJobs.Jobs)
+        {
+            Assert.Contains(trackedJob.Jid, trackedJids);
+        }
+        Assert.Empty(trackedJobs.ExpiredJids);
+    }
+
+    /// <summary>
     /// <see cref="ReqlessClient.HeartbeatJobAsync"/> should return the new
     /// expiration time when not given data and when successful.
     /// </summary>
