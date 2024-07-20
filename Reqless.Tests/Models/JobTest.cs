@@ -203,17 +203,13 @@ public class JobTest
     }
 
     /// <summary>
-    /// The constructor should throw an exception if the given queueName
-    /// argument is null.
+    /// The constructor should allow queueName to be null.
     /// </summary>
     [Fact]
-    public void Constructor_QueueName_ThrowsWhenNull()
+    public void Constructor_QueueName_CanBeNull()
     {
-        var exception = Assert.Throws<ArgumentNullException>(
-            () => MakeJob(queueName: null)
-        );
-        Assert.Equal("queueName", exception.ParamName);
-        Assert.Equal("Value cannot be null. (Parameter 'queueName')", exception.Message);
+        var job = MakeJob(queueName: null);
+        Assert.Null(job.QueueName);
     }
 
     /// <summary>

@@ -359,14 +359,32 @@ public class JobJsonConverterTest
     }
 
     /// <summary>
-    /// Read should throw an error if the JSON has a null queue property.
+    /// Read should allow queue/queueName to be null.
     /// </summary>
     [Fact]
-    public void Read_Queue_ThrowsWhenNull()
+    public void Read_Queue_CanBeNull()
     {
-        var json = JobFactory.JobJson(queueName: Maybe<string?>.Some(null));
-        var exception = Assert.Throws<ArgumentNullException>(() => JsonSerializer.Deserialize<Job>(json));
-        Assert.Equal("Value cannot be null. (Parameter 'queueName')", exception.Message);
+        string json = JobFactory.JobJson(queueName: Maybe<string?>.Some(null));
+        Job? job = JsonSerializer.Deserialize<Job>(json);
+        Assert.NotNull(job);
+        Assert.Null(job.QueueName);
+    }
+
+    /// <summary>
+    /// Read should handle empty and whitespace queue/queueName as null.
+    /// </summary>
+    [Fact]
+    public void Read_Queue_EmptyOrWhitespaceIsConveretedToNull()
+    {
+        foreach (var emptyString in TestConstants.EmptyStrings)
+        {
+            string json = JobFactory.JobJson(
+                queueName: Maybe<string?>.Some(emptyString)
+            );
+            Job? job = JsonSerializer.Deserialize<Job>(json);
+            Assert.NotNull(job);
+            Assert.Null(job.QueueName);
+        }
     }
 
     /// <summary>

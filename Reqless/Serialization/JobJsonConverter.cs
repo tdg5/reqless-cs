@@ -140,6 +140,10 @@ public class JobJsonConverter : JsonConverter<Job>
                     break;
                 case "queue":
                     queue = reader.GetString();
+                    if (string.IsNullOrWhiteSpace(queue))
+                    {
+                        queue = null;
+                    }
                     break;
                 case "remaining":
                     remaining = reader.GetInt32();
@@ -215,7 +219,7 @@ public class JobJsonConverter : JsonConverter<Job>
             history: history!,
             jid: jid!,
             priority: priority!.Value,
-            queueName: queue!,
+            queueName: queue,
             remaining: remaining!.Value,
             retries: retries!.Value,
             spawnedFromJid: spawnedFromJid,

@@ -65,7 +65,7 @@ public class Job
     /// <summary>
     /// The name of the queue that the job currently belongs to.
     /// </summary>
-    public string QueueName { get; }
+    public string? QueueName { get; }
 
     /// <summary>
     /// The number of retry attempts remaining for the job before all retries
@@ -162,7 +162,7 @@ public class Job
         JobEvent[] history,
         string jid,
         int priority,
-        string queueName,
+        string? queueName,
         int remaining,
         int retries,
         string? spawnedFromJid,
@@ -179,7 +179,11 @@ public class Job
         ArgumentNullException.ThrowIfNull(dependents, nameof(dependents));
         ArgumentNullException.ThrowIfNull(history, nameof(history));
         ArgumentException.ThrowIfNullOrWhiteSpace(jid, nameof(jid));
-        ArgumentException.ThrowIfNullOrWhiteSpace(queueName, nameof(queueName));
+        // Queue name can be null when a job is completed and no longer in a queue.
+        if (queueName is not null)
+        {
+            ArgumentException.ThrowIfNullOrWhiteSpace(queueName, nameof(queueName));
+        }
         if (spawnedFromJid is not null)
         {
             ArgumentException.ThrowIfNullOrWhiteSpace(spawnedFromJid, nameof(spawnedFromJid));
