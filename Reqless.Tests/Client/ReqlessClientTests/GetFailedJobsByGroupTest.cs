@@ -2,7 +2,6 @@ using System.Text.Json;
 using Reqless.Client;
 using Reqless.Models;
 using Reqless.Tests.TestHelpers;
-using StackExchange.Redis;
 
 namespace Reqless.Tests.Client.ReqlessClientTests;
 
@@ -73,7 +72,7 @@ public class GetFailedJobsByGroupTest : BaseReqlessClientTest
                     offset,
                     limit
                 ],
-                returnValue: RedisValue.Null
+                returnValue: null
             )
         );
         Assert.Equal(

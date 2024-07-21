@@ -1,5 +1,4 @@
 using Reqless.Client;
-using StackExchange.Redis;
 
 namespace Reqless.Tests.Client.ReqlessClientTests;
 
@@ -83,7 +82,7 @@ public class HeartbeatJobTest : BaseReqlessClientTest
                     ExampleJid,
                     ExampleWorkerName,
                 ],
-                returnValue: RedisValue.Null
+                returnValue: null
             )
         );
         Assert.Equal("Server returned unexpected null result.", exception.Message);

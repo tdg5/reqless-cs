@@ -120,7 +120,7 @@ public class GetJobsByStateAsyncTest : BaseReqlessClientTest
                     0,
                     25,
                 ],
-                returnValue: RedisValue.Null
+                returnValue: null
             )
         );
         Assert.Equal(

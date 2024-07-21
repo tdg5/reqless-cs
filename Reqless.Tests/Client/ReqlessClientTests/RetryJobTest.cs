@@ -1,5 +1,4 @@
 using Reqless.Client;
-using StackExchange.Redis;
 
 namespace Reqless.Tests.Client.ReqlessClientTests;
 
@@ -73,7 +72,7 @@ public class RetryJobTest : BaseReqlessClientTest
                     ExampleGroup,
                     ExampleMessage,
                 ],
-                returnValue: RedisValue.Null
+                returnValue: null
             )
         );
         Assert.Equal("Server returned unexpected null result.", exception.Message);

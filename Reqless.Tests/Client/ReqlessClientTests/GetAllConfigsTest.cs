@@ -1,6 +1,5 @@
 using System.Text.Json;
 using Reqless.Client;
-using StackExchange.Redis;
 
 namespace Reqless.Tests.Client.ReqlessClientTests;
 
@@ -39,7 +38,7 @@ public class GetAllConfigsTest : BaseReqlessClientTest
             () => WithClientWithExecutorMockForExpectedArguments(
                 subject => subject.GetAllConfigsAsync(),
                 expectedArguments: ["config.getAll", 0],
-                returnValue: RedisValue.Null
+                returnValue: null
             )
         );
         Assert.Equal("Server returned unexpected null result.", exception.Message);

@@ -73,7 +73,7 @@ public class GetJobsByTagTest : BaseReqlessClientTest
                     offset,
                     limit
                 ],
-                returnValue: RedisValue.Null
+                returnValue: null
             )
         );
         Assert.Equal(

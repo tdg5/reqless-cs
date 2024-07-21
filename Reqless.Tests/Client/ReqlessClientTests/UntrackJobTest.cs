@@ -1,6 +1,5 @@
 using Reqless.Client;
 using Reqless.Tests.TestHelpers;
-using StackExchange.Redis;
 
 namespace Reqless.Tests.Client.ReqlessClientTests;
 
@@ -59,7 +58,7 @@ public class UntrackJobTest : BaseReqlessClientTest
             () => WithClientWithExecutorMockForExpectedArguments(
                 subject => subject.UntrackJobAsync(ExampleJid),
                 expectedArguments: ["job.untrack", 0, ExampleJid],
-                returnValue: RedisValue.Null
+                returnValue: null
             )
         );
         Assert.Equal(

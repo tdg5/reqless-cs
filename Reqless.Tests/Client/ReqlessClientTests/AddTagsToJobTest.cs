@@ -1,7 +1,6 @@
 using System.Text.Json;
 using Reqless.Client;
 using Reqless.Tests.TestHelpers;
-using StackExchange.Redis;
 
 namespace Reqless.Tests.Client.ReqlessClientTests;
 
@@ -135,7 +134,7 @@ public class AddTagsToJobTest : BaseReqlessClientTest
                     ExampleJid,
                     ExampleTag,
                 ],
-                returnValue: RedisValue.Null
+                returnValue: null
             )
         );
         Assert.Equal("Server returned unexpected null result.", exception.Message);

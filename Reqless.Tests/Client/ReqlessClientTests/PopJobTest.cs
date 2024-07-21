@@ -3,7 +3,6 @@ using Reqless.Client;
 using Reqless.Models;
 using Reqless.Tests.TestHelpers;
 using Reqless.Tests.TestHelpers.Factories;
-using StackExchange.Redis;
 
 namespace Reqless.Tests.Client.ReqlessClientTests;
 
@@ -51,7 +50,7 @@ public class PopJobTest : BaseReqlessClientTest
     [Fact]
     public async void ReturnsNullIfTheServerReturnsNoJobs()
     {
-        foreach (var emptyResult in new RedisValue[] { "[]", "{}" })
+        foreach (var emptyResult in new string[] { "[]", "{}" })
         {
             await WithClientWithExecutorMockForExpectedArguments(
                 static async subject =>
@@ -93,7 +92,7 @@ public class PopJobTest : BaseReqlessClientTest
                     ExampleWorkerName,
                     1,
                 ],
-                returnValue: RedisValue.Null
+                returnValue: null
             )
         );
         Assert.Equal("Server returned unexpected null result.", exception.Message);

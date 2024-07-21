@@ -19,7 +19,7 @@ public class GetCompletedJobsTest : BaseReqlessClientTest
             () => WithClientWithExecutorMockForExpectedArguments(
                 subject => subject.GetCompletedJobsAsync(),
                 expectedArguments: ["jobs.completed", 0, 0, 25],
-                returnValue: RedisValue.Null
+                returnValue: null
             )
         );
         Assert.Equal(

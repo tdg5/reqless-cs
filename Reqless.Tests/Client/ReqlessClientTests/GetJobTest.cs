@@ -45,7 +45,7 @@ public class GetJobTest : BaseReqlessClientTest
                 Assert.Null(job);
             },
             expectedArguments: ["job.get", 0, ExampleJid],
-            returnValue: RedisValue.Null
+            returnValue: null
         );
     }
 

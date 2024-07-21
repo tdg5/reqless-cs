@@ -157,7 +157,7 @@ public class PutJobTest : BaseReqlessClientTest
                     "throttles",
                     JsonSerializer.Serialize(throttles),
                 ],
-                returnValue: RedisValue.Null
+                returnValue: null
             )
         );
         Assert.Equal("Server returned unexpected null result.", exception.Message);

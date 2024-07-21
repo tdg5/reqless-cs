@@ -120,7 +120,7 @@ public class GetJobsTest : BaseReqlessClientTest
             () => WithClientWithExecutorMockForExpectedArguments(
                 subject => subject.GetJobsAsync(ExampleJid, null!),
                 expectedArguments: ["job.getMulti", 0, ExampleJid, RedisValue.Null],
-                returnValue: RedisValue.Null
+                returnValue: null
             )
         );
         Assert.Equal(
@@ -140,7 +140,7 @@ public class GetJobsTest : BaseReqlessClientTest
             () => WithClientWithExecutorMockForExpectedArguments(
                 subject => subject.GetJobsAsync(ExampleJid),
                 expectedArguments: ["job.getMulti", 0, ExampleJid],
-                returnValue: RedisValue.Null
+                returnValue: null
             )
         );
         Assert.Equal("Server returned unexpected null result.", exception.Message);
