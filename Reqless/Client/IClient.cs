@@ -153,6 +153,20 @@ public interface IClient
     );
 
     /// <summary>
+    /// Forget the queue with the given name.
+    /// </summary>
+    /// <param name="queueName">The name of the queue that should be removed
+    /// from the set of known queues.</param>
+    Task ForgetQueueAsync(string queueName);
+
+    /// <summary>
+    /// Forget the queues with the given names.
+    /// </summary>
+    /// <param name="queueNames">The names of the queue that should be removed
+    /// from the set of known queues.</param>
+    Task ForgetQueuesAsync(params string[] queueNames);
+
+    /// <summary>
     /// Get all Reqless configuration values.
     /// </summary>
     /// <returns>Zero or more job IDs of completed jobs.</returns>

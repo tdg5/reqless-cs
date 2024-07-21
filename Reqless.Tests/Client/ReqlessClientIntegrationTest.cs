@@ -440,6 +440,46 @@ public class ReqlessClientIntegrationTest
     }
 
     /// <summary>
+    /// <see cref="ReqlessClient.ForgetQueueAsync"/> should cause the named
+    /// queue to be removed from the set of known queues.
+    /// </summary>
+    [Fact]
+    public async void ForgetQueueAsync_CausesTheNamedQueueToBeForgotten()
+    {
+        await PutJobAsync(_client, queueName: Maybe<string>.Some(ExampleQueueName));
+        QueueCounts[] allQueueCountsBefore = await _client.GetAllQueueCountsAsync();
+        Assert.Single(allQueueCountsBefore);
+        Assert.Equal(ExampleQueueName, allQueueCountsBefore[0].QueueName);
+        await _client.ForgetQueueAsync(ExampleQueueName);
+        QueueCounts[] allQueueCountsAfter = await _client.GetAllQueueCountsAsync();
+        Assert.Empty(allQueueCountsAfter);
+    }
+
+    /// <summary>
+    /// <see cref="ReqlessClient.ForgetQueuesAsync"/> should cause the named
+    /// queues to be removed from the set of known queues.
+    /// </summary>
+    [Fact]
+    public async void ForgetQueuesAsync_CausesTheNamedQueuesToBeForgotten()
+    {
+        var otherQueueName = "other-queue";
+        string[] expectedQueueNames = [ExampleQueueName, otherQueueName];
+        await PutJobAsync(_client, queueName: Maybe<string>.Some(ExampleQueueName));
+        await PutJobAsync(_client, queueName: Maybe<string>.Some(otherQueueName));
+        QueueCounts[] allQueueCountsBefore = await _client.GetAllQueueCountsAsync();
+        Assert.Equal(2, allQueueCountsBefore.Length);
+        foreach (var queueCounts in allQueueCountsBefore)
+        {
+            Assert.Contains(queueCounts.QueueName, expectedQueueNames);
+
+        }
+        Assert.Equal(ExampleQueueName, allQueueCountsBefore[0].QueueName);
+        await _client.ForgetQueuesAsync(ExampleQueueName, otherQueueName);
+        QueueCounts[] allQueueCountsAfter = await _client.GetAllQueueCountsAsync();
+        Assert.Empty(allQueueCountsAfter);
+    }
+
+    /// <summary>
     /// <see cref="ReqlessClient.GetAllConfigsAsync "/>should return the
     /// expected default configs.
     /// </summary>
