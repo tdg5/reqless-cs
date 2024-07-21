@@ -551,6 +551,18 @@ public class ReqlessClient : IClient, IDisposable
     }
 
     /// <inheritdoc/>
+    public async Task PauseQueueAsync(string queueName)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(queueName, nameof(queueName));
+
+        await _executor.ExecuteAsync([
+            "queue.pause",
+            Now(),
+            queueName,
+        ]);
+    }
+
+    /// <inheritdoc/>
     public async Task<Job?> PopJobAsync(string queueName, string workerName)
     {
         var jobs = await PopJobsAsync(queueName, workerName, 1);
@@ -830,6 +842,18 @@ public class ReqlessClient : IClient, IDisposable
         );
 
         return addedCount == 1;
+    }
+
+    /// <inheritdoc/>
+    public async Task UnpauseQueueAsync(string queueName)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(queueName, nameof(queueName));
+
+        await _executor.ExecuteAsync([
+            "queue.unpause",
+            Now(),
+            queueName,
+        ]);
     }
 
     /// <inheritdoc/>

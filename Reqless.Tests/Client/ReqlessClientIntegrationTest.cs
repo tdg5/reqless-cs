@@ -903,6 +903,19 @@ public class ReqlessClientIntegrationTest
     }
 
     /// <summary>
+    /// <see cref="ReqlessClient.PauseQueueAsync"/> should pause the given queue.
+    /// </summary>
+    [Fact]
+    public async void PauseQueueAsync_PausesTheGivenQueue()
+    {
+        var countsBefore = await _client.GetQueueCountsAsync(ExampleQueueName);
+        Assert.False(countsBefore.Paused);
+        await _client.PauseQueueAsync(ExampleQueueName);
+        var countsAfter = await _client.GetQueueCountsAsync(ExampleQueueName);
+        Assert.True(countsAfter.Paused);
+    }
+
+    /// <summary>
     /// <see cref="ReqlessClient.PopJobAsync"/> should return null when there
     /// are no jobs in the queue.
     /// </summary>
@@ -1382,6 +1395,20 @@ public class ReqlessClientIntegrationTest
         var jobAfter = await _client.GetJobAsync(jid);
         Assert.NotNull(jobAfter);
         Assert.True(jobAfter.Tracked);
+    }
+
+    /// <summary>
+    /// <see cref="ReqlessClient.UnpauseQueueAsync"/> should unpause the given queue.
+    /// </summary>
+    [Fact]
+    public async void UnpauseQueueAsync_UnpausesTheGivenQueue()
+    {
+        await _client.PauseQueueAsync(ExampleQueueName);
+        var countsBefore = await _client.GetQueueCountsAsync(ExampleQueueName);
+        Assert.True(countsBefore.Paused);
+        await _client.UnpauseQueueAsync(ExampleQueueName);
+        var countsAfter = await _client.GetQueueCountsAsync(ExampleQueueName);
+        Assert.False(countsAfter.Paused);
     }
 
     /// <summary>

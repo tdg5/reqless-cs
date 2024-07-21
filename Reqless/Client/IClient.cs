@@ -255,6 +255,13 @@ public interface IClient
     );
 
     /// <summary>
+    /// Pause the queue with the given name.
+    /// </summary>
+    /// <param name="queueName">The name of the queue that should be
+    /// paused.</param>
+    Task PauseQueueAsync(string queueName);
+
+    /// <summary>
     /// Attempt to pop a job from a queue.
     /// </summary>
     /// <param name="queueName">The name of the queue to take work from.</param>
@@ -425,6 +432,13 @@ public interface IClient
     /// <returns>False if the job is not already tracked, otherwise
     /// true.</returns>
     Task<bool> TrackJobAsync(string jid);
+
+    /// <summary>
+    /// Unpause the queue with the given name.
+    /// </summary>
+    /// <param name="queueName">The name of the queue that should be
+    /// unpaused.</param>
+    Task UnpauseQueueAsync(string queueName);
 
     /// <summary>
     /// Untrack the job with the given jid.
