@@ -681,6 +681,25 @@ public class ReqlessClientIntegrationTest
     }
 
     /// <summary>
+    /// <see cref="ReqlessClient.GetQueueCountsAsync"/> returns mostly zeroes
+    /// for a newly created queue.
+    /// </summary>
+    [Fact]
+    public async void GetQueueCountsAsync_ReturnsZeroCountsForNascentQueue()
+    {
+        var counts = await _client.GetQueueCountsAsync(ExampleQueueName);
+        Assert.Equal(0, counts.Depends);
+        Assert.Equal(ExampleQueueName, counts.Name);
+        Assert.False(counts.Paused);
+        Assert.Equal(0, counts.Recurring);
+        Assert.Equal(0, counts.Running);
+        Assert.Equal(0, counts.Scheduled);
+        Assert.Equal(0, counts.Stalled);
+        Assert.Equal(0, counts.Throttled);
+        Assert.Equal(0, counts.Waiting);
+    }
+
+    /// <summary>
     /// <see cref="ReqlessClient.GetQueueLengthAsync"/> should return zero when
     /// the queue is empty.
     /// </summary>

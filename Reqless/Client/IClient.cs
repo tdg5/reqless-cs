@@ -205,8 +205,15 @@ public interface IClient
     /// <summary>
     /// Get the count of jobs in the given queue.
     /// </summary>
-    /// <param name="queueName">The name of the queue to get the count of.</param>
+    /// <param name="queueName">The name of the queue to get the length of.</param>
     Task<int> GetQueueLengthAsync(string queueName);
+
+    /// <summary>
+    /// Get the counts of the number of jobs in various states in the queue with
+    /// the given name.
+    /// </summary>
+    /// <param name="queueName">The name of the queue to get the counts of.</param>
+    Task<QueueCounts> GetQueueCountsAsync(string queueName);
 
     /// <summary>
     /// Gets the details of all currently traced jobs.

@@ -9,6 +9,11 @@ namespace Reqless.Client;
 /// </summary>
 public class ReqlessClient : IClient, IDisposable
 {
+    private readonly JsonSerializerOptions _jsonSerializerOptions = new()
+    {
+        PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+    };
+
     private readonly IRedisExecutor _executor;
 
     private readonly bool _responsibleForExecutor;
@@ -417,6 +422,26 @@ public class ReqlessClient : IClient, IDisposable
     }
 
     /// <inheritdoc/>
+    public async Task<QueueCounts> GetQueueCountsAsync(string queueName)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(queueName, nameof(queueName));
+
+        var result = await _executor.ExecuteAsync(["queue.counts", Now(), queueName]);
+
+        var countsJson = (string?)result
+            ?? throw new InvalidOperationException(
+                "Server returned unexpected null result."
+            );
+
+        var counts = JsonSerializer.Deserialize<QueueCounts>(countsJson, _jsonSerializerOptions)
+            ?? throw new JsonException(
+                $"Failed to deserialize queue counts JSON: {countsJson}"
+            );
+
+        return counts;
+    }
+
+    /// <inheritdoc/>
     public async Task<int> GetQueueLengthAsync(string queueName)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(queueName, nameof(queueName));
@@ -430,11 +455,6 @@ public class ReqlessClient : IClient, IDisposable
         return length;
     }
 
-    private JsonSerializerOptions _jsonOptions = new()
-    {
-        PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-    };
-
     /// <inheritdoc/>
     public async Task<TrackedJobsResult> GetTrackedJobsAsync()
     {
@@ -447,7 +467,7 @@ public class ReqlessClient : IClient, IDisposable
 
         var trackedJobsResult = JsonSerializer.Deserialize<TrackedJobsResult>(
             trackedJobsJson,
-            _jsonOptions
+            _jsonSerializerOptions
         ) ?? throw new JsonException(
             $"Failed to deserialize tracked jobs JSON: {trackedJobsJson}"
         );
