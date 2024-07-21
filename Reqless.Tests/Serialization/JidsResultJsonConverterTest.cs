@@ -110,6 +110,41 @@ public class JidsResultJsonConverterTest
     }
 
     /// <summary>
+    /// <see cref="JidsResultJsonConverter.Read"/> returns the expected <see
+    /// cref="JidsResult"/> instance when given valid JSON.
+    /// </summary>
+    [Fact]
+    public void Read_ReturnsExpectedJidsResult()
+    {
+        var jid = "jid1";
+        var total = 1;
+        var result = JsonSerializer.Deserialize<JidsResult>(
+            $$"""{"jobs": ["{{jid}}"], "total": {{total}}}""",
+            _jsonSerializerOptions
+        );
+        Assert.NotNull(result);
+        Assert.Single(result.Jids);
+        Assert.Equal(jid, result.Jids[0]);
+        Assert.Equal(total, result.Total);
+    }
+
+    /// <summary>
+    /// <see cref="JidsResultJsonConverter.Read"/> handles a jobs property that
+    /// contains an empty JSON object like an empty array.
+    /// </summary>
+    [Fact]
+    public void Read_HandlesJobsPropertyWithEmptyObjectLikeEmptyArray()
+    {
+        var result = JsonSerializer.Deserialize<JidsResult>(
+            """{"jobs": {}, "total": 0}""",
+            _jsonSerializerOptions
+        );
+        Assert.NotNull(result);
+        Assert.Empty(result.Jids);
+        Assert.Equal(0, result.Total);
+    }
+
+    /// <summary>
     /// <see cref="JidsResultJsonConverter.Write"/> can serialize a JidsResult
     /// instance so it can be round-tripped.
     /// </summary>
