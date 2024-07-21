@@ -9,11 +9,6 @@ namespace Reqless.Client;
 /// </summary>
 public class ReqlessClient : IClient, IDisposable
 {
-    private readonly JsonSerializerOptions _jsonSerializerOptions = new()
-    {
-        PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-    };
-
     private readonly IRedisExecutor _executor;
 
     private readonly bool _responsibleForExecutor;
@@ -293,6 +288,32 @@ public class ReqlessClient : IClient, IDisposable
     }
 
     /// <inheritdoc/>
+    public async Task<QueueCounts[]> GetAllQueueCountsAsync()
+    {
+        var result = await _executor.ExecuteAsync(["queue.counts", Now()]);
+
+        var countsJson = (string?)result
+            ?? throw new InvalidOperationException(
+                "Server returned unexpected null result."
+            );
+
+        // Redis cjson can't distinguish between an empty array and an empty
+        // object, so an empty object here actually represents an empty array,
+        // and, ergo, no queue counts.
+        if (countsJson == "{}")
+        {
+            return [];
+        }
+
+        var counts = JsonSerializer.Deserialize<QueueCounts[]>(countsJson)
+            ?? throw new JsonException(
+                $"Failed to deserialize all queue counts JSON: {countsJson}"
+            );
+
+        return counts;
+    }
+
+    /// <inheritdoc/>
     public async Task<List<string>> GetCompletedJobsAsync(
         int limit = 25,
         int offset = 0
@@ -433,7 +454,7 @@ public class ReqlessClient : IClient, IDisposable
                 "Server returned unexpected null result."
             );
 
-        var counts = JsonSerializer.Deserialize<QueueCounts>(countsJson, _jsonSerializerOptions)
+        var counts = JsonSerializer.Deserialize<QueueCounts>(countsJson)
             ?? throw new JsonException(
                 $"Failed to deserialize queue counts JSON: {countsJson}"
             );
@@ -466,8 +487,7 @@ public class ReqlessClient : IClient, IDisposable
             );
 
         var trackedJobsResult = JsonSerializer.Deserialize<TrackedJobsResult>(
-            trackedJobsJson,
-            _jsonSerializerOptions
+            trackedJobsJson
         ) ?? throw new JsonException(
             $"Failed to deserialize tracked jobs JSON: {trackedJobsJson}"
         );

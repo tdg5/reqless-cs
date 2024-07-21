@@ -159,6 +159,11 @@ public interface IClient
     Task<Dictionary<string, JsonElement>> GetAllConfigsAsync();
 
     /// <summary>
+    /// Get the counts of the number of jobs in various states for all queues.
+    /// </summary>
+    Task<QueueCounts[]> GetAllQueueCountsAsync();
+
+    /// <summary>
     /// Gets a job by its job ID.
     /// </summary>
     /// <param name="jid">The ID of the job that should be retreived.</param>

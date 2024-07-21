@@ -1,4 +1,3 @@
-using System.Runtime.CompilerServices;
 using System.Text.Json;
 using Reqless.Client;
 using Reqless.Models;
@@ -12,11 +11,6 @@ namespace Reqless.Tests.Client.ReqlessClientTests;
 /// </summary>
 public class GetQueueCountsTest : BaseReqlessClientTest
 {
-    private readonly JsonSerializerOptions _jsonSerializerOptions = new()
-    {
-        PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-    };
-
     /// <summary>
     /// <see cref="ReqlessClient.GetQueueCountsAsync"/> should throw if queue
     /// name is null.
@@ -108,7 +102,7 @@ public class GetQueueCountsTest : BaseReqlessClientTest
         var expectedCounts = new QueueCounts
         {
             Depends = 0,
-            Name = ExampleQueueName,
+            QueueName = ExampleQueueName,
             Paused = false,
             Recurring = 0,
             Running = 0,
@@ -117,7 +111,7 @@ public class GetQueueCountsTest : BaseReqlessClientTest
             Throttled = 0,
             Waiting = 0
         };
-        var countsJson = JsonSerializer.Serialize(expectedCounts, _jsonSerializerOptions);
+        var countsJson = JsonSerializer.Serialize(expectedCounts);
         await WithClientWithExecutorMockForExpectedArguments(
             async subject =>
             {

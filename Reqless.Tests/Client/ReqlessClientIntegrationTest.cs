@@ -459,6 +459,34 @@ public class ReqlessClientIntegrationTest
     }
 
     /// <summary>
+    /// <see cref="ReqlessClient.GetAllQueueCountsAsync"/> returns empty array
+    /// when no queues exist.
+    /// </summary>
+    [Fact]
+    public async void GetAllQueueCountsAsync_ReturnsEmptyArrayWhenNoQueues()
+    {
+        var allQueueCounts = await _client.GetAllQueueCountsAsync();
+        Assert.Empty(allQueueCounts);
+    }
+
+    /// <summary>
+    /// <see cref="ReqlessClient.GetAllQueueCountsAsync"/> returns expected
+    /// counts when queues exist.
+    /// </summary>
+    [Fact]
+    public async void GetAllQueueCountsAsync_ReturnsExpectedCounts()
+    {
+        await PutJobAsync(
+            _client,
+            queueName: Maybe<string>.Some(ExampleQueueName)
+        );
+        var allQueueCounts = await _client.GetAllQueueCountsAsync();
+        Assert.Single(allQueueCounts);
+        Assert.Equal(ExampleQueueName, allQueueCounts[0].QueueName);
+        Assert.Equal(1, allQueueCounts[0].Waiting);
+    }
+
+    /// <summary>
     /// <see cref="ReqlessClient.GetCompletedJobsAsync"/> should return an empty
     /// list when there are no completed jobs.
     /// </summary>
@@ -689,7 +717,7 @@ public class ReqlessClientIntegrationTest
     {
         var counts = await _client.GetQueueCountsAsync(ExampleQueueName);
         Assert.Equal(0, counts.Depends);
-        Assert.Equal(ExampleQueueName, counts.Name);
+        Assert.Equal(ExampleQueueName, counts.QueueName);
         Assert.False(counts.Paused);
         Assert.Equal(0, counts.Recurring);
         Assert.Equal(0, counts.Running);

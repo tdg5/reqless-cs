@@ -18,7 +18,7 @@ public class QueueCountsTest
             () => new QueueCounts
             {
                 Depends = 0,
-                Name = null!,
+                QueueName = null!,
                 Paused = false,
                 Recurring = 0,
                 Running = 0,
@@ -29,7 +29,7 @@ public class QueueCountsTest
             }
         );
         Assert.Equal(
-            "Value cannot be null. (Parameter 'Name')",
+            "Value cannot be null. (Parameter 'QueueName')",
             exception.Message
         );
     }
@@ -47,7 +47,7 @@ public class QueueCountsTest
                 () => new QueueCounts
                 {
                     Depends = 0,
-                    Name = emptyString,
+                    QueueName = emptyString,
                     Paused = false,
                     Recurring = 0,
                     Running = 0,
@@ -58,7 +58,7 @@ public class QueueCountsTest
                 }
             );
             Assert.Equal(
-                "The value cannot be an empty string or composed entirely of whitespace. (Parameter 'Name')",
+                "The value cannot be an empty string or composed entirely of whitespace. (Parameter 'QueueName')",
                 exception.Message
             );
         }
@@ -74,7 +74,7 @@ public class QueueCountsTest
         var queueCounts = new QueueCounts
         {
             Depends = 0,
-            Name = name,
+            QueueName = name,
             Paused = false,
             Recurring = 0,
             Running = 0,
@@ -83,6 +83,6 @@ public class QueueCountsTest
             Throttled = 0,
             Waiting = 0
         };
-        Assert.Equal(name, queueCounts.Name);
+        Assert.Equal(name, queueCounts.QueueName);
     }
 }
