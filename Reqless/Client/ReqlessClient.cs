@@ -118,12 +118,13 @@ public class ReqlessClient : IClient, IDisposable
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(jid, nameof(jid));
         ArgumentNullException.ThrowIfNull(tags, nameof(tags));
+        ValidationHelper.ThrowIfAnyNullOrWhitespace(tags, nameof(tags));
 
         var arguments = new RedisValue[tags.Length + 3];
         arguments[0] = "job.addTag";
         arguments[1] = Now();
         arguments[2] = jid;
-        CopyStringArguments(tags, ref arguments, 3, nameof(tags));
+        CopyStringArguments(tags, ref arguments, 3);
 
         var result = await _executor.ExecuteAsync(arguments);
 
@@ -148,6 +149,7 @@ public class ReqlessClient : IClient, IDisposable
     public async Task<bool> CancelJobsAsync(params string[] jids)
     {
         ArgumentNullException.ThrowIfNull(jids, nameof(jids));
+        ValidationHelper.ThrowIfAnyNullOrWhitespace(jids, nameof(jids));
 
         if (jids.Length == 0)
         {
@@ -157,7 +159,7 @@ public class ReqlessClient : IClient, IDisposable
         var arguments = new RedisValue[jids.Length + 2];
         arguments[0] = "job.cancel";
         arguments[1] = Now();
-        CopyStringArguments(jids, ref arguments, 2, nameof(jids));
+        CopyStringArguments(jids, ref arguments, 2);
         await _executor.ExecuteAsync(arguments);
         // If no error occurred, the jobs were either cancelled or didn't exist.
         return true;
@@ -363,11 +365,12 @@ public class ReqlessClient : IClient, IDisposable
     public async Task<Job[]> GetJobsAsync(params string[] jids)
     {
         ArgumentNullException.ThrowIfNull(jids, nameof(jids));
+        ValidationHelper.ThrowIfAnyNullOrWhitespace(jids, nameof(jids));
 
         var arguments = new RedisValue[jids.Length + 2];
         arguments[0] = "job.getMulti";
         arguments[1] = Now();
-        CopyStringArguments(jids, ref arguments, 2, nameof(jids));
+        CopyStringArguments(jids, ref arguments, 2);
 
         RedisResult result = await _executor.ExecuteAsync(arguments);
         var jobsJson = (string?)result
@@ -647,12 +650,13 @@ public class ReqlessClient : IClient, IDisposable
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(jid, nameof(jid));
         ArgumentNullException.ThrowIfNull(tags, nameof(tags));
+        ValidationHelper.ThrowIfAnyNullOrWhitespace(tags, nameof(tags));
 
         var arguments = new RedisValue[tags.Length + 3];
         arguments[0] = "job.removeTag";
         arguments[1] = Now();
         arguments[2] = jid;
-        CopyStringArguments(tags, ref arguments, 3, nameof(tags));
+        CopyStringArguments(tags, ref arguments, 3);
 
         var result = await _executor.ExecuteAsync(arguments);
 
@@ -776,10 +780,12 @@ public class ReqlessClient : IClient, IDisposable
     /// <inheritdoc/>
     public async Task TimeoutJobsAsync(params string[] jids)
     {
+        ValidationHelper.ThrowIfAnyNullOrWhitespace(jids, nameof(jids));
+
         var arguments = new RedisValue[jids.Length + 2];
         arguments[0] = "job.timeout";
         arguments[1] = Now();
-        CopyStringArguments(jids, ref arguments, 2, nameof(jids));
+        CopyStringArguments(jids, ref arguments, 2);
         await _executor.ExecuteAsync(arguments);
     }
 
@@ -875,27 +881,15 @@ public class ReqlessClient : IClient, IDisposable
     /// <param name="destination">The array of RedisValue to copy to.</param>
     /// <param name="destinationIndex">The index in the destination array at
     /// which to start copying.</param>
-    /// <param name="argumentName">The name of the argument being copied; for
-    /// error reporting purposes.</param>
     protected static void CopyStringArguments(
         string[] source,
         ref RedisValue[] destination,
-        int destinationIndex,
-        string argumentName
+        int destinationIndex
     )
     {
         for (var index = 0; index < source.Length; index++)
         {
-            var value = source[index];
-            if (string.IsNullOrWhiteSpace(value))
-            {
-                throw new ArgumentException(
-                    "Value cannot include null, empty string, or strings composed entirely of whitespace.",
-                    argumentName
-                );
-            }
-
-            destination[index + destinationIndex] = value;
+            destination[index + destinationIndex] = source[index];
         }
     }
 
