@@ -43,7 +43,7 @@ public class GetJobsTest : BaseReqlessClientTest
     /// the server responds with an empty list.
     /// </summary>
     [Fact]
-    public async void ReturnsNullIfServerRespondsWithEmptyArray()
+    public async void ReturnsEmptyArrayIfServerRespondsWithEmptyArray()
     {
         await WithClientWithExecutorMockForExpectedArguments(
             static async subject =>
@@ -61,7 +61,7 @@ public class GetJobsTest : BaseReqlessClientTest
     /// the server responds with an empty object.
     /// </summary>
     [Fact]
-    public async void ReturnsNullIfServerRespondsWithEmptyObject()
+    public async void ReturnsEmptyArrayIfServerRespondsWithEmptyObject()
     {
         await WithClientWithExecutorMockForExpectedArguments(
             static async subject =>
@@ -88,7 +88,7 @@ public class GetJobsTest : BaseReqlessClientTest
                 returnValue: "null"
             )
         );
-        Assert.Equal("Failed to deserialize job JSON: null", exception.Message);
+        Assert.Equal("Failed to deserialize jobs JSON: null", exception.Message);
     }
 
     /// <summary>

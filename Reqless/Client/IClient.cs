@@ -262,6 +262,17 @@ public interface IClient
     Task PauseQueueAsync(string queueName);
 
     /// <summary>
+    /// Peek jobs from the given queue starting from the given offset and taking
+    /// at most limit jobs.
+    /// </summary>
+    /// <param name="queueName">The name of the queue to peek jobs from.</param>
+    /// <param name="limit">The maximum number of job IDs to retrieve.</param>
+    /// <param name="offset">The number of job IDs to skip before returning
+    /// results.</param>
+    /// <returns>Zero or more job IDs of completed jobs.</returns>
+    Task<Job[]> PeekJobsAsync(string queueName, int limit, int offset);
+
+    /// <summary>
     /// Attempt to pop a job from a queue.
     /// </summary>
     /// <param name="queueName">The name of the queue to take work from.</param>

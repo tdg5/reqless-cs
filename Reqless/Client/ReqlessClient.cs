@@ -398,23 +398,7 @@ public class ReqlessClient : IClient, IDisposable
         CopyStringArguments(jids, ref arguments, 2);
 
         RedisResult result = await _executor.ExecuteAsync(arguments);
-        var jobsJson = (string?)result
-            ?? throw new InvalidOperationException(
-                "Server returned unexpected null result."
-            );
-
-        // Redis cjson can't distinguish between an empty array and an empty
-        // object, so an empty object here actually represents an empty
-        // array, and, ergo, no jobs retrieved.
-        if (jobsJson == "{}")
-        {
-            return [];
-        }
-
-        var jobs = JsonSerializer.Deserialize<Job[]>(jobsJson)
-          ?? throw new JsonException($"Failed to deserialize job JSON: {jobsJson}");
-
-        return jobs;
+        return ValidateJobsResult(result);
     }
 
     /// <inheritdoc/>
@@ -444,18 +428,7 @@ public class ReqlessClient : IClient, IDisposable
             );
         }
 
-        // For whatever reason, if result is null, this cast results in
-        // string?[] { null }, so we check for null directly above and forgive
-        // null here.
-        var jidsResult = ((string?[]?)result)!;
-
-        List<string> jids = jidsResult.Select(jid =>
-            jid ?? throw new InvalidOperationException(
-                "Server returned unexpected null jid."
-            )
-        ).ToList();
-
-        return jids;
+        return ValidateJidsResult(result);
     }
 
     /// <inheritdoc/>
@@ -560,6 +533,25 @@ public class ReqlessClient : IClient, IDisposable
             Now(),
             queueName,
         ]);
+    }
+
+    /// <inheritdoc/>
+    public async Task<Job[]> PeekJobsAsync(
+        string queueName,
+        int limit = 25,
+        int offset = 0
+    )
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(queueName, nameof(queueName));
+
+        var result = await _executor.ExecuteAsync([
+            "queue.peek",
+            Now(),
+            queueName,
+            offset,
+            limit,
+        ]);
+        return ValidateJobsResult(result);
     }
 
     /// <inheritdoc/>
@@ -940,6 +932,37 @@ public class ReqlessClient : IClient, IDisposable
         {
             destination[index + destinationIndex] = source[index];
         }
+    }
+
+    /// <summary>
+    /// Validates the result of a command that returns a list of jobs and
+    /// deserializes those jobs.
+    /// </summary>
+    /// <param name="result">The JSON jobs data returned by the server.</param>
+    /// <returns>The deserialized jobs.</returns>
+    /// <exception cref="InvalidOperationException">Thrown if the given result
+    /// is null.</exception>
+    /// <exception cref="JsonException">Thrown if the jobs JSON can't be
+    /// deserialized.</exception>
+    protected static Job[] ValidateJobsResult(RedisResult result)
+    {
+        var jobsJson = (string?)result
+            ?? throw new InvalidOperationException(
+                "Server returned unexpected null result."
+            );
+
+        // Redis cjson can't distinguish between an empty array and an empty
+        // object, so an empty object here actually represents an empty array,
+        // and, ergo, no jobs retrieved.
+        if (jobsJson == "{}")
+        {
+            return [];
+        }
+
+        var jobs = JsonSerializer.Deserialize<Job[]>(jobsJson)
+            ?? throw new JsonException($"Failed to deserialize jobs JSON: {jobsJson}");
+
+        return jobs;
     }
 
     /// <summary>

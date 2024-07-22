@@ -916,6 +916,46 @@ public class ReqlessClientIntegrationTest
     }
 
     /// <summary>
+    /// <see cref="ReqlessClient.PeekJobsAsync"/> should return an empty array
+    /// when the jobs do not exist.
+    /// </summary>
+    [Fact]
+    public async void PeekJobsAsync_ReturnsEmptyArrayWhenJobsDoNotExist()
+    {
+        var jobs = await _client.PeekJobsAsync("no-such-queue");
+        Assert.Empty(jobs);
+    }
+
+    /// <summary>
+    /// <see cref="ReqlessClient.PeekJobsAsync"/> should return the jobs when the
+    /// jobs exist.
+    /// </summary>
+    [Fact]
+    public async void PeekJobsAsync_ReturnsTheJobsWhenTheyExist()
+    {
+        var jid = await PutJobAsync(
+            _client,
+            queueName: Maybe<string>.Some(ExampleQueueName)
+        );
+        var otherJid = await PutJobAsync(
+            _client,
+            queueName: Maybe<string>.Some(ExampleQueueName)
+        );
+        var jobs = await _client.PeekJobsAsync(ExampleQueueName);
+        Assert.NotNull(jobs);
+        Assert.Equal(2, jobs.Length);
+        var expectedJids = new string[] { jid, otherJid };
+        foreach (var job in jobs)
+        {
+            Assert.Contains(job.Jid, expectedJids);
+            Assert.IsType<Job>(job);
+        }
+
+        jobs = await _client.PeekJobsAsync(ExampleQueueName, offset: 2);
+        Assert.Empty(jobs);
+    }
+
+    /// <summary>
     /// <see cref="ReqlessClient.PopJobAsync"/> should return null when there
     /// are no jobs in the queue.
     /// </summary>
