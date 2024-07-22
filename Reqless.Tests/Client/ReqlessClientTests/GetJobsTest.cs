@@ -24,8 +24,8 @@ public class GetJobsTest : BaseReqlessClientTest
         await WithClientWithExecutorMockForExpectedArguments(
             static async subject =>
             {
-                Job[] jobs = await subject.GetJobsAsync(ExampleJid);
-                Assert.Equal(2, jobs.Length);
+                List<Job> jobs = await subject.GetJobsAsync(ExampleJid);
+                Assert.Equal(2, jobs.Count);
                 var expectedJids = new string[] { ExampleJid, ExampleJidOther };
                 foreach (var job in jobs)
                 {
@@ -48,7 +48,7 @@ public class GetJobsTest : BaseReqlessClientTest
         await WithClientWithExecutorMockForExpectedArguments(
             static async subject =>
             {
-                Job[] jobs = await subject.GetJobsAsync(ExampleJid);
+                List<Job> jobs = await subject.GetJobsAsync(ExampleJid);
                 Assert.Empty(jobs);
             },
             expectedArguments: ["job.getMulti", 0, ExampleJid],
@@ -66,7 +66,7 @@ public class GetJobsTest : BaseReqlessClientTest
         await WithClientWithExecutorMockForExpectedArguments(
             static async subject =>
             {
-                Job[] jobs = await subject.GetJobsAsync(ExampleJid);
+                List<Job> jobs = await subject.GetJobsAsync(ExampleJid);
                 Assert.Empty(jobs);
             },
             expectedArguments: ["job.getMulti", 0, ExampleJid],

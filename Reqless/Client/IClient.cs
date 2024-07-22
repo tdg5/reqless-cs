@@ -175,7 +175,7 @@ public interface IClient
     /// <summary>
     /// Get the counts of the number of jobs in various states for all queues.
     /// </summary>
-    Task<QueueCounts[]> GetAllQueueCountsAsync();
+    Task<List<QueueCounts>> GetAllQueueCountsAsync();
 
     /// <summary>
     /// Gets a job by its job ID.
@@ -189,7 +189,7 @@ public interface IClient
     /// </summary>
     /// <param name="jids">The IDs of the jobs that should be retreived.</param>
     /// <returns>An array of the retrieved jobs.</returns>
-    Task<Job[]> GetJobsAsync(params string[] jids);
+    Task<List<Job>> GetJobsAsync(params string[] jids);
 
     /// <summary>
     /// Gets the IDs of jobs in the given queue in the given state.
@@ -270,7 +270,7 @@ public interface IClient
     /// <param name="offset">The number of job IDs to skip before returning
     /// results.</param>
     /// <returns>Zero or more job IDs of completed jobs.</returns>
-    Task<Job[]> PeekJobsAsync(string queueName, int limit, int offset);
+    Task<List<Job>> PeekJobsAsync(string queueName, int limit, int offset);
 
     /// <summary>
     /// Attempt to pop a job from a queue.

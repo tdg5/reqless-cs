@@ -315,7 +315,7 @@ public class ReqlessClient : IClient, IDisposable
     }
 
     /// <inheritdoc/>
-    public async Task<QueueCounts[]> GetAllQueueCountsAsync()
+    public async Task<List<QueueCounts>> GetAllQueueCountsAsync()
     {
         var result = await _executor.ExecuteAsync(["queue.counts", Now()]);
 
@@ -332,7 +332,7 @@ public class ReqlessClient : IClient, IDisposable
             return [];
         }
 
-        var counts = JsonSerializer.Deserialize<QueueCounts[]>(countsJson)
+        var counts = JsonSerializer.Deserialize<List<QueueCounts>>(countsJson)
             ?? throw new JsonException(
                 $"Failed to deserialize all queue counts JSON: {countsJson}"
             );
@@ -387,7 +387,7 @@ public class ReqlessClient : IClient, IDisposable
     }
 
     /// <inheritdoc/>
-    public async Task<Job[]> GetJobsAsync(params string[] jids)
+    public async Task<List<Job>> GetJobsAsync(params string[] jids)
     {
         ArgumentNullException.ThrowIfNull(jids, nameof(jids));
         ValidationHelper.ThrowIfAnyNullOrWhitespace(jids, nameof(jids));
@@ -536,7 +536,7 @@ public class ReqlessClient : IClient, IDisposable
     }
 
     /// <inheritdoc/>
-    public async Task<Job[]> PeekJobsAsync(
+    public async Task<List<Job>> PeekJobsAsync(
         string queueName,
         int limit = 25,
         int offset = 0
@@ -944,7 +944,7 @@ public class ReqlessClient : IClient, IDisposable
     /// is null.</exception>
     /// <exception cref="JsonException">Thrown if the jobs JSON can't be
     /// deserialized.</exception>
-    protected static Job[] ValidateJobsResult(RedisResult result)
+    protected static List<Job> ValidateJobsResult(RedisResult result)
     {
         var jobsJson = (string?)result
             ?? throw new InvalidOperationException(
@@ -959,7 +959,7 @@ public class ReqlessClient : IClient, IDisposable
             return [];
         }
 
-        var jobs = JsonSerializer.Deserialize<Job[]>(jobsJson)
+        var jobs = JsonSerializer.Deserialize<List<Job>>(jobsJson)
             ?? throw new JsonException($"Failed to deserialize jobs JSON: {jobsJson}");
 
         return jobs;

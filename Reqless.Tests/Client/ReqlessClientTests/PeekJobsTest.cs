@@ -64,8 +64,8 @@ public class PeekJobsTest : BaseReqlessClientTest
         await WithClientWithExecutorMockForExpectedArguments(
             static async subject =>
             {
-                Job[] jobs = await subject.PeekJobsAsync(ExampleQueueName);
-                Assert.Equal(2, jobs.Length);
+                List<Job> jobs = await subject.PeekJobsAsync(ExampleQueueName);
+                Assert.Equal(2, jobs.Count);
                 var expectedJids = new string[] { ExampleJid, ExampleJidOther };
                 foreach (var job in jobs)
                 {
@@ -88,7 +88,7 @@ public class PeekJobsTest : BaseReqlessClientTest
         await WithClientWithExecutorMockForExpectedArguments(
             static async subject =>
             {
-                Job[] jobs = await subject.PeekJobsAsync(ExampleQueueName);
+                List<Job> jobs = await subject.PeekJobsAsync(ExampleQueueName);
                 Assert.Empty(jobs);
             },
             expectedArguments: ["queue.peek", 0, ExampleQueueName, 0, 25],
@@ -106,7 +106,7 @@ public class PeekJobsTest : BaseReqlessClientTest
         await WithClientWithExecutorMockForExpectedArguments(
             static async subject =>
             {
-                Job[] jobs = await subject.PeekJobsAsync(ExampleQueueName);
+                List<Job> jobs = await subject.PeekJobsAsync(ExampleQueueName);
                 Assert.Empty(jobs);
             },
             expectedArguments: ["queue.peek", 0, ExampleQueueName, 0, 25],

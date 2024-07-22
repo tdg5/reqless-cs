@@ -447,11 +447,11 @@ public class ReqlessClientIntegrationTest
     public async void ForgetQueueAsync_CausesTheNamedQueueToBeForgotten()
     {
         await PutJobAsync(_client, queueName: Maybe<string>.Some(ExampleQueueName));
-        QueueCounts[] allQueueCountsBefore = await _client.GetAllQueueCountsAsync();
+        List<QueueCounts> allQueueCountsBefore = await _client.GetAllQueueCountsAsync();
         Assert.Single(allQueueCountsBefore);
         Assert.Equal(ExampleQueueName, allQueueCountsBefore[0].QueueName);
         await _client.ForgetQueueAsync(ExampleQueueName);
-        QueueCounts[] allQueueCountsAfter = await _client.GetAllQueueCountsAsync();
+        List<QueueCounts> allQueueCountsAfter = await _client.GetAllQueueCountsAsync();
         Assert.Empty(allQueueCountsAfter);
     }
 
@@ -466,8 +466,8 @@ public class ReqlessClientIntegrationTest
         string[] expectedQueueNames = [ExampleQueueName, otherQueueName];
         await PutJobAsync(_client, queueName: Maybe<string>.Some(ExampleQueueName));
         await PutJobAsync(_client, queueName: Maybe<string>.Some(otherQueueName));
-        QueueCounts[] allQueueCountsBefore = await _client.GetAllQueueCountsAsync();
-        Assert.Equal(2, allQueueCountsBefore.Length);
+        List<QueueCounts> allQueueCountsBefore = await _client.GetAllQueueCountsAsync();
+        Assert.Equal(2, allQueueCountsBefore.Count);
         foreach (var queueCounts in allQueueCountsBefore)
         {
             Assert.Contains(queueCounts.QueueName, expectedQueueNames);
@@ -475,7 +475,7 @@ public class ReqlessClientIntegrationTest
         }
         Assert.Equal(ExampleQueueName, allQueueCountsBefore[0].QueueName);
         await _client.ForgetQueuesAsync(ExampleQueueName, otherQueueName);
-        QueueCounts[] allQueueCountsAfter = await _client.GetAllQueueCountsAsync();
+        List<QueueCounts> allQueueCountsAfter = await _client.GetAllQueueCountsAsync();
         Assert.Empty(allQueueCountsAfter);
     }
 
@@ -664,7 +664,7 @@ public class ReqlessClientIntegrationTest
         var otherJid = await PutJobAsync(_client);
         var jobs = await _client.GetJobsAsync(jid, otherJid);
         Assert.NotNull(jobs);
-        Assert.Equal(2, jobs.Length);
+        Assert.Equal(2, jobs.Count);
         var expectedJids = new string[] { jid, otherJid };
         foreach (var job in jobs)
         {
@@ -943,7 +943,7 @@ public class ReqlessClientIntegrationTest
         );
         var jobs = await _client.PeekJobsAsync(ExampleQueueName);
         Assert.NotNull(jobs);
-        Assert.Equal(2, jobs.Length);
+        Assert.Equal(2, jobs.Count);
         var expectedJids = new string[] { jid, otherJid };
         foreach (var job in jobs)
         {
