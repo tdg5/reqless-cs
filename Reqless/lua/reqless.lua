@@ -1,4 +1,4 @@
--- Current SHA: 0d8c78d4555be790e969b3f4846c110f6d23eb77
+-- Current SHA: 4be6bbd08890c671ef03e5f48c837d941f892ebd
 -- This is a generated file
 local Reqless = {
   ns = 'ql:'
@@ -1596,84 +1596,79 @@ function ReqlessQueue:unfail(now, group, count)
   return #jids
 end
 
-function ReqlessQueue:recur(now, jid, klass, raw_data, spec, ...)
+function ReqlessQueue:recurAtInterval(now, jid, klass, raw_data, interval, offset, ...)
   assert(jid  , 'RecurringJob On(): Arg "jid" missing')
   assert(klass, 'RecurringJob On(): Arg "klass" missing')
-  assert(spec , 'RecurringJob On(): Arg "spec" missing')
   local data = assert(cjson.decode(raw_data),
     'RecurringJob On(): Arg "data" not JSON: ' .. tostring(raw_data))
 
-  if spec == 'interval' then
-    local interval = assert(tonumber(arg[1]),
-      'Recur(): Arg "interval" not a number: ' .. tostring(arg[1]))
-    local offset   = assert(tonumber(arg[2]),
-      'Recur(): Arg "offset" not a number: '   .. tostring(arg[2]))
-    if interval <= 0 then
-      error('Recur(): Arg "interval" must be greater than 0')
-    end
-
-    if #arg % 2 == 1 then
-      error('Odd number of additional args: ' .. tostring(arg))
-    end
-
-    local options = {}
-    for i = 3, #arg, 2 do options[arg[i]] = arg[i + 1] end
-    options.tags = assert(cjson.decode(options.tags or '{}'),
-      'Recur(): Arg "tags" must be JSON string array: ' .. tostring(
-        options.tags))
-    options.priority = assert(tonumber(options.priority or 0),
-      'Recur(): Arg "priority" not a number: ' .. tostring(
-        options.priority))
-    options.retries = assert(tonumber(options.retries  or 0),
-      'Recur(): Arg "retries" not a number: ' .. tostring(
-        options.retries))
-    options.backlog = assert(tonumber(options.backlog  or 0),
-      'Recur(): Arg "backlog" not a number: ' .. tostring(
-        options.backlog))
-    options.throttles = assert(cjson.decode(options['throttles'] or '{}'),
-      'Recur(): Arg "throttles" not JSON array: ' .. tostring(options['throttles']))
-
-    local count, old_queue = unpack(redis.call('hmget', 'ql:r:' .. jid, 'count', 'queue'))
-    count = count or 0
-
-    local throttles = options['throttles'] or {}
-
-    if old_queue then
-      Reqless.queue(old_queue).recurring.remove(jid)
-
-      for index, throttle_name in ipairs(throttles) do
-        if throttle_name == old_queue then
-          table.remove(throttles, index)
-        end
-      end
-    end
-
-    table.insert(throttles, ReqlessQueue.ns .. self.name)
-
-    redis.call('hmset', 'ql:r:' .. jid,
-      'jid'      , jid,
-      'klass'    , klass,
-      'data'     , raw_data,
-      'priority' , options.priority,
-      'tags'     , cjson.encode(options.tags or {}),
-      'state'    , 'recur',
-      'queue'    , self.name,
-      'type'     , 'interval',
-      'count'    , count,
-      'interval' , interval,
-      'retries'  , options.retries,
-      'backlog'  , options.backlog,
-      'throttles', cjson.encode(throttles))
-    self.recurring.add(now + offset, jid)
-
-    if redis.call('zscore', 'ql:queues', self.name) == false then
-      redis.call('zadd', 'ql:queues', now, self.name)
-    end
-
-    return jid
+  local interval = assert(tonumber(interval),
+    'Recur(): Arg "interval" not a number: ' .. tostring(interval))
+  local offset   = assert(tonumber(offset),
+    'Recur(): Arg "offset" not a number: '   .. tostring(offset))
+  if interval <= 0 then
+    error('Recur(): Arg "interval" must be greater than 0')
   end
 
-  error('Recur(): schedule type "' .. tostring(spec) .. '" unknown')
+  if #arg % 2 == 1 then
+    error('Odd number of additional args: ' .. tostring(arg))
+  end
+
+  local options = {}
+  for i = 1, #arg, 2 do options[arg[i]] = arg[i + 1] end
+  options.tags = assert(cjson.decode(options.tags or '{}'),
+    'Recur(): Arg "tags" must be JSON string array: ' .. tostring(
+      options.tags))
+  options.priority = assert(tonumber(options.priority or 0),
+    'Recur(): Arg "priority" not a number: ' .. tostring(
+      options.priority))
+  options.retries = assert(tonumber(options.retries  or 0),
+    'Recur(): Arg "retries" not a number: ' .. tostring(
+      options.retries))
+  options.backlog = assert(tonumber(options.backlog  or 0),
+    'Recur(): Arg "backlog" not a number: ' .. tostring(
+      options.backlog))
+  options.throttles = assert(cjson.decode(options['throttles'] or '{}'),
+    'Recur(): Arg "throttles" not JSON array: ' .. tostring(options['throttles']))
+
+  local count, old_queue = unpack(redis.call('hmget', 'ql:r:' .. jid, 'count', 'queue'))
+  count = count or 0
+
+  local throttles = options['throttles'] or {}
+
+  if old_queue then
+    Reqless.queue(old_queue).recurring.remove(jid)
+
+    for index, throttle_name in ipairs(throttles) do
+      if throttle_name == old_queue then
+        table.remove(throttles, index)
+      end
+    end
+  end
+
+  table.insert(throttles, ReqlessQueue.ns .. self.name)
+
+  redis.call('hmset', 'ql:r:' .. jid,
+    'jid'      , jid,
+    'klass'    , klass,
+    'data'     , raw_data,
+    'priority' , options.priority,
+    'tags'     , cjson.encode(options.tags or {}),
+    'state'    , 'recur',
+    'queue'    , self.name,
+    'type'     , 'interval',
+    'count'    , count,
+    'interval' , interval,
+    'retries'  , options.retries,
+    'backlog'  , options.backlog,
+    'throttles', cjson.encode(throttles))
+  self.recurring.add(now + offset, jid)
+
+  if redis.call('zscore', 'ql:queues', self.name) == false then
+    redis.call('zadd', 'ql:queues', now, self.name)
+  end
+
+  return jid
 end
 
 function ReqlessQueue:length()
@@ -2144,7 +2139,7 @@ ReqlessAPI['config.getAll'] = function(now)
 end
 
 ReqlessAPI['config.set'] = function(now, key, value)
-  return Reqless.config.set(key, value)
+  Reqless.config.set(key, value)
 end
 
 ReqlessAPI['config.unset'] = function(now, key)
@@ -2280,7 +2275,7 @@ ReqlessAPI['queue.length'] = function(now, queue)
 end
 
 ReqlessAPI['queue.pause'] = function(now, ...)
-  return ReqlessQueue.pause(now, unpack(arg))
+  ReqlessQueue.pause(now, unpack(arg))
 end
 
 ReqlessAPI['queue.peek'] = function(now, queue, offset, count)
@@ -2305,8 +2300,8 @@ ReqlessAPI['queue.put'] = function(now, worker, queue, jid, klass, data, delay, 
   return Reqless.queue(queue):put(now, worker, jid, klass, data, delay, unpack(arg))
 end
 
-ReqlessAPI['queue.recur'] = function(now, queue, jid, klass, data, spec, ...)
-  return Reqless.queue(queue):recur(now, jid, klass, data, spec, unpack(arg))
+ReqlessAPI['queue.recurAtInterval'] = function(now, queue, jid, klass, data, interval, offset, ...)
+  return Reqless.queue(queue):recurAtInterval(now, jid, klass, data, interval, offset, unpack(arg))
 end
 
 ReqlessAPI['queue.stats'] = function(now, queue, date)
@@ -2329,7 +2324,7 @@ ReqlessAPI['queue.unfail'] = function(now, queue, group, count)
 end
 
 ReqlessAPI['queue.unpause'] = function(now, ...)
-  return ReqlessQueue.unpause(unpack(arg))
+  ReqlessQueue.unpause(unpack(arg))
 end
 
 ReqlessAPI['queues.list'] = function(now)
@@ -2403,7 +2398,7 @@ ReqlessAPI['worker.counts'] = function(now, worker)
   return cjson.encode(ReqlessWorker.counts(now, worker))
 end
 
-ReqlessAPI['worker.unregister'] = function(now, ...)
+ReqlessAPI['worker.forget'] = function(now, ...)
   return ReqlessWorker.deregister(unpack(arg))
 end
 
@@ -2495,7 +2490,11 @@ ReqlessAPI['queues'] = function(now, queue)
 end
 
 ReqlessAPI['recur'] = function(now, queue, jid, klass, data, spec, ...)
-  return ReqlessAPI['queue.recur'](now, queue, jid, klass, data, spec, unpack(arg))
+  if spec == 'interval' then
+    return Reqless.queue(queue):recurAtInterval(now, jid, klass, data, unpack(arg))
+  end
+
+  error('Recur(): schedule type "' .. tostring(spec) .. '" unknown')
 end
 
 ReqlessAPI['recur.get'] = function(now, jid)
@@ -2571,7 +2570,7 @@ ReqlessAPI['unrecur'] = function(now, jid)
 end
 
 ReqlessAPI['worker.deregister'] = function(now, ...)
-  return ReqlessAPI['worker.unregister'](now, unpack(arg))
+  return ReqlessAPI['worker.forget'](now, unpack(arg))
 end
 
 ReqlessAPI['workers'] = function(now, worker)
