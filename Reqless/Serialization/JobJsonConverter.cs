@@ -73,7 +73,7 @@ public class JobJsonConverter : JsonConverter<Job>
             {
                 case "data":
                     // It is left to job classes to deserialize and validate data.
-                    data = reader.GetString();
+                    data = BaseJobJsonHelper.ReadData(ref reader);
                     break;
                 case "dependencies":
                     wasDegenerateObject = JsonConverterHelper.TryConsumeDegenerateObject(
@@ -130,26 +130,22 @@ public class JobJsonConverter : JsonConverter<Job>
                         : JsonSerializer.Deserialize<JobEvent[]>(ref reader);
                     break;
                 case "jid":
-                    jid = reader.GetString();
+                    jid = BaseJobJsonHelper.ReadJid(ref reader);
                     break;
                 case "klass":
-                    klass = reader.GetString();
+                    klass = BaseJobJsonHelper.ReadClassName(ref reader);
                     break;
                 case "priority":
-                    priority = reader.GetInt32();
+                    priority = BaseJobJsonHelper.ReadPriority(ref reader);
                     break;
                 case "queue":
-                    queue = reader.GetString();
-                    if (string.IsNullOrWhiteSpace(queue))
-                    {
-                        queue = null;
-                    }
+                    queue = BaseJobJsonHelper.ReadQueueName(ref reader);
                     break;
                 case "remaining":
                     remaining = reader.GetInt32();
                     break;
                 case "retries":
-                    retries = reader.GetInt32();
+                    retries = BaseJobJsonHelper.ReadRetries(ref reader);
                     break;
                 case "spawned_from_jid":
                     if (reader.TokenType == JsonTokenType.False)
@@ -162,30 +158,16 @@ public class JobJsonConverter : JsonConverter<Job>
                     }
                     break;
                 case "state":
-                    state = reader.GetString();
+                    state = BaseJobJsonHelper.ReadState(ref reader);
                     break;
                 case "tags":
-                    wasDegenerateObject = JsonConverterHelper.TryConsumeDegenerateObject(
-                        "tags",
-                        "array",
-                        ref reader
-                    );
-                    tags = wasDegenerateObject
-                        ? []
-                        : JsonSerializer.Deserialize<string[]>(ref reader);
+                    tags = BaseJobJsonHelper.ReadTags(ref reader);
                     break;
                 case "throttles":
-                    wasDegenerateObject = JsonConverterHelper.TryConsumeDegenerateObject(
-                        "throttles",
-                        "array",
-                        ref reader
-                    );
-                    throttles = wasDegenerateObject
-                        ? []
-                        : JsonSerializer.Deserialize<string[]>(ref reader);
+                    throttles = BaseJobJsonHelper.ReadThrottles(ref reader);
                     break;
                 case "tracked":
-                    tracked = reader.GetBoolean();
+                    tracked = BaseJobJsonHelper.ReadTracked(ref reader);
                     break;
                 case "worker":
                     worker = reader.GetString();
@@ -240,59 +222,28 @@ public class JobJsonConverter : JsonConverter<Job>
     public override void Write(Utf8JsonWriter writer, Job value, JsonSerializerOptions options)
     {
         writer.WriteStartObject();
-        writer.WriteString("data", value.Data);
-        WriteStringArray(writer, "dependencies", value.Dependencies);
-        WriteStringArray(writer, "dependents", value.Dependents);
+        BaseJobJsonHelper.WriteData(writer, value.Data);
+        writer.WritePropertyName("dependencies");
+        JsonSerializer.Serialize(writer, value.Dependencies);
+        writer.WritePropertyName("dependents");
+        JsonSerializer.Serialize(writer, value.Dependents);
         writer.WriteNumber("expires", value.Expires ?? 0);
-        WriteObject(writer, "failure", value.Failure);
-        WriteHistoryArray(writer, "history", value.History);
-        writer.WriteString("jid", value.Jid);
-        writer.WriteString("klass", value.ClassName);
-        writer.WriteNumber("priority", value.Priority);
-        writer.WriteString("queue", value.QueueName);
+        writer.WritePropertyName("failure");
+        JsonSerializer.Serialize(writer, value.Failure);
+        writer.WritePropertyName("history");
+        JsonSerializer.Serialize(writer, value.History);
+        BaseJobJsonHelper.WriteJid(writer, value.Jid);
+        BaseJobJsonHelper.WriteClassName(writer, value.ClassName);
+        BaseJobJsonHelper.WritePriority(writer, value.Priority);
+        BaseJobJsonHelper.WriteQueueName(writer, value.QueueName);
         writer.WriteNumber("remaining", value.Remaining);
-        writer.WriteNumber("retries", value.Retries);
+        BaseJobJsonHelper.WriteRetries(writer, value.Retries);
         writer.WriteString("spawned_from_jid", value.SpawnedFromJid);
-        writer.WriteString("state", value.State);
-        WriteStringArray(writer, "tags", value.Tags);
-        WriteStringArray(writer, "throttles", value.Throttles);
-        writer.WriteBoolean("tracked", value.Tracked);
+        BaseJobJsonHelper.WriteState(writer, value.State);
+        BaseJobJsonHelper.WriteTags(writer, value.Tags);
+        BaseJobJsonHelper.WriteThrottles(writer, value.Throttles);
+        BaseJobJsonHelper.WriteTracked(writer, value.Tracked);
         writer.WriteString("worker", value.WorkerName);
         writer.WriteEndObject();
-    }
-
-    private static void WriteHistoryArray(Utf8JsonWriter writer, string propertyName, JobEvent[] values)
-    {
-        writer.WriteStartArray(propertyName);
-        foreach (var value in values)
-        {
-            var rawEventJson = JsonSerializer.Serialize(value);
-            writer.WriteRawValue(rawEventJson);
-        }
-        writer.WriteEndArray();
-    }
-
-    private static void WriteObject(Utf8JsonWriter writer, string propertyName, JobFailure? value)
-    {
-        if (value is null)
-        {
-            writer.WriteNull(propertyName);
-            return;
-        }
-
-        var objectJson = JsonSerializer.Serialize(value);
-        writer.WritePropertyName(propertyName);
-        writer.WriteRawValue(objectJson);
-    }
-
-    private static void WriteStringArray(Utf8JsonWriter writer, string propertyName, string[] values)
-    {
-        writer.WritePropertyName(propertyName);
-        writer.WriteStartArray();
-        foreach (var value in values)
-        {
-            writer.WriteStringValue(value);
-        }
-        writer.WriteEndArray();
     }
 }

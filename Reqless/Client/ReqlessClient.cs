@@ -478,6 +478,29 @@ public class ReqlessClient : IClient, IDisposable
     }
 
     /// <inheritdoc/>
+    public async Task<RecurringJob?> GetRecurringJobAsync(string jid)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(jid, nameof(jid));
+
+        RedisValue[] arguments = ["recurringJob.get", Now(), jid];
+        RedisResult result = await _executor.ExecuteAsync(arguments);
+
+        var recurringJobJson = (string?)result;
+
+        if (recurringJobJson == null)
+        {
+            return null;
+        }
+
+        var recurringJob = JsonSerializer.Deserialize<RecurringJob>(recurringJobJson)
+            ?? throw new JsonException(
+                $"Failed to deserialize recurring job JSON: {recurringJobJson}"
+            );
+
+        return recurringJob;
+    }
+
+    /// <inheritdoc/>
     public async Task<TrackedJobsResult> GetTrackedJobsAsync()
     {
         var result = await _executor.ExecuteAsync(["jobs.tracked", Now()]);
@@ -616,7 +639,7 @@ public class ReqlessClient : IClient, IDisposable
         ArgumentException.ThrowIfNullOrWhiteSpace(className, nameof(className));
         ArgumentException.ThrowIfNullOrWhiteSpace(data, nameof(data));
 
-        var _jid = jid ?? Guid.NewGuid().ToString("N");
+        var _jid = jid ?? MakeJid();
         var _dependencies = dependencies ?? [];
         var _tags = tags ?? [];
         var _throttles = throttles ?? [];
@@ -631,6 +654,54 @@ public class ReqlessClient : IClient, IDisposable
             delay,
             "depends",
             JsonSerializer.Serialize(_dependencies),
+            "priority",
+            priority,
+            "retries",
+            retries,
+            "tags",
+            JsonSerializer.Serialize(_tags),
+            "throttles",
+            JsonSerializer.Serialize(_throttles),
+        ]);
+
+        var resultJid = (string?)result
+            ?? throw new InvalidOperationException(
+                "Server returned unexpected null result."
+            );
+
+        return resultJid;
+    }
+
+    /// <inheritdoc />
+    public async Task<string> RecurJobAtIntervalAsync(
+        string queueName,
+        string className,
+        string data,
+        int intervalSeconds,
+        int initialDelaySeconds = 0,
+        int maximumBacklog = 0,
+        string? jid = null,
+        int priority = 0,
+        int retries = 5,
+        string[]? tags = null,
+        string[]? throttles = null
+    )
+    {
+        var _jid = jid ?? MakeJid();
+        var _tags = tags ?? [];
+        var _throttles = throttles ?? [];
+
+        var result = await _executor.ExecuteAsync([
+            "queue.recurAtInterval",
+            Now(),
+            queueName,
+            _jid,
+            className,
+            data,
+            intervalSeconds,
+            initialDelaySeconds,
+            "backlog",
+            maximumBacklog,
             "priority",
             priority,
             "retries",
@@ -867,7 +938,7 @@ public class ReqlessClient : IClient, IDisposable
     }
 
     /// <inheritdoc/>
-    public async Task<JidsResult> ExecuteJobsQuery(
+    protected async Task<JidsResult> ExecuteJobsQuery(
         string queryCommand,
         string query,
         int limit = 25,
@@ -994,6 +1065,15 @@ public class ReqlessClient : IClient, IDisposable
         ).ToList();
 
         return jids;
+    }
+
+    /// <summary>
+    /// Synthesizes a new job ID.
+    /// </summary>
+    /// <returns>A job ID.</returns>
+    protected string MakeJid()
+    {
+        return Guid.NewGuid().ToString("N");
     }
 
     /// <summary>

@@ -163,7 +163,7 @@ public class JobTest
             Assert.Equal("expires", exception.ParamName);
             Assert.Equal(
                 $"""
-                expires must be a positive whole number. (Parameter 'expires')
+                Value must be a positive whole number. (Parameter 'expires')
                 Actual value was {nonPositiveValue}.
                 """,
                 exception.Message
@@ -248,7 +248,7 @@ public class JobTest
             Assert.Equal("priority", exception.ParamName);
             Assert.Equal(
                 $"""
-                priority must be a non-negative whole number. (Parameter 'priority')
+                Value must be a non-negative whole number. (Parameter 'priority')
                 Actual value was {negativeValue}.
                 """,
                 exception.Message
@@ -301,7 +301,7 @@ public class JobTest
             Assert.Equal("remaining", exception.ParamName);
             Assert.Equal(
                 $"""
-                remaining must be a whole number greater than or equal to -1. (Parameter 'remaining')
+                Value must be a whole number greater than or equal to -1. (Parameter 'remaining')
                 Actual value was {invalidValue}.
                 """,
                 exception.Message
@@ -327,7 +327,7 @@ public class JobTest
         Assert.Equal("remaining", exception.ParamName);
         Assert.Equal(
             $"""
-            remaining must be less than or equal to retries ({retries}). (Parameter 'remaining')
+            Value must be less than or equal to retries ({retries}). (Parameter 'remaining')
             Actual value was {remaining}.
             """,
             exception.Message
@@ -349,7 +349,7 @@ public class JobTest
             Assert.Equal("retries", exception.ParamName);
             Assert.Equal(
                 $"""
-                retries must be a non-negative whole number. (Parameter 'retries')
+                Value must be a non-negative whole number. (Parameter 'retries')
                 Actual value was {negativeValue}.
                 """,
                 exception.Message

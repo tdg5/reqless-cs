@@ -103,7 +103,7 @@ public class PutJobTest : BaseReqlessClientTest
         );
         executorMock.VerifyAll();
         executorMock.VerifyNoOtherCalls();
-        Assert.NotNull(ExampleJid);
+        Assert.Equal(ExampleJid, jidFromPut);
     }
 
     /// <summary>

@@ -795,6 +795,62 @@ public class ReqlessClientIntegrationTest
     }
 
     /// <summary>
+    /// <see cref="ReqlessClient.RecurJobAtIntervalAsync"/> should return null
+    /// if the recurring job doesn't exist.
+    /// </summary>
+    [Fact]
+    public async void GetRecurringJobAsync_ReturnsNullIfThereIsNoSuchRecurringJob()
+    {
+        RecurringJob? subject = await _client.GetRecurringJobAsync("no-such-jid");
+        Assert.Null(subject);
+    }
+
+    /// <summary>
+    /// <see cref="ReqlessClient.RecurJobAtIntervalAsync"/> should be able to
+    /// register recurrence and receive jid result.
+    /// </summary>
+    [Fact]
+    public async void GetRecurringJobAsync_CanRetrieveRecurringJobInfo()
+    {
+        var initialDelaySeconds = 300;
+        var intervalSeconds = 180;
+        var maximumBacklog = 10;
+        var priority = 0;
+        var retries = 5;
+        var tags = new string[] { "tags" };
+        var throttles = new string[] { "throttles" };
+
+        var jid = await _client.RecurJobAtIntervalAsync(
+            className: ExampleClassName,
+            data: ExampleData,
+            initialDelaySeconds: initialDelaySeconds,
+            intervalSeconds: intervalSeconds,
+            maximumBacklog: maximumBacklog,
+            priority: priority,
+            queueName: ExampleQueueName,
+            retries: retries,
+            tags: tags,
+            throttles: throttles
+        );
+
+        RecurringJob? subject = await _client.GetRecurringJobAsync(jid);
+        Assert.NotNull(subject);
+        Assert.Equal(0, subject.Count);
+        Assert.Equal(ExampleClassName, subject.ClassName);
+        Assert.Equal(ExampleData, subject.Data);
+        Assert.Equal(intervalSeconds, subject.IntervalSeconds);
+        Assert.Equal(maximumBacklog, subject.MaximumBacklog);
+        Assert.Equal(priority, subject.Priority);
+        Assert.Equal(ExampleQueueName, subject.QueueName);
+        Assert.Equal(retries, subject.Retries);
+        Assert.Equivalent(tags, subject.Tags);
+        Assert.Equivalent(throttles, subject.Throttles);
+        Assert.Equal("recur", subject.State);
+
+        await _client.CancelJobAsync(jid);
+    }
+
+    /// <summary>
     /// <see cref="ReqlessClient.GetTrackedJobsAsync"/> should return an empty
     /// result when no jobs are tracked.
     /// </summary>
@@ -1085,6 +1141,51 @@ public class ReqlessClientIntegrationTest
 
         await _client.CancelJobAsync(jid);
         await _client.CancelJobAsync(dependencyJid);
+    }
+
+    /// <summary>
+    /// <see cref="ReqlessClient.RecurJobAtIntervalAsync"/> should be able to
+    /// register recurrence and receive jid result.
+    /// </summary>
+    [Fact]
+    public async void RecurJobAtIntervalAsync_CanScheduleRecurrenceAndReceiveJid()
+    {
+        var initialDelaySeconds = 300;
+        var intervalSeconds = 180;
+        var maximumBacklog = 10;
+        var priority = 0;
+        var retries = 5;
+        var tags = new string[] { "tags" };
+        var throttles = new string[] { "throttles" };
+
+        var jid = await _client.RecurJobAtIntervalAsync(
+            maximumBacklog: maximumBacklog,
+            className: ExampleClassName,
+            data: ExampleData,
+            initialDelaySeconds: initialDelaySeconds,
+            intervalSeconds: intervalSeconds,
+            priority: priority,
+            queueName: ExampleQueueName,
+            retries: retries,
+            tags: tags,
+            throttles: throttles
+        );
+
+        RecurringJob? subject = await _client.GetRecurringJobAsync(jid);
+        Assert.NotNull(subject);
+        Assert.Equal(0, subject.Count);
+        Assert.Equal(ExampleClassName, subject.ClassName);
+        Assert.Equal(ExampleData, subject.Data);
+        Assert.Equal(intervalSeconds, subject.IntervalSeconds);
+        Assert.Equal(maximumBacklog, subject.MaximumBacklog);
+        Assert.Equal(priority, subject.Priority);
+        Assert.Equal(ExampleQueueName, subject.QueueName);
+        Assert.Equal(retries, subject.Retries);
+        Assert.Equivalent(tags, subject.Tags);
+        Assert.Equivalent(throttles, subject.Throttles);
+        Assert.Equal("recur", subject.State);
+
+        await _client.CancelJobAsync(jid);
     }
 
     /// <summary>
