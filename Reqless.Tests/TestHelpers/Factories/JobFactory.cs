@@ -6,12 +6,13 @@ using System.Text;
 namespace Reqless.Tests.TestHelpers.Factories;
 
 /// <summary>
-/// Factory for creating job instances and/or JSON for use in tests.
+/// Factory for creating <see cref="Job"/> instances and/or JSON for use in
+/// tests.
 /// </summary>
 public static class JobFactory
 {
     /// <summary>
-    /// Creates a new job instance.
+    /// Creates a new <see cref="Job"/> instance.
     /// </summary>
     /// <remarks>
     /// For the purposes of this method, for each argument, a given value of
@@ -89,7 +90,7 @@ public static class JobFactory
     }
 
     /// <summary>
-    /// Returns a JSON string representing a job.
+    /// Returns a JSON string representing a <see cref="Job"/>.
     /// </summary>
     /// <remarks>
     /// For the purposes of this method, for each argument, a given value of
@@ -203,8 +204,8 @@ public static class JobFactory
     }
 
     /// <summary>
-    /// Returns a JSON string representing a job. All arguments are expected to
-    /// have been serialized to JSON format already.
+    /// Returns a JSON string representing a <see cref="Job"/>. All arguments
+    /// are expected to have been serialized to JSON format already.
     /// </summary>
     /// <remarks>
     /// For the purposes of this method, for each argument, a given value of

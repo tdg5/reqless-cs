@@ -1,5 +1,6 @@
 using Reqless.Models;
 using Reqless.Models.JobEvents;
+using Reqless.Serialization;
 using Reqless.Tests.TestHelpers;
 using Reqless.Tests.TestHelpers.Factories;
 using System.Text.Json;
@@ -7,7 +8,7 @@ using System.Text.Json;
 namespace Reqless.Tests.Serialization;
 
 /// <summary>
-/// Tests for the <see cref="Reqless.Serialization.JobJsonConverter"/> class.
+/// Tests for the <see cref="JobJsonConverter"/> class.
 /// </summary>
 public class JobJsonConverterTest
 {

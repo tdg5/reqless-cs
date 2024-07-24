@@ -235,6 +235,14 @@ public interface IClient
     Task<QueueCounts> GetQueueCountsAsync(string queueName);
 
     /// <summary>
+    /// Gets a recurring job by its job ID.
+    /// </summary>
+    /// <param name="jid">The ID of the recurring job that should be
+    /// retreived.</param>
+    /// <returns>The job, if it exists; otherwise, null.</returns>
+    Task<RecurringJob?> GetRecurringJobAsync(string jid);
+
+    /// <summary>
     /// Gets the details of all currently traced jobs.
     /// </summary>
     Task<TrackedJobsResult> GetTrackedJobsAsync();
@@ -326,6 +334,43 @@ public interface IClient
         int priority = 0,
         int retries = 5,
         string[]? dependencies = null,
+        string[]? tags = null,
+        string[]? throttles = null
+    );
+
+    /// <summary>
+    /// Puts a job on a queue that runs repeatedly at the given interval.
+    /// </summary>
+    /// <param name="queueName">The name of the queue.</param>
+    /// <param name="className">The name of the class.</param>
+    /// <param name="data">The data to be processed.</param>
+    /// <param name="intervalSeconds">The interval in seconds with which the job
+    /// should recur.</param>
+    /// <param name="initialDelay">The delay in seconds before the first
+    /// recurrance of the job. Defaults to no delay (0).</param>
+    /// <param name="maximumBacklog">The maximum number of backlogged jobs that
+    /// can be scheduled at once to make up for skipped jobs that occurred as a
+    /// result of a flood of jobs or due to resource contention.</param>
+    /// <param name="jid">The ID of the job. When not provided, an ID will be
+    /// generated.</param>
+    /// <param name="priority">The priority of the job. Defaults to 0,
+    /// representing a low priority. Ignoring other factors like throttles, jobs
+    /// with a higher priority value are popped before jobs with a lower
+    /// priority.</param>
+    /// <param name="retries">The number of retries.</param>
+    /// <param name="tags">The tags for the job.</param>
+    /// <param name="throttles">The throttles for the job.</param>
+    /// <returns>The job ID.</returns>
+    Task<string> RecurJobAtIntervalAsync(
+        string queueName,
+        string className,
+        string data,
+        int intervalSeconds,
+        int initialDelay = 0,
+        int maximumBacklog = 0,
+        string? jid = null,
+        int priority = 0,
+        int retries = 5,
         string[]? tags = null,
         string[]? throttles = null
     );

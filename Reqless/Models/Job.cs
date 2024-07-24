@@ -5,22 +5,12 @@ using System.Text.Json.Serialization;
 namespace Reqless.Models;
 
 /// <summary>
-/// Data class representing a job, as defined by qless-core.
+/// Data class representing a concrete job instance that could be or has been
+/// processed.
 /// </summary>
 [JsonConverter(typeof(JobJsonConverter))]
-public class Job
+public class Job : BaseJob
 {
-    /// <summary>
-    /// The name of the class that will be used to perform the job.
-    /// </summary>
-    public string ClassName { get; }
-
-    /// <summary>
-    /// The stringifed JSON data relevant to the job that will be passed to the
-    /// job class at execution time.
-    /// </summary>
-    public string Data { get; }
-
     /// <summary>
     /// The JIDs of jobs that must complete before the job is eligible to run.
     /// </summary>
@@ -50,56 +40,15 @@ public class Job
     public JobEvent[] History { get; }
 
     /// <summary>
-    /// The unique identifier, or job ID, of the job.
-    /// </summary>
-    public string Jid { get; }
-
-    /// <summary>
-    /// The priority of the job, which, ignoring other factors like throttles,
-    /// determines the order in which jobs are popped off the queue. A lower
-    /// value represents a less urgent priority and a higher value represents a
-    /// more urgent priority.
-    /// </summary>
-    public int Priority { get; }
-
-    /// <summary>
-    /// The name of the queue that the job currently belongs to.
-    /// </summary>
-    public string? QueueName { get; }
-
-    /// <summary>
     /// The number of retry attempts remaining for the job before all retries
     /// are exhausted.
     /// </summary>
     public int Remaining { get; }
 
     /// <summary>
-    /// The total number of times the job will been retried before the job is
-    /// declared failed.
-    /// </summary>
-    public int Retries { get; }
-
-    /// <summary>
     /// The JID, if any, of the job that spawned the job.
     /// </summary>
     public string? SpawnedFromJid { get; }
-
-    /// <summary>
-    /// The current state of the job.
-    /// </summary>
-    public string State { get; }
-
-    /// <summary>
-    /// A list of tags that are applied to the job for tracking purposes.
-    /// </summary>
-    public string[] Tags { get; }
-
-    /// <summary>
-    /// A list of throttles that are applied to the job to manage various
-    /// concurrency limits and prevent the job from being scheduled when
-    /// capacity is not available.
-    /// </summary>
-    public string[] Throttles { get; }
 
     /// <summary>
     /// Flag indicating whether or not the job is being tracked.
@@ -171,20 +120,12 @@ public class Job
         string[] throttles,
         bool tracked,
         string? workerName
-    )
+    ) : base(className, data, jid, priority, queueName, retries, state, tags, throttles)
     {
-        ArgumentException.ThrowIfNullOrWhiteSpace(className, nameof(className));
-        ArgumentException.ThrowIfNullOrWhiteSpace(data, nameof(data));
         ValidationHelper.ThrowIfAnyNullOrWhitespace(dependencies, nameof(dependencies));
         ValidationHelper.ThrowIfAnyNullOrWhitespace(dependents, nameof(dependents));
         ValidationHelper.ThrowIfAnyNull(history, nameof(history));
-        ArgumentException.ThrowIfNullOrWhiteSpace(jid, nameof(jid));
-        // Queue name can be null when a job is completed and no longer in a queue.
-        ValidationHelper.ThrowIfNotNullAndEmptyOrWhitespace(queueName, nameof(queueName));
         ValidationHelper.ThrowIfNotNullAndEmptyOrWhitespace(spawnedFromJid, nameof(spawnedFromJid));
-        ArgumentException.ThrowIfNullOrWhiteSpace(state, nameof(state));
-        ValidationHelper.ThrowIfAnyNullOrWhitespace(tags, nameof(tags));
-        ValidationHelper.ThrowIfAnyNullOrWhitespace(throttles, nameof(throttles));
         ValidationHelper.ThrowIfNotNullAndEmptyOrWhitespace(workerName, nameof(workerName));
         if (expires <= 0)
         {
@@ -194,12 +135,12 @@ public class Job
                 "expires must be a positive whole number."
             );
         }
-        if (priority < 0)
+        if (retries < 0)
         {
             throw new ArgumentOutOfRangeException(
-                nameof(priority),
-                priority,
-                "priority must be a non-negative whole number."
+                nameof(retries),
+                retries,
+                "retries must be a non-negative whole number."
             );
         }
         if (remaining < -1)
@@ -208,14 +149,6 @@ public class Job
                 nameof(remaining),
                 remaining,
                 "remaining must be a whole number greater than or equal to -1."
-            );
-        }
-        if (retries < 0)
-        {
-            throw new ArgumentOutOfRangeException(
-                nameof(retries),
-                retries,
-                "retries must be a non-negative whole number."
             );
         }
         if (remaining > retries)
@@ -227,22 +160,13 @@ public class Job
             );
         }
 
-        ClassName = className;
-        Data = data;
         Dependencies = dependencies;
         Dependents = dependents;
         Expires = expires;
         Failure = failure;
         History = history;
-        Jid = jid;
-        Priority = priority;
-        QueueName = queueName;
         Remaining = remaining;
-        Retries = retries;
         SpawnedFromJid = spawnedFromJid;
-        State = state;
-        Tags = tags;
-        Throttles = throttles;
         Tracked = tracked;
         WorkerName = workerName;
     }
