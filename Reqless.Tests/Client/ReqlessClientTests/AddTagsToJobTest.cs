@@ -91,19 +91,12 @@ public class AddTagsToJobTest : BaseReqlessClientTest
     [Fact]
     public async void CallsExecutorWithTheExpectedArguments()
     {
-        await WithClientWithExecutorMockForExpectedArguments(
-            static async subject =>
-            {
-                List<string> tags = await subject.AddTagsToJobAsync(
-                    ExampleJid,
-                    ExampleTag,
-                    ExampleTagOther
-                );
-                Assert.Equivalent(
-                    new string[] { ExampleTag, ExampleTagOther },
-                    tags
-                );
-            },
+        List<string> tags = await WithClientWithExecutorMockForExpectedArguments(
+            subject => subject.AddTagsToJobAsync(
+                ExampleJid,
+                ExampleTag,
+                ExampleTagOther
+            ),
             expectedArguments: [
                 "job.addTag",
                 0,
@@ -112,6 +105,10 @@ public class AddTagsToJobTest : BaseReqlessClientTest
                 ExampleTagOther,
             ],
             returnValue: $"""["{ExampleTag}", "{ExampleTagOther}"]"""
+        );
+        Assert.Equivalent(
+            new string[] { ExampleTag, ExampleTagOther },
+            tags
         );
     }
 

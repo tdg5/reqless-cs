@@ -95,15 +95,11 @@ public class RemoveTagFromJobTest : BaseReqlessClientTest
     [Fact]
     public async void CallsExecutorWithTheExpectedArguments()
     {
-        await WithClientWithExecutorMockForExpectedArguments(
-            static async subject =>
-            {
-                List<string> tags = await subject.RemoveTagFromJobAsync(
-                    ExampleJid,
-                    ExampleTagOther
-                );
-                Assert.Equivalent(new string[] { ExampleTag }, tags);
-            },
+        List<string> tags = await WithClientWithExecutorMockForExpectedArguments(
+            subject => subject.RemoveTagFromJobAsync(
+                ExampleJid,
+                ExampleTagOther
+            ),
             expectedArguments: [
                 "job.removeTag",
                 0,
@@ -112,6 +108,7 @@ public class RemoveTagFromJobTest : BaseReqlessClientTest
             ],
             returnValue: $"""["{ExampleTag}"]"""
         );
+        Assert.Equivalent(new string[] { ExampleTag }, tags);
     }
 
     /// <summary>
@@ -197,16 +194,12 @@ public class RemoveTagFromJobTest : BaseReqlessClientTest
     public async void RemoveTagsFromJobAsync_CallsExecutorWithTheExpectedArguments()
     {
         var leftoverTag = "leftover-tag";
-        await WithClientWithExecutorMockForExpectedArguments(
-            async subject =>
-            {
-                List<string> tags = await subject.RemoveTagsFromJobAsync(
-                    ExampleJid,
-                    ExampleTag,
-                    ExampleTagOther
-                );
-                Assert.Equivalent(new string[] { leftoverTag }, tags);
-            },
+        List<string> tags = await WithClientWithExecutorMockForExpectedArguments(
+            subject => subject.RemoveTagsFromJobAsync(
+                ExampleJid,
+                ExampleTag,
+                ExampleTagOther
+            ),
             expectedArguments: [
                 "job.removeTag",
                 0,
@@ -216,6 +209,7 @@ public class RemoveTagFromJobTest : BaseReqlessClientTest
             ],
             returnValue: $"""["{leftoverTag}"]"""
         );
+        Assert.Equivalent(new string[] { leftoverTag }, tags);
     }
 
     /// <summary>

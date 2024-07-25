@@ -15,16 +15,13 @@ public class GetAllConfigsTest : BaseReqlessClientTest
     [Fact]
     public async void CallsExecutorWithTheExpectedArguments()
     {
-        await WithClientWithExecutorMockForExpectedArguments(
-            static async subject =>
-            {
-                Dictionary<string, JsonElement> configs = await subject.GetAllConfigsAsync();
-                Assert.Empty(configs);
-                Assert.IsType<Dictionary<string, JsonElement>>(configs);
-            },
+        Dictionary<string, JsonElement> configs = await WithClientWithExecutorMockForExpectedArguments(
+            subject => subject.GetAllConfigsAsync(),
             expectedArguments: ["config.getAll", 0],
             returnValue: "{}"
         );
+        Assert.Empty(configs);
+        Assert.IsType<Dictionary<string, JsonElement>>(configs);
     }
 
     /// <summary>

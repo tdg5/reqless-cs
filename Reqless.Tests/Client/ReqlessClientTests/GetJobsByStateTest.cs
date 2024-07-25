@@ -166,17 +166,13 @@ public class GetJobsByStateAsyncTest : BaseReqlessClientTest
     [Fact]
     public async void ReturnsEmptyListWhenNoSuchJobs()
     {
-        await WithClientWithExecutorMockForExpectedArguments(
-            static async subject =>
-            {
-                List<string> jobs = await subject.GetJobsByStateAsync(
-                    limit: 25,
-                    offset: 0,
-                    queueName: ExampleQueueName,
-                    state: "running"
-                );
-                Assert.Empty(jobs);
-            },
+        List<string> jobs = await WithClientWithExecutorMockForExpectedArguments(
+            subject => subject.GetJobsByStateAsync(
+                limit: 25,
+                offset: 0,
+                queueName: ExampleQueueName,
+                state: "running"
+            ),
             expectedArguments: [
                 "queue.jobsByState",
                 0,
@@ -187,6 +183,7 @@ public class GetJobsByStateAsyncTest : BaseReqlessClientTest
             ],
             returnValues: []
         );
+        Assert.Empty(jobs);
     }
 
     /// <summary>
@@ -196,20 +193,13 @@ public class GetJobsByStateAsyncTest : BaseReqlessClientTest
     [Fact]
     public async void ReturnsJidsWhenThereAreJobsInTheGivenState()
     {
-        await WithClientWithExecutorMockForExpectedArguments(
-            static async subject =>
-            {
-                List<string> jids = await subject.GetJobsByStateAsync(
+        List<string> jids = await WithClientWithExecutorMockForExpectedArguments(
+            subject => subject.GetJobsByStateAsync(
                     limit: 25,
                     offset: 0,
                     queueName: ExampleQueueName,
                     state: "running"
-                );
-                var expectedJids = new string[] { ExampleJid, ExampleJidOther };
-                Assert.Equal(expectedJids.Length, jids.Count);
-                Assert.Contains(jids[0], expectedJids);
-                Assert.Contains(jids[1], expectedJids);
-            },
+                ),
             expectedArguments: [
                 "queue.jobsByState",
                 0,
@@ -220,5 +210,9 @@ public class GetJobsByStateAsyncTest : BaseReqlessClientTest
             ],
             returnValues: [ExampleJid, ExampleJidOther]
         );
+        var expectedJids = new string[] { ExampleJid, ExampleJidOther };
+        Assert.Equal(expectedJids.Length, jids.Count);
+        Assert.Contains(jids[0], expectedJids);
+        Assert.Contains(jids[1], expectedJids);
     }
 }

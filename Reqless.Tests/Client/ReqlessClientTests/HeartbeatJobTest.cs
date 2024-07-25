@@ -15,15 +15,11 @@ public class HeartbeatJobTest : BaseReqlessClientTest
     public async void ReturnsTheNewExpirationTimeWithoutData()
     {
         var expectedExpiration = DateTimeOffset.Now.ToUnixTimeMilliseconds() + 60000;
-        await WithClientWithExecutorMockForExpectedArguments(
-            async subject =>
-            {
-                long newExpiration = await subject.HeartbeatJobAsync(
-                    jid: ExampleJid,
-                    workerName: ExampleWorkerName
-                );
-                Assert.Equal(expectedExpiration, newExpiration);
-            },
+        long newExpiration = await WithClientWithExecutorMockForExpectedArguments(
+            subject => subject.HeartbeatJobAsync(
+                jid: ExampleJid,
+                workerName: ExampleWorkerName
+            ),
             expectedArguments: [
                 "job.heartbeat",
                 0,
@@ -32,6 +28,7 @@ public class HeartbeatJobTest : BaseReqlessClientTest
             ],
             returnValue: expectedExpiration
         );
+        Assert.Equal(expectedExpiration, newExpiration);
     }
 
     /// <summary>
@@ -42,16 +39,12 @@ public class HeartbeatJobTest : BaseReqlessClientTest
     public async void ReturnsTheNewExpirationTimeWithData()
     {
         var expectedExpiration = DateTimeOffset.Now.ToUnixTimeMilliseconds() + 60000;
-        await WithClientWithExecutorMockForExpectedArguments(
-            async subject =>
-            {
-                long newExpiration = await subject.HeartbeatJobAsync(
-                    data: ExampleData,
-                    jid: ExampleJid,
-                    workerName: ExampleWorkerName
-                );
-                Assert.Equal(expectedExpiration, newExpiration);
-            },
+        long newExpiration = await WithClientWithExecutorMockForExpectedArguments(
+            subject => subject.HeartbeatJobAsync(
+                data: ExampleData,
+                jid: ExampleJid,
+                workerName: ExampleWorkerName
+            ),
             expectedArguments: [
                 "job.heartbeat",
                 0,
@@ -61,6 +54,7 @@ public class HeartbeatJobTest : BaseReqlessClientTest
             ],
             returnValue: expectedExpiration
         );
+        Assert.Equal(expectedExpiration, newExpiration);
     }
 
     /// <summary>

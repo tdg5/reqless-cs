@@ -105,15 +105,11 @@ public class RemoveDependencyFromJobTest : BaseReqlessClientTest
     [Fact]
     public async void CallsExecutorWithTheExpectedArguments()
     {
-        await WithClientWithExecutorMockForExpectedArguments(
-            async subject =>
-            {
-                var result = await subject.RemoveDependencyFromJobAsync(
-                    dependsOnJid: ExampleJidOther,
-                    jid: ExampleJid
-                );
-                Assert.True(result);
-            },
+        bool result = await WithClientWithExecutorMockForExpectedArguments(
+            subject => subject.RemoveDependencyFromJobAsync(
+                dependsOnJid: ExampleJidOther,
+                jid: ExampleJid
+            ),
             expectedArguments: [
                 "job.removeDependency",
                 0,
@@ -122,5 +118,6 @@ public class RemoveDependencyFromJobTest : BaseReqlessClientTest
             ],
             returnValue: true
         );
+        Assert.True(result);
     }
 }

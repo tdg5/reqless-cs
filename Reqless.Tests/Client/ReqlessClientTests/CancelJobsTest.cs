@@ -15,15 +15,11 @@ public class CancelJobsTest : BaseReqlessClientTest
     [Fact]
     public async void CallsExecutorWithTheExpectedArguments()
     {
-        await WithClientWithExecutorMockForExpectedArguments(
-            static async subject =>
-            {
-                bool cancelledSuccessfully = await subject.CancelJobsAsync(
-                    ExampleJid,
-                    ExampleJidOther
-                );
-                Assert.True(cancelledSuccessfully);
-            },
+        bool cancelledSuccessfully = await WithClientWithExecutorMockForExpectedArguments(
+            subject => subject.CancelJobsAsync(
+                ExampleJid,
+                ExampleJidOther
+            ),
             expectedArguments: [
                 "job.cancel",
                 0,
@@ -32,6 +28,7 @@ public class CancelJobsTest : BaseReqlessClientTest
             ],
             returnValues: [ExampleJid, ExampleJidOther]
         );
+        Assert.True(cancelledSuccessfully);
     }
 
     /// <summary>
@@ -41,13 +38,10 @@ public class CancelJobsTest : BaseReqlessClientTest
     [Fact]
     public async void ReturnsTrueIfNoJidsAreGiven()
     {
-        await WithClientWithExecutorMockForExpectedArguments(
-            static async subject =>
-            {
-                bool cancelledSuccessfully = await subject.CancelJobsAsync();
-                Assert.True(cancelledSuccessfully);
-            }
+        bool cancelledSuccessfully = await WithClientWithExecutorMockForExpectedArguments(
+            subject => subject.CancelJobsAsync()
         );
+        Assert.True(cancelledSuccessfully);
     }
 
     /// <summary>

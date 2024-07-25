@@ -107,15 +107,11 @@ public class AddDependencyToJobTest : BaseReqlessClientTest
     public async void CallsExecutorWithTheExpectedArguments()
     {
         var otherJid = "otherJid";
-        await WithClientWithExecutorMockForExpectedArguments(
-            async subject =>
-            {
-                var result = await subject.AddDependencyToJobAsync(
+        var result = await WithClientWithExecutorMockForExpectedArguments(
+            subject => subject.AddDependencyToJobAsync(
                     dependsOnJid: otherJid,
                     jid: ExampleJid
-                );
-                Assert.True(result);
-            },
+                ),
             expectedArguments: [
                 "job.addDependency",
                 0,
@@ -124,5 +120,6 @@ public class AddDependencyToJobTest : BaseReqlessClientTest
             ],
             returnValue: true
         );
+        Assert.True(result);
     }
 }

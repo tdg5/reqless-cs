@@ -16,19 +16,15 @@ public class RetryJobTest : BaseReqlessClientTest
     {
         var delay = 0;
 
-        await WithClientWithExecutorMockForExpectedArguments(
-            async subject =>
-            {
-                bool retriedSuccessfully = await subject.RetryJobAsync(
-                    ExampleJid,
-                    ExampleQueueName,
-                    ExampleWorkerName,
-                    ExampleGroup,
-                    ExampleMessage,
-                    delay
-                );
-                Assert.True(retriedSuccessfully);
-            },
+        bool retriedSuccessfully = await WithClientWithExecutorMockForExpectedArguments(
+            subject => subject.RetryJobAsync(
+                ExampleJid,
+                ExampleQueueName,
+                ExampleWorkerName,
+                ExampleGroup,
+                ExampleMessage,
+                delay
+            ),
             expectedArguments: [
                 "job.retry",
                 0,
@@ -41,6 +37,7 @@ public class RetryJobTest : BaseReqlessClientTest
             ],
             returnValue: 1
         );
+        Assert.True(retriedSuccessfully);
     }
 
     /// <summary>

@@ -131,16 +131,12 @@ public class AddEventToJobHistoryTest : BaseReqlessClientTest
     [Fact]
     public async void CallsExecutorWithTheExpectedArgumentsWithoutData()
     {
-        await WithClientWithExecutorMockForExpectedArguments(
-            static async subject =>
-            {
-                var result = await subject.AddEventToJobHistoryAsync(
-                    data: ExampleData,
-                    jid: ExampleJid,
-                    what: ExampleMessage
-                );
-                Assert.True(result);
-            },
+        var result = await WithClientWithExecutorMockForExpectedArguments(
+            subject => subject.AddEventToJobHistoryAsync(
+                data: ExampleData,
+                jid: ExampleJid,
+                what: ExampleMessage
+            ),
             expectedArguments: [
                 "job.log",
                 0,
@@ -150,6 +146,7 @@ public class AddEventToJobHistoryTest : BaseReqlessClientTest
             ],
             returnValue: true
         );
+        Assert.True(result);
     }
 
     /// <summary>
@@ -159,15 +156,11 @@ public class AddEventToJobHistoryTest : BaseReqlessClientTest
     [Fact]
     public async void CallsExecutorWithTheExpectedArgumentsWithData()
     {
-        await WithClientWithExecutorMockForExpectedArguments(
-            static async subject =>
-            {
-                var result = await subject.AddEventToJobHistoryAsync(
-                    jid: ExampleJid,
-                    what: ExampleMessage
-                );
-                Assert.True(result);
-            },
+        var result = await WithClientWithExecutorMockForExpectedArguments(
+            subject => subject.AddEventToJobHistoryAsync(
+                jid: ExampleJid,
+                what: ExampleMessage
+            ),
             expectedArguments: [
                 "job.log",
                 0,
@@ -176,5 +169,6 @@ public class AddEventToJobHistoryTest : BaseReqlessClientTest
             ],
             returnValue: true
         );
+        Assert.True(result);
     }
 }

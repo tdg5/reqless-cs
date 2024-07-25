@@ -61,21 +61,18 @@ public class PeekJobsTest : BaseReqlessClientTest
     {
         var jobJson = JobFactory.JobJson(jid: Maybe<string?>.Some(ExampleJid));
         var otherJobJson = JobFactory.JobJson(jid: Maybe<string?>.Some(ExampleJidOther));
-        await WithClientWithExecutorMockForExpectedArguments(
-            static async subject =>
-            {
-                List<Job> jobs = await subject.PeekJobsAsync(ExampleQueueName);
-                Assert.Equal(2, jobs.Count);
-                var expectedJids = new string[] { ExampleJid, ExampleJidOther };
-                foreach (var job in jobs)
-                {
-                    Assert.Contains(job.Jid, expectedJids);
-                    Assert.IsType<Job>(job);
-                }
-            },
+        List<Job> jobs = await WithClientWithExecutorMockForExpectedArguments(
+            subject => subject.PeekJobsAsync(ExampleQueueName),
             expectedArguments: ["queue.peek", 0, ExampleQueueName, 0, 25],
             returnValue: $"[{jobJson}, {otherJobJson}]"
         );
+        Assert.Equal(2, jobs.Count);
+        var expectedJids = new string[] { ExampleJid, ExampleJidOther };
+        foreach (var job in jobs)
+        {
+            Assert.Contains(job.Jid, expectedJids);
+            Assert.IsType<Job>(job);
+        }
     }
 
     /// <summary>
@@ -85,15 +82,12 @@ public class PeekJobsTest : BaseReqlessClientTest
     [Fact]
     public async void ReturnsEmptyArrayIfServerRespondsWithEmptyArray()
     {
-        await WithClientWithExecutorMockForExpectedArguments(
-            static async subject =>
-            {
-                List<Job> jobs = await subject.PeekJobsAsync(ExampleQueueName);
-                Assert.Empty(jobs);
-            },
+        List<Job> jobs = await WithClientWithExecutorMockForExpectedArguments(
+            subject => subject.PeekJobsAsync(ExampleQueueName),
             expectedArguments: ["queue.peek", 0, ExampleQueueName, 0, 25],
             returnValue: "[]"
         );
+        Assert.Empty(jobs);
     }
 
     /// <summary>
@@ -103,15 +97,12 @@ public class PeekJobsTest : BaseReqlessClientTest
     [Fact]
     public async void ReturnsEmptyArrayIfServerRespondsWithEmptyObject()
     {
-        await WithClientWithExecutorMockForExpectedArguments(
-            static async subject =>
-            {
-                List<Job> jobs = await subject.PeekJobsAsync(ExampleQueueName);
-                Assert.Empty(jobs);
-            },
+        List<Job> jobs = await WithClientWithExecutorMockForExpectedArguments(
+            subject => subject.PeekJobsAsync(ExampleQueueName),
             expectedArguments: ["queue.peek", 0, ExampleQueueName, 0, 25],
             returnValue: "{}"
         );
+        Assert.Empty(jobs);
     }
 
     /// <summary>

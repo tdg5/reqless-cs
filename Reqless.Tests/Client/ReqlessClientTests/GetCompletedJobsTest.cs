@@ -55,18 +55,12 @@ public class GetCompletedJobsTest : BaseReqlessClientTest
     [Fact]
     public async void ReturnsEmptyListWhenNoSuchJobs()
     {
-        await WithClientWithExecutorMockForExpectedArguments(
-            static async subject =>
-            {
-                List<string> jobs = await subject.GetCompletedJobsAsync(
-                    limit: 25,
-                    offset: 0
-                );
-                Assert.Empty(jobs);
-            },
+        List<string> jobs = await WithClientWithExecutorMockForExpectedArguments(
+            subject => subject.GetCompletedJobsAsync(limit: 25, offset: 0),
             expectedArguments: ["jobs.completed", 0, 0, 25],
             returnValues: []
         );
+        Assert.Empty(jobs);
     }
 
     /// <summary>
@@ -76,20 +70,17 @@ public class GetCompletedJobsTest : BaseReqlessClientTest
     [Fact]
     public async void ReturnsJidsWhenThereAreCompletedJobs()
     {
-        await WithClientWithExecutorMockForExpectedArguments(
-            async subject =>
-            {
-                List<string> jids = await subject.GetCompletedJobsAsync(
-                    limit: 25,
-                    offset: 0
-                );
-                var expectedJids = new string[] { ExampleJid, ExampleJidOther };
-                Assert.Equal(expectedJids.Length, jids.Count);
-                Assert.Contains(jids[0], expectedJids);
-                Assert.Contains(jids[1], expectedJids);
-            },
+        List<string> jids = await WithClientWithExecutorMockForExpectedArguments(
+            subject => subject.GetCompletedJobsAsync(
+                limit: 25,
+                offset: 0
+            ),
             expectedArguments: ["jobs.completed", 0, 0, 25],
             returnValues: [ExampleJid, ExampleJidOther]
         );
+        var expectedJids = new string[] { ExampleJid, ExampleJidOther };
+        Assert.Equal(expectedJids.Length, jids.Count);
+        Assert.Contains(jids[0], expectedJids);
+        Assert.Contains(jids[1], expectedJids);
     }
 }

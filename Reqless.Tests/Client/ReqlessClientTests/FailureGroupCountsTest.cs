@@ -19,15 +19,12 @@ public class FailureGroupsCountsTest : BaseReqlessClientTest
             { ExampleGroup, 1 },
         };
         string failedCountsJson = JsonSerializer.Serialize(expectedResult);
-        await WithClientWithExecutorMockForExpectedArguments(
-            async subject =>
-            {
-                Dictionary<string, int> failedCounts = await subject.FailureGroupsCountsAsync();
-                Assert.Equivalent(expectedResult, failedCounts);
-            },
+        Dictionary<string, int> failedCounts = await WithClientWithExecutorMockForExpectedArguments(
+            subject => subject.FailureGroupsCountsAsync(),
             expectedArguments: ["failureGroups.counts", 0],
             returnValue: failedCountsJson
         );
+        Assert.Equivalent(expectedResult, failedCounts);
     }
 
     /// <summary>

@@ -17,22 +17,16 @@ public class GetTrackedJobsTest : BaseReqlessClientTest
     [Fact]
     public async void ThrowsIfTheServerReturnsNull()
     {
-        await WithClientWithExecutorMockForExpectedArguments(
-            async subject =>
-            {
-                var exception = await Assert.ThrowsAsync<InvalidOperationException>(
-                    async () => await subject.GetTrackedJobsAsync()
-                );
-                Assert.Equal(
-                    "Server returned unexpected null result.",
-                    exception.Message
-                );
-            },
-            expectedArguments: [
-                "jobs.tracked",
-                0
-            ],
-            returnValue: null
+        var exception = await Assert.ThrowsAsync<InvalidOperationException>(
+            () => WithClientWithExecutorMockForExpectedArguments(
+                subject => subject.GetTrackedJobsAsync(),
+                expectedArguments: ["jobs.tracked", 0],
+                returnValue: null
+            )
+        );
+        Assert.Equal(
+            "Server returned unexpected null result.",
+            exception.Message
         );
     }
 
@@ -43,22 +37,19 @@ public class GetTrackedJobsTest : BaseReqlessClientTest
     [Fact]
     public async void ThrowsIfTheServerReturnsJsonThatCannotBeDeserialized()
     {
-        await WithClientWithExecutorMockForExpectedArguments(
-            async subject =>
-            {
-                var exception = await Assert.ThrowsAsync<JsonException>(
-                    async () => await subject.GetTrackedJobsAsync()
-                );
-                Assert.Equal(
-                    "Failed to deserialize tracked jobs JSON: null",
-                    exception.Message
-                );
-            },
+        var exception = await WithClientWithExecutorMockForExpectedArguments(
+            subject => Assert.ThrowsAsync<JsonException>(
+                () => subject.GetTrackedJobsAsync()
+            ),
             expectedArguments: [
                 "jobs.tracked",
                 0
             ],
             returnValue: "null"
+        );
+        Assert.Equal(
+            "Failed to deserialize tracked jobs JSON: null",
+            exception.Message
         );
     }
 
@@ -72,19 +63,16 @@ public class GetTrackedJobsTest : BaseReqlessClientTest
         var expiredJid = "expired-jid";
         var expiredJob = JobFactory.NewJob();
         var expiredJobJson = JsonSerializer.Serialize(expiredJob);
-        await WithClientWithExecutorMockForExpectedArguments(
-            async subject =>
-            {
-                var trackedJobsResult = await subject.GetTrackedJobsAsync();
-                Assert.Single(trackedJobsResult.ExpiredJids);
-                Assert.Equal(expiredJid, trackedJobsResult.ExpiredJids[0]);
-                Assert.Equivalent(expiredJob, trackedJobsResult.Jobs[0]);
-            },
+        var trackedJobsResult = await WithClientWithExecutorMockForExpectedArguments(
+            subject => subject.GetTrackedJobsAsync(),
             expectedArguments: [
                 "jobs.tracked",
                 0
             ],
             returnValue: $$"""{"expired":["{{expiredJid}}"],"jobs":[{{expiredJobJson}}]}"""
         );
+        Assert.Single(trackedJobsResult.ExpiredJids);
+        Assert.Equal(expiredJid, trackedJobsResult.ExpiredJids[0]);
+        Assert.Equivalent(expiredJob, trackedJobsResult.Jobs[0]);
     }
 }

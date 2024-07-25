@@ -20,17 +20,11 @@ public class PopJobTest : BaseReqlessClientTest
     {
         var jobJson = JobFactory.JobJson(jid: Maybe<string?>.Some(ExampleJid));
         var jobsJson = $"[{jobJson}]";
-        await WithClientWithExecutorMockForExpectedArguments(
-            static async subject =>
-            {
-                Job? job = await subject.PopJobAsync(
-                    queueName: ExampleQueueName,
-                    workerName: ExampleWorkerName
-                );
-                Assert.NotNull(job);
-                Assert.IsType<Job>(job);
-                Assert.Equal(ExampleJid, job.Jid);
-            },
+        Job? job = await WithClientWithExecutorMockForExpectedArguments(
+            subject => subject.PopJobAsync(
+                queueName: ExampleQueueName,
+                workerName: ExampleWorkerName
+            ),
             expectedArguments: [
                 "queue.pop",
                 0,
@@ -41,6 +35,9 @@ public class PopJobTest : BaseReqlessClientTest
             ],
             returnValue: jobsJson
         );
+        Assert.NotNull(job);
+        Assert.IsType<Job>(job);
+        Assert.Equal(ExampleJid, job.Jid);
     }
 
     /// <summary>
@@ -52,15 +49,11 @@ public class PopJobTest : BaseReqlessClientTest
     {
         foreach (var emptyResult in new string[] { "[]", "{}" })
         {
-            await WithClientWithExecutorMockForExpectedArguments(
-                static async subject =>
-                {
-                    Job? job = await subject.PopJobAsync(
-                        queueName: ExampleQueueName,
-                        workerName: ExampleWorkerName
-                    );
-                    Assert.Null(job);
-                },
+            Job? job = await WithClientWithExecutorMockForExpectedArguments(
+                subject => subject.PopJobAsync(
+                    queueName: ExampleQueueName,
+                    workerName: ExampleWorkerName
+                ),
                 expectedArguments: [
                     "queue.pop",
                     0,
@@ -70,6 +63,7 @@ public class PopJobTest : BaseReqlessClientTest
                 ],
                 returnValue: emptyResult
             );
+            Assert.Null(job);
         }
     }
 

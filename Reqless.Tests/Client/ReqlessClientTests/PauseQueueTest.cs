@@ -55,10 +55,7 @@ public class PauseQueueTest : BaseReqlessClientTest
     public async void CallsExecutorWithExpectedArguments()
     {
         await WithClientWithExecutorMockForExpectedArguments(
-            async subject =>
-            {
-                await subject.PauseQueueAsync(ExampleQueueName);
-            },
+            subject => subject.PauseQueueAsync(ExampleQueueName),
             expectedArguments: [
                 "queue.pause",
                 0,

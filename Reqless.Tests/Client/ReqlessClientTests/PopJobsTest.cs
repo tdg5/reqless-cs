@@ -22,20 +22,12 @@ public class PopJobsTest : BaseReqlessClientTest
         var jobJson = JobFactory.JobJson(jid: Maybe<string?>.Some(ExampleJid));
         var otherJobJson = JobFactory.JobJson(jid: Maybe<string?>.Some(ExampleJid));
         var jobsJson = $"[{jobJson},{otherJobJson}]";
-        await WithClientWithExecutorMockForExpectedArguments(
-            async subject =>
-            {
-                List<Job> jobs = await subject.PopJobsAsync(
-                    limit: count,
-                    queueName: ExampleQueueName,
-                    workerName: ExampleWorkerName
-                );
-                Assert.Equal(count, jobs.Count);
-                var job = jobs[0];
-                Assert.NotNull(job);
-                Assert.IsType<Job>(job);
-                Assert.Equal(ExampleJid, job.Jid);
-            },
+        List<Job> jobs = await WithClientWithExecutorMockForExpectedArguments(
+            subject => subject.PopJobsAsync(
+                limit: count,
+                queueName: ExampleQueueName,
+                workerName: ExampleWorkerName
+            ),
             expectedArguments: [
                 "queue.pop",
                 0,
@@ -45,6 +37,11 @@ public class PopJobsTest : BaseReqlessClientTest
             ],
             returnValue: jobsJson
         );
+        Assert.Equal(count, jobs.Count);
+        var job = jobs[0];
+        Assert.NotNull(job);
+        Assert.IsType<Job>(job);
+        Assert.Equal(ExampleJid, job.Jid);
     }
 
     /// <summary>
@@ -57,16 +54,12 @@ public class PopJobsTest : BaseReqlessClientTest
         var count = 2;
         foreach (var emptyResult in new string[] { "[]", "{}" })
         {
-            await WithClientWithExecutorMockForExpectedArguments(
-                async subject =>
-                {
-                    List<Job> jobs = await subject.PopJobsAsync(
-                        limit: count,
-                        queueName: ExampleQueueName,
-                        workerName: ExampleWorkerName
-                    );
-                    Assert.Empty(jobs);
-                },
+            List<Job> jobs = await WithClientWithExecutorMockForExpectedArguments(
+                subject => subject.PopJobsAsync(
+                    limit: count,
+                    queueName: ExampleQueueName,
+                    workerName: ExampleWorkerName
+                ),
                 expectedArguments: [
                     "queue.pop",
                     0,
@@ -76,6 +69,7 @@ public class PopJobsTest : BaseReqlessClientTest
                 ],
                 returnValue: emptyResult
             );
+            Assert.Empty(jobs);
         }
     }
 

@@ -83,8 +83,8 @@ public partial class BaseReqlessClientTest
     /// ExecuteAsync.</param> <param name="returnValues">Array of RedisValue to
     /// return from ExecuteAsync.</param>
     /// it.</param>
-    protected static async Task WithClientWithExecutorMockForExpectedArguments(
-        Func<ReqlessClient, Task> action,
+    protected static async Task<T> WithClientWithExecutorMockForExpectedArguments<T>(
+        Func<ReqlessClient, Task<T>> action,
         RedisValue[]? expectedArguments = null,
         RedisValue? returnValue = null,
         RedisValue[]? returnValues = null
@@ -105,19 +105,50 @@ public partial class BaseReqlessClientTest
         }
         else
         {
-            RedisResult result = returnValues is not null ?
+            RedisResult redisResult = returnValues is not null ?
                 RedisResult.Create(returnValues) :
                 RedisResult.Create(returnValue ?? RedisValue.Null);
 
             executorMock = ExecutorMockForExpectedArguments(
                 expectedArguments,
-                Task.FromResult(result)
+                Task.FromResult(redisResult)
             );
         }
         using var subject = new PredictableNowReqlessClient(executorMock.Object);
-        await action(subject);
+        T result = await action(subject);
         executorMock.VerifyAll();
         executorMock.VerifyNoOtherCalls();
+        return result;
+    }
+
+    /// <summary>
+    /// Helper method for creating a ReqlessClient with a mocked RedisExecutor
+    /// and running an action with the client.
+    /// </summary>
+    /// <param name="action">A function that takes a ReqlessClient and tests
+    /// <param name="expectedArguments">The arguments that are expected to be
+    /// passed to ExecuteAsync.</param>
+    /// <param name="returnValue">Singular RedisValue to return from
+    /// ExecuteAsync.</param> <param name="returnValues">Array of RedisValue to
+    /// return from ExecuteAsync.</param>
+    /// it.</param>
+    protected static async Task WithClientWithExecutorMockForExpectedArguments(
+        Func<ReqlessClient, Task> action,
+        RedisValue[]? expectedArguments = null,
+        RedisValue? returnValue = null,
+        RedisValue[]? returnValues = null
+    )
+    {
+        await WithClientWithExecutorMockForExpectedArguments<int>(
+            async (ReqlessClient subject) =>
+            {
+                await action(subject);
+                return 0;
+            },
+            expectedArguments,
+            returnValue,
+            returnValues
+        );
     }
 
     /// <summary>

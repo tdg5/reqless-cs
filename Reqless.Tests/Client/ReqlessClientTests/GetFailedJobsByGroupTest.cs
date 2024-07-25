@@ -125,18 +125,12 @@ public class GetFailedJobsByGroupTest : BaseReqlessClientTest
         var total = 21;
         var jids = new List<string> { "jid1", "jid2" };
         var jobsJson = JsonSerializer.Serialize(jids);
-        await WithClientWithExecutorMockForExpectedArguments(
-            async subject =>
-            {
-                var result = await subject.GetFailedJobsByGroupAsync(
-                    group: ExampleGroup,
-                    limit: limit,
-                    offset: offset
-                );
-                Assert.IsType<JidsResult>(result);
-                Assert.Equal(total, result.Total);
-                Assert.Equal(jids, result.Jids);
-            },
+        var result = await WithClientWithExecutorMockForExpectedArguments(
+            subject => subject.GetFailedJobsByGroupAsync(
+                group: ExampleGroup,
+                limit: limit,
+                offset: offset
+            ),
             expectedArguments: [
                 "jobs.failedByGroup",
                 0,
@@ -146,5 +140,8 @@ public class GetFailedJobsByGroupTest : BaseReqlessClientTest
             ],
             returnValue: $$"""{"total":{{total}},"jobs":{{jobsJson}}}"""
         );
+        Assert.IsType<JidsResult>(result);
+        Assert.Equal(total, result.Total);
+        Assert.Equal(jids, result.Jids);
     }
 }

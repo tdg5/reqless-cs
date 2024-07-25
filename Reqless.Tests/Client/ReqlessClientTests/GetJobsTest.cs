@@ -21,21 +21,18 @@ public class GetJobsTest : BaseReqlessClientTest
     {
         var jobJson = JobFactory.JobJson(jid: Maybe<string?>.Some(ExampleJid));
         var otherJobJson = JobFactory.JobJson(jid: Maybe<string?>.Some(ExampleJidOther));
-        await WithClientWithExecutorMockForExpectedArguments(
-            static async subject =>
-            {
-                List<Job> jobs = await subject.GetJobsAsync(ExampleJid);
-                Assert.Equal(2, jobs.Count);
-                var expectedJids = new string[] { ExampleJid, ExampleJidOther };
-                foreach (var job in jobs)
-                {
-                    Assert.Contains(job.Jid, expectedJids);
-                    Assert.IsType<Job>(job);
-                }
-            },
+        List<Job> jobs = await WithClientWithExecutorMockForExpectedArguments(
+            subject => subject.GetJobsAsync(ExampleJid),
             expectedArguments: ["job.getMulti", 0, ExampleJid],
             returnValue: $"[{jobJson}, {otherJobJson}]"
         );
+        Assert.Equal(2, jobs.Count);
+        var expectedJids = new string[] { ExampleJid, ExampleJidOther };
+        foreach (var job in jobs)
+        {
+            Assert.Contains(job.Jid, expectedJids);
+            Assert.IsType<Job>(job);
+        }
     }
 
     /// <summary>
@@ -45,15 +42,12 @@ public class GetJobsTest : BaseReqlessClientTest
     [Fact]
     public async void ReturnsEmptyArrayIfServerRespondsWithEmptyArray()
     {
-        await WithClientWithExecutorMockForExpectedArguments(
-            static async subject =>
-            {
-                List<Job> jobs = await subject.GetJobsAsync(ExampleJid);
-                Assert.Empty(jobs);
-            },
+        List<Job> jobs = await WithClientWithExecutorMockForExpectedArguments(
+            subject => subject.GetJobsAsync(ExampleJid),
             expectedArguments: ["job.getMulti", 0, ExampleJid],
             returnValue: "[]"
         );
+        Assert.Empty(jobs);
     }
 
     /// <summary>
@@ -63,15 +57,12 @@ public class GetJobsTest : BaseReqlessClientTest
     [Fact]
     public async void ReturnsEmptyArrayIfServerRespondsWithEmptyObject()
     {
-        await WithClientWithExecutorMockForExpectedArguments(
-            static async subject =>
-            {
-                List<Job> jobs = await subject.GetJobsAsync(ExampleJid);
-                Assert.Empty(jobs);
-            },
+        List<Job> jobs = await WithClientWithExecutorMockForExpectedArguments(
+            subject => subject.GetJobsAsync(ExampleJid),
             expectedArguments: ["job.getMulti", 0, ExampleJid],
             returnValue: "{}"
         );
+        Assert.Empty(jobs);
     }
 
     /// <summary>

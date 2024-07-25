@@ -19,16 +19,13 @@ public class GetJobTest : BaseReqlessClientTest
     [Fact]
     public async void ReturnsTheJobReturnedByTheServer()
     {
-        await WithClientWithExecutorMockForExpectedArguments(
-            static async subject =>
-            {
-                Job? job = await subject.GetJobAsync(jid: ExampleJid);
-                Assert.NotNull(job);
-                Assert.Equal(ExampleJid, job.Jid);
-            },
+        Job? job = await WithClientWithExecutorMockForExpectedArguments(
+            subject => subject.GetJobAsync(jid: ExampleJid),
             expectedArguments: ["job.get", 0, ExampleJid],
             returnValue: JobFactory.JobJson(jid: Maybe<string?>.Some(ExampleJid))
         );
+        Assert.NotNull(job);
+        Assert.Equal(ExampleJid, job.Jid);
     }
 
     /// <summary>
@@ -38,15 +35,12 @@ public class GetJobTest : BaseReqlessClientTest
     [Fact]
     public async void ReturnsNullIfServerRespondsWithNull()
     {
-        await WithClientWithExecutorMockForExpectedArguments(
-            static async subject =>
-            {
-                Job? job = await subject.GetJobAsync(jid: ExampleJid);
-                Assert.Null(job);
-            },
+        Job? job = await WithClientWithExecutorMockForExpectedArguments(
+            subject => subject.GetJobAsync(jid: ExampleJid),
             expectedArguments: ["job.get", 0, ExampleJid],
             returnValue: null
         );
+        Assert.Null(job);
     }
 
     /// <summary>

@@ -111,12 +111,8 @@ public class GetQueueCountsTest : BaseReqlessClientTest
             Waiting = 0
         };
         var countsJson = JsonSerializer.Serialize(expectedCounts);
-        await WithClientWithExecutorMockForExpectedArguments(
-            async subject =>
-            {
-                var counts = await subject.GetQueueCountsAsync(ExampleQueueName);
-                Assert.Equivalent(expectedCounts, counts);
-            },
+        var counts = await WithClientWithExecutorMockForExpectedArguments(
+            subject => subject.GetQueueCountsAsync(ExampleQueueName),
             expectedArguments: [
                 "queue.counts",
                 0,
@@ -124,5 +120,6 @@ public class GetQueueCountsTest : BaseReqlessClientTest
             ],
             returnValue: countsJson
         );
+        Assert.Equivalent(expectedCounts, counts);
     }
 }

@@ -16,10 +16,7 @@ public class TimeoutJobTest : BaseReqlessClientTest
     public async void CallsTheExecutorWithTheExpectedArguments()
     {
         await WithClientWithExecutorMockForExpectedArguments(
-            static async subject =>
-            {
-                await subject.TimeoutJobAsync(ExampleJid);
-            },
+            subject => subject.TimeoutJobAsync(ExampleJid),
             expectedArguments: ["job.timeout", 0, ExampleJid]
         );
     }
@@ -33,10 +30,7 @@ public class TimeoutJobTest : BaseReqlessClientTest
     {
         var exception = await Assert.ThrowsAsync<ArgumentNullException>(
             () => WithClientWithExecutorMockForExpectedArguments(
-                static async subject =>
-                {
-                    await subject.TimeoutJobAsync(null!);
-                },
+                subject => subject.TimeoutJobAsync(null!),
                 expectedArguments: ["job.timeout", 0, ExampleJid]
             )
         );
@@ -54,10 +48,7 @@ public class TimeoutJobTest : BaseReqlessClientTest
         {
             var exception = await Assert.ThrowsAsync<ArgumentException>(
                 () => WithClientWithExecutorMockForExpectedArguments(
-                    async subject =>
-                    {
-                        await subject.TimeoutJobAsync(emptyString);
-                    },
+                    subject => subject.TimeoutJobAsync(emptyString),
                     expectedArguments: ["job.timeout", 0, ExampleJid]
                 )
             );

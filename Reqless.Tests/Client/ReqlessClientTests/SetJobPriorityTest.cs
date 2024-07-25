@@ -36,15 +36,11 @@ public class SetJobPriorityTest : BaseReqlessClientTest
     public async void CallsExecutorWithExpectedArguments()
     {
         var newPriority = 42;
-        await WithClientWithExecutorMockForExpectedArguments(
-            async subject =>
-            {
-                var updatedSuccessfully = await subject.SetJobPriorityAsync(
-                    jid: ExampleJid,
-                    priority: newPriority
-                );
-                Assert.True(updatedSuccessfully);
-            },
+        var updatedSuccessfully = await WithClientWithExecutorMockForExpectedArguments(
+            subject => subject.SetJobPriorityAsync(
+                jid: ExampleJid,
+                priority: newPriority
+            ),
             expectedArguments: [
                 "job.setPriority",
                 0,
@@ -53,5 +49,6 @@ public class SetJobPriorityTest : BaseReqlessClientTest
             ],
             returnValue: true
         );
+        Assert.True(updatedSuccessfully);
     }
 }

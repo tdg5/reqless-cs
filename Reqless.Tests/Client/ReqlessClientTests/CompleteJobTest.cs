@@ -211,17 +211,13 @@ public class CompleteJobTest : BaseReqlessClientTest
     [Fact]
     public async void CallsExecutorWithTheExpectedArguments()
     {
-        await WithClientWithExecutorMockForExpectedArguments(
-            static async subject =>
-            {
-                bool completedSuccessfully = await subject.CompleteJobAsync(
-                    data: ExampleData,
-                    jid: ExampleJid,
-                    queueName: ExampleQueueName,
-                    workerName: ExampleWorkerName
-                );
-                Assert.True(completedSuccessfully);
-            },
+        bool completedSuccessfully = await WithClientWithExecutorMockForExpectedArguments(
+            subject => subject.CompleteJobAsync(
+                data: ExampleData,
+                jid: ExampleJid,
+                queueName: ExampleQueueName,
+                workerName: ExampleWorkerName
+            ),
             expectedArguments: [
                 "job.complete",
                 0,
@@ -232,5 +228,6 @@ public class CompleteJobTest : BaseReqlessClientTest
             ],
             returnValue: "complete"
         );
+        Assert.True(completedSuccessfully);
     }
 }

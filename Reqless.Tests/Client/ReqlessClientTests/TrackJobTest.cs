@@ -74,15 +74,12 @@ public class TrackJobTest : BaseReqlessClientTest
     [Fact]
     public async void CallsExecutorWithExpectedArgumentsReturningTrue()
     {
-        await WithClientWithExecutorMockForExpectedArguments(
-            static async subject =>
-            {
-                var trackedSuccessfully = await subject.TrackJobAsync(ExampleJid);
-                Assert.True(trackedSuccessfully);
-            },
+        var trackedSuccessfully = await WithClientWithExecutorMockForExpectedArguments(
+            subject => subject.TrackJobAsync(ExampleJid),
             expectedArguments: ["job.track", 0, ExampleJid],
             returnValue: 1
         );
+        Assert.True(trackedSuccessfully);
     }
 
     /// <summary>
@@ -92,14 +89,11 @@ public class TrackJobTest : BaseReqlessClientTest
     [Fact]
     public async void CallsExecutorWithExpectedArgumentsReturningFalse()
     {
-        await WithClientWithExecutorMockForExpectedArguments(
-            static async subject =>
-            {
-                var trackedSuccessfully = await subject.TrackJobAsync(ExampleJid);
-                Assert.False(trackedSuccessfully);
-            },
+        var trackedSuccessfully = await WithClientWithExecutorMockForExpectedArguments(
+            subject => subject.TrackJobAsync(ExampleJid),
             expectedArguments: ["job.track", 0, ExampleJid],
             returnValue: 0
         );
+        Assert.False(trackedSuccessfully);
     }
 }

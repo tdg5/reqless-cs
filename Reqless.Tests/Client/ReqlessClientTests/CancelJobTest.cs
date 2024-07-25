@@ -14,14 +14,11 @@ public class CancelJobTest : BaseReqlessClientTest
     [Fact]
     public async void CallsExecutorWithTheExpectedArguments()
     {
-        await WithClientWithExecutorMockForExpectedArguments(
-            static async subject =>
-            {
-                bool cancelledSuccessfully = await subject.CancelJobAsync(jid: ExampleJid);
-                Assert.True(cancelledSuccessfully);
-            },
+        bool cancelledSuccessfully = await WithClientWithExecutorMockForExpectedArguments(
+            subject => subject.CancelJobAsync(jid: ExampleJid),
             expectedArguments: ["job.cancel", 0, ExampleJid],
             returnValue: ExampleJid
         );
+        Assert.True(cancelledSuccessfully);
     }
 }

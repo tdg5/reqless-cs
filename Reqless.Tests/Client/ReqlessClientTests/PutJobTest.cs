@@ -23,24 +23,20 @@ public class PutJobTest : BaseReqlessClientTest
         var dependencies = new string[] { "dependencies" };
         var tags = new string[] { "tags" };
         var throttles = new string[] { "throttles" };
-        await WithClientWithExecutorMockForExpectedArguments(
-            async subject =>
-            {
-                string jidFromPut = await subject.PutJobAsync(
-                    ExampleWorkerName,
-                    ExampleQueueName,
-                    ExampleClassName,
-                    ExampleData,
-                    delay,
-                    ExampleJid,
-                    priority,
-                    retries,
-                    dependencies,
-                    tags,
-                    throttles
-                );
-                Assert.Equal(ExampleJid, jidFromPut);
-            },
+        string jidFromPut = await WithClientWithExecutorMockForExpectedArguments(
+            subject => subject.PutJobAsync(
+                ExampleWorkerName,
+                ExampleQueueName,
+                ExampleClassName,
+                ExampleData,
+                delay,
+                ExampleJid,
+                priority,
+                retries,
+                dependencies,
+                tags,
+                throttles
+            ),
             expectedArguments: [
                 "queue.put",
                 0,
@@ -63,6 +59,7 @@ public class PutJobTest : BaseReqlessClientTest
             ],
             returnValue: ExampleJid
         );
+        Assert.Equal(ExampleJid, jidFromPut);
     }
 
     /// <summary>

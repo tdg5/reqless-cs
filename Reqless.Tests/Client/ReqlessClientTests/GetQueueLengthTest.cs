@@ -76,12 +76,8 @@ public class GetQueueLengthTest : BaseReqlessClientTest
     public async void ReturnsValidResultFromTheServer()
     {
         int expectedLength = 5;
-        await WithClientWithExecutorMockForExpectedArguments(
-            async subject =>
-            {
-                int actualLength = await subject.GetQueueLengthAsync(ExampleQueueName);
-                Assert.Equal(expectedLength, actualLength);
-            },
+        int actualLength = await WithClientWithExecutorMockForExpectedArguments(
+            subject => subject.GetQueueLengthAsync(ExampleQueueName),
             expectedArguments: [
                 "queue.length",
                 0,
@@ -89,5 +85,6 @@ public class GetQueueLengthTest : BaseReqlessClientTest
             ],
             returnValue: expectedLength
         );
+        Assert.Equal(expectedLength, actualLength);
     }
 }

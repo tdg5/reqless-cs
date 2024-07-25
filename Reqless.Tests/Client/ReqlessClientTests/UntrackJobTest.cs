@@ -74,15 +74,12 @@ public class UntrackJobTest : BaseReqlessClientTest
     [Fact]
     public async void CallsExecutorWithExpectedArgumentsReturningTrue()
     {
-        await WithClientWithExecutorMockForExpectedArguments(
-            static async subject =>
-            {
-                var untrackedSuccessfully = await subject.UntrackJobAsync(ExampleJid);
-                Assert.True(untrackedSuccessfully);
-            },
+        var untrackedSuccessfully = await WithClientWithExecutorMockForExpectedArguments(
+            subject => subject.UntrackJobAsync(ExampleJid),
             expectedArguments: ["job.untrack", 0, ExampleJid],
             returnValue: 1
         );
+        Assert.True(untrackedSuccessfully);
     }
 
     /// <summary>
@@ -92,14 +89,11 @@ public class UntrackJobTest : BaseReqlessClientTest
     [Fact]
     public async void CallsExecutorWithExpectedArgumentsReturningFalse()
     {
-        await WithClientWithExecutorMockForExpectedArguments(
-            static async subject =>
-            {
-                var untrackedSuccessfully = await subject.UntrackJobAsync(ExampleJid);
-                Assert.False(untrackedSuccessfully);
-            },
+        var untrackedSuccessfully = await WithClientWithExecutorMockForExpectedArguments(
+            subject => subject.UntrackJobAsync(ExampleJid),
             expectedArguments: ["job.untrack", 0, ExampleJid],
             returnValue: 0
         );
+        Assert.False(untrackedSuccessfully);
     }
 }

@@ -50,15 +50,12 @@ public class GetAllQueueCountsTest : BaseReqlessClientTest
     [Fact]
     public async void ReturnsEmptyArrayWhenServerReturnsJsonObject()
     {
-        await WithClientWithExecutorMockForExpectedArguments(
-            async subject =>
-            {
-                var allQueueCounts = await subject.GetAllQueueCountsAsync();
-                Assert.Empty(allQueueCounts);
-            },
+        var allQueueCounts = await WithClientWithExecutorMockForExpectedArguments(
+            subject => subject.GetAllQueueCountsAsync(),
             expectedArguments: ["queue.counts", 0],
             returnValue: "{}"
         );
+        Assert.Empty(allQueueCounts);
     }
 
     /// <summary>
@@ -81,15 +78,12 @@ public class GetAllQueueCountsTest : BaseReqlessClientTest
             Waiting = 0
         };
         var countsJson = JsonSerializer.Serialize<QueueCounts[]>([expectedCounts]);
-        await WithClientWithExecutorMockForExpectedArguments(
-            async subject =>
-            {
-                var allQueueCounts = await subject.GetAllQueueCountsAsync();
-                Assert.Single(allQueueCounts);
-                Assert.Equivalent(expectedCounts, allQueueCounts[0]);
-            },
+        var allQueueCounts = await WithClientWithExecutorMockForExpectedArguments(
+            subject => subject.GetAllQueueCountsAsync(),
             expectedArguments: ["queue.counts", 0],
             returnValue: countsJson
         );
+        Assert.Single(allQueueCounts);
+        Assert.Equivalent(expectedCounts, allQueueCounts[0]);
     }
 }

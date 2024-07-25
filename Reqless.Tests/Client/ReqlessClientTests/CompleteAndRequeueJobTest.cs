@@ -226,20 +226,16 @@ public class CompleteAndRequeueJobTest : BaseReqlessClientTest
         foreach (var includeDependencies in new bool[] { true, false })
         {
             var _dependencies = includeDependencies ? dependencies : null;
-            await WithClientWithExecutorMockForExpectedArguments(
-                async subject =>
-                {
-                    bool completedSuccessfully = await subject.CompleteAndRequeueJobAsync(
-                        data: ExampleData,
-                        dependencies: _dependencies,
-                        delay: delay,
-                        jid: ExampleJid,
-                        nextQueueName: nextQueueName,
-                        queueName: ExampleQueueName,
-                        workerName: ExampleWorkerName
-                    );
-                    Assert.True(completedSuccessfully);
-                },
+            bool completedSuccessfully = await WithClientWithExecutorMockForExpectedArguments(
+                subject => subject.CompleteAndRequeueJobAsync(
+                    data: ExampleData,
+                    dependencies: _dependencies,
+                    delay: delay,
+                    jid: ExampleJid,
+                    nextQueueName: nextQueueName,
+                    queueName: ExampleQueueName,
+                    workerName: ExampleWorkerName
+                ),
                 expectedArguments: [
                     "job.completeAndRequeue",
                     0,
@@ -255,6 +251,7 @@ public class CompleteAndRequeueJobTest : BaseReqlessClientTest
                 ],
                 returnValue: includeDependencies ? "depends" : "scheduled"
             );
+            Assert.True(completedSuccessfully);
         }
     }
 }
