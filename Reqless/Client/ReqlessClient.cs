@@ -478,6 +478,35 @@ public class ReqlessClient : IClient, IDisposable
     }
 
     /// <inheritdoc/>
+    public async Task<QueueStats> GetQueueStatsAsync(
+        string queueName,
+        DateTimeOffset? date = null
+    )
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(queueName, nameof(queueName));
+
+        var _date = date ?? DateTimeOffset.UtcNow;
+
+        var result = await _executor.ExecuteAsync([
+            "queue.stats",
+            Now(),
+            queueName,
+            _date.ToUnixTimeMilliseconds()
+        ]);
+
+        var queueStatsJson = (string?)result ?? throw new InvalidOperationException(
+            "Server returned unexpected null result."
+        );
+
+        var queueStats = JsonSerializer.Deserialize<QueueStats>(queueStatsJson)
+            ?? throw new JsonException(
+                $"Failed to deserialize queue stats JSON: {queueStatsJson}"
+            );
+
+        return queueStats;
+    }
+
+    /// <inheritdoc/>
     public async Task<RecurringJob?> GetRecurringJobAsync(string jid)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(jid, nameof(jid));

@@ -222,17 +222,28 @@ public interface IClient
     );
 
     /// <summary>
+    /// Get the counts of the number of jobs in various states in the queue with
+    /// the given name.
+    /// </summary>
+    /// <param name="queueName">The name of the queue to get the counts of.</param>
+    Task<QueueCounts> GetQueueCountsAsync(string queueName);
+
+    /// <summary>
     /// Get the count of jobs in the given queue.
     /// </summary>
     /// <param name="queueName">The name of the queue to get the length of.</param>
     Task<int> GetQueueLengthAsync(string queueName);
 
     /// <summary>
-    /// Get the counts of the number of jobs in various states in the queue with
-    /// the given name.
+    /// Get statistics on the durations that jobs spent in different states for
+    /// the queue with the given name for the given date;
     /// </summary>
-    /// <param name="queueName">The name of the queue to get the counts of.</param>
-    Task<QueueCounts> GetQueueCountsAsync(string queueName);
+    /// <param name="queueName">The name of the queue to retrieve stats
+    /// for.</param>
+    /// <param name="date">The date to retrieve stats for. Defaults to now.
+    /// Reqless will round the value to midnight of the given day, so exact
+    /// precision is not required.</param>
+    Task<QueueStats> GetQueueStatsAsync(string queueName, DateTimeOffset? date);
 
     /// <summary>
     /// Gets a recurring job by its job ID.

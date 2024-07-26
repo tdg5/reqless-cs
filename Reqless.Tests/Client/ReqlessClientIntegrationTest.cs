@@ -795,6 +795,37 @@ public class ReqlessClientIntegrationTest
     }
 
     /// <summary>
+    /// <see cref="ReqlessClient.GetQueueStatsAsync"/> returns stats of all
+    /// zeroes for a nacent queue.
+    /// </summary>
+    [Fact]
+    public async void GetQueueStatsAsync_ReturnsStatsForTheQueue()
+    {
+        var queueStats = await _client.GetQueueStatsAsync(ExampleQueueName);
+        Assert.Equal(0, queueStats.Failed);
+        Assert.Equal(0, queueStats.Failures);
+        Assert.Equal(0, queueStats.Retries);
+
+        Assert.Equal(0, queueStats.Run.Count);
+        Assert.Equal(0, queueStats.Run.Mean);
+        Assert.Equal(0, queueStats.Run.StandardDeviation);
+        Assert.Equal(148, queueStats.Run.Histogram.Length);
+        foreach (var datapoint in queueStats.Run.Histogram)
+        {
+            Assert.Equal(0, datapoint);
+        }
+
+        Assert.Equal(0, queueStats.Wait.Count);
+        Assert.Equal(0, queueStats.Wait.Mean);
+        Assert.Equal(0, queueStats.Wait.StandardDeviation);
+        Assert.Equal(148, queueStats.Wait.Histogram.Length);
+        foreach (var datapoint in queueStats.Wait.Histogram)
+        {
+            Assert.Equal(0, datapoint);
+        }
+    }
+
+    /// <summary>
     /// <see cref="ReqlessClient.RecurJobAtIntervalAsync"/> should return null
     /// if the recurring job doesn't exist.
     /// </summary>
