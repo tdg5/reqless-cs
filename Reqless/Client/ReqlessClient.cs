@@ -507,6 +507,30 @@ public class ReqlessClient : IClient, IDisposable
     }
 
     /// <inheritdoc/>
+    public async Task<Throttle> GetQueueThrottleAsync(string queueName)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(queueName, nameof(queueName));
+
+        var result = await _executor.ExecuteAsync([
+            "queue.throttle.get",
+            Now(),
+            queueName,
+        ]);
+
+        var throttleJson = (string?)result
+            ?? throw new InvalidOperationException(
+                "Server returned unexpected null result."
+            );
+
+        var throttle = JsonSerializer.Deserialize<Throttle>(throttleJson)
+            ?? throw new JsonException(
+                $"Failed to deserialize throttle JSON: {throttleJson}"
+            );
+
+        return throttle;
+    }
+
+    /// <inheritdoc/>
     public async Task<RecurringJob?> GetRecurringJobAsync(string jid)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(jid, nameof(jid));

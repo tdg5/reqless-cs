@@ -246,6 +246,13 @@ public interface IClient
     Task<QueueStats> GetQueueStatsAsync(string queueName, DateTimeOffset? date);
 
     /// <summary>
+    /// Get the throttle for the queue with the given name.
+    /// </summary>
+    /// <param name="queueName">The name of the queue to retrieve the throttle
+    /// for.</param>
+    Task<Throttle> GetQueueThrottleAsync(string queueName);
+
+    /// <summary>
     /// Gets a recurring job by its job ID.
     /// </summary>
     /// <param name="jid">The ID of the recurring job that should be

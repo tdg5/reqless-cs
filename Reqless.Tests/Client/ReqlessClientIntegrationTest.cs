@@ -826,6 +826,18 @@ public class ReqlessClientIntegrationTest
     }
 
     /// <summary>
+    /// <see cref="ReqlessClient.GetQueueThrottleAsync"/> should return throttle
+    /// information.
+    /// </summary>
+    [Fact]
+    public async void GetQueueThrottleAsync_ReturnsThrottleData()
+    {
+        Throttle subject = await _client.GetQueueThrottleAsync(ExampleQueueName);
+        Assert.Equal(0, subject.Maximum);
+        Assert.Equal($"ql:q:{ExampleQueueName}", subject.Id);
+    }
+
+    /// <summary>
     /// <see cref="ReqlessClient.RecurJobAtIntervalAsync"/> should return null
     /// if the recurring job doesn't exist.
     /// </summary>
