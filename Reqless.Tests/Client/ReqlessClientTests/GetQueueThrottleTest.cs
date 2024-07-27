@@ -94,6 +94,7 @@ public class GetQueueThrottleTest : BaseReqlessClientTest
         {
             Id = $"ql:q:{ExampleQueueName}",
             Maximum = 42,
+            Ttl = 60,
         };
         var throttleJson = JsonSerializer.Serialize(expectedThrottle);
         var throttle = await WithClientWithExecutorMockForExpectedArguments(

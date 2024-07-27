@@ -20,6 +20,13 @@ public class Throttle
     public required int Maximum { get; init; }
 
     /// <summary>
+    /// The TTL of the throttle. Values less than 0 indicate the throttle has no
+    /// associated expiration.
+    /// </summary>
+    [JsonPropertyName("ttl")]
+    public required int Ttl { get; init; }
+
+    /// <summary>
     /// Create a new <see cref="Throttle"/> instance.
     /// </summary>
     public Throttle()

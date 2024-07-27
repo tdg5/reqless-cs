@@ -17,7 +17,8 @@ public class ThrottleTest
     {
         var id = "throttle-id";
         var maximum = 42;
-        var throttleJson = $$"""{"id": "{{id}}", "maximum": {{maximum}}}""";
+        var ttl = 60;
+        var throttleJson = $$"""{"id": "{{id}}", "maximum": {{maximum}}, "ttl": {{ttl}}}""";
         var throttle = JsonSerializer.Deserialize<Throttle>(throttleJson);
         Assert.NotNull(throttle);
         Assert.Equal(id, throttle.Id);
@@ -35,6 +36,7 @@ public class ThrottleTest
         {
             Id = "throttle-id",
             Maximum = 42,
+            Ttl = 60,
         };
         var throttleJson = JsonSerializer.Serialize(expectedThrottle);
         var throttle = (
