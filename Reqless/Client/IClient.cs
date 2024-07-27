@@ -261,6 +261,12 @@ public interface IClient
     Task<RecurringJob?> GetRecurringJobAsync(string jid);
 
     /// <summary>
+    /// Get the throttle with the given name.
+    /// </summary>
+    /// <param name="throttleName">The name of the throttle to retrieve.</param>
+    Task<Throttle> GetThrottleAsync(string throttleName);
+
+    /// <summary>
     /// Gets the details of all currently traced jobs.
     /// </summary>
     Task<TrackedJobsResult> GetTrackedJobsAsync();
@@ -486,6 +492,25 @@ public interface IClient
     /// <returns>True if the job's priority was successfully updated, otherwise
     /// an exception is raised.</returns>
     Task<bool> SetJobPriorityAsync(string jid, int priority);
+
+    /// <summary>
+    /// Set the maximum for the throttle associated with the queue with the
+    /// given name.
+    /// </summary>
+    /// <param name="queueName">The name of the queue to modify the throttle
+    /// for.</param>
+    /// <param name="maximum">The new maximum value for the throttle.</param>
+    Task SetQueueThrottleAsync(string queueName, int maximum);
+
+    /// <summary>
+    /// Set the maximum for the throttle with the given name.
+    /// </summary>
+    /// <param name="throttleName">The name of the throttle to modify.</param>
+    /// <param name="maximum">The new maximum value for the throttle.</param>
+    /// <param name="ttl">The time-to-live for the throttle. By default doesn't
+    /// modify the throttle's TTL. Any value less than zero doesn't mutate the
+    /// TTL.</param>
+    Task SetThrottleAsync(string throttleName, int maximum, int ttl = 0);
 
     /// <summary>
     /// Timeout a job by its job ID.

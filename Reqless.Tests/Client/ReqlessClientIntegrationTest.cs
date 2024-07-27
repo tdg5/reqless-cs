@@ -37,6 +37,8 @@ public class ReqlessClientIntegrationTest
 
     private static readonly string ExampleQueueName = "example-queue-name";
 
+    private static readonly string ExampleThrottleName = "example-throttle-name";
+
     private static readonly string ExampleUpdatedData = """{"updated":true}""";
 
     private static readonly string ExampleWorkerName = "example-worker-name";
@@ -832,8 +834,10 @@ public class ReqlessClientIntegrationTest
     [Fact]
     public async void GetQueueThrottleAsync_ReturnsThrottleData()
     {
+        var maximum = 25;
+        await _client.SetQueueThrottleAsync(ExampleQueueName, maximum);
         Throttle subject = await _client.GetQueueThrottleAsync(ExampleQueueName);
-        Assert.Equal(0, subject.Maximum);
+        Assert.Equal(maximum, subject.Maximum);
         Assert.Equal($"ql:q:{ExampleQueueName}", subject.Id);
     }
 
@@ -891,6 +895,21 @@ public class ReqlessClientIntegrationTest
         Assert.Equal("recur", subject.State);
 
         await _client.CancelJobAsync(jid);
+    }
+
+    /// <summary>
+    /// <see cref="ReqlessClient.GetThrottleAsync"/> should return throttle
+    /// information.
+    /// </summary>
+    [Fact]
+    public async void GetThrottleAsync_ReturnsThrottleData()
+    {
+        var maximum = 25;
+        await _client.SetThrottleAsync(ExampleThrottleName, maximum);
+        Throttle subject = await _client.GetThrottleAsync(ExampleThrottleName);
+        Assert.Equal(maximum, subject.Maximum);
+        Assert.Equal(ExampleThrottleName, subject.Id);
+        Assert.Equal(-1, subject.Ttl);
     }
 
     /// <summary>
@@ -1503,6 +1522,36 @@ public class ReqlessClientIntegrationTest
         Job? updatedJob = await _client.GetJobAsync(jid);
         Assert.NotNull(updatedJob);
         Assert.Equal(newPriority, updatedJob.Priority);
+    }
+
+    /// <summary>
+    /// <see cref="ReqlessClient.SetQueueThrottleAsync"/> should set the
+    /// throttle maximum.
+    /// </summary>
+    [Fact]
+    public async void SetQueueThrottleAsync_SetsThrottleMaximum()
+    {
+        var maximum = 25;
+        await _client.SetQueueThrottleAsync(ExampleQueueName, maximum);
+        Throttle subject = await _client.GetQueueThrottleAsync(ExampleQueueName);
+        Assert.Equal(maximum, subject.Maximum);
+        Assert.Equal($"ql:q:{ExampleQueueName}", subject.Id);
+    }
+
+    /// <summary>
+    /// <see cref="ReqlessClient.SetThrottleAsync"/> should set the
+    /// throttle maximum.
+    /// </summary>
+    [Fact]
+    public async void SetThrottleAsync_SetsThrottleMaximumAndTtl()
+    {
+        var maximum = 25;
+        var ttl = 300;
+        await _client.SetThrottleAsync(ExampleThrottleName, maximum, ttl);
+        Throttle subject = await _client.GetThrottleAsync(ExampleThrottleName);
+        Assert.Equal(maximum, subject.Maximum);
+        Assert.Equal(ExampleThrottleName, subject.Id);
+        Assert.InRange(subject.Ttl, ttl - 30, ttl);
     }
 
     /// <summary>

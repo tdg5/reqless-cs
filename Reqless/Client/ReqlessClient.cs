@@ -507,27 +507,10 @@ public class ReqlessClient : IClient, IDisposable
     }
 
     /// <inheritdoc/>
-    public async Task<Throttle> GetQueueThrottleAsync(string queueName)
+    public Task<Throttle> GetQueueThrottleAsync(string queueName)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(queueName, nameof(queueName));
-
-        var result = await _executor.ExecuteAsync([
-            "queue.throttle.get",
-            Now(),
-            queueName,
-        ]);
-
-        var throttleJson = (string?)result
-            ?? throw new InvalidOperationException(
-                "Server returned unexpected null result."
-            );
-
-        var throttle = JsonSerializer.Deserialize<Throttle>(throttleJson)
-            ?? throw new JsonException(
-                $"Failed to deserialize throttle JSON: {throttleJson}"
-            );
-
-        return throttle;
+        return ExecuteThrottleQuery("queue.throttle.get", queueName);
     }
 
     /// <inheritdoc/>
@@ -551,6 +534,13 @@ public class ReqlessClient : IClient, IDisposable
             );
 
         return recurringJob;
+    }
+
+    /// <inheritdoc/>
+    public Task<Throttle> GetThrottleAsync(string throttleName)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(throttleName, nameof(throttleName));
+        return ExecuteThrottleQuery("throttle.get", throttleName);
     }
 
     /// <inheritdoc/>
@@ -924,6 +914,54 @@ public class ReqlessClient : IClient, IDisposable
     }
 
     /// <inheritdoc/>
+    public async Task SetQueueThrottleAsync(
+        string queueName,
+        int maximum
+    )
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(queueName, nameof(queueName));
+        if (maximum < 0)
+        {
+            throw new ArgumentOutOfRangeException(
+                nameof(maximum),
+                "Value must be greater than or equal to zero."
+            );
+        }
+
+        await _executor.ExecuteAsync([
+            "queue.throttle.set",
+            Now(),
+            queueName,
+            maximum,
+        ]);
+    }
+
+    /// <inheritdoc/>
+    public async Task SetThrottleAsync(
+        string throttleName,
+        int maximum,
+        int ttl = 0
+    )
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(throttleName, nameof(throttleName));
+        if (maximum < 0)
+        {
+            throw new ArgumentOutOfRangeException(
+                nameof(maximum),
+                "Value must be greater than or equal to zero."
+            );
+        }
+
+        await _executor.ExecuteAsync([
+            "throttle.set",
+            Now(),
+            throttleName,
+            maximum,
+            ttl,
+        ]);
+    }
+
+    /// <inheritdoc/>
     public async Task TimeoutJobAsync(string jid)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(jid, nameof(jid));
@@ -988,6 +1026,41 @@ public class ReqlessClient : IClient, IDisposable
         );
 
         return removedCount == 1;
+    }
+
+    /// <summary>
+    /// Execute a query for a throttle and return the result.
+    /// </summary>
+    /// <param name="queryCommand">The specific throttle query to
+    /// execute.</param>
+    /// <param name="identifier">An identifier for the throttle to
+    /// retrieve.</param>
+    /// <exception cref="InvalidOperationException">Thrown if the server returns
+    /// a null result.</exception>
+    /// <exception cref="JsonException">Thrown if the JSON returned by the
+    /// server can't be deserialized.</exception>
+    protected async Task<Throttle> ExecuteThrottleQuery(
+        string queryCommand,
+        string identifier
+    )
+    {
+        var result = await _executor.ExecuteAsync([
+            queryCommand,
+            Now(),
+            identifier,
+        ]);
+
+        var throttleJson = (string?)result
+            ?? throw new InvalidOperationException(
+                "Server returned unexpected null result."
+            );
+
+        var throttle = JsonSerializer.Deserialize<Throttle>(throttleJson)
+            ?? throw new JsonException(
+                $"Failed to deserialize throttle JSON: {throttleJson}"
+            );
+
+        return throttle;
     }
 
     /// <inheritdoc/>

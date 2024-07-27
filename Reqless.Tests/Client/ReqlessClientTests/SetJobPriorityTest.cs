@@ -1,4 +1,5 @@
 using Reqless.Client;
+using Reqless.Tests.TestHelpers;
 
 namespace Reqless.Tests.Client.ReqlessClientTests;
 
@@ -26,6 +27,30 @@ public class SetJobPriorityTest : BaseReqlessClientTest
             "Value cannot be null. (Parameter 'jid')",
             exception.Message
         );
+    }
+
+    /// <summary>
+    /// <see cref="ReqlessClient.SetJobPriorityAsync"/> should throw if jid is
+    /// empty or whitespace.
+    /// </summary>
+    [Fact]
+    public async void ThrowsIfJidIsEmptyOrWhitespace()
+    {
+        foreach (var emptyString in TestConstants.EmptyStrings)
+        {
+            var exception = await Assert.ThrowsAsync<ArgumentException>(
+                () => WithClientWithExecutorMockForExpectedArguments(
+                    subject => subject.SetJobPriorityAsync(
+                        jid: emptyString,
+                        priority: 21
+                    )
+                )
+            );
+            Assert.Equal(
+                "The value cannot be an empty string or composed entirely of whitespace. (Parameter 'jid')",
+                exception.Message
+            );
+        }
     }
 
     /// <summary>

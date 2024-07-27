@@ -61,6 +61,11 @@ public partial class BaseReqlessClientTest
     protected static readonly string ExampleThrottle = "example-throttle";
 
     /// <summary>
+    /// An example throttle name.
+    /// </summary>
+    protected static readonly string ExampleThrottleName = "example-throttle-name";
+
+    /// <summary>
     /// An example worker name.
     /// </summary>
     protected static readonly string ExampleWorkerName = "example-worker-name";
