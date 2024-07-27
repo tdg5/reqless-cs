@@ -439,8 +439,26 @@ public interface IClient
     /// Update the given job to remove the given tags.
     /// </summary>
     /// <param name="jid">The ID of the job that should have tags removed.</param>
-    /// <param name="tags">The tags that should be removed to the job.</param>
+    /// <param name="tags">The tags that should be removed from the job.</param>
     Task<List<string>> RemoveTagsFromJobAsync(string jid, params string[] tags);
+
+    /// <summary>
+    /// Update the given recurring job to remove the given tag.
+    /// </summary>
+    /// <param name="jid">The ID of the recurring job that the tag should be
+    /// removed from</param>
+    /// <param name="tag">The tag that should be removed from the recurring
+    /// job.</param>
+    Task<List<string>> RemoveTagFromRecurringJobAsync(string jid, string tag);
+
+    /// <summary>
+    /// Update the given recurring job to remove the given tags.
+    /// </summary>
+    /// <param name="jid">The ID of the recurring job that should have tags
+    /// removed.</param>
+    /// <param name="tags">The tags that should be removed from the recurring
+    /// job.</param>
+    Task<List<string>> RemoveTagsFromRecurringJobAsync(string jid, params string[] tags);
 
     /// <summary>
     /// Requeue the given job to the given queue. Similar in functionality to

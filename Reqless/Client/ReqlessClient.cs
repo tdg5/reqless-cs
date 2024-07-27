@@ -109,7 +109,7 @@ public class ReqlessClient : IClient, IDisposable
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(jid, nameof(jid));
         ArgumentException.ThrowIfNullOrWhiteSpace(tag, nameof(tag));
-        return AddTagsToJobAsyncCore("job.addTag", jid, tag);
+        return UpdateJobTagsAsyncCore("job.addTag", jid, tag);
     }
 
     /// <inheritdoc />
@@ -118,7 +118,7 @@ public class ReqlessClient : IClient, IDisposable
         ArgumentException.ThrowIfNullOrWhiteSpace(jid, nameof(jid));
         ArgumentNullException.ThrowIfNull(tags, nameof(tags));
         ValidationHelper.ThrowIfAnyNullOrWhitespace(tags, nameof(tags));
-        return AddTagsToJobAsyncCore("job.addTag", jid, tags);
+        return UpdateJobTagsAsyncCore("job.addTag", jid, tags);
     }
 
     /// <inheritdoc />
@@ -126,7 +126,7 @@ public class ReqlessClient : IClient, IDisposable
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(jid, nameof(jid));
         ArgumentException.ThrowIfNullOrWhiteSpace(tag, nameof(tag));
-        return AddTagsToJobAsyncCore("recurringJob.addTag", jid, tag);
+        return UpdateJobTagsAsyncCore("recurringJob.addTag", jid, tag);
     }
 
     /// <inheritdoc />
@@ -135,7 +135,7 @@ public class ReqlessClient : IClient, IDisposable
         ArgumentException.ThrowIfNullOrWhiteSpace(jid, nameof(jid));
         ArgumentNullException.ThrowIfNull(tags, nameof(tags));
         ValidationHelper.ThrowIfAnyNullOrWhitespace(tags, nameof(tags));
-        return AddTagsToJobAsyncCore("recurringJob.addTag", jid, tags);
+        return UpdateJobTagsAsyncCore("recurringJob.addTag", jid, tags);
     }
 
     /// <inheritdoc />
@@ -779,38 +779,41 @@ public class ReqlessClient : IClient, IDisposable
     }
 
     /// <inheritdoc />
-    public async Task<List<string>> RemoveTagFromJobAsync(string jid, string tag)
+    public Task<List<string>> RemoveTagFromJobAsync(string jid, string tag)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(jid, nameof(jid));
         ArgumentException.ThrowIfNullOrWhiteSpace(tag, nameof(tag));
 
-        return await RemoveTagsFromJobAsync(jid, tag);
+        return UpdateJobTagsAsyncCore("job.removeTag", jid, tag);
     }
 
     /// <inheritdoc />
-    public async Task<List<string>> RemoveTagsFromJobAsync(string jid, params string[] tags)
+    public Task<List<string>> RemoveTagsFromJobAsync(string jid, params string[] tags)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(jid, nameof(jid));
         ArgumentNullException.ThrowIfNull(tags, nameof(tags));
         ValidationHelper.ThrowIfAnyNullOrWhitespace(tags, nameof(tags));
 
-        var arguments = new RedisValue[tags.Length + 3];
-        arguments[0] = "job.removeTag";
-        arguments[1] = Now();
-        arguments[2] = jid;
-        CopyStringArguments(tags, ref arguments, 3);
+        return UpdateJobTagsAsyncCore("job.removeTag", jid, tags);
+    }
 
-        var result = await _executor.ExecuteAsync(arguments);
+    /// <inheritdoc />
+    public Task<List<string>> RemoveTagFromRecurringJobAsync(string jid, string tag)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(jid, nameof(jid));
+        ArgumentException.ThrowIfNullOrWhiteSpace(tag, nameof(tag));
 
-        var tagsJson = (string?)result
-            ?? throw new InvalidOperationException(
-                "Server returned unexpected null result."
-            );
+        return UpdateJobTagsAsyncCore("recurringJob.removeTag", jid, tag);
+    }
 
-        var resultTags = JsonSerializer.Deserialize<List<string>>(tagsJson)
-            ?? throw new JsonException($"Failed to deserialize tags JSON: {tagsJson}");
+    /// <inheritdoc />
+    public Task<List<string>> RemoveTagsFromRecurringJobAsync(string jid, params string[] tags)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(jid, nameof(jid));
+        ArgumentNullException.ThrowIfNull(tags, nameof(tags));
+        ValidationHelper.ThrowIfAnyNullOrWhitespace(tags, nameof(tags));
 
-        return resultTags;
+        return UpdateJobTagsAsyncCore("recurringJob.removeTag", jid, tags);
     }
 
     /// <inheritdoc />
@@ -1060,19 +1063,20 @@ public class ReqlessClient : IClient, IDisposable
     }
 
     /// <summary>
-    /// Handle the common logic of tagging a job or recurring job with one or
-    /// more tags.
+    /// Handle the common logic of adding or removing tags to/from a job or
+    /// recurring job.
     /// </summary>
-    /// <param name="tagCommand">The Reqless command to invoke to tag the
+    /// <param name="tagCommand">The Reqless command to invoke to update the job
+    /// tags.</param>
+    /// <param name="jid">The ID of the job or recurring job to update tags for.</param>
+    /// <param name="tags">The tags to add/remove to/from the job or recurring
     /// job.</param>
-    /// <param name="jid">The ID of the job or recurring job to add tags to.</param>
-    /// <param name="tags">The tags to add to the job or recurring job.</param>
     /// <returns>The updated list of job tags.</returns>
     /// <exception cref="InvalidOperationException">Thrown if server returns
     /// unexpected null result.</exception>
     /// <exception cref="JsonException">Thrown if the JSON returned by the
     /// server can't be deserialized.</exception>
-    protected async Task<List<string>> AddTagsToJobAsyncCore(
+    protected async Task<List<string>> UpdateJobTagsAsyncCore(
         string tagCommand,
         string jid,
         params string[] tags
