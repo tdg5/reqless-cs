@@ -23,7 +23,7 @@ public partial class BaseReqlessClientTest
     /// <summary>
     /// An example failure group.
     /// </summary>
-    protected static readonly string ExampleGroup = "example-group";
+    protected static readonly string ExampleGroupName = "example-group-name";
 
     /// <summary>
     /// An example job ID.

@@ -16,7 +16,7 @@ public class FailureGroupsCountsTest : BaseReqlessClientTest
     public async void CallsExecutorWithTheExpectedArguments()
     {
         var expectedResult = new Dictionary<string, int>() {
-            { ExampleGroup, 1 },
+            { ExampleGroupName, 1 },
         };
         string failedCountsJson = JsonSerializer.Serialize(expectedResult);
         Dictionary<string, int> failedCounts = await WithClientWithExecutorMockForExpectedArguments(

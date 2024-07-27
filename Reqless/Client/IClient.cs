@@ -109,20 +109,20 @@ public interface IClient
     /// </summary>
     /// <param name="jid">The job ID.</param>
     /// <param name="workerName">The name of the worker that failed the job.</param>
-    /// <param name="group">The group or kind of the failure.</param>
+    /// <param name="groupName">The group name or kind of the failure.</param>
     /// <param name="message">The message for the failure.</param>
     /// <param name="data">Optional, updated data for the job.</param>
     Task<bool> FailJobAsync(
         string jid,
         string workerName,
-        string group,
+        string groupName,
         string message,
         string? data = null
     );
 
     /// <summary>
-    /// Returns a dictionary where each key is a known failure group and each
-    /// value is the count of jobs that have failed with that group.
+    /// Returns a dictionary where each key is a known failure group name and
+    /// each value is the count of jobs that have failed with that group.
     /// </summary>
     Task<Dictionary<string, int>> FailureGroupsCountsAsync();
 
@@ -139,15 +139,15 @@ public interface IClient
     );
 
     /// <summary>
-    /// Gets the IDs of jobs that have failed with the given failure group.
+    /// Gets the IDs of jobs that have failed with the given failure group name.
     /// </summary>
-    /// <param name="group">The name of the failure group to retrieve job
+    /// <param name="groupName">The name of the failure group to retrieve job
     /// failures for.</param>
     /// <param name="limit">The maximum number of job IDs to retrieve.</param>
     /// <param name="offset">The number of job IDs to skip before returning
     /// results.</param>
     Task<JidsResult> GetFailedJobsByGroupAsync(
-        string group,
+        string groupName,
         int limit = 25,
         int offset = 0
     );
@@ -470,7 +470,7 @@ public interface IClient
     /// <param name="queueName">The name of the queue.</param>
     /// <param name="workerName">The name of the worker that is requesting to
     /// retry the job.</param>
-    /// <param name="group">The group or kind of the failure.</param>
+    /// <param name="groupName">The group or kind of the failure.</param>
     /// <param name="message">The message for the failure.</param>
     /// <param name="delay">The delay in seconds before the job is retried.</param>
     /// <returns>True if the job was successfully queued to be retried, false if
@@ -479,7 +479,7 @@ public interface IClient
         string jid,
         string queueName,
         string workerName,
-        string group,
+        string groupName,
         string message,
         int delay = 0
     );

@@ -229,7 +229,7 @@ public class ReqlessClient : IClient, IDisposable
     public async Task<bool> FailJobAsync(
         string jid,
         string workerName,
-        string group,
+        string groupName,
         string message,
         string? data = null
     )
@@ -239,7 +239,7 @@ public class ReqlessClient : IClient, IDisposable
         arguments[1] = Now();
         arguments[2] = jid;
         arguments[3] = workerName;
-        arguments[4] = group;
+        arguments[4] = groupName;
         arguments[5] = message;
         if (data != null)
         {
@@ -358,14 +358,14 @@ public class ReqlessClient : IClient, IDisposable
 
     /// <inheritdoc/>
     public Task<JidsResult> GetFailedJobsByGroupAsync(
-        string group,
+        string groupName,
         int limit = 25,
         int offset = 0
     )
     {
-        ArgumentException.ThrowIfNullOrWhiteSpace(group, nameof(group));
+        ArgumentException.ThrowIfNullOrWhiteSpace(groupName, nameof(groupName));
 
-        return ExecuteJobsQuery("jobs.failedByGroup", group, limit, offset);
+        return ExecuteJobsQuery("jobs.failedByGroup", groupName, limit, offset);
     }
 
     /// <inheritdoc/>
@@ -874,7 +874,7 @@ public class ReqlessClient : IClient, IDisposable
         string jid,
         string queueName,
         string workerName,
-        string group,
+        string groupName,
         string message,
         int delay = 0
     )
@@ -886,7 +886,7 @@ public class ReqlessClient : IClient, IDisposable
             queueName,
             workerName,
             delay,
-            group,
+            groupName,
             message,
         ]);
 

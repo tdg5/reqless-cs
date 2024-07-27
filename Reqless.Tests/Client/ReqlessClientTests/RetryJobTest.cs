@@ -21,7 +21,7 @@ public class RetryJobTest : BaseReqlessClientTest
                 ExampleJid,
                 ExampleQueueName,
                 ExampleWorkerName,
-                ExampleGroup,
+                ExampleGroupName,
                 ExampleMessage,
                 delay
             ),
@@ -32,7 +32,7 @@ public class RetryJobTest : BaseReqlessClientTest
                 ExampleQueueName,
                 ExampleWorkerName,
                 delay,
-                ExampleGroup,
+                ExampleGroupName,
                 ExampleMessage,
             ],
             returnValue: 1
@@ -55,7 +55,7 @@ public class RetryJobTest : BaseReqlessClientTest
                     ExampleJid,
                     ExampleQueueName,
                     ExampleWorkerName,
-                    ExampleGroup,
+                    ExampleGroupName,
                     ExampleMessage,
                     delay
                 ),
@@ -66,7 +66,7 @@ public class RetryJobTest : BaseReqlessClientTest
                     ExampleQueueName,
                     ExampleWorkerName,
                     delay,
-                    ExampleGroup,
+                    ExampleGroupName,
                     ExampleMessage,
                 ],
                 returnValue: null

@@ -31,7 +31,7 @@ public class ReqlessClientIntegrationTest
 
     private static readonly string ExampleData = "{}";
 
-    private static readonly string ExampleGroup = "example-group";
+    private static readonly string ExampleGroupName = "example-group-name";
 
     private static readonly string ExampleMessage = "example-message";
 
@@ -363,7 +363,7 @@ public class ReqlessClientIntegrationTest
         var failedSuccessfully = await _client.FailJobAsync(
             jid,
             ExampleWorkerName,
-            ExampleGroup,
+            ExampleGroupName,
             ExampleMessage
         );
         Assert.True(failedSuccessfully);
@@ -372,7 +372,7 @@ public class ReqlessClientIntegrationTest
         Assert.Equal("failed", job.State);
         Assert.NotNull(job.Failure);
         Assert.Equal(ExampleWorkerName, job.Failure.WorkerName);
-        Assert.Equal(ExampleGroup, job.Failure.Group);
+        Assert.Equal(ExampleGroupName, job.Failure.Group);
         Assert.Equal(ExampleMessage, job.Failure.Message);
     }
 
@@ -394,7 +394,7 @@ public class ReqlessClientIntegrationTest
         var failedSuccessfully = await _client.FailJobAsync(
             jid,
             ExampleWorkerName,
-            ExampleGroup,
+            ExampleGroupName,
             ExampleMessage,
             ExampleUpdatedData
         );
@@ -405,7 +405,7 @@ public class ReqlessClientIntegrationTest
         Assert.Equal(ExampleUpdatedData, job.Data);
         Assert.NotNull(job.Failure);
         Assert.Equal(ExampleWorkerName, job.Failure.WorkerName);
-        Assert.Equal(ExampleGroup, job.Failure.Group);
+        Assert.Equal(ExampleGroupName, job.Failure.Group);
         Assert.Equal(ExampleMessage, job.Failure.Message);
     }
 
@@ -430,13 +430,13 @@ public class ReqlessClientIntegrationTest
         var failedSuccessfully = await _client.FailJobAsync(
             jid,
             ExampleWorkerName,
-            ExampleGroup,
+            ExampleGroupName,
             ExampleMessage
         );
         Assert.True(failedSuccessfully);
         var failedCounts = await _client.FailureGroupsCountsAsync();
         Assert.Equal(
-            new Dictionary<string, int> { { ExampleGroup, 1 } },
+            new Dictionary<string, int> { { ExampleGroupName, 1 } },
             failedCounts
         );
     }
@@ -599,18 +599,18 @@ public class ReqlessClientIntegrationTest
             var failedSuccessfully = await _client.FailJobAsync(
                 jid,
                 ExampleWorkerName,
-                ExampleGroup,
+                ExampleGroupName,
                 ExampleMessage
             );
             Assert.True(failedSuccessfully);
             failedJids[index] = jid;
         }
-        var jidsResult = await _client.GetFailedJobsByGroupAsync(ExampleGroup);
+        var jidsResult = await _client.GetFailedJobsByGroupAsync(ExampleGroupName);
         Assert.Equivalent(failedJids, jidsResult.Jids);
         Assert.Equal(failedJobCount, jidsResult.Total);
 
         jidsResult = await _client.GetFailedJobsByGroupAsync(
-            ExampleGroup,
+            ExampleGroupName,
             offset: failedJobCount
         );
         Assert.Empty(jidsResult.Jids);
@@ -1413,7 +1413,7 @@ public class ReqlessClientIntegrationTest
             jid,
             ExampleQueueName,
             ExampleWorkerName,
-            ExampleGroup,
+            ExampleGroupName,
             ExampleMessage
         );
         Assert.True(retrySuccessful);
@@ -1422,7 +1422,7 @@ public class ReqlessClientIntegrationTest
         Assert.Equal("waiting", retriedJob.State);
         Assert.NotNull(retriedJob.Failure);
         Assert.Equal(ExampleWorkerName, retriedJob.Failure.WorkerName);
-        Assert.Equal(ExampleGroup, retriedJob.Failure.Group);
+        Assert.Equal(ExampleGroupName, retriedJob.Failure.Group);
         Assert.Equal(ExampleMessage, retriedJob.Failure.Message);
         Assert.Equal(retries - 1, retriedJob.Remaining);
     }
@@ -1451,7 +1451,7 @@ public class ReqlessClientIntegrationTest
             jid,
             ExampleQueueName,
             ExampleWorkerName,
-            ExampleGroup,
+            ExampleGroupName,
             ExampleMessage
         );
         Assert.False(retrySuccessful);
@@ -1460,7 +1460,7 @@ public class ReqlessClientIntegrationTest
         Assert.Equal("failed", failedJob.State);
         Assert.NotNull(failedJob.Failure);
         Assert.Equal(ExampleWorkerName, failedJob.Failure.WorkerName);
-        Assert.Equal(ExampleGroup, failedJob.Failure.Group);
+        Assert.Equal(ExampleGroupName, failedJob.Failure.Group);
         Assert.Equal(ExampleMessage, failedJob.Failure.Message);
     }
 
@@ -1485,7 +1485,7 @@ public class ReqlessClientIntegrationTest
         Assert.Equal(retries, job.Remaining);
         var retrySuccessful = await _client.RetryJobAsync(
             delay: 300,
-            group: ExampleGroup,
+            groupName: ExampleGroupName,
             jid: jid,
             message: ExampleMessage,
             queueName: ExampleQueueName,
@@ -1497,7 +1497,7 @@ public class ReqlessClientIntegrationTest
         Assert.Equal("scheduled", failedJob.State);
         Assert.NotNull(failedJob.Failure);
         Assert.Equal(ExampleWorkerName, failedJob.Failure.WorkerName);
-        Assert.Equal(ExampleGroup, failedJob.Failure.Group);
+        Assert.Equal(ExampleGroupName, failedJob.Failure.Group);
         Assert.Equal(ExampleMessage, failedJob.Failure.Message);
     }
 

@@ -12,38 +12,38 @@ public class GetFailedJobsByGroupTest : BaseReqlessClientTest
 {
     /// <summary>
     /// <see cref="ReqlessClient.GetFailedJobsByGroupAsync"/> should throw if group
-    /// is null.
+    /// name is null.
     /// </summary>
     [Fact]
-    public async void ShouldThrowIfGroupIsNull()
+    public async void ShouldThrowIfGroupNameIsNull()
     {
         var exception = await Assert.ThrowsAsync<ArgumentNullException>(
             () => WithClientWithExecutorMockForExpectedArguments(
-                subject => subject.GetFailedJobsByGroupAsync(group: null!)
+                subject => subject.GetFailedJobsByGroupAsync(groupName: null!)
             )
         );
         Assert.Equal(
-            "Value cannot be null. (Parameter 'group')",
+            "Value cannot be null. (Parameter 'groupName')",
             exception.Message
         );
     }
 
     /// <summary>
     /// <see cref="ReqlessClient.GetFailedJobsByGroupAsync"/> should throw if group
-    /// is empty or only whitespace.
+    /// name is empty or only whitespace.
     /// </summary>
     [Fact]
-    public async void ShouldThrowIfGroupIsEmptyOrOnlyWhitespace()
+    public async void ShouldThrowIfGroupNameIsEmptyOrOnlyWhitespace()
     {
         foreach (var emptyString in TestConstants.EmptyStrings)
         {
             var exception = await Assert.ThrowsAsync<ArgumentException>(
                 () => WithClientWithExecutorMockForExpectedArguments(
-                    subject => subject.GetFailedJobsByGroupAsync(group: emptyString)
+                    subject => subject.GetFailedJobsByGroupAsync(groupName: emptyString)
                 )
             );
             Assert.Equal(
-                "The value cannot be an empty string or composed entirely of whitespace. (Parameter 'group')",
+                "The value cannot be an empty string or composed entirely of whitespace. (Parameter 'groupName')",
                 exception.Message
             );
         }
@@ -61,14 +61,14 @@ public class GetFailedJobsByGroupTest : BaseReqlessClientTest
         var exception = await Assert.ThrowsAsync<InvalidOperationException>(
             () => WithClientWithExecutorMockForExpectedArguments(
                 subject => subject.GetFailedJobsByGroupAsync(
-                    group: ExampleGroup,
+                    groupName: ExampleGroupName,
                     limit: limit,
                     offset: offset
                 ),
                 expectedArguments: [
                     "jobs.failedByGroup",
                     0,
-                    ExampleGroup,
+                    ExampleGroupName,
                     offset,
                     limit
                 ],
@@ -93,14 +93,14 @@ public class GetFailedJobsByGroupTest : BaseReqlessClientTest
         var exception = await Assert.ThrowsAsync<JsonException>(
             () => WithClientWithExecutorMockForExpectedArguments(
                 subject => subject.GetFailedJobsByGroupAsync(
-                    group: ExampleGroup,
+                    groupName: ExampleGroupName,
                     limit: limit,
                     offset: offset
                 ),
                 expectedArguments: [
                     "jobs.failedByGroup",
                     0,
-                    ExampleGroup,
+                    ExampleGroupName,
                     offset,
                     limit
                 ],
@@ -127,14 +127,14 @@ public class GetFailedJobsByGroupTest : BaseReqlessClientTest
         var jobsJson = JsonSerializer.Serialize(jids);
         var result = await WithClientWithExecutorMockForExpectedArguments(
             subject => subject.GetFailedJobsByGroupAsync(
-                group: ExampleGroup,
+                groupName: ExampleGroupName,
                 limit: limit,
                 offset: offset
             ),
             expectedArguments: [
                 "jobs.failedByGroup",
                 0,
-                ExampleGroup,
+                ExampleGroupName,
                 offset,
                 limit
             ],

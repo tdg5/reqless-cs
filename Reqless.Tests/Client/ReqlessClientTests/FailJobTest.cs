@@ -17,7 +17,7 @@ public class FailJobTest : BaseReqlessClientTest
         bool failedSuccessfully = await WithClientWithExecutorMockForExpectedArguments(
             subject => subject.FailJobAsync(
                 data: ExampleData,
-                group: ExampleGroup,
+                groupName: ExampleGroupName,
                 jid: ExampleJid,
                 message: ExampleMessage,
                 workerName: ExampleWorkerName
@@ -27,7 +27,7 @@ public class FailJobTest : BaseReqlessClientTest
                 0,
                 ExampleJid,
                 ExampleWorkerName,
-                ExampleGroup,
+                ExampleGroupName,
                 ExampleMessage,
                 ExampleData
             ],
@@ -45,7 +45,7 @@ public class FailJobTest : BaseReqlessClientTest
     {
         bool failedSuccessfully = await WithClientWithExecutorMockForExpectedArguments(
             subject => subject.FailJobAsync(
-                group: ExampleGroup,
+                groupName: ExampleGroupName,
                 jid: ExampleJid,
                 message: ExampleMessage,
                 workerName: ExampleWorkerName
@@ -55,7 +55,7 @@ public class FailJobTest : BaseReqlessClientTest
                 0,
                 ExampleJid,
                 ExampleWorkerName,
-                ExampleGroup,
+                ExampleGroupName,
                 ExampleMessage
             ],
             returnValue: ExampleJid
