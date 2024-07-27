@@ -145,6 +145,53 @@ public class ReqlessClientIntegrationTest
     }
 
     /// <summary>
+    /// <see cref="ReqlessClient.AddTagToRecurringJobAsync"/> should return the
+    /// updated list of tags.
+    /// </summary>
+    [Fact]
+    public async void AddTagToRecurringJobAsync_ReturnsTheUpdatedTagsList()
+    {
+        var initialTag = "initial-tag";
+        var newTag = "new-tag";
+        var jid = await RecurJobAsync(
+            _client,
+            tags: Maybe<string[]>.Some([initialTag])
+        );
+        var updatedTags = await _client.AddTagToRecurringJobAsync(jid, newTag);
+        var expectedTags = new string[] { initialTag, newTag };
+        Assert.Equivalent(expectedTags, updatedTags);
+        var job = await _client.GetRecurringJobAsync(jid);
+        Assert.NotNull(job);
+        Assert.Equivalent(expectedTags, job.Tags);
+    }
+
+    /// <summary>
+    /// <see cref="ReqlessClient.AddTagsToRecurringJobAsync"/> should return the
+    /// updated list of tags.
+    /// </summary>
+    [Fact]
+    public async void AddTagsToRecurringJobAsync_ReturnsTheUpdatedTagsList()
+    {
+        var initialTag = "initial-tag";
+        var newTag = "new-tag";
+        var otherTag = "other-tag";
+        var jid = await RecurJobAsync(
+            _client,
+            tags: Maybe<string[]>.Some([initialTag])
+        );
+        var updatedTags = await _client.AddTagsToRecurringJobAsync(
+            jid,
+            newTag,
+            otherTag
+        );
+        var expectedTags = new string[] { initialTag, newTag, otherTag };
+        Assert.Equivalent(expectedTags, updatedTags);
+        var job = await _client.GetRecurringJobAsync(jid);
+        Assert.NotNull(job);
+        Assert.Equivalent(expectedTags, job.Tags);
+    }
+
+    /// <summary>
     /// <see cref="ReqlessClient.CancelJobsAsync"/> should throw if jids
     /// argument is null.
     /// </summary>
@@ -1730,6 +1777,29 @@ public class ReqlessClientIntegrationTest
             queueName: (queueName ?? Maybe<string>.None).GetOrDefault(ExampleQueueName),
             tags: (tags ?? Maybe<string[]>.None).GetOrDefault([]),
             workerName: (workerName ?? Maybe<string>.None).GetOrDefault(ExampleWorkerName)
+        );
+        return jid;
+    }
+
+    private static async Task<string> RecurJobAsync(
+        ReqlessClient _client,
+        Maybe<string>? className = null,
+        Maybe<string>? data = null,
+        Maybe<int>? intervalSeconds = null,
+        Maybe<int>? priority = null,
+        Maybe<string>? queueName = null,
+        Maybe<int>? retries = null,
+        Maybe<string[]>? tags = null
+    )
+    {
+        var jid = await _client.RecurJobAtIntervalAsync(
+            className: (className ?? Maybe<string>.None).GetOrDefault(ExampleClassName),
+            data: (data ?? Maybe<string>.None).GetOrDefault(ExampleData),
+            intervalSeconds: (intervalSeconds ?? Maybe<int>.None).GetOrDefault(300),
+            priority: (priority ?? Maybe<int>.None).GetOrDefault(0),
+            retries: (retries ?? Maybe<int>.None).GetOrDefault(5),
+            queueName: (queueName ?? Maybe<string>.None).GetOrDefault(ExampleQueueName),
+            tags: (tags ?? Maybe<string[]>.None).GetOrDefault([])
         );
         return jid;
     }

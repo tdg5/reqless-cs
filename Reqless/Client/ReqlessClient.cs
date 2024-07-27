@@ -105,38 +105,37 @@ public class ReqlessClient : IClient, IDisposable
     }
 
     /// <inheritdoc />
-    public async Task<List<string>> AddTagToJobAsync(string jid, string tag)
+    public Task<List<string>> AddTagToJobAsync(string jid, string tag)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(jid, nameof(jid));
         ArgumentException.ThrowIfNullOrWhiteSpace(tag, nameof(tag));
-
-        return await AddTagsToJobAsync(jid, tag);
+        return AddTagsToJobAsyncCore("job.addTag", jid, tag);
     }
 
     /// <inheritdoc />
-    public async Task<List<string>> AddTagsToJobAsync(string jid, params string[] tags)
+    public Task<List<string>> AddTagsToJobAsync(string jid, params string[] tags)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(jid, nameof(jid));
         ArgumentNullException.ThrowIfNull(tags, nameof(tags));
         ValidationHelper.ThrowIfAnyNullOrWhitespace(tags, nameof(tags));
+        return AddTagsToJobAsyncCore("job.addTag", jid, tags);
+    }
 
-        var arguments = new RedisValue[tags.Length + 3];
-        arguments[0] = "job.addTag";
-        arguments[1] = Now();
-        arguments[2] = jid;
-        CopyStringArguments(tags, ref arguments, 3);
+    /// <inheritdoc />
+    public Task<List<string>> AddTagToRecurringJobAsync(string jid, string tag)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(jid, nameof(jid));
+        ArgumentException.ThrowIfNullOrWhiteSpace(tag, nameof(tag));
+        return AddTagsToJobAsyncCore("recurringJob.addTag", jid, tag);
+    }
 
-        var result = await _executor.ExecuteAsync(arguments);
-
-        var tagsJson = (string?)result
-            ?? throw new InvalidOperationException(
-                "Server returned unexpected null result."
-            );
-
-        var resultTags = JsonSerializer.Deserialize<List<string>>(tagsJson)
-            ?? throw new JsonException($"Failed to deserialize tags JSON: {tagsJson}");
-
-        return resultTags;
+    /// <inheritdoc />
+    public Task<List<string>> AddTagsToRecurringJobAsync(string jid, params string[] tags)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(jid, nameof(jid));
+        ArgumentNullException.ThrowIfNull(tags, nameof(tags));
+        ValidationHelper.ThrowIfAnyNullOrWhitespace(tags, nameof(tags));
+        return AddTagsToJobAsyncCore("recurringJob.addTag", jid, tags);
     }
 
     /// <inheritdoc />
@@ -510,7 +509,7 @@ public class ReqlessClient : IClient, IDisposable
     public Task<Throttle> GetQueueThrottleAsync(string queueName)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(queueName, nameof(queueName));
-        return ExecuteThrottleQuery("queue.throttle.get", queueName);
+        return GetThrottleAsyncCore("queue.throttle.get", queueName);
     }
 
     /// <inheritdoc/>
@@ -540,7 +539,7 @@ public class ReqlessClient : IClient, IDisposable
     public Task<Throttle> GetThrottleAsync(string throttleName)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(throttleName, nameof(throttleName));
-        return ExecuteThrottleQuery("throttle.get", throttleName);
+        return GetThrottleAsyncCore("throttle.get", throttleName);
     }
 
     /// <inheritdoc/>
@@ -1061,9 +1060,51 @@ public class ReqlessClient : IClient, IDisposable
     }
 
     /// <summary>
-    /// Execute a query for a throttle and return the result.
+    /// Handle the common logic of tagging a job or recurring job with one or
+    /// more tags.
     /// </summary>
-    /// <param name="queryCommand">The specific throttle query to
+    /// <param name="tagCommand">The Reqless command to invoke to tag the
+    /// job.</param>
+    /// <param name="jid">The ID of the job or recurring job to add tags to.</param>
+    /// <param name="tags">The tags to add to the job or recurring job.</param>
+    /// <returns>The updated list of job tags.</returns>
+    /// <exception cref="InvalidOperationException">Thrown if server returns
+    /// unexpected null result.</exception>
+    /// <exception cref="JsonException">Thrown if the JSON returned by the
+    /// server can't be deserialized.</exception>
+    protected async Task<List<string>> AddTagsToJobAsyncCore(
+        string tagCommand,
+        string jid,
+        params string[] tags
+    )
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(jid, nameof(jid));
+        ArgumentNullException.ThrowIfNull(tags, nameof(tags));
+        ValidationHelper.ThrowIfAnyNullOrWhitespace(tags, nameof(tags));
+
+        var arguments = new RedisValue[tags.Length + 3];
+        arguments[0] = tagCommand;
+        arguments[1] = Now();
+        arguments[2] = jid;
+        CopyStringArguments(tags, ref arguments, 3);
+
+        var result = await _executor.ExecuteAsync(arguments);
+
+        var tagsJson = (string?)result
+            ?? throw new InvalidOperationException(
+                "Server returned unexpected null result."
+            );
+
+        var resultTags = JsonSerializer.Deserialize<List<string>>(tagsJson)
+            ?? throw new JsonException($"Failed to deserialize tags JSON: {tagsJson}");
+
+        return resultTags;
+    }
+
+    /// <summary>
+    /// Get a throttle and return the result.
+    /// </summary>
+    /// <param name="getThrottleCommand">The specific throttle query to
     /// execute.</param>
     /// <param name="identifier">An identifier for the throttle to
     /// retrieve.</param>
@@ -1071,13 +1112,13 @@ public class ReqlessClient : IClient, IDisposable
     /// a null result.</exception>
     /// <exception cref="JsonException">Thrown if the JSON returned by the
     /// server can't be deserialized.</exception>
-    protected async Task<Throttle> ExecuteThrottleQuery(
-        string queryCommand,
+    protected async Task<Throttle> GetThrottleAsyncCore(
+        string getThrottleCommand,
         string identifier
     )
     {
         var result = await _executor.ExecuteAsync([
-            queryCommand,
+            getThrottleCommand,
             Now(),
             identifier,
         ]);

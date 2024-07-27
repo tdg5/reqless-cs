@@ -46,6 +46,24 @@ public interface IClient
     Task<List<string>> AddTagsToJobAsync(string jid, params string[] tags);
 
     /// <summary>
+    /// Update the given recurring job to add the given tag.
+    /// </summary>
+    /// <param name="jid">The ID of the recurring job that the tag should be added
+    /// to.</param>
+    /// <param name="tag">The tag that should be added to the recurring
+    /// job.</param>
+    Task<List<string>> AddTagToRecurringJobAsync(string jid, string tag);
+
+    /// <summary>
+    /// Update the given recurring job to add the given tags.
+    /// </summary>
+    /// <param name="jid">The ID of the recurring job that should have tags
+    /// added.</param>
+    /// <param name="tags">The tags that should be added to the recurring
+    /// job.</param>
+    Task<List<string>> AddTagsToRecurringJobAsync(string jid, params string[] tags);
+
+    /// <summary>
     /// Cancel a job.
     /// </summary>
     /// <param name="jid">The ID of the job that should be cancelled.</param>
