@@ -1,4 +1,4 @@
--- Current SHA: 1b5bb93e846bbf76be594efe6fc19268dd3a20b2
+-- Current SHA: 7265737b4cc1b4e134b58435e91666d567bb83da
 -- This is a generated file
 local Reqless = {
   ns = 'ql:'
@@ -1571,6 +1571,7 @@ function ReqlessQueue:unfail(now, group, count)
   assert(group, 'Unfail(): Arg "group" missing')
   count = assert(tonumber(count or 25),
     'Unfail(): Arg "count" not a number: ' .. tostring(count))
+  assert(count > 0, 'Unfail(): Arg "count" must be greater than zero')
 
   local jids = redis.call('lrange', 'ql:f:' .. group, -count, -1)
 
@@ -1916,103 +1917,123 @@ end
 
 function ReqlessRecurringJob:update(now, ...)
   local options = {}
-  if redis.call('exists', 'ql:r:' .. self.jid) ~= 0 then
-    for i = 1, #arg, 2 do
-      local key = arg[i]
-      local value = arg[i+1]
-      assert(value, 'No value provided for ' .. tostring(key))
-      if key == 'priority' or key == 'interval' or key == 'retries' then
-        value = assert(tonumber(value), 'Recur(): Arg "' .. key .. '" must be a number: ' .. tostring(value))
-        if key == 'interval' then
-          local queue, interval = unpack(redis.call('hmget', 'ql:r:' .. self.jid, 'queue', 'interval'))
-          Reqless.queue(queue).recurring.update(
-            value - tonumber(interval), self.jid)
-        end
-        redis.call('hset', 'ql:r:' .. self.jid, key, value)
-      elseif key == 'data' then
-        assert(cjson.decode(value), 'Recur(): Arg "data" is not JSON-encoded: ' .. tostring(value))
-        redis.call('hset', 'ql:r:' .. self.jid, 'data', value)
-      elseif key == 'klass' then
-        redis.call('hset', 'ql:r:' .. self.jid, 'klass', value)
-      elseif key == 'queue' then
-        local old_queue_name = redis.call('hget', 'ql:r:' .. self.jid, 'queue')
-        local queue_obj = Reqless.queue(old_queue_name)
-        local score = queue_obj.recurring.score(self.jid)
-
-        queue_obj.recurring.remove(self.jid)
-        local throttles = cjson.decode(redis.call('hget', 'ql:r:' .. self.jid, 'throttles') or '{}')
-        for index, throttle_name in ipairs(throttles) do
-          if throttle_name == ReqlessQueue.ns .. old_queue_name then
-            table.remove(throttles, index)
-          end
-        end
-
-
-        table.insert(throttles, ReqlessQueue.ns .. value)
-        redis.call('hset', 'ql:r:' .. self.jid, 'throttles', cjson.encode(throttles))
-
-        Reqless.queue(value).recurring.add(score, self.jid)
-        redis.call('hset', 'ql:r:' .. self.jid, 'queue', value)
-        if redis.call('zscore', 'ql:queues', value) == false then
-          redis.call('zadd', 'ql:queues', now, value)
-        end
-      elseif key == 'backlog' then
-        value = assert(tonumber(value),
-          'Recur(): Arg "backlog" not a number: ' .. tostring(value))
-        redis.call('hset', 'ql:r:' .. self.jid, 'backlog', value)
-      elseif key == 'throttles' then
-        local throttles = assert(cjson.decode(value), 'Recur(): Arg "throttles" is not JSON-encoded: ' .. tostring(value))
-        redis.call('hset', 'ql:r:' .. self.jid, 'throttles', cjson.encode(throttles))
-      else
-        error('Recur(): Unrecognized option "' .. key .. '"')
-      end
-    end
-    return true
+  if redis.call('exists', 'ql:r:' .. self.jid) == 0 then
+    error('Recur(): No recurring job ' .. self.jid)
   end
 
-  error('Recur(): No recurring job ' .. self.jid)
+  for i = 1, #arg, 2 do
+    local key = arg[i]
+    local value = arg[i+1]
+    assert(value, 'No value provided for ' .. tostring(key))
+    if key == 'priority' or key == 'interval' or key == 'retries' then
+      value = assert(tonumber(value), 'Recur(): Arg "' .. key .. '" must be a number: ' .. tostring(value))
+      if key == 'interval' then
+        local queue, interval = unpack(redis.call('hmget', 'ql:r:' .. self.jid, 'queue', 'interval'))
+        Reqless.queue(queue).recurring.update(
+          value - tonumber(interval), self.jid)
+      end
+      redis.call('hset', 'ql:r:' .. self.jid, key, value)
+    elseif key == 'data' then
+      assert(cjson.decode(value), 'Recur(): Arg "data" is not JSON-encoded: ' .. tostring(value))
+      redis.call('hset', 'ql:r:' .. self.jid, 'data', value)
+    elseif key == 'klass' then
+      redis.call('hset', 'ql:r:' .. self.jid, 'klass', value)
+    elseif key == 'queue' then
+      local old_queue_name = redis.call('hget', 'ql:r:' .. self.jid, 'queue')
+      local queue_obj = Reqless.queue(old_queue_name)
+      local score = queue_obj.recurring.score(self.jid)
+
+      queue_obj.recurring.remove(self.jid)
+      local throttles = cjson.decode(redis.call('hget', 'ql:r:' .. self.jid, 'throttles') or '{}')
+      for index, throttle_name in ipairs(throttles) do
+        if throttle_name == ReqlessQueue.ns .. old_queue_name then
+          table.remove(throttles, index)
+        end
+      end
+
+
+      table.insert(throttles, ReqlessQueue.ns .. value)
+      redis.call('hset', 'ql:r:' .. self.jid, 'throttles', cjson.encode(throttles))
+
+      Reqless.queue(value).recurring.add(score, self.jid)
+      redis.call('hset', 'ql:r:' .. self.jid, 'queue', value)
+      if redis.call('zscore', 'ql:queues', value) == false then
+        redis.call('zadd', 'ql:queues', now, value)
+      end
+    elseif key == 'backlog' then
+      value = assert(tonumber(value),
+        'Recur(): Arg "backlog" not a number: ' .. tostring(value))
+      redis.call('hset', 'ql:r:' .. self.jid, 'backlog', value)
+    elseif key == 'throttles' then
+      local throttles = assert(cjson.decode(value), 'Recur(): Arg "throttles" is not JSON-encoded: ' .. tostring(value))
+      redis.call('hset', 'ql:r:' .. self.jid, 'throttles', cjson.encode(throttles))
+    else
+      error('Recur(): Unrecognized option "' .. key .. '"')
+    end
+  end
+  return true
 end
 
 function ReqlessRecurringJob:tag(...)
   local tags = redis.call('hget', 'ql:r:' .. self.jid, 'tags')
-  if tags then
-    tags = cjson.decode(tags)
-    local _tags = {}
-    for _, v in ipairs(tags) do _tags[v] = true end
-
-    for i=1, #arg do if _tags[arg[i]] == nil then table.insert(tags, arg[i]) end end
-
-    tags = cjson.encode(tags)
-    redis.call('hset', 'ql:r:' .. self.jid, 'tags', tags)
-    return tags
+  if not tags then
+    error('Tag(): Job ' .. self.jid .. ' does not exist')
   end
 
-  error('Tag(): Job ' .. self.jid .. ' does not exist')
+  tags = cjson.decode(tags)
+  local _tags = {}
+  for _, v in ipairs(tags) do
+    _tags[v] = true
+  end
+
+  for i = 1, #arg do
+    if _tags[arg[i]] == nil then
+      table.insert(tags, arg[i])
+    end
+  end
+
+  tags = cjson.encode(tags)
+  redis.call('hset', 'ql:r:' .. self.jid, 'tags', tags)
+
+  return tags
 end
 
 function ReqlessRecurringJob:untag(...)
   local tags = redis.call('hget', 'ql:r:' .. self.jid, 'tags')
-  if tags then
-    tags = cjson.decode(tags)
-    local _tags = {}
-    for _, v in ipairs(tags) do _tags[v] = true end
-    for i = 1, #arg do _tags[arg[i]] = nil end
-    local results = {}
-    for _, tag in ipairs(tags) do if _tags[tag] then table.insert(results, tag) end end
-    tags = cjson.encode(results)
-    redis.call('hset', 'ql:r:' .. self.jid, 'tags', tags)
-    return tags
+
+  if not tags then
+    error('Untag(): Job ' .. self.jid .. ' does not exist')
   end
 
-  error('Untag(): Job ' .. self.jid .. ' does not exist')
+  tags = cjson.decode(tags)
+
+  local _tags = {}
+  for _, v in ipairs(tags) do
+    _tags[v] = true
+  end
+
+  for i = 1, #arg do
+    _tags[arg[i]] = nil
+  end
+
+  local results = {}
+  for _, tag in ipairs(tags) do
+    if _tags[tag] then
+      table.insert(results, tag)
+    end
+  end
+
+  tags = cjson.encode(results)
+  redis.call('hset', 'ql:r:' .. self.jid, 'tags', tags)
+
+  return tags
 end
 
-function ReqlessRecurringJob:unrecur()
+function ReqlessRecurringJob:cancel()
   local queue = redis.call('hget', 'ql:r:' .. self.jid, 'queue')
   if queue then
     Reqless.queue(queue).recurring.remove(self.jid)
     redis.call('del', 'ql:r:' .. self.jid)
-    return true
   end
 
   return true
@@ -2323,6 +2344,7 @@ ReqlessAPI['queue.throttle.set'] = function(now, queue, max)
 end
 
 ReqlessAPI['queue.unfail'] = function(now, queue, group, count)
+  assert(queue, 'queue.unfail(): Arg "queue" missing')
   return Reqless.queue(queue):unfail(now, group, count)
 end
 
@@ -2330,8 +2352,12 @@ ReqlessAPI['queue.unpause'] = function(now, ...)
   ReqlessQueue.unpause(unpack(arg))
 end
 
-ReqlessAPI['queues.list'] = function(now)
+ReqlessAPI['queues.counts'] = function(now)
   return cjson.encode(ReqlessQueue.counts(now, nil))
+end
+
+ReqlessAPI['recurringJob.cancel'] = function(now, jid)
+  return Reqless.recurring(jid):cancel()
 end
 
 ReqlessAPI['recurringJob.get'] = function(now, jid)
@@ -2347,10 +2373,6 @@ end
 
 ReqlessAPI['recurringJob.removeTag'] = function(now, jid, ...)
   return Reqless.recurring(jid):untag(unpack(arg))
-end
-
-ReqlessAPI['recurringJob.unrecur'] = function(now, jid)
-  return Reqless.recurring(jid):unrecur()
 end
 
 ReqlessAPI['recurringJob.update'] = function(now, jid, ...)
@@ -2401,7 +2423,7 @@ ReqlessAPI['worker.forget'] = function(now, ...)
   return ReqlessWorker.deregister(unpack(arg))
 end
 
-ReqlessAPI['workers.list'] = function(now)
+ReqlessAPI['workers.counts'] = function(now)
   return cjson.encode(ReqlessWorker.counts(now, nil))
 end
 
@@ -2485,7 +2507,7 @@ ReqlessAPI['queues'] = function(now, queue)
   if queue then
     return ReqlessAPI['queue.counts'](now, queue)
   end
-  return ReqlessAPI['queues.list'](now)
+  return ReqlessAPI['queues.counts'](now)
 end
 
 ReqlessAPI['recur'] = function(now, queue, jid, klass, data, spec, ...)
@@ -2565,11 +2587,11 @@ ReqlessAPI['unfail'] = function(now, queue, group, count)
 end
 
 ReqlessAPI['unpause'] = function(now, ...)
-  return ReqlessAPI['queue.unpause'](now, unpack(arg))
+  ReqlessAPI['queue.unpause'](now, unpack(arg))
 end
 
 ReqlessAPI['unrecur'] = function(now, jid)
-  return ReqlessAPI['recurringJob.unrecur'](now, jid)
+  return ReqlessAPI['recurringJob.cancel'](now, jid)
 end
 
 ReqlessAPI['worker.deregister'] = function(now, ...)
@@ -2580,7 +2602,7 @@ ReqlessAPI['workers'] = function(now, worker)
   if worker then
     return ReqlessAPI['worker.counts'](now, worker)
   end
-  return ReqlessAPI['workers.list'](now)
+  return ReqlessAPI['workers.counts'](now)
 end
 
 

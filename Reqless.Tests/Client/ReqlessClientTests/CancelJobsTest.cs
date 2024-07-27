@@ -45,6 +45,21 @@ public class CancelJobsTest : BaseReqlessClientTest
     }
 
     /// <summary>
+    /// <see cref="ReqlessClient.CancelJobsAsync"/> should throw if jids
+    /// argument is null.
+    /// </summary>
+    [Fact]
+    public async void CancelJobsAsync_ThrowsIfJidsArgumentIsNull()
+    {
+        var exception = await Assert.ThrowsAsync<ArgumentNullException>(
+            () => WithClientWithExecutorMockForExpectedArguments(
+                subject => subject.CancelJobsAsync(null!)
+            )
+        );
+        Assert.Equal("Value cannot be null. (Parameter 'jids')", exception.Message);
+    }
+
+    /// <summary>
     /// <see cref="ReqlessClient.CancelJobsAsync"/> throws if any of the jids
     /// are null.
     /// </summary>

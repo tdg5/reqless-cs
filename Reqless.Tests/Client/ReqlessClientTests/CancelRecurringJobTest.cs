@@ -4,20 +4,20 @@ using Reqless.Tests.TestHelpers;
 namespace Reqless.Tests.Client.ReqlessClientTests;
 
 /// <summary>
-/// Unit tests for <see cref="ReqlessClient.CancelJobAsync"/>.
+/// Unit tests for <see cref="ReqlessClient.CancelRecurringJobAsync"/>.
 /// </summary>
-public class CancelJobTest : BaseReqlessClientTest
+public class CancelRecurringJobTest : BaseReqlessClientTest
 {
     /// <summary>
-    /// <see cref="ReqlessClient.CancelJobAsync"/> should throw if the given jid
-    /// is null.
+    /// <see cref="ReqlessClient.CancelRecurringJobAsync"/> should throw if the
+    /// given jid is null.
     /// </summary>
     [Fact]
     public async void ThrowsIfJidIsNull()
     {
         var exception = await Assert.ThrowsAsync<ArgumentNullException>(
             () => WithClientWithExecutorMockForExpectedArguments(
-                subject => subject.CancelJobAsync(jid: null!)
+                subject => subject.CancelRecurringJobAsync(jid: null!)
             )
         );
         Assert.Equal(
@@ -27,8 +27,8 @@ public class CancelJobTest : BaseReqlessClientTest
     }
 
     /// <summary>
-    /// <see cref="ReqlessClient.CancelJobAsync"/> should throw if the given jid
-    /// is empty or composed entirely of whitespace.
+    /// <see cref="ReqlessClient.CancelRecurringJobAsync"/> should throw if the
+    /// given jid is empty or composed entirely of whitespace.
     /// </summary>
     [Fact]
     public async void ThrowsIfJidIsEmptyOrOnlyWhitespace()
@@ -37,7 +37,7 @@ public class CancelJobTest : BaseReqlessClientTest
         {
             var exception = await Assert.ThrowsAsync<ArgumentException>(
                 () => WithClientWithExecutorMockForExpectedArguments(
-                    subject => subject.CancelJobAsync(emptyString)
+                    subject => subject.CancelRecurringJobAsync(emptyString)
                 )
             );
             Assert.Equal(
@@ -48,17 +48,16 @@ public class CancelJobTest : BaseReqlessClientTest
     }
 
     /// <summary>
-    /// <see cref="ReqlessClient.CancelJobAsync"/> should call Executor with
-    /// the expected arguments.
+    /// <see cref="ReqlessClient.CancelRecurringJobAsync"/> should call Executor
+    /// with the expected arguments.
     /// </summary>
     [Fact]
     public async void CallsExecutorWithTheExpectedArguments()
     {
-        bool cancelledSuccessfully = await WithClientWithExecutorMockForExpectedArguments(
-            subject => subject.CancelJobAsync(jid: ExampleJid),
-            expectedArguments: ["job.cancel", 0, ExampleJid],
+        await WithClientWithExecutorMockForExpectedArguments(
+            subject => subject.CancelRecurringJobAsync(jid: ExampleJid),
+            expectedArguments: ["recurringJob.cancel", 0, ExampleJid],
             returnValue: ExampleJid
         );
-        Assert.True(cancelledSuccessfully);
     }
 }

@@ -139,9 +139,11 @@ public class ReqlessClient : IClient, IDisposable
     }
 
     /// <inheritdoc />
-    public async Task<bool> CancelJobAsync(string jid)
+    public Task<bool> CancelJobAsync(string jid)
     {
-        return await CancelJobsAsync(jid);
+        ArgumentNullException.ThrowIfNullOrWhiteSpace(jid, nameof(jid));
+
+        return CancelJobsAsync(jid);
     }
 
     /// <inheritdoc />
@@ -162,6 +164,18 @@ public class ReqlessClient : IClient, IDisposable
         await _executor.ExecuteAsync(arguments);
         // If no error occurred, the jobs were either cancelled or didn't exist.
         return true;
+    }
+
+    /// <inheritdoc />
+    public async Task CancelRecurringJobAsync(string jid)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(jid, nameof(jid));
+
+        await _executor.ExecuteAsync([
+            "recurringJob.cancel",
+            Now(),
+            jid,
+        ]);
     }
 
     /// <inheritdoc />

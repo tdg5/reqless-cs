@@ -192,19 +192,6 @@ public class ReqlessClientIntegrationTest
     }
 
     /// <summary>
-    /// <see cref="ReqlessClient.CancelJobsAsync"/> should throw if jids
-    /// argument is null.
-    /// </summary>
-    [Fact]
-    public async void CancelJobsAsync_ThrowsIfJidsArgumentIsNull()
-    {
-        var exception = await Assert.ThrowsAsync<ArgumentNullException>(
-            () => _client.CancelJobsAsync(null!)
-        );
-        Assert.Equal("Value cannot be null. (Parameter 'jids')", exception.Message);
-    }
-
-    /// <summary>
     /// <see cref="ReqlessClient.CancelJobAsync"/> should return true when
     /// successful.
     /// </summary>
@@ -268,6 +255,30 @@ public class ReqlessClientIntegrationTest
         Assert.True(cancelledSuccessfully);
         cancelledSuccessfully = await _client.CancelJobsAsync([]);
         Assert.True(cancelledSuccessfully);
+    }
+
+    /// <summary>
+    /// <see cref="ReqlessClient.CancelRecurringJobAsync"/> should return true when
+    /// successful.
+    /// </summary>
+    [Fact]
+    public async void CancelRecurringJobAsync_SucceedsIfTheJobExists()
+    {
+        var jid = await RecurJobAsync(_client);
+        await _client.CancelRecurringJobAsync(jid);
+        Assert.Null(await _client.GetRecurringJobAsync(jid));
+    }
+
+    /// <summary>
+    /// <see cref="ReqlessClient.CancelRecurringJobAsync"/> should return true when there
+    /// is no such job.
+    /// </summary>
+    [Fact]
+    public async void CancelRecurringJobAsync_SucceedsIfTheJobDoesNotExist()
+    {
+        var jid = "no-such-jid";
+        Assert.Null(await _client.GetRecurringJobAsync(jid));
+        await _client.CancelRecurringJobAsync(jid);
     }
 
     /// <summary>

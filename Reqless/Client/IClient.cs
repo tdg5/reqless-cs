@@ -76,6 +76,13 @@ public interface IClient
     Task<bool> CancelJobsAsync(params string[] jids);
 
     /// <summary>
+    /// Cancel a recurring job.
+    /// </summary>
+    /// <param name="jid">The ID of the recurring job for which all futurue
+    /// occurences should be cancelled.</param>
+    Task CancelRecurringJobAsync(string jid);
+
+    /// <summary>
     /// Complete the job with the given jid.
     /// </summary>
     /// <param name="jid">The ID of the job that should be completed.</param>
