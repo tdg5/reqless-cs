@@ -533,6 +533,23 @@ public interface IClient
     Task<bool> TrackJobAsync(string jid);
 
     /// <summary>
+    /// Unfail count number of jobs from the given failure group into the given
+    /// queue.
+    /// </summary>
+    /// <param name="queueName">The name of the queue which should receive the
+    /// unfailed jobs.</param>
+    /// <param name="groupName">The name of the failure group from which jobs
+    /// should be taken.</param>
+    /// <param name="count">The maximum number of jobs that should be
+    /// unfailed.</param>
+    /// <returns>The number of jobs that were unfaild.</returns>
+    Task<int> UnfailJobsFromFailureGroupIntoQueueAsync(
+        string queueName,
+        string groupName,
+        int count = 25
+    );
+
+    /// <summary>
     /// Unpause the queue with the given name.
     /// </summary>
     /// <param name="queueName">The name of the queue that should be

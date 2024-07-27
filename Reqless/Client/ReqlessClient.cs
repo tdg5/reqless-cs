@@ -999,6 +999,38 @@ public class ReqlessClient : IClient, IDisposable
     }
 
     /// <inheritdoc/>
+    public async Task<int> UnfailJobsFromFailureGroupIntoQueueAsync(
+        string queueName,
+        string groupName,
+        int count = 25
+    )
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(queueName, nameof(queueName));
+        ArgumentException.ThrowIfNullOrWhiteSpace(groupName, nameof(groupName));
+        if (count < 1)
+        {
+            throw new ArgumentOutOfRangeException(
+                nameof(count),
+                "Value must be greater than zero."
+            );
+        }
+
+        var result = await _executor.ExecuteAsync([
+            "queue.unfail",
+            Now(),
+            queueName,
+            groupName,
+            count,
+        ]);
+
+        var unfailedCount = (int?)result ?? throw new InvalidOperationException(
+            "Server returned unexpected null result."
+        );
+
+        return unfailedCount;
+    }
+
+    /// <inheritdoc/>
     public async Task UnpauseQueueAsync(string queueName)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(queueName, nameof(queueName));

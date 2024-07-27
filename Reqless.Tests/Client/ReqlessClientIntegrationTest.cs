@@ -1631,6 +1631,45 @@ public class ReqlessClientIntegrationTest
     }
 
     /// <summary>
+    /// <see cref="ReqlessClient.UnfailJobsFromFailureGroupIntoQueueAsync"/> should unpause the given queue.
+    /// </summary>
+    [Fact]
+    public async void UnfailJobsFromFailureGroupIntoQueueAsync_UnpausesTheGivenQueue()
+    {
+        var jid = await PutJobAsync(
+            _client,
+            queueName: Maybe<string>.Some(ExampleQueueName),
+            workerName: Maybe<string>.Some(ExampleWorkerName)
+        );
+        Job? job = await _client.PopJobAsync(ExampleQueueName, ExampleWorkerName);
+        Assert.NotNull(job);
+        Assert.Equal(jid, job.Jid);
+        var failedSuccessfully = await _client.FailJobAsync(
+            jid,
+            ExampleWorkerName,
+            ExampleGroupName,
+            ExampleMessage
+        );
+        Assert.True(failedSuccessfully);
+        job = await _client.GetJobAsync(jid);
+        Assert.NotNull(job);
+        Assert.Equal("failed", job.State);
+
+        var otherQueueName = "other-queue-name";
+        var unfailedCount = await _client.UnfailJobsFromFailureGroupIntoQueueAsync(
+            count: 2,
+            groupName: ExampleGroupName,
+            queueName: otherQueueName
+        );
+        Assert.Equal(1, unfailedCount);
+
+        job = await _client.GetJobAsync(jid);
+        Assert.NotNull(job);
+        Assert.Equal("waiting", job.State);
+        Assert.Equal(otherQueueName, job.QueueName);
+    }
+
+    /// <summary>
     /// <see cref="ReqlessClient.UnpauseQueueAsync"/> should unpause the given queue.
     /// </summary>
     [Fact]
