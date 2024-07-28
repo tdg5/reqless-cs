@@ -12,6 +12,44 @@ namespace Reqless.Tests.Client.ReqlessClientTests;
 public class PopJobsTest : BaseReqlessClientTest
 {
     /// <summary>
+    /// <see cref="ReqlessClient.PopJobsAsync"/> should throw if the
+    /// given queue name is null, empty, or only whitespace.
+    /// </summary>
+    [Fact]
+    public async void ThrowsIfQueueNameIsNullOrEmptyOrWhitespace()
+    {
+        await Scenario.ThrowsWhenParameterIsNullOrEmptyOrWhitespaceAsync(
+            (invalidQueueName) => WithClientWithExecutorMockForExpectedArguments(
+                subject => subject.PopJobsAsync(
+                    limit: 10,
+                    queueName: invalidQueueName!,
+                    workerName: ExampleWorkerName
+                )
+            ),
+            "queueName"
+        );
+    }
+
+    /// <summary>
+    /// <see cref="ReqlessClient.PopJobsAsync"/> should throw if the
+    /// given worker name is null, empty, or only whitespace.
+    /// </summary>
+    [Fact]
+    public async void ThrowsIfWorkerNameIsNullOrEmptyOrWhitespace()
+    {
+        await Scenario.ThrowsWhenParameterIsNullOrEmptyOrWhitespaceAsync(
+            (invalidWorkerName) => WithClientWithExecutorMockForExpectedArguments(
+                subject => subject.PopJobsAsync(
+                    limit: 10,
+                    queueName: ExampleQueueName,
+                    workerName: invalidWorkerName!
+                )
+            ),
+            "workerName"
+        );
+    }
+
+    /// <summary>
     /// <see cref="ReqlessClient.PopJobsAsync"/> should call Executor with
     /// the expected arguments.
     /// </summary>
@@ -45,11 +83,11 @@ public class PopJobsTest : BaseReqlessClientTest
     }
 
     /// <summary>
-    /// <see cref="ReqlessClient.PopJobsAsync"/> should returns null if the
+    /// <see cref="ReqlessClient.PopJobsAsync"/> should return empty list if the
     /// server returns no jobs.
     /// </summary>
     [Fact]
-    public async void ReturnsNullIfTheServerReturnsNoJobs()
+    public async void ReturnsEmptyListIfTheServerReturnsNoJobs()
     {
         var count = 2;
         foreach (var emptyResult in new string[] { "[]", "{}" })

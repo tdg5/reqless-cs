@@ -1,4 +1,5 @@
 using Reqless.Client;
+using Reqless.Tests.TestHelpers;
 
 namespace Reqless.Tests.Client.ReqlessClientTests;
 
@@ -7,6 +8,111 @@ namespace Reqless.Tests.Client.ReqlessClientTests;
 /// </summary>
 public class FailJobTest : BaseReqlessClientTest
 {
+    /// <summary>
+    /// <see cref="ReqlessClient.FailJobAsync"/> should throw if data is
+    /// empty or whitespace.
+    /// </summary>
+    [Fact]
+    public async void ThrowsIfDataIsEmptyOrWhitespace()
+    {
+        await Scenario.ThrowsWhenParameterIsEmptyOrWhitespaceAsync(
+            (invalidData) => WithClientWithExecutorMockForExpectedArguments(
+                subject => subject.FailJobAsync(
+                    data: invalidData!,
+                    groupName: ExampleGroupName,
+                    jid: ExampleJid,
+                    message: ExampleMessage,
+                    workerName: ExampleWorkerName
+                )
+            ),
+            "data"
+        );
+    }
+
+    /// <summary>
+    /// <see cref="ReqlessClient.FailJobAsync"/> should throw if jid is
+    /// null, empty, or whitespace.
+    /// </summary>
+    [Fact]
+    public async void ThrowsIfJidIsNullOrEmptyOrWhitespace()
+    {
+        await Scenario.ThrowsWhenParameterIsNullOrEmptyOrWhitespaceAsync(
+            (invalidJid) => WithClientWithExecutorMockForExpectedArguments(
+                subject => subject.FailJobAsync(
+                    data: ExampleData!,
+                    groupName: ExampleGroupName,
+                    jid: invalidJid!,
+                    message: ExampleMessage,
+                    workerName: ExampleWorkerName
+                )
+            ),
+            "jid"
+        );
+    }
+
+    /// <summary>
+    /// <see cref="ReqlessClient.FailJobAsync"/> should throw if group name
+    /// is null, empty, or whitespace.
+    /// </summary>
+    [Fact]
+    public async void ThrowsIfGroupNameIsNullOrEmptyOrWhitespace()
+    {
+        await Scenario.ThrowsWhenParameterIsNullOrEmptyOrWhitespaceAsync(
+            (invalidGroupName) => WithClientWithExecutorMockForExpectedArguments(
+                subject => subject.FailJobAsync(
+                    data: ExampleData!,
+                    groupName: invalidGroupName!,
+                    jid: ExampleJid,
+                    message: ExampleMessage,
+                    workerName: ExampleWorkerName
+                )
+            ),
+            "groupName"
+        );
+    }
+
+    /// <summary>
+    /// <see cref="ReqlessClient.FailJobAsync"/> should throw if message is
+    /// null, empty, or whitespace.
+    /// </summary>
+    [Fact]
+    public async void ThrowsIfMessageIsNullOrEmptyOrOnlyWhitespace()
+    {
+        await Scenario.ThrowsWhenParameterIsNullOrEmptyOrWhitespaceAsync(
+            (invalidMessage) => WithClientWithExecutorMockForExpectedArguments(
+                subject => subject.FailJobAsync(
+                    data: ExampleData!,
+                    groupName: ExampleGroupName,
+                    jid: ExampleJid,
+                    message: invalidMessage!,
+                    workerName: ExampleWorkerName
+                )
+            ),
+            "message"
+        );
+    }
+
+    /// <summary>
+    /// <see cref="ReqlessClient.FailJobAsync"/> should throw if worker name
+    /// is null, empty, or whitespace.
+    /// </summary>
+    [Fact]
+    public async void ThrowsIfWorkerNameIsNullOrEmptyOrOnlyWhitespace()
+    {
+        await Scenario.ThrowsWhenParameterIsNullOrEmptyOrWhitespaceAsync(
+            (invalidWorkerName) => WithClientWithExecutorMockForExpectedArguments(
+                subject => subject.FailJobAsync(
+                    data: ExampleData!,
+                    groupName: ExampleGroupName,
+                    jid: ExampleJid,
+                    message: ExampleMessage,
+                    workerName: invalidWorkerName!
+                )
+            ),
+            "workerName"
+        );
+    }
+
     /// <summary>
     /// <see cref="ReqlessClient.FailJobAsync"/> should call Executor with
     /// the expected arguments when data is given.

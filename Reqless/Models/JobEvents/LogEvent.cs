@@ -28,6 +28,8 @@ public class LogEvent : JobEvent
        Dictionary<string, JsonElement>? data = null
    ) : base(what, when)
     {
+        ArgumentException.ThrowIfNullOrWhiteSpace(what, nameof(what));
+
         Data = data ?? [];
     }
 }

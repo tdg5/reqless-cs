@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using System.Text.Json.Serialization;
 
 namespace Reqless.Models;
@@ -7,11 +8,23 @@ namespace Reqless.Models;
 /// </summary>
 public class Throttle
 {
+    private string _Id;
+
     /// <summary>
     /// The unique identifier of the throttle.
     /// </summary>
     [JsonPropertyName("id")]
-    public required string Id { get; init; }
+    public required string Id
+    {
+        get => _Id;
+
+        [MemberNotNull(nameof(_Id))]
+        init
+        {
+            ArgumentException.ThrowIfNullOrWhiteSpace(value, nameof(Id));
+            _Id = value;
+        }
+    }
 
     /// <summary>
     /// The maximum number of jobs that can hold the throttle at once.

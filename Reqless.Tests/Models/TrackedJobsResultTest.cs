@@ -14,13 +14,12 @@ public class TrackedJobsResultTest
     /// is null.
     /// </summary>
     [Fact]
-    public void Constructor_ThrowsWhenJobsIsNull()
+    public void Constructor_Jobs_ThrowsWhenNull()
     {
-        var exception = Assert.Throws<ArgumentNullException>(() =>
-        {
-            new TrackedJobsResult(expiredJids: [], jobs: null!);
-        });
-        Assert.Equal("Value cannot be null. (Parameter 'jobs')", exception.Message);
+        Scenario.ThrowsArgumentNullException(
+            () => new TrackedJobsResult(expiredJids: [], jobs: null!),
+            "jobs"
+        );
     }
 
     /// <summary>
@@ -44,13 +43,9 @@ public class TrackedJobsResultTest
     [Fact]
     public void Constructor_ThrowsWhenExpiredJidsIsNull()
     {
-        var exception = Assert.Throws<ArgumentNullException>(() =>
-        {
-            new TrackedJobsResult(expiredJids: null!, jobs: []);
-        });
-        Assert.Equal(
-            "Value cannot be null. (Parameter 'expiredJids')",
-            exception.Message
+        Scenario.ThrowsArgumentNullException(
+            () => new TrackedJobsResult(expiredJids: null!, jobs: []),
+            "expiredJids"
         );
     }
 
@@ -61,21 +56,17 @@ public class TrackedJobsResultTest
     [Fact]
     public void Constructor_ThrowsWhenExpiredJidsIncludesNullEmptyOrOnlyWhitespaceValue()
     {
-        foreach (var invalidJid in TestConstants.EmptyStringsWithNull)
-        {
-            var exception = Assert.Throws<ArgumentException>(() =>
-            {
-                new TrackedJobsResult(expiredJids: [invalidJid!], jobs: []);
-            });
-            Assert.Equal(
-                "Value cannot include null, empty string, or strings composed entirely of whitespace. (Parameter 'expiredJids')",
-                exception.Message
-            );
-        }
+        Scenario.ThrowsWhenParameterItemIsNullOrEmptyOrWhitespace(
+            (invalidJid) => new TrackedJobsResult(
+                expiredJids: [invalidJid!],
+                jobs: []
+            ),
+            "expiredJids"
+        );
     }
 
     /// <summary>
-    /// <see cref="TrackedJobsResult(Job[], string[])"/> should assigns
+    /// <see cref="TrackedJobsResult(Job[], string[])"/> should assign
     /// properties appropriately.
     /// </summary>
     [Fact]

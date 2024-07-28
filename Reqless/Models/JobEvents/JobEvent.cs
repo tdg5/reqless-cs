@@ -32,15 +32,8 @@ public class JobEvent
     /// is null.</exception>
     protected JobEvent(string what, long when)
     {
-        ArgumentNullException.ThrowIfNull(what, nameof(what));
-        if (when < 0)
-        {
-            throw new ArgumentOutOfRangeException(
-                nameof(when),
-                when,
-                "when must be greater than or equal to 0"
-            );
-        }
+        ArgumentException.ThrowIfNullOrWhiteSpace(what, nameof(what));
+        ValidationHelper.ThrowIfNegative(when, nameof(when));
 
         What = what;
         When = when;

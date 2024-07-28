@@ -12,41 +12,19 @@ public class GetFailedJobsByGroupTest : BaseReqlessClientTest
 {
     /// <summary>
     /// <see cref="ReqlessClient.GetFailedJobsByGroupAsync"/> should throw if group
-    /// name is null.
+    /// name is null, empty, or only whitespace.
     /// </summary>
     [Fact]
-    public async void ShouldThrowIfGroupNameIsNull()
+    public async void ShouldThrowIfGroupNameIsNullOrEmptyOrOnlyWhitespace()
     {
-        var exception = await Assert.ThrowsAsync<ArgumentNullException>(
-            () => WithClientWithExecutorMockForExpectedArguments(
-                subject => subject.GetFailedJobsByGroupAsync(groupName: null!)
-            )
-        );
-        Assert.Equal(
-            "Value cannot be null. (Parameter 'groupName')",
-            exception.Message
-        );
-    }
-
-    /// <summary>
-    /// <see cref="ReqlessClient.GetFailedJobsByGroupAsync"/> should throw if group
-    /// name is empty or only whitespace.
-    /// </summary>
-    [Fact]
-    public async void ShouldThrowIfGroupNameIsEmptyOrOnlyWhitespace()
-    {
-        foreach (var emptyString in TestConstants.EmptyStrings)
-        {
-            var exception = await Assert.ThrowsAsync<ArgumentException>(
-                () => WithClientWithExecutorMockForExpectedArguments(
-                    subject => subject.GetFailedJobsByGroupAsync(groupName: emptyString)
+        await Scenario.ThrowsWhenParameterIsNullOrEmptyOrWhitespaceAsync(
+            (invalidGroupName) => WithClientWithExecutorMockForExpectedArguments(
+                subject => subject.GetFailedJobsByGroupAsync(
+                    groupName: invalidGroupName!
                 )
-            );
-            Assert.Equal(
-                "The value cannot be an empty string or composed entirely of whitespace. (Parameter 'groupName')",
-                exception.Message
-            );
-        }
+            ),
+            "groupName"
+        );
     }
 
     /// <summary>

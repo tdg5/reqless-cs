@@ -49,52 +49,28 @@ public class CancelJobsTest : BaseReqlessClientTest
     /// argument is null.
     /// </summary>
     [Fact]
-    public async void CancelJobsAsync_ThrowsIfJidsArgumentIsNull()
+    public async void ThrowsIfJidsArgumentIsNull()
     {
-        var exception = await Assert.ThrowsAsync<ArgumentNullException>(
+        await Scenario.ThrowsArgumentNullExceptionAsync(
             () => WithClientWithExecutorMockForExpectedArguments(
                 subject => subject.CancelJobsAsync(null!)
-            )
-        );
-        Assert.Equal("Value cannot be null. (Parameter 'jids')", exception.Message);
-    }
-
-    /// <summary>
-    /// <see cref="ReqlessClient.CancelJobsAsync"/> throws if any of the jids
-    /// are null.
-    /// </summary>
-    [Fact]
-    public async void ThrowsIfAnyJidsAreNull()
-    {
-        var exception = await Assert.ThrowsAsync<ArgumentException>(
-            () => WithClientWithExecutorMockForExpectedArguments(
-                subject => subject.CancelJobsAsync(ExampleJid, null!)
-            )
-        );
-        Assert.Equal(
-            "Value cannot include null, empty string, or strings composed entirely of whitespace. (Parameter 'jids')",
-            exception.Message
+            ),
+            "jids"
         );
     }
 
     /// <summary>
     /// <see cref="ReqlessClient.CancelJobsAsync"/> throws if any of the jids
-    /// are empty or composed entirely of whitespace.
+    /// are null, empty, or composed entirely of whitespace.
     /// </summary>
     [Fact]
-    public async void ThrowsIfAnyJidsAreEmptyOrOnlyWhitespace()
+    public async void ThrowsIfAnyJidsAreNullOrEmptyOrOnlyWhitespace()
     {
-        foreach (var emptyString in TestConstants.EmptyStrings)
-        {
-            var exception = await Assert.ThrowsAsync<ArgumentException>(
-                () => WithClientWithExecutorMockForExpectedArguments(
-                    subject => subject.CancelJobsAsync(ExampleJid, null!)
-                )
-            );
-            Assert.Equal(
-                "Value cannot include null, empty string, or strings composed entirely of whitespace. (Parameter 'jids')",
-                exception.Message
-            );
-        }
+        await Scenario.ThrowsWhenParameterItemIsNullOrEmptyOrWhitespaceAsync(
+            (invalidJid) => WithClientWithExecutorMockForExpectedArguments(
+                subject => subject.CancelJobsAsync(ExampleJid, invalidJid!)
+            ),
+            "jids"
+        );
     }
 }

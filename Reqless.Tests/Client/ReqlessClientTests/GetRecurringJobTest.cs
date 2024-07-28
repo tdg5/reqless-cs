@@ -13,38 +13,17 @@ public class GetRecurringJobTest : BaseReqlessClientTest
 {
     /// <summary>
     /// <see cref="ReqlessClient.GetRecurringJobAsync"/> should throw if the
-    /// given job ID is null.
+    /// given job ID is null, empty, or only whitespace.
     /// </summary>
     [Fact]
-    public async void ThrowsIfTheGivenJidIsNull()
+    public async void ThrowsIfJidIsNullOrEmptyOrWhitespace()
     {
-        var exception = await Assert.ThrowsAsync<ArgumentNullException>(
-            () => WithClientWithExecutorMockForExpectedArguments(
-                subject => subject.GetRecurringJobAsync(null!)
-            )
+        await Scenario.ThrowsWhenParameterIsNullOrEmptyOrWhitespaceAsync(
+            (invalidJid) => WithClientWithExecutorMockForExpectedArguments(
+                subject => subject.GetRecurringJobAsync(invalidJid!)
+            ),
+            "jid"
         );
-        Assert.Equal("Value cannot be null. (Parameter 'jid')", exception.Message);
-    }
-
-    /// <summary>
-    /// <see cref="ReqlessClient.GetRecurringJobAsync"/> should throw if the
-    /// given jid is empty or only whitespace.
-    /// </summary>
-    [Fact]
-    public async void ThrowsIfTheGivenJidIsEmptyOrOnlyWhitespace()
-    {
-        foreach (var emptyString in TestConstants.EmptyStrings)
-        {
-            var exception = await Assert.ThrowsAsync<ArgumentException>(
-                () => WithClientWithExecutorMockForExpectedArguments(
-                    subject => subject.GetRecurringJobAsync(emptyString)
-                )
-            );
-            Assert.Equal(
-                "The value cannot be an empty string or composed entirely of whitespace. (Parameter 'jid')",
-                exception.Message
-            );
-        }
     }
 
     /// <summary>

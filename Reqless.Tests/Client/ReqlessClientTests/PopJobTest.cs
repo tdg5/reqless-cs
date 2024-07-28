@@ -12,6 +12,42 @@ namespace Reqless.Tests.Client.ReqlessClientTests;
 public class PopJobTest : BaseReqlessClientTest
 {
     /// <summary>
+    /// <see cref="ReqlessClient.PopJobAsync"/> should throw if the
+    /// given queue name is null, empty, or only whitespace.
+    /// </summary>
+    [Fact]
+    public async void ThrowsIfQueueNameIsNullOrEmptyOrWhitespace()
+    {
+        await Scenario.ThrowsWhenParameterIsNullOrEmptyOrWhitespaceAsync(
+            (invalidQueueName) => WithClientWithExecutorMockForExpectedArguments(
+                subject => subject.PopJobAsync(
+                    queueName: invalidQueueName!,
+                    workerName: ExampleWorkerName
+                )
+            ),
+            "queueName"
+        );
+    }
+
+    /// <summary>
+    /// <see cref="ReqlessClient.PopJobAsync"/> should throw if the
+    /// given worker name is null, empty, or only whitespace.
+    /// </summary>
+    [Fact]
+    public async void ThrowsIfWorkerNameIsNullOrEmptyOrWhitespace()
+    {
+        await Scenario.ThrowsWhenParameterIsNullOrEmptyOrWhitespaceAsync(
+            (invalidWorkerName) => WithClientWithExecutorMockForExpectedArguments(
+                subject => subject.PopJobAsync(
+                    queueName: ExampleQueueName,
+                    workerName: invalidWorkerName!
+                )
+            ),
+            "workerName"
+        );
+    }
+
+    /// <summary>
     /// <see cref="ReqlessClient.PopJobAsync"/> should call Executor with
     /// the expected arguments.
     /// </summary>

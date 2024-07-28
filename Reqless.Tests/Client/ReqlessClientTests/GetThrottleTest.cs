@@ -12,41 +12,17 @@ public class GetThrottleTest : BaseReqlessClientTest
 {
     /// <summary>
     /// <see cref="ReqlessClient.GetThrottleAsync"/> should throw if throttle
-    /// name is null.
+    /// name is null, or empty, or only whitespace.
     /// </summary>
     [Fact]
-    public async void ThrowsIfThrottleNameIsNull()
+    public async void ThrowsIfThrottleNameIsNullOrEmptyOrOnlyWhitespace()
     {
-        var exception = await Assert.ThrowsAsync<ArgumentNullException>(
-            () => WithClientWithExecutorMockForExpectedArguments(
-                subject => subject.GetThrottleAsync(throttleName: null!)
-            )
+        await Scenario.ThrowsWhenParameterIsNullOrEmptyOrWhitespaceAsync(
+            (invalidThrottleName) => WithClientWithExecutorMockForExpectedArguments(
+                subject => subject.GetThrottleAsync(throttleName: invalidThrottleName!)
+            ),
+            "throttleName"
         );
-        Assert.Equal(
-            "Value cannot be null. (Parameter 'throttleName')",
-            exception.Message
-        );
-    }
-
-    /// <summary>
-    /// <see cref="ReqlessClient.GetThrottleAsync"/> should throw if throttle
-    /// name is empty or whitespace.
-    /// </summary>
-    [Fact]
-    public async void ThrowsIfThrottleNameIsEmptyOrWhitespace()
-    {
-        foreach (var emptyString in TestConstants.EmptyStrings)
-        {
-            var exception = await Assert.ThrowsAsync<ArgumentException>(
-                () => WithClientWithExecutorMockForExpectedArguments(
-                    subject => subject.GetThrottleAsync(emptyString)
-                )
-            );
-            Assert.Equal(
-                "The value cannot be an empty string or composed entirely of whitespace. (Parameter 'throttleName')",
-                exception.Message
-            );
-        }
     }
 
     /// <summary>
@@ -68,7 +44,7 @@ public class GetThrottleTest : BaseReqlessClientTest
 
     /// <summary>
     /// <see cref="ReqlessClient.GetThrottleAsync"/> should throw if server
-    /// retruns JSON that can't be deserialized.
+    /// returns JSON that can't be deserialized.
     /// </summary>
     [Fact]
     public async void ThrowsIfServerReturnsJsonThatCannotBeDeserialized()

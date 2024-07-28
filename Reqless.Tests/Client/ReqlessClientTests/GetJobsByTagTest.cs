@@ -13,41 +13,17 @@ public class GetJobsByTagTest : BaseReqlessClientTest
 {
     /// <summary>
     /// <see cref="ReqlessClient.GetJobsByTagAsync"/> should throw if tag is
-    /// null.
+    /// null, empty, or only whitespace.
     /// </summary>
     [Fact]
-    public async void ShouldThrowIfTagIsNull()
+    public async void ShouldThrowIfTagIsNullOrEmptyOrOnlyWhitespace()
     {
-        var exception = await Assert.ThrowsAsync<ArgumentNullException>(
-            () => WithClientWithExecutorMockForExpectedArguments(
-                subject => subject.GetJobsByTagAsync(tag: null!)
-            )
+        await Scenario.ThrowsWhenParameterIsNullOrEmptyOrWhitespaceAsync(
+            (invalidTag) => WithClientWithExecutorMockForExpectedArguments(
+                subject => subject.GetJobsByTagAsync(tag: invalidTag!)
+            ),
+            "tag"
         );
-        Assert.Equal(
-            "Value cannot be null. (Parameter 'tag')",
-            exception.Message
-        );
-    }
-
-    /// <summary>
-    /// <see cref="ReqlessClient.GetJobsByTagAsync"/> should throw if tag is
-    /// empty or only whitespace.
-    /// </summary>
-    [Fact]
-    public async void ShouldThrowIfTagIsEmptyOrOnlyWhitespace()
-    {
-        foreach (var emptyString in TestConstants.EmptyStrings)
-        {
-            var exception = await Assert.ThrowsAsync<ArgumentException>(
-                () => WithClientWithExecutorMockForExpectedArguments(
-                    subject => subject.GetJobsByTagAsync(tag: emptyString)
-                )
-            );
-            Assert.Equal(
-                "The value cannot be an empty string or composed entirely of whitespace. (Parameter 'tag')",
-                exception.Message
-            );
-        }
     }
 
     /// <summary>

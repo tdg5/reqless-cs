@@ -15,14 +15,11 @@ public class ForgetQueuesTest : BaseReqlessClientTest
     [Fact]
     public async void ThrowsIfQueueNamesIsNull()
     {
-        var exception = await Assert.ThrowsAsync<ArgumentNullException>(
+        await Scenario.ThrowsArgumentNullExceptionAsync(
             () => WithClientWithExecutorMockForExpectedArguments(
                 subject => subject.ForgetQueuesAsync(null!)
-            )
-        );
-        Assert.Equal(
-            "Value cannot be null. (Parameter 'queueNames')",
-            exception.Message
+            ),
+            "queueNames"
         );
     }
 
@@ -34,18 +31,12 @@ public class ForgetQueuesTest : BaseReqlessClientTest
     [Fact]
     public async void ThrowsIfAnyQueueNameIsNullEmptyOrOnlyWhitespace()
     {
-        foreach (var invalidQueueName in TestConstants.EmptyStringsWithNull)
-        {
-            var exception = await Assert.ThrowsAsync<ArgumentException>(
-                () => WithClientWithExecutorMockForExpectedArguments(
-                    subject => subject.ForgetQueuesAsync(invalidQueueName!)
-                )
-            );
-            Assert.Equal(
-                "Value cannot include null, empty string, or strings composed entirely of whitespace. (Parameter 'queueNames')",
-                exception.Message
-            );
-        }
+        await Scenario.ThrowsWhenParameterItemIsNullOrEmptyOrWhitespaceAsync(
+            (invalidQueueName) => WithClientWithExecutorMockForExpectedArguments(
+                subject => subject.ForgetQueuesAsync(invalidQueueName!)
+            ),
+            "queueNames"
+        );
     }
 
     /// <summary>

@@ -9,16 +9,17 @@ namespace Reqless.Tests.Models;
 public class QueueCountsTest
 {
     /// <summary>
-    /// The constructor should throw if the given name is null.
+    /// The constructor should throw if the given queue name is null, empty, or
+    /// only whitespace.
     /// </summary>
     [Fact]
     public void Constructor_ThrowsIfNameIsNull()
     {
-        var exception = Assert.Throws<ArgumentNullException>(
-            () => new QueueCounts
+        Scenario.ThrowsWhenParameterIsNullOrEmptyOrWhitespace(
+            (invalidName) => new QueueCounts
             {
                 Depends = 0,
-                QueueName = null!,
+                QueueName = invalidName!,
                 Paused = false,
                 Recurring = 0,
                 Running = 0,
@@ -26,55 +27,22 @@ public class QueueCountsTest
                 Stalled = 0,
                 Throttled = 0,
                 Waiting = 0
-            }
+            },
+            "QueueName"
         );
-        Assert.Equal(
-            "Value cannot be null. (Parameter 'QueueName')",
-            exception.Message
-        );
-    }
-
-    /// <summary>
-    /// The constructor should throw if the given name value is empty or only
-    /// whitespace.
-    /// </summary>
-    [Fact]
-    public void Constructor_ThrowsIfNameIsEmptyOrWhitespace()
-    {
-        foreach (var emptyString in TestConstants.EmptyStrings)
-        {
-            var exception = Assert.Throws<ArgumentException>(
-                () => new QueueCounts
-                {
-                    Depends = 0,
-                    QueueName = emptyString,
-                    Paused = false,
-                    Recurring = 0,
-                    Running = 0,
-                    Scheduled = 0,
-                    Stalled = 0,
-                    Throttled = 0,
-                    Waiting = 0
-                }
-            );
-            Assert.Equal(
-                "The value cannot be an empty string or composed entirely of whitespace. (Parameter 'QueueName')",
-                exception.Message
-            );
-        }
     }
 
     /// <summary>
     /// The constructor should initialize the name property.
     /// </summary>
     [Fact]
-    public void Constructor_InitializesName()
+    public void Constructor_InitializesQueueName()
     {
-        var name = "test-queue";
+        var queueName = "test-queue";
         var queueCounts = new QueueCounts
         {
             Depends = 0,
-            QueueName = name,
+            QueueName = queueName,
             Paused = false,
             Recurring = 0,
             Running = 0,
@@ -83,6 +51,6 @@ public class QueueCountsTest
             Throttled = 0,
             Waiting = 0
         };
-        Assert.Equal(name, queueCounts.QueueName);
+        Assert.Equal(queueName, queueCounts.QueueName);
     }
 }

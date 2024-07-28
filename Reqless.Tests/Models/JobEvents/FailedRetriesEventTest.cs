@@ -1,4 +1,5 @@
 using Reqless.Models.JobEvents;
+using Reqless.Tests.TestHelpers;
 
 namespace Reqless.Tests.Models.JobEvents;
 
@@ -14,53 +15,23 @@ public class FailedRetriesEventTest
     [Fact]
     public void Constructor_ArgumentOutOfRangeExceptionThrownIfWhenIsNegative()
     {
-        var invalidWhen = -1;
-        var exception = Assert.Throws<ArgumentOutOfRangeException>(
-            () => new FailedRetriesEvent(invalidWhen, "Group")
+        Scenario.ThrowsWhenParameterIsNegative(
+            (long invalidWhen) => new FailedRetriesEvent(invalidWhen, "Group"),
+            "when"
         );
-        Assert.Equal("when", exception.ParamName);
-        // Use a similar exception to compose the message to avoid
-        // inconsistencies with line endings across platforms.
-        var similarException = new ArgumentOutOfRangeException(
-            "when",
-            invalidWhen,
-            "when must be greater than or equal to 0"
-        );
-        Assert.Equal(similarException.Message, exception.Message);
     }
 
     /// <summary>
     /// The constructor should throw an ArgumentNullException if the group parameter
-    /// is null.
+    /// is null, empty, or composed entirely of whitespace.
     /// </summary>
     [Fact]
-    public void Constructor_ArgumentNullExceptionThrownIfGroupIsNull()
+    public void Constructor_ArgumentNullExceptionThrownIfGroupIsNullOrEmptyOrOnlyWhitespace()
     {
-        var exception = Assert.Throws<ArgumentNullException>(
-            () => new FailedRetriesEvent(1, null!)
+        Scenario.ThrowsWhenParameterIsNullOrEmptyOrWhitespace(
+            (invalidGroup) => new FailedRetriesEvent(1, invalidGroup!),
+            "group"
         );
-        Assert.Equal("group", exception.ParamName);
-        Assert.Equal("Value cannot be null. (Parameter 'group')", exception.Message);
-    }
-
-    /// <summary>
-    /// The constructor should throw an ArgumentException if the group parameter
-    /// is empty or composed entirely of whitespace.
-    /// </summary>
-    [Fact]
-    public void Constructor_ArgumentExceptionThrownIfGroupIsEmptyOrWhitespace()
-    {
-        foreach (var invalidGroup in new string[] { "", " ", "\t" })
-        {
-            var exception = Assert.Throws<ArgumentException>(
-                () => new FailedRetriesEvent(1, invalidGroup)
-            );
-            Assert.Equal("group", exception.ParamName);
-            Assert.Equal(
-                $"The value cannot be an empty string or composed entirely of whitespace. (Parameter 'group')",
-                exception.Message
-            );
-        }
     }
 
     /// <summary>

@@ -10,39 +10,15 @@ public class RecurringJobTest
 {
     /// <summary>
     /// The constructor should throw an exception if the given className
-    /// argument is null.
+    /// argument is null, empty, or composed entirely of whitespace.
     /// </summary>
     [Fact]
-    public void Constructor_ClassName_ThrowsWhenNull()
+    public void Constructor_ClassName_ThrowsWhenNullOrEmptyOrOnlyWhitespace()
     {
-        var exception = Assert.Throws<ArgumentNullException>(
-            () => MakeRecurringJob(className: null)
+        Scenario.ThrowsWhenParameterIsNullOrEmptyOrWhitespace(
+            (invalidClassName) => MakeRecurringJob(className: invalidClassName),
+            "className"
         );
-        Assert.Equal("className", exception.ParamName);
-        Assert.Equal(
-            "Value cannot be null. (Parameter 'className')",
-            exception.Message
-        );
-    }
-
-    /// <summary>
-    /// The constructor should throw an exception if the given className
-    /// argument is empty or composed entirely of whitespace.
-    /// </summary>
-    [Fact]
-    public void Constructor_ClassName_ThrowsWhenEmptyOrWhitespace()
-    {
-        foreach (var invalidClassName in TestConstants.EmptyStrings)
-        {
-            var exception = Assert.Throws<ArgumentException>(
-                () => MakeRecurringJob(className: invalidClassName)
-            );
-            Assert.Equal("className", exception.ParamName);
-            Assert.Equal(
-                "The value cannot be an empty string or composed entirely of whitespace. (Parameter 'className')",
-                exception.Message
-            );
-        }
     }
 
     /// <summary>
@@ -52,54 +28,23 @@ public class RecurringJobTest
     [Fact]
     public void Constructor_Count_ThrowsWhenNegative()
     {
-        foreach (var negativeValue in new int[] { -100, -1 })
-        {
-            var exception = Assert.Throws<ArgumentOutOfRangeException>(
-                () => MakeRecurringJob(count: Maybe<int>.Some(negativeValue))
-            );
-            Assert.Equal("count", exception.ParamName);
-            Assert.Equal(
-                $"""
-                Value must be a non-negative whole number. (Parameter 'count')
-                Actual value was {negativeValue}.
-                """,
-                exception.Message
-            );
-        }
+        Scenario.ThrowsWhenParameterIsNegative(
+            (invalidCount) => MakeRecurringJob(count: Maybe<int>.Some(invalidCount)),
+            "count"
+        );
     }
 
     /// <summary>
     /// The constructor should throw an exception if the given data argument is
-    /// null.
+    /// null, empty, or composed entirely of whitespace.
     /// </summary>
     [Fact]
-    public void Constructor_Data_ThrowsWhenNull()
+    public void Constructor_Data_ThrowsWhenNullOrEmptyOrOnlyWhitespace()
     {
-        var exception = Assert.Throws<ArgumentNullException>(
-            () => MakeRecurringJob(data: null)
+        Scenario.ThrowsWhenParameterIsNullOrEmptyOrWhitespace(
+            (invalidData) => MakeRecurringJob(data: invalidData),
+            "data"
         );
-        Assert.Equal("data", exception.ParamName);
-        Assert.Equal("Value cannot be null. (Parameter 'data')", exception.Message);
-    }
-
-    /// <summary>
-    /// The constructor should throw an exception if the given data is empty or
-    /// composed entirely of whitespace.
-    /// </summary>
-    [Fact]
-    public void Constructor_Data_ThrowsWhenEmptyOrWhitespace()
-    {
-        foreach (var invalidData in TestConstants.EmptyStrings)
-        {
-            var exception = Assert.Throws<ArgumentException>(
-                () => MakeRecurringJob(data: invalidData)
-            );
-            Assert.Equal("data", exception.ParamName);
-            Assert.Equal(
-                "The value cannot be an empty string or composed entirely of whitespace. (Parameter 'data')",
-                exception.Message
-            );
-        }
     }
 
     /// <summary>
@@ -109,77 +54,40 @@ public class RecurringJobTest
     [Fact]
     public void Constructor_IntervalSeconds_ThrowsWhenNegative()
     {
-        foreach (var nonPositiveValue in new int[] { -100, -1, 0 })
-        {
-            var exception = Assert.Throws<ArgumentOutOfRangeException>(
-                () => MakeRecurringJob(intervalSeconds: Maybe<int>.Some(nonPositiveValue))
-            );
-            Assert.Equal("intervalSeconds", exception.ParamName);
-            Assert.Equal(
-                $"""
-                Value must be a positive whole number. (Parameter 'intervalSeconds')
-                Actual value was {nonPositiveValue}.
-                """,
-                exception.Message
-            );
-        }
-    }
-
-    /// <summary>
-    /// The constructor should throw an exception if the given jid argument is
-    /// null.
-    /// </summary>
-    [Fact]
-    public void Constructor_Jid_ThrowsWhenNull()
-    {
-        var exception = Assert.Throws<ArgumentNullException>(
-            () => MakeRecurringJob(jid: null)
+        Scenario.ThrowsWhenParameterIsNotPositive(
+            (invalidIntervalSeconds) => MakeRecurringJob(
+                intervalSeconds: Maybe<int>.Some(invalidIntervalSeconds)
+            ),
+            "intervalSeconds"
         );
-        Assert.Equal("jid", exception.ParamName);
-        Assert.Equal("Value cannot be null. (Parameter 'jid')", exception.Message);
     }
 
     /// <summary>
     /// The constructor should throw an exception if the given jid argument is
-    /// empty or composed entirely of whitespace.
+    /// null, empty, or composed entirely of whitespace.
     /// </summary>
     [Fact]
-    public void Constructor_Jid_ThrowsWhenEmptyOrWhitespace()
+    public void Constructor_Jid_ThrowsWhenNullOrEmptyOrOnlyWhitespace()
     {
-        foreach (var invalidJid in TestConstants.EmptyStrings)
-        {
-            var exception = Assert.Throws<ArgumentException>(
-                () => MakeRecurringJob(jid: invalidJid)
-            );
-            Assert.Equal("jid", exception.ParamName);
-            Assert.Equal(
-                "The value cannot be an empty string or composed entirely of whitespace. (Parameter 'jid')",
-                exception.Message
-            );
-        }
+        Scenario.ThrowsWhenParameterIsNullOrEmptyOrWhitespace(
+            (invalidJid) => MakeRecurringJob(jid: invalidJid),
+            "jid"
+        );
     }
 
     /// <summary>
-    /// The constructor should throw an exception if the given maximumBacklog argument
-    /// is negative.
+    /// The constructor should throw an exception if the given maximumBacklog
+    /// argument is negative.
     /// </summary>
     [Fact]
     public void Constructor_MaximumBacklog_ThrowsWhenNegative()
     {
-        foreach (var negativeValue in new int[] { -100, -1 })
-        {
-            var exception = Assert.Throws<ArgumentOutOfRangeException>(
-                () => MakeRecurringJob(maximumBacklog: Maybe<int>.Some(negativeValue))
-            );
-            Assert.Equal("maximumBacklog", exception.ParamName);
-            Assert.Equal(
-                $"""
-                Value must be a non-negative whole number. (Parameter 'maximumBacklog')
-                Actual value was {negativeValue}.
-                """,
-                exception.Message
-            );
-        }
+        Scenario.ThrowsWhenParameterIsNegative(
+            (invalidMaximumBacklog) => MakeRecurringJob(
+                maximumBacklog: Maybe<int>.Some(invalidMaximumBacklog)
+            ),
+            "maximumBacklog"
+        );
     }
 
     /// <summary>
@@ -189,20 +97,12 @@ public class RecurringJobTest
     [Fact]
     public void Constructor_Priority_ThrowsWhenNegative()
     {
-        foreach (var negativeValue in new int[] { -100, -1 })
-        {
-            var exception = Assert.Throws<ArgumentOutOfRangeException>(
-                () => MakeRecurringJob(priority: Maybe<int>.Some(negativeValue))
-            );
-            Assert.Equal("priority", exception.ParamName);
-            Assert.Equal(
-                $"""
-                Value must be a non-negative whole number. (Parameter 'priority')
-                Actual value was {negativeValue}.
-                """,
-                exception.Message
-            );
-        }
+        Scenario.ThrowsWhenParameterIsNegative(
+            (invalidPriority) => MakeRecurringJob(
+                priority: Maybe<int>.Some(invalidPriority)
+            ),
+            "priority"
+        );
     }
 
     /// <summary>
@@ -222,17 +122,10 @@ public class RecurringJobTest
     [Fact]
     public void Constructor_QueueName_ThrowsWhenEmptyOrWhitespace()
     {
-        foreach (var invalidQueueName in TestConstants.EmptyStrings)
-        {
-            var exception = Assert.Throws<ArgumentException>(
-                () => MakeRecurringJob(queueName: invalidQueueName)
-            );
-            Assert.Equal("queueName", exception.ParamName);
-            Assert.Equal(
-                "The value cannot be an empty string or composed entirely of whitespace. (Parameter 'queueName')",
-                exception.Message
-            );
-        }
+        Scenario.ThrowsWhenParameterIsEmptyOrWhitespace(
+            (invalidQueueName) => MakeRecurringJob(queueName: invalidQueueName),
+            "queueName"
+        );
     }
 
     /// <summary>
@@ -242,54 +135,25 @@ public class RecurringJobTest
     [Fact]
     public void Constructor_Retries_ThrowsWhenNegative()
     {
-        foreach (var negativeValue in new int[] { -100, -1 })
-        {
-            var exception = Assert.Throws<ArgumentOutOfRangeException>(
-                () => MakeRecurringJob(retries: Maybe<int>.Some(negativeValue))
-            );
-            Assert.Equal("retries", exception.ParamName);
-            Assert.Equal(
-                $"""
-                Value must be a non-negative whole number. (Parameter 'retries')
-                Actual value was {negativeValue}.
-                """,
-                exception.Message
-            );
-        }
-    }
-
-    /// <summary>
-    /// The constructor should throw an exception if the given state argument is
-    /// null.
-    /// </summary>
-    [Fact]
-    public void Constructor_State_ThrowsWhenNull()
-    {
-        var exception = Assert.Throws<ArgumentNullException>(
-            () => MakeRecurringJob(state: null)
+        Scenario.ThrowsWhenParameterIsNegative(
+            (invalidRetries) => MakeRecurringJob(
+                retries: Maybe<int>.Some(invalidRetries)
+            ),
+            "retries"
         );
-        Assert.Equal("state", exception.ParamName);
-        Assert.Equal("Value cannot be null. (Parameter 'state')", exception.Message);
     }
 
     /// <summary>
     /// The constructor should throw an exception if the given state argument is
-    /// empty or composed entirely of whitespace.
+    /// null, empty, or composed entirely of whitespace.
     /// </summary>
     [Fact]
-    public void Constructor_State_ThrowsWhenEmptyOrWhitespace()
+    public void Constructor_State_ThrowsWhenNullOrEmptyOrOnlyWhitespace()
     {
-        foreach (var invalidState in TestConstants.EmptyStrings)
-        {
-            var exception = Assert.Throws<ArgumentException>(
-                () => MakeRecurringJob(state: invalidState)
-            );
-            Assert.Equal("state", exception.ParamName);
-            Assert.Equal(
-                "The value cannot be an empty string or composed entirely of whitespace. (Parameter 'state')",
-                exception.Message
-            );
-        }
+        Scenario.ThrowsWhenParameterIsNullOrEmptyOrWhitespace(
+            (invalidState) => MakeRecurringJob(state: invalidState),
+            "state"
+        );
     }
 
     /// <summary>
@@ -299,11 +163,10 @@ public class RecurringJobTest
     [Fact]
     public void Constructor_Tags_ThrowsWhenNull()
     {
-        var exception = Assert.Throws<ArgumentNullException>(
-            () => MakeRecurringJob(tags: Maybe<string[]?>.Some(null))
+        Scenario.ThrowsArgumentNullException(
+            () => MakeRecurringJob(tags: Maybe<string[]?>.Some(null)),
+            "tags"
         );
-        Assert.Equal("tags", exception.ParamName);
-        Assert.Equal("Value cannot be null. (Parameter 'tags')", exception.Message);
     }
 
     /// <summary>
@@ -313,17 +176,12 @@ public class RecurringJobTest
     [Fact]
     public void Constructor_Tags_ThrowsWhenAnyValueIsNullEmptyOrOnlyWhitespace()
     {
-        foreach (var invalidValue in TestConstants.EmptyStringsWithNull)
-        {
-            var exception = Assert.Throws<ArgumentException>(
-                () => MakeRecurringJob(tags: Maybe<string[]?>.Some([invalidValue!]))
-            );
-            Assert.Equal("tags", exception.ParamName);
-            Assert.Equal(
-                "Value cannot include null, empty string, or strings composed entirely of whitespace. (Parameter 'tags')",
-                exception.Message
-            );
-        }
+        Scenario.ThrowsWhenParameterItemIsNullOrEmptyOrWhitespace(
+            (invalidTag) => MakeRecurringJob(
+                tags: Maybe<string[]?>.Some([invalidTag!])
+            ),
+            "tags"
+        );
     }
 
     /// <summary>
@@ -333,11 +191,10 @@ public class RecurringJobTest
     [Fact]
     public void Constructor_Throttles_ThrowsWhenNull()
     {
-        var exception = Assert.Throws<ArgumentNullException>(
-            () => MakeRecurringJob(throttles: Maybe<string[]?>.Some(null))
+        Scenario.ThrowsArgumentNullException(
+            () => MakeRecurringJob(throttles: Maybe<string[]?>.Some(null)),
+            "throttles"
         );
-        Assert.Equal("throttles", exception.ParamName);
-        Assert.Equal("Value cannot be null. (Parameter 'throttles')", exception.Message);
     }
 
     /// <summary>
@@ -347,17 +204,12 @@ public class RecurringJobTest
     [Fact]
     public void Constructor_Throttles_ThrowsWhenAnyValueIsNullEmptyOrOnlyWhitespace()
     {
-        foreach (var invalidValue in TestConstants.EmptyStringsWithNull)
-        {
-            var exception = Assert.Throws<ArgumentException>(
-                () => MakeRecurringJob(throttles: Maybe<string[]?>.Some([invalidValue!]))
-            );
-            Assert.Equal("throttles", exception.ParamName);
-            Assert.Equal(
-                "Value cannot include null, empty string, or strings composed entirely of whitespace. (Parameter 'throttles')",
-                exception.Message
-            );
-        }
+        Scenario.ThrowsWhenParameterItemIsNullOrEmptyOrWhitespace(
+            (invalidThrottle) => MakeRecurringJob(
+                throttles: Maybe<string[]?>.Some([invalidThrottle!])
+            ),
+            "throttles"
+        );
     }
 
     /// <summary>

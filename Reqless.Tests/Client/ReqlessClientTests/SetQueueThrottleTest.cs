@@ -10,47 +10,20 @@ public class SetQueueThrottleTest : BaseReqlessClientTest
 {
     /// <summary>
     /// <see cref="ReqlessClient.SetQueueThrottleAsync"/> should throw if queue
-    /// name is null.
+    /// name is null, empty, or only whitespace.
     /// </summary>
     [Fact]
-    public async void ThrowsIfQueueNameIsNull()
+    public async void ThrowsIfQueueNameIsNullOrEmptyOrOnlyWhitespace()
     {
-        var exception = await Assert.ThrowsAsync<ArgumentNullException>(
-            () => WithClientWithExecutorMockForExpectedArguments(
+        await Scenario.ThrowsWhenParameterIsNullOrEmptyOrWhitespaceAsync(
+            (invalidQueueName) => WithClientWithExecutorMockForExpectedArguments(
                 subject => subject.SetQueueThrottleAsync(
-                    queueName: null!,
+                    queueName: invalidQueueName!,
                     maximum: 21
                 )
-            )
+            ),
+            "queueName"
         );
-        Assert.Equal(
-            "Value cannot be null. (Parameter 'queueName')",
-            exception.Message
-        );
-    }
-
-    /// <summary>
-    /// <see cref="ReqlessClient.SetQueueThrottleAsync"/> should throw if queue
-    /// name is empty or whitespace.
-    /// </summary>
-    [Fact]
-    public async void ThrowsIfQueueNameIsEmptyOrJustWhitespace()
-    {
-        foreach (var emptyString in TestConstants.EmptyStrings)
-        {
-            var exception = await Assert.ThrowsAsync<ArgumentException>(
-                () => WithClientWithExecutorMockForExpectedArguments(
-                    subject => subject.SetQueueThrottleAsync(
-                        queueName: emptyString,
-                        maximum: 21
-                    )
-                )
-            );
-            Assert.Equal(
-                "The value cannot be an empty string or composed entirely of whitespace. (Parameter 'queueName')",
-                exception.Message
-            );
-        }
     }
 
     /// <summary>
@@ -60,21 +33,15 @@ public class SetQueueThrottleTest : BaseReqlessClientTest
     [Fact]
     public async void ThrowsIfMaximumIsLessThanZero()
     {
-        foreach (var invalidMaximum in new int[] { -100, -1 })
-        {
-            var exception = await Assert.ThrowsAsync<ArgumentOutOfRangeException>(
-                () => WithClientWithExecutorMockForExpectedArguments(
-                    subject => subject.SetQueueThrottleAsync(
-                        queueName: ExampleQueueName,
-                        maximum: invalidMaximum
-                    )
+        await Scenario.ThrowsWhenParameterIsNegativeAsync(
+            (invalidMaximum) => WithClientWithExecutorMockForExpectedArguments(
+                subject => subject.SetQueueThrottleAsync(
+                    queueName: ExampleQueueName,
+                    maximum: invalidMaximum
                 )
-            );
-            Assert.Equal(
-                "Value must be greater than or equal to zero. (Parameter 'maximum')",
-                exception.Message
-            );
-        }
+            ),
+            "maximum"
+        );
     }
 
     /// <summary>

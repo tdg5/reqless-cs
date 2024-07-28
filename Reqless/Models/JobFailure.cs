@@ -50,13 +50,7 @@ public class JobFailure
         ArgumentException.ThrowIfNullOrWhiteSpace(group, nameof(group));
         ArgumentException.ThrowIfNullOrWhiteSpace(message, nameof(message));
         ArgumentException.ThrowIfNullOrWhiteSpace(workerName, nameof(workerName));
-        if (when <= 0)
-        {
-            throw new ArgumentOutOfRangeException(
-                nameof(when),
-                "When must be greater than 0."
-            );
-        }
+        ValidationHelper.ThrowIfNotPositive(when, nameof(when));
 
         Group = group;
         Message = message;

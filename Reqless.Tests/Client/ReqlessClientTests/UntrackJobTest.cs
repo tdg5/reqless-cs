@@ -10,41 +10,17 @@ public class UntrackJobTest : BaseReqlessClientTest
 {
     /// <summary>
     /// <see cref="ReqlessClient.UntrackJobAsync"/> should throw if jid is
-    /// null.
+    /// null, empty, or only whitespace.
     /// </summary>
     [Fact]
-    public async void ThrowsIfJidIsNull()
+    public async void ThrowsIfJidIsNullOrEmptyOrOnlyWhitespace()
     {
-        var exception = await Assert.ThrowsAsync<ArgumentNullException>(
-            () => WithClientWithExecutorMockForExpectedArguments(
-                subject => subject.UntrackJobAsync(jid: null!)
-            )
+        await Scenario.ThrowsWhenParameterIsNullOrEmptyOrWhitespaceAsync(
+            (invalidJid) => WithClientWithExecutorMockForExpectedArguments(
+                subject => subject.UntrackJobAsync(jid: invalidJid!)
+            ),
+            "jid"
         );
-        Assert.Equal(
-            "Value cannot be null. (Parameter 'jid')",
-            exception.Message
-        );
-    }
-
-    /// <summary>
-    /// <see cref="ReqlessClient.UntrackJobAsync"/> should throw if jid is
-    /// empty or whitespace.
-    /// </summary>
-    [Fact]
-    public async void ThrowsIfJidIsEmptyOrOnlyWhitespace()
-    {
-        foreach (var emptyString in TestConstants.EmptyStrings)
-        {
-            var exception = await Assert.ThrowsAsync<ArgumentException>(
-                () => WithClientWithExecutorMockForExpectedArguments(
-                    subject => subject.UntrackJobAsync(jid: emptyString)
-                )
-            );
-            Assert.Equal(
-                "The value cannot be an empty string or composed entirely of whitespace. (Parameter 'jid')",
-                exception.Message
-            );
-        }
     }
 
     /// <summary>

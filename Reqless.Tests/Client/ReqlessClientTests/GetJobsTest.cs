@@ -89,34 +89,28 @@ public class GetJobsTest : BaseReqlessClientTest
     [Fact]
     public async void ThrowsIfJidsIsNull()
     {
-        var exception = await Assert.ThrowsAsync<ArgumentNullException>(
+        await Scenario.ThrowsArgumentNullExceptionAsync(
             () => WithClientWithExecutorMockForExpectedArguments(
                 subject => subject.GetJobsAsync(null!)
-            )
-        );
-        Assert.Equal(
-            "Value cannot be null. (Parameter 'jids')",
-            exception.Message
+            ),
+            "jids"
         );
     }
 
     /// <summary>
     /// <see cref="ReqlessClient.GetJobsAsync"/> throws if any of the given JIDs
-    /// are null.
+    /// are null, empty, or whitespace.
     /// </summary>
     [Fact]
-    public async void ThrowsIfAnyOfTheJidsAreNull()
+    public async void ThrowsIfAnyOfTheJidsAreNullOrEmptyOrOnlyWhitespace()
     {
-        var exception = await Assert.ThrowsAsync<ArgumentException>(
-            () => WithClientWithExecutorMockForExpectedArguments(
+        await Scenario.ThrowsWhenParameterItemIsNullOrEmptyOrWhitespaceAsync(
+            (invalidJid) => WithClientWithExecutorMockForExpectedArguments(
                 subject => subject.GetJobsAsync(ExampleJid, null!),
-                expectedArguments: ["job.getMulti", 0, ExampleJid, RedisValue.Null],
+                expectedArguments: ["job.getMulti", 0, ExampleJid, invalidJid],
                 returnValue: null
-            )
-        );
-        Assert.Equal(
-            "Value cannot include null, empty string, or strings composed entirely of whitespace. (Parameter 'jids')",
-            exception.Message
+            ),
+            "jids"
         );
     }
 

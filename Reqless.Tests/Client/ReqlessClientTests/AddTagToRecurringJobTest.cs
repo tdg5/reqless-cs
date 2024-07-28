@@ -10,80 +10,32 @@ public class AddTagToRecurringJobTest : BaseReqlessClientTest
 {
     /// <summary>
     /// <see cref="ReqlessClient.AddTagToRecurringJobAsync"/> throws if the
-    /// given jid is null.
+    /// given jid is null, or empty, or whitespace.
     /// </summary>
     [Fact]
-    public async void ThrowsIfJidIsNull()
+    public async void ThrowsIfJidIsNullOrEmptyOrWhitespace()
     {
-        var exception = await Assert.ThrowsAsync<ArgumentNullException>(
-            () => WithClientWithExecutorMockForExpectedArguments(
-                subject => subject.AddTagToRecurringJobAsync(null!, ExampleTag)
-            )
-        );
-        Assert.Equal(
-            "Value cannot be null. (Parameter 'jid')",
-            exception.Message
+        await Scenario.ThrowsWhenParameterIsNullOrEmptyOrWhitespaceAsync(
+            (invalidJid) => WithClientWithExecutorMockForExpectedArguments(
+                subject => subject.AddTagToRecurringJobAsync(invalidJid!, ExampleTag)
+            ),
+            "jid"
         );
     }
 
     /// <summary>
     /// <see cref="ReqlessClient.AddTagToRecurringJobAsync"/> throws if the
-    /// given jid is empty or only whitespace.
-    /// </summary>
-    [Fact]
-    public async void ThrowsIfJidIsEmptyOrOnlyWhitespace()
-    {
-        foreach (var emptyString in TestConstants.EmptyStrings)
-        {
-            var exception = await Assert.ThrowsAsync<ArgumentException>(
-                () => WithClientWithExecutorMockForExpectedArguments(
-                    subject => subject.AddTagToRecurringJobAsync(emptyString, ExampleTag)
-                )
-            );
-            Assert.Equal(
-                "The value cannot be an empty string or composed entirely of whitespace. (Parameter 'jid')",
-                exception.Message
-            );
-        }
-    }
-
-    /// <summary>
-    /// <see cref="ReqlessClient.AddTagToRecurringJobAsync"/> throws if the
-    /// given tags argument is null.
+    /// given tag argument is null, empty, or whitespace.
     /// </summary>
     [Fact]
     public async void ThrowsIfTagIsNull()
     {
-        var exception = await Assert.ThrowsAsync<ArgumentNullException>(
-            () => WithClientWithExecutorMockForExpectedArguments(
-                subject => subject.AddTagToRecurringJobAsync(ExampleJid, null!)
-            )
+        await Scenario.ThrowsWhenParameterIsNullOrEmptyOrWhitespaceAsync(
+            (invalidTag) => WithClientWithExecutorMockForExpectedArguments(
+                subject => subject.AddTagToRecurringJobAsync(ExampleJid, invalidTag!)
+            ),
+            "tag"
         );
-        Assert.Equal(
-            "Value cannot be null. (Parameter 'tag')",
-            exception.Message
-        );
-    }
-
-    /// <summary>
-    /// <see cref="ReqlessClient.AddTagToRecurringJobAsync"/> throws if any of
-    /// the tags are empty or composed entirely of whitespace.
-    /// </summary>
-    [Fact]
-    public async void ThrowsIfAnyTagIsEmptyOrOnlyWhitespace()
-    {
-        foreach (var emptyString in TestConstants.EmptyStrings)
-        {
-            var exception = await Assert.ThrowsAsync<ArgumentException>(
-                () => WithClientWithExecutorMockForExpectedArguments(
-                    subject => subject.AddTagToRecurringJobAsync(ExampleJid, emptyString)
-                )
-            );
-            Assert.Equal(
-                "The value cannot be an empty string or composed entirely of whitespace. (Parameter 'tag')",
-                exception.Message
-            );
-        }
     }
 
     /// <summary>

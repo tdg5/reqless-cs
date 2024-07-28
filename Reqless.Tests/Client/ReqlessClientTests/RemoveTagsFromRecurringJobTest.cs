@@ -11,19 +11,19 @@ public class RemoveTagsFromRecurringJobTest : BaseReqlessClientTest
 {
     /// <summary>
     /// <see cref="ReqlessClient.RemoveTagsFromRecurringJobAsync"/> throws if
-    /// the given jid is null.
+    /// the given jid is null, empty, or only whitespace.
     /// </summary>
     [Fact]
-    public async void RemoveTagsFromRecurringJobAsync_ThrowsIfJidIsNull()
+    public async void ThrowsIfJidIsNullOrEmptyOrOnlyWhitespace()
     {
-        var exception = await Assert.ThrowsAsync<ArgumentNullException>(
-            () => WithClientWithExecutorMockForExpectedArguments(
-                subject => subject.RemoveTagsFromRecurringJobAsync(null!, ExampleTag)
-            )
-        );
-        Assert.Equal(
-            "Value cannot be null. (Parameter 'jid')",
-            exception.Message
+        await Scenario.ThrowsWhenParameterIsNullOrEmptyOrWhitespaceAsync(
+            (invalidJid) => WithClientWithExecutorMockForExpectedArguments(
+                subject => subject.RemoveTagsFromRecurringJobAsync(
+                    jid: invalidJid!,
+                    tags: ExampleTag
+                )
+            ),
+            "jid"
         );
     }
 
@@ -32,56 +32,35 @@ public class RemoveTagsFromRecurringJobTest : BaseReqlessClientTest
     /// the given tags argument is null.
     /// </summary>
     [Fact]
-    public async void RemoveTagsFromRecurringJobAsync_ThrowsIfTagsIsNull()
+    public async void ThrowsIfTagsIsNull()
     {
-        var exception = await Assert.ThrowsAsync<ArgumentNullException>(
+        await Scenario.ThrowsArgumentNullExceptionAsync(
             () => WithClientWithExecutorMockForExpectedArguments(
-                subject => subject.RemoveTagsFromRecurringJobAsync(ExampleJid, null!)
-            )
-        );
-        Assert.Equal(
-            "Value cannot be null. (Parameter 'tags')",
-            exception.Message
-        );
-    }
-
-    /// <summary>
-    /// <see cref="ReqlessClient.RemoveTagsFromRecurringJobAsync"/> throws if
-    /// any of the tags are null.
-    /// </summary>
-    [Fact]
-    public async void RemoveTagsFromRecurringJobAsync_ThrowsIfAnyTagsAreNull()
-    {
-        var exception = await Assert.ThrowsAsync<ArgumentException>(
-            () => WithClientWithExecutorMockForExpectedArguments(
-                subject => subject.RemoveTagsFromRecurringJobAsync(ExampleJid, [null!])
-            )
-        );
-        Assert.Equal(
-            "Value cannot include null, empty string, or strings composed entirely of whitespace. (Parameter 'tags')",
-            exception.Message
-        );
-    }
-
-    /// <summary>
-    /// <see cref="ReqlessClient.RemoveTagsFromRecurringJobAsync"/> throws if
-    /// any of the tags are empty or composed entirely of whitespace.
-    /// </summary>
-    [Fact]
-    public async void RemoveTagsFromRecurringJobAsync_ThrowsIfAnyTagsAreEmptyOrOnlyWhitespace()
-    {
-        foreach (var emptyString in TestConstants.EmptyStrings)
-        {
-            var exception = await Assert.ThrowsAsync<ArgumentException>(
-                () => WithClientWithExecutorMockForExpectedArguments(
-                    subject => subject.RemoveTagsFromRecurringJobAsync(ExampleJid, [emptyString])
+                subject => subject.RemoveTagsFromRecurringJobAsync(
+                    jid: ExampleJid,
+                    tags: null!
                 )
-            );
-            Assert.Equal(
-                "Value cannot include null, empty string, or strings composed entirely of whitespace. (Parameter 'tags')",
-                exception.Message
-            );
-        }
+            ),
+            "tags"
+        );
+    }
+
+    /// <summary>
+    /// <see cref="ReqlessClient.RemoveTagsFromRecurringJobAsync"/> throws if
+    /// any of the tags are null, empty, or composed entirely of whitespace.
+    /// </summary>
+    [Fact]
+    public async void ThrowsIfAnyTagsAreNullOrEmptyOrWhitespace()
+    {
+        await Scenario.ThrowsWhenParameterItemIsNullOrEmptyOrWhitespaceAsync(
+            (invalidTag) => WithClientWithExecutorMockForExpectedArguments(
+                subject => subject.RemoveTagsFromRecurringJobAsync(
+                    jid: ExampleJid,
+                    tags: [invalidTag!]
+                )
+            ),
+            "tags"
+        );
     }
 
     /// <summary>
@@ -89,7 +68,7 @@ public class RemoveTagsFromRecurringJobTest : BaseReqlessClientTest
     /// Executor with the expected arguments.
     /// </summary>
     [Fact]
-    public async void RemoveTagsFromRecurringJobAsync_CallsExecutorWithTheExpectedArguments()
+    public async void CallsExecutorWithTheExpectedArguments()
     {
         var leftoverTag = "leftover-tag";
         List<string> tags = await WithClientWithExecutorMockForExpectedArguments(
@@ -115,7 +94,7 @@ public class RemoveTagsFromRecurringJobTest : BaseReqlessClientTest
     /// server returns null.
     /// </summary>
     [Fact]
-    public async void RemoveTagsFromRecurringJobAsync_ThrowsIfServerReturnsNull()
+    public async void ThrowsIfServerReturnsNull()
     {
         var exception = await Assert.ThrowsAsync<InvalidOperationException>(
             () => WithClientWithExecutorMockForExpectedArguments(
@@ -141,7 +120,7 @@ public class RemoveTagsFromRecurringJobTest : BaseReqlessClientTest
     /// if the JSON can't be deserialized.
     /// </summary>
     [Fact]
-    public async void RemoveTagsFromRecurringJobAsync_ThrowsIfJsonCannotBeDeserialized()
+    public async void ThrowsIfJsonCannotBeDeserialized()
     {
         var exception = await Assert.ThrowsAsync<JsonException>(
             () => WithClientWithExecutorMockForExpectedArguments(

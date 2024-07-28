@@ -10,41 +10,17 @@ public class GetQueueLengthTest : BaseReqlessClientTest
 {
     /// <summary>
     /// <see cref="ReqlessClient.GetQueueLengthAsync"/> should throw if queue
-    /// name is null.
+    /// name is null, empty, or whitespace.
     /// </summary>
     [Fact]
-    public async void ThrowsIfQueueNameIsNull()
+    public async void ThrowsIfQueueNameIsNullOrEmptyOrOnlyWhitespace()
     {
-        var exception = await Assert.ThrowsAsync<ArgumentNullException>(
-            () => WithClientWithExecutorMockForExpectedArguments(
-                subject => subject.GetQueueLengthAsync(queueName: null!)
-            )
+        await Scenario.ThrowsWhenParameterIsNullOrEmptyOrWhitespaceAsync(
+            (invalidQueueName) => WithClientWithExecutorMockForExpectedArguments(
+                subject => subject.GetQueueLengthAsync(queueName: invalidQueueName!)
+            ),
+            "queueName"
         );
-        Assert.Equal(
-            "Value cannot be null. (Parameter 'queueName')",
-            exception.Message
-        );
-    }
-
-    /// <summary>
-    /// <see cref="ReqlessClient.GetQueueLengthAsync"/> should throw if queue
-    /// name is empty or whitespace.
-    /// </summary>
-    [Fact]
-    public async void ThrowsIfQueueNameIsEmptyOrWhitespace()
-    {
-        foreach (var emptyString in TestConstants.EmptyStrings)
-        {
-            var exception = await Assert.ThrowsAsync<ArgumentException>(
-                () => WithClientWithExecutorMockForExpectedArguments(
-                    subject => subject.GetQueueLengthAsync(emptyString)
-                )
-            );
-            Assert.Equal(
-                "The value cannot be an empty string or composed entirely of whitespace. (Parameter 'queueName')",
-                exception.Message
-            );
-        }
     }
 
     /// <summary>

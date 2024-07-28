@@ -10,106 +10,73 @@ namespace Reqless.Tests.Models;
 public class JobFailureTest
 {
     /// <summary>
-    /// Constructor should throw when group is null.
+    /// Constructor should throw when group is null, empty, or only whitespace.
     /// </summary>
     [Fact]
-    public void Constructor_ThrowsWhenGroupIsNull()
+    public void Constructor_Group_ThrowsWhenGroupIsNullOrEmptyOrOnlyWhitespace()
     {
-        var exception = Assert.Throws<ArgumentNullException>(
-            () => new JobFailure(null!, "message", 123, "workerName")
+        Scenario.ThrowsWhenParameterIsNullOrEmptyOrWhitespace(
+            (invalidGroup) => new JobFailure(
+                group: invalidGroup!,
+                message: "message",
+                when: 123,
+                workerName: "workerName"
+            ),
+            "group"
         );
-        Assert.Equal("group", exception.ParamName);
-        Assert.Equal("Value cannot be null. (Parameter 'group')", exception.Message);
     }
 
     /// <summary>
-    /// Constructor should throw when group is empty or only whitespace.
+    /// Constructor should throw when message is null, empty, or only
+    /// whitespace.
     /// </summary>
     [Fact]
-    public void Constructor_ThrowsWhenGroupIsEmptyOrOnlyWhitespace()
+    public void Constructor_Message_ThrowsWhenNullOrEmptyOrOnlyWhitespace()
     {
-        foreach (var emptyString in TestConstants.EmptyStrings)
-        {
-            var exception = Assert.Throws<ArgumentException>(
-                () => new JobFailure(emptyString, "message", 123, "workerName")
-            );
-            Assert.Equal("group", exception.ParamName);
-            Assert.Equal("The value cannot be an empty string or composed entirely of whitespace. (Parameter 'group')", exception.Message);
-        }
-    }
-
-    /// <summary>
-    /// Constructor should throw when message is null.
-    /// </summary>
-    [Fact]
-    public void Constructor_ThrowsWhenMessageIsNull()
-    {
-        var exception = Assert.Throws<ArgumentNullException>(
-            () => new JobFailure("group", null!, 123, "workerName")
+        Scenario.ThrowsWhenParameterIsNullOrEmptyOrWhitespace(
+            (invalidMessage) => new JobFailure(
+                group: "group",
+                message: invalidMessage!,
+                when: 123,
+                workerName: "workerName"
+            ),
+            "message"
         );
-        Assert.Equal("message", exception.ParamName);
-        Assert.Equal("Value cannot be null. (Parameter 'message')", exception.Message);
     }
 
     /// <summary>
-    /// Constructor should throw when message is empty or only whitespace.
+    /// Constructor should throw when the when argument is not positive.
     /// </summary>
     [Fact]
-    public void Constructor_ThrowsWhenMessageIsEmptyOrOnlyWhitespace()
+    public void Constructor_When_ThrowsWhenNotPositive()
     {
-        foreach (var emptyString in TestConstants.EmptyStrings)
-        {
-            var exception = Assert.Throws<ArgumentException>(
-                () => new JobFailure("group", emptyString, 123, "workerName")
-            );
-            Assert.Equal("message", exception.ParamName);
-            Assert.Equal("The value cannot be an empty string or composed entirely of whitespace. (Parameter 'message')", exception.Message);
-        }
-    }
-
-    /// <summary>
-    /// Constructor should throw when when is not positive.
-    /// </summary>
-    [Fact]
-    public void Constructor_ThrowsWhenWhenIsNotPositive()
-    {
-        foreach (var invalidWhen in new int[] { 0, -1, -100 })
-        {
-            var exception = Assert.Throws<ArgumentOutOfRangeException>(
-                () => new JobFailure("group", "message", invalidWhen, "workerName")
-            );
-            Assert.Equal("when", exception.ParamName);
-            Assert.Equal("When must be greater than 0. (Parameter 'when')", exception.Message);
-        }
-    }
-
-    /// <summary>
-    /// Constructor should throw when workerName is null.
-    /// </summary>
-    [Fact]
-    public void Constructor_ThrowsWhenWorkerNameIsNull()
-    {
-        var exception = Assert.Throws<ArgumentNullException>(
-            () => new JobFailure("group", "message", 123, null!)
+        Scenario.ThrowsWhenParameterIsNotPositive(
+            (long invalidWhen) => new JobFailure(
+                "group",
+                "message",
+                invalidWhen,
+                "workerName"
+            ),
+            "when"
         );
-        Assert.Equal("workerName", exception.ParamName);
-        Assert.Equal("Value cannot be null. (Parameter 'workerName')", exception.Message);
     }
 
     /// <summary>
-    /// Constructor should throw when workerName is empty or only whitespace.
+    /// Constructor should throw when workerName is null, empty, or only
+    /// whitespace.
     /// </summary>
     [Fact]
-    public void Constructor_ThrowsWhenWorkerNameIsEmptyOrOnlyWhitespace()
+    public void Constructor_WorkerName_ThrowsWhenNullOrEmptyOrOnlyWhitespace()
     {
-        foreach (var emptyString in TestConstants.EmptyStrings)
-        {
-            var exception = Assert.Throws<ArgumentException>(
-                () => new JobFailure("group", "message", 123, emptyString)
-            );
-            Assert.Equal("workerName", exception.ParamName);
-            Assert.Equal("The value cannot be an empty string or composed entirely of whitespace. (Parameter 'workerName')", exception.Message);
-        }
+        Scenario.ThrowsWhenParameterIsNullOrEmptyOrWhitespace(
+            (invalidWorkerName) => new JobFailure(
+                "group",
+                "message",
+                123,
+                invalidWorkerName!
+            ),
+            "workerName"
+        );
     }
 
     /// <summary>

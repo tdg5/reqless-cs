@@ -10,92 +10,38 @@ public class AddDependencyToJobTest : BaseReqlessClientTest
 {
     /// <summary>
     /// <see cref="ReqlessClient.AddDependencyToJobAsync"/> should throw if jid
-    /// is null.
+    /// is null, empty, or whitespace.
     /// </summary>
     [Fact]
-    public async void ThrowsIfJidIsNull()
+    public async void ThrowsIfJidIsNullOrEmptyOrWhitespace()
     {
-        var exception = await Assert.ThrowsAsync<ArgumentNullException>(
-            () => WithClientWithExecutorMockForExpectedArguments(
+        await Scenario.ThrowsWhenParameterIsNullOrEmptyOrWhitespaceAsync(
+            (invalidJid) => WithClientWithExecutorMockForExpectedArguments(
                 subject => subject.AddDependencyToJobAsync(
                     dependsOnJid: ExampleJid,
-                    jid: null!
+                    jid: invalidJid!
                 )
-            )
+            ),
+            "jid"
         );
-        Assert.Equal(
-            "Value cannot be null. (Parameter 'jid')",
-            exception.Message
-        );
-    }
-
-    /// <summary>
-    /// <see cref="ReqlessClient.AddDependencyToJobAsync"/> should throw if jid
-    /// is empty or whitespace.
-    /// </summary>
-    [Fact]
-    public async void ThrowsIfJidIsEmptyOrWhitespace()
-    {
-        foreach (var emptyString in TestConstants.EmptyStrings)
-        {
-            var exception = await Assert.ThrowsAsync<ArgumentException>(
-                () => WithClientWithExecutorMockForExpectedArguments(
-                    subject => subject.AddDependencyToJobAsync(
-                        jid: emptyString,
-                        dependsOnJid: ExampleJid
-                    )
-                )
-            );
-            Assert.Equal(
-                "The value cannot be an empty string or composed entirely of whitespace. (Parameter 'jid')",
-                exception.Message
-            );
-        }
     }
 
     /// <summary>
     /// <see cref="ReqlessClient.AddDependencyToJobAsync"/> should throw if
-    /// dependsOnJid is null.
+    /// dependsOnJid is null, empty, or whitespace.
     /// </summary>
     [Fact]
-    public async void ThrowsIfDependsOnJidIsNull()
+    public async void ThrowsIfDependsOnJidIsNullOrEmptyOrWhitespace()
     {
-        var exception = await Assert.ThrowsAsync<ArgumentNullException>(
-            () => WithClientWithExecutorMockForExpectedArguments(
-                    subject => subject.AddDependencyToJobAsync(
-                    dependsOnJid: null!,
+        await Scenario.ThrowsWhenParameterIsNullOrEmptyOrWhitespaceAsync(
+            (invalidDependsOnJid) => WithClientWithExecutorMockForExpectedArguments(
+                subject => subject.AddDependencyToJobAsync(
+                    dependsOnJid: invalidDependsOnJid!,
                     jid: ExampleJid
                 )
-            )
+            ),
+            "dependsOnJid"
         );
-        Assert.Equal(
-            "Value cannot be null. (Parameter 'dependsOnJid')",
-            exception.Message
-        );
-    }
-
-    /// <summary>
-    /// <see cref="ReqlessClient.AddDependencyToJobAsync"/> should throw if
-    /// dependsOnJid is empty or whitespace.
-    /// </summary>
-    [Fact]
-    public async void ThrowsIfDependsOnJidIsEmptyOrWhitespace()
-    {
-        foreach (var emptyString in TestConstants.EmptyStrings)
-        {
-            var exception = await Assert.ThrowsAsync<ArgumentException>(
-                () => WithClientWithExecutorMockForExpectedArguments(
-                        subject => subject.AddDependencyToJobAsync(
-                        jid: ExampleJid,
-                        dependsOnJid: emptyString
-                    )
-                )
-            );
-            Assert.Equal(
-                "The value cannot be an empty string or composed entirely of whitespace. (Parameter 'dependsOnJid')",
-                exception.Message
-            );
-        }
     }
 
     /// <summary>

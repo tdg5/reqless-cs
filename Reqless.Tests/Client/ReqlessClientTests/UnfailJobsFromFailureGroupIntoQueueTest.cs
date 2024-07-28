@@ -11,117 +11,57 @@ public class UnfailJobsFromFailureGroupIntoQueueTest : BaseReqlessClientTest
 {
     /// <summary>
     /// <see cref="ReqlessClient.UnfailJobsFromFailureGroupIntoQueueAsync"/>
-    /// should throw if queue name is null.
+    /// should throw if queue name is null, empty, or only whitespace.
     /// </summary>
     [Fact]
-    public async void ThrowsIfQueueNameIsNull()
+    public async void ThrowsIfQueueNameIsNullOrEmptyOrOnlyWhitespace()
     {
-        var exception = await Assert.ThrowsAsync<ArgumentNullException>(
-            () => WithClientWithExecutorMockForExpectedArguments(
+        await Scenario.ThrowsWhenParameterIsNullOrEmptyOrWhitespaceAsync(
+            (invalidQueueName) => WithClientWithExecutorMockForExpectedArguments(
                 subject => subject.UnfailJobsFromFailureGroupIntoQueueAsync(
                     groupName: ExampleGroupName,
-                    queueName: null!
+                    queueName: invalidQueueName!
                 )
-            )
-        );
-        Assert.Equal(
-            "Value cannot be null. (Parameter 'queueName')",
-            exception.Message
+            ),
+            "queueName"
         );
     }
 
     /// <summary>
     /// <see cref="ReqlessClient.UnfailJobsFromFailureGroupIntoQueueAsync"/>
-    /// should throw if queue name is empty or whitespace.
+    /// should throw if group name is null, empty, or only whitespace.
     /// </summary>
     [Fact]
-    public async void ThrowsIfQueueNameIsEmptyOrWhitespace()
+    public async void ThrowsIfGroupNameIsNullOrEmptyOrWhitespace()
     {
-        foreach (var emptyString in TestConstants.EmptyStrings)
-        {
-            var exception = await Assert.ThrowsAsync<ArgumentException>(
-                () => WithClientWithExecutorMockForExpectedArguments(
-                    subject => subject.UnfailJobsFromFailureGroupIntoQueueAsync(
-                        groupName: ExampleGroupName,
-                        queueName: emptyString
-                    )
-                )
-            );
-            Assert.Equal(
-                "The value cannot be an empty string or composed entirely of whitespace. (Parameter 'queueName')",
-                exception.Message
-            );
-        }
-    }
-
-    /// <summary>
-    /// <see cref="ReqlessClient.UnfailJobsFromFailureGroupIntoQueueAsync"/>
-    /// should throw if group name is null.
-    /// </summary>
-    [Fact]
-    public async void ThrowsIfGroupNameIsNull()
-    {
-        var exception = await Assert.ThrowsAsync<ArgumentNullException>(
-            () => WithClientWithExecutorMockForExpectedArguments(
+        await Scenario.ThrowsWhenParameterIsNullOrEmptyOrWhitespaceAsync(
+            (invalidGroupName) => WithClientWithExecutorMockForExpectedArguments(
                 subject => subject.UnfailJobsFromFailureGroupIntoQueueAsync(
-                    groupName: null!,
+                    groupName: invalidGroupName!,
                     queueName: ExampleQueueName
                 )
-            )
-        );
-        Assert.Equal(
-            "Value cannot be null. (Parameter 'groupName')",
-            exception.Message
+            ),
+            "groupName"
         );
     }
 
     /// <summary>
     /// <see cref="ReqlessClient.UnfailJobsFromFailureGroupIntoQueueAsync"/>
-    /// should throw if group name is empty or whitespace.
+    /// should throw if count is not a positive number.
     /// </summary>
     [Fact]
-    public async void ThrowsIfGroupNameIsEmptyOrWhitespace()
+    public async void ThrowsIfCountIsNotAPositiveNumber()
     {
-        foreach (var emptyString in TestConstants.EmptyStrings)
-        {
-            var exception = await Assert.ThrowsAsync<ArgumentException>(
-                () => WithClientWithExecutorMockForExpectedArguments(
-                    subject => subject.UnfailJobsFromFailureGroupIntoQueueAsync(
-                        groupName: emptyString,
-                        queueName: ExampleQueueName
-                    )
+        await Scenario.ThrowsWhenParameterIsNotPositiveAsync(
+            (invalidCount) => WithClientWithExecutorMockForExpectedArguments(
+                subject => subject.UnfailJobsFromFailureGroupIntoQueueAsync(
+                    count: invalidCount,
+                    groupName: ExampleGroupName,
+                    queueName: ExampleQueueName
                 )
-            );
-            Assert.Equal(
-                "The value cannot be an empty string or composed entirely of whitespace. (Parameter 'groupName')",
-                exception.Message
-            );
-        }
-    }
-
-    /// <summary>
-    /// <see cref="ReqlessClient.UnfailJobsFromFailureGroupIntoQueueAsync"/>
-    /// should throw if count is less than 1.
-    /// </summary>
-    [Fact]
-    public async void ThrowsIfCountIsLessThanOne()
-    {
-        foreach (var invalidCount in new int[] { -100, -10, -1, 0 })
-        {
-            var exception = await Assert.ThrowsAsync<ArgumentOutOfRangeException>(
-                () => WithClientWithExecutorMockForExpectedArguments(
-                    subject => subject.UnfailJobsFromFailureGroupIntoQueueAsync(
-                        count: invalidCount,
-                        groupName: ExampleGroupName,
-                        queueName: ExampleQueueName
-                    )
-                )
-            );
-            Assert.Equal(
-                "Value must be greater than zero. (Parameter 'count')",
-                exception.Message
-            );
-        }
+            ),
+            "count"
+        );
     }
 
     /// <summary>

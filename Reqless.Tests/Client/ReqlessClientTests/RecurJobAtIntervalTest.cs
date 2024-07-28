@@ -1,6 +1,7 @@
 using System.Text.Json;
 using Moq;
 using Reqless.Client;
+using Reqless.Tests.TestHelpers;
 using StackExchange.Redis;
 
 namespace Reqless.Tests.Client.ReqlessClientTests;
@@ -153,5 +154,86 @@ public class RecurJobAtIntervalTest : BaseReqlessClientTest
             returnValue: ExampleJid
         );
         Assert.Equal(ExampleJid, resultJid);
+    }
+
+    /// <summary>
+    /// <see cref="ReqlessClient.RecurJobAtIntervalAsync"/> should throw if queueName is
+    /// null, empty, or only whitespace.
+    /// </summary>
+    [Fact]
+    public async void ThrowsIfQueueNameIsNullOrEmptyOrOnlyWhitespace()
+    {
+        await Scenario.ThrowsWhenParameterIsNullOrEmptyOrWhitespaceAsync(
+            (invalidQueueName) => WithClientWithExecutorMockForExpectedArguments(
+                subject => subject.RecurJobAtIntervalAsync(
+                    className: ExampleClassName,
+                    data: ExampleData,
+                    intervalSeconds: ExampleIntervalSeconds,
+                    queueName: invalidQueueName!
+                )
+            ),
+            "queueName"
+        );
+    }
+
+    /// <summary>
+    /// <see cref="ReqlessClient.RecurJobAtIntervalAsync"/> should throw if className is
+    /// null, empty, or only whitespace.
+    /// </summary>
+    [Fact]
+    public async void ThrowsIfClassNameIsNullOrEmptyOrOnlyWhitespace()
+    {
+        await Scenario.ThrowsWhenParameterIsNullOrEmptyOrWhitespaceAsync(
+            (invalidClassName) => WithClientWithExecutorMockForExpectedArguments(
+                subject => subject.RecurJobAtIntervalAsync(
+                    className: invalidClassName!,
+                    data: ExampleData,
+                    intervalSeconds: ExampleIntervalSeconds,
+                    queueName: ExampleQueueName
+                )
+            ),
+            "className"
+        );
+    }
+
+    /// <summary>
+    /// <see cref="ReqlessClient.RecurJobAtIntervalAsync"/> should throw if data is null,
+    /// empty, or only whitespace.
+    /// </summary>
+    [Fact]
+    public async void ThrowsIfDataIsNullOrEmptyOrOnlyWhitespace()
+    {
+        await Scenario.ThrowsWhenParameterIsNullOrEmptyOrWhitespaceAsync(
+            (invalidData) => WithClientWithExecutorMockForExpectedArguments(
+                subject => subject.RecurJobAtIntervalAsync(
+                    className: ExampleClassName,
+                    data: invalidData!,
+                    intervalSeconds: ExampleIntervalSeconds,
+                    queueName: ExampleQueueName
+                )
+            ),
+            "data"
+        );
+    }
+
+    /// <summary>
+    /// <see cref="ReqlessClient.RecurJobAtIntervalAsync"/> should throw if jid is empty or
+    /// only whitespace.
+    /// </summary>
+    [Fact]
+    public async void ThrowsIfJidIsEmptyOrOnlyWhitespace()
+    {
+        await Scenario.ThrowsWhenParameterIsEmptyOrWhitespaceAsync(
+            (invalidJid) => WithClientWithExecutorMockForExpectedArguments(
+                subject => subject.RecurJobAtIntervalAsync(
+                    className: ExampleClassName,
+                    data: ExampleData,
+                    intervalSeconds: ExampleIntervalSeconds,
+                    jid: invalidJid,
+                    queueName: ExampleQueueName
+                )
+            ),
+            "jid"
+        );
     }
 }

@@ -247,14 +247,20 @@ public class ReqlessClient : IClient, IDisposable
         string? data = null
     )
     {
-        var arguments = new RedisValue[6 + (data == null ? 0 : 1)];
+        ArgumentException.ThrowIfNullOrWhiteSpace(jid, nameof(jid));
+        ArgumentException.ThrowIfNullOrWhiteSpace(workerName, nameof(workerName));
+        ArgumentException.ThrowIfNullOrWhiteSpace(groupName, nameof(groupName));
+        ArgumentException.ThrowIfNullOrWhiteSpace(message, nameof(message));
+        ValidationHelper.ThrowIfNotNullAndEmptyOrWhitespace(data, nameof(data));
+
+        var arguments = new RedisValue[6 + (data is null ? 0 : 1)];
         arguments[0] = "job.fail";
         arguments[1] = Now();
         arguments[2] = jid;
         arguments[3] = workerName;
         arguments[4] = groupName;
         arguments[5] = message;
-        if (data != null)
+        if (data is not null)
         {
             arguments[6] = data;
         }
@@ -384,11 +390,13 @@ public class ReqlessClient : IClient, IDisposable
     /// <inheritdoc/>
     public async Task<Job?> GetJobAsync(string jid)
     {
+        ArgumentException.ThrowIfNullOrWhiteSpace(jid, nameof(jid));
+
         RedisResult result = await _executor.ExecuteAsync(["job.get", Now(), jid]);
 
         var jobJson = (string?)result;
 
-        if (jobJson == null)
+        if (jobJson is null)
         {
             return null;
         }
@@ -536,7 +544,7 @@ public class ReqlessClient : IClient, IDisposable
 
         var recurringJobJson = (string?)result;
 
-        if (recurringJobJson == null)
+        if (recurringJobJson is null)
         {
             return null;
         }
@@ -582,12 +590,16 @@ public class ReqlessClient : IClient, IDisposable
         string? data = null
     )
     {
-        var arguments = new RedisValue[4 + (data == null ? 0 : 1)];
+        ArgumentException.ThrowIfNullOrWhiteSpace(jid, nameof(jid));
+        ArgumentException.ThrowIfNullOrWhiteSpace(workerName, nameof(workerName));
+        ValidationHelper.ThrowIfNotNullAndEmptyOrWhitespace(data, nameof(data));
+
+        var arguments = new RedisValue[4 + (data is null ? 0 : 1)];
         arguments[0] = "job.heartbeat";
         arguments[1] = Now();
         arguments[2] = jid;
         arguments[3] = workerName;
-        if (data != null)
+        if (data is not null)
         {
             arguments[4] = data;
         }
@@ -647,6 +659,9 @@ public class ReqlessClient : IClient, IDisposable
         int limit
     )
     {
+        ArgumentException.ThrowIfNullOrWhiteSpace(queueName, nameof(queueName));
+        ArgumentException.ThrowIfNullOrWhiteSpace(workerName, nameof(workerName));
+
         RedisResult result = await _executor.ExecuteAsync([
             "queue.pop",
             Now(),
@@ -694,6 +709,7 @@ public class ReqlessClient : IClient, IDisposable
         ArgumentException.ThrowIfNullOrWhiteSpace(queueName, nameof(queueName));
         ArgumentException.ThrowIfNullOrWhiteSpace(className, nameof(className));
         ArgumentException.ThrowIfNullOrWhiteSpace(data, nameof(data));
+        ValidationHelper.ThrowIfNotNullAndEmptyOrWhitespace(jid, nameof(jid));
 
         var _jid = jid ?? MakeJid();
         var _dependencies = dependencies ?? [];
@@ -743,6 +759,11 @@ public class ReqlessClient : IClient, IDisposable
         string[]? throttles = null
     )
     {
+        ArgumentException.ThrowIfNullOrWhiteSpace(queueName, nameof(queueName));
+        ArgumentException.ThrowIfNullOrWhiteSpace(className, nameof(className));
+        ArgumentException.ThrowIfNullOrWhiteSpace(data, nameof(data));
+        ValidationHelper.ThrowIfNotNullAndEmptyOrWhitespace(jid, nameof(jid));
+
         var _jid = jid ?? MakeJid();
         var _tags = tags ?? [];
         var _throttles = throttles ?? [];
@@ -895,6 +916,13 @@ public class ReqlessClient : IClient, IDisposable
         int delay = 0
     )
     {
+        ArgumentException.ThrowIfNullOrWhiteSpace(jid, nameof(jid));
+        ArgumentException.ThrowIfNullOrWhiteSpace(queueName, nameof(queueName));
+        ArgumentException.ThrowIfNullOrWhiteSpace(workerName, nameof(workerName));
+        ArgumentException.ThrowIfNullOrWhiteSpace(groupName, nameof(groupName));
+        ArgumentException.ThrowIfNullOrWhiteSpace(message, nameof(message));
+        ValidationHelper.ThrowIfNegative(delay, nameof(delay));
+
         RedisResult result = await _executor.ExecuteAsync([
             "job.retry",
             Now(),
@@ -936,13 +964,7 @@ public class ReqlessClient : IClient, IDisposable
     )
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(queueName, nameof(queueName));
-        if (maximum < 0)
-        {
-            throw new ArgumentOutOfRangeException(
-                nameof(maximum),
-                "Value must be greater than or equal to zero."
-            );
-        }
+        ValidationHelper.ThrowIfNegative(maximum, nameof(maximum));
 
         await _executor.ExecuteAsync([
             "queue.throttle.set",
@@ -960,13 +982,7 @@ public class ReqlessClient : IClient, IDisposable
     )
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(throttleName, nameof(throttleName));
-        if (maximum < 0)
-        {
-            throw new ArgumentOutOfRangeException(
-                nameof(maximum),
-                "Value must be greater than or equal to zero."
-            );
-        }
+        ValidationHelper.ThrowIfNegative(maximum, nameof(maximum));
 
         await _executor.ExecuteAsync([
             "throttle.set",
@@ -1023,13 +1039,7 @@ public class ReqlessClient : IClient, IDisposable
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(queueName, nameof(queueName));
         ArgumentException.ThrowIfNullOrWhiteSpace(groupName, nameof(groupName));
-        if (count < 1)
-        {
-            throw new ArgumentOutOfRangeException(
-                nameof(count),
-                "Value must be greater than zero."
-            );
-        }
+        ValidationHelper.ThrowIfNotPositive(count, nameof(count));
 
         var result = await _executor.ExecuteAsync([
             "queue.unfail",

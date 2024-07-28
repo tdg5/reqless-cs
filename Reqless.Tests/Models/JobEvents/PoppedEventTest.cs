@@ -1,4 +1,5 @@
 using Reqless.Models.JobEvents;
+using Reqless.Tests.TestHelpers;
 
 namespace Reqless.Tests.Models.JobEvents;
 
@@ -12,54 +13,25 @@ public class PoppedEventTest
     /// negative.
     /// </summary>
     [Fact]
-    public void Constructor_ArgumentOutOfRangeExceptionThrownIfWhenIsNegative()
+    public void Constructor_When_ThrowsWhenNegative()
     {
-        var invalidWhen = -1;
-        var exception = Assert.Throws<ArgumentOutOfRangeException>(
-            () => new PoppedEvent(invalidWhen, "WorkerName")
+        Scenario.ThrowsWhenParameterIsNegative(
+            (long invalidWhen) => new PoppedEvent(invalidWhen, "WorkerName"),
+            "when"
         );
-        Assert.Equal("when", exception.ParamName);
-        // Use a similar exception to compose the message to avoid
-        // inconsistencies with line endings across platforms.
-        var similarException = new ArgumentOutOfRangeException(
-            "when",
-            invalidWhen,
-            "when must be greater than or equal to 0"
-        );
-        Assert.Equal(similarException.Message, exception.Message);
     }
 
     /// <summary>
-    /// The constructor should throw an ArgumentNullException if workerName is null.
+    /// The constructor should throw an ArgumentNullException if workerName is
+    /// null, empty, or composed entirely of whitespace.
     /// </summary>
     [Fact]
-    public void Constructor_ArgumentNullExceptionThrownIfWorkerNameIsNull()
+    public void Constructor_WorkerName_ThrowsWhenNullOrEmptyOrOnlyWhitespace()
     {
-        var exception = Assert.Throws<ArgumentNullException>(
-            () => new PoppedEvent(1, null!)
+        Scenario.ThrowsWhenParameterIsNullOrEmptyOrWhitespace(
+            (invalidWorkerName) => new PoppedEvent(1, invalidWorkerName!),
+            "workerName"
         );
-        Assert.Equal("workerName", exception.ParamName);
-        Assert.Equal("Value cannot be null. (Parameter 'workerName')", exception.Message);
-    }
-
-    /// <summary>
-    /// The constructor should throw an ArgumentException if workerName is empty or
-    /// composed entirely of whitespace.
-    /// </summary>
-    [Fact]
-    public void Constructor_ArgumentExceptionThrownIfWorkerNameIsEmptyOrWhitespace()
-    {
-        foreach (var invalidWorkerName in new string[] { "", " ", "\t" })
-        {
-            var exception = Assert.Throws<ArgumentException>(
-                () => new PoppedEvent(1, invalidWorkerName)
-            );
-            Assert.Equal("workerName", exception.ParamName);
-            Assert.Equal(
-                $"The value cannot be an empty string or composed entirely of whitespace. (Parameter 'workerName')",
-                exception.Message
-            );
-        }
     }
 
     /// <summary>

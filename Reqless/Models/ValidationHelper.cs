@@ -74,4 +74,78 @@ public static class ValidationHelper
         }
         ArgumentException.ThrowIfNullOrWhiteSpace(value, paramName);
     }
+
+    /// <summary>
+    /// Check if an integer is less than zero and if so throw an <see
+    /// cref="ArgumentOutOfRangeException"/>.
+    /// </summary>
+    /// <param name="value">The value to validate.</param>
+    /// <param name="paramName">The name of the parameter that is being
+    /// validated.</param>
+    /// <exception cref="ArgumentOutOfRangeException">If the value is less than
+    /// zero.</exception>
+    public static void ThrowIfNegative(int value, string paramName)
+    {
+        if (value < 0)
+        {
+            throw new ArgumentOutOfRangeException(paramName, "Value must be greater than or equal to zero.");
+        }
+    }
+
+    /// <summary>
+    /// Check if a long is less than zero and if so throw an <see
+    /// cref="ArgumentOutOfRangeException"/>.
+    /// </summary>
+    /// <param name="value">The value to validate.</param>
+    /// <param name="paramName">The name of the parameter that is being
+    /// validated.</param>
+    /// <exception cref="ArgumentOutOfRangeException">If the value is less than
+    /// zero.</exception>
+    public static void ThrowIfNegative(long value, string paramName)
+    {
+        if (value < 0)
+        {
+            throw new ArgumentOutOfRangeException(paramName, "Value must be greater than or equal to zero.");
+        }
+    }
+
+    /// <summary>
+    /// Check if an integer is less than one and if so throw an <see
+    /// cref="ArgumentOutOfRangeException"/>.
+    /// </summary>
+    /// <param name="value">The value to validate.</param>
+    /// <param name="paramName">The name of the parameter that is being
+    /// validated.</param>
+    /// <exception cref="ArgumentOutOfRangeException">If the value is less than
+    /// zero.</exception>
+    public static void ThrowIfNotPositive(int value, string paramName)
+    {
+        if (value < 1)
+        {
+            throw new ArgumentOutOfRangeException(
+                paramName,
+                "Value must be greater than zero."
+            );
+        }
+    }
+
+    /// <summary>
+    /// Check if an long is less than one and if so throw an <see
+    /// cref="ArgumentOutOfRangeException"/>.
+    /// </summary>
+    /// <param name="value">The value to validate.</param>
+    /// <param name="paramName">The name of the parameter that is being
+    /// validated.</param>
+    /// <exception cref="ArgumentOutOfRangeException">If the value is less than
+    /// zero.</exception>
+    public static void ThrowIfNotPositive(long value, string paramName)
+    {
+        if (value < 1)
+        {
+            throw new ArgumentOutOfRangeException(
+                paramName,
+                "Value must be greater than zero."
+            );
+        }
+    }
 }

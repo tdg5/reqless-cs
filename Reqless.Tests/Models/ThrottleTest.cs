@@ -1,5 +1,6 @@
 using System.Text.Json;
 using Reqless.Models;
+using Reqless.Tests.TestHelpers;
 
 namespace Reqless.Tests.Models;
 
@@ -8,6 +9,24 @@ namespace Reqless.Tests.Models;
 /// </summary>
 public class ThrottleTest
 {
+    /// <summary>
+    /// <see cref="Throttle"/> should throw if the given ID is null, empty,
+    /// or only whitespace.
+    /// </summary>
+    [Fact]
+    public void Constructor_ThrowsWhenIdIsNullOrEmptyOrWhitespace()
+    {
+        Scenario.ThrowsWhenParameterIsNullOrEmptyOrWhitespace(
+            (invalidId) => new Throttle
+            {
+                Id = invalidId!,
+                Maximum = 42,
+                Ttl = 60
+            },
+            "Id"
+        );
+    }
+
     /// <summary>
     /// <see cref="Throttle"/> should be deserializable from JSON like that
     /// returned by Reqless server.

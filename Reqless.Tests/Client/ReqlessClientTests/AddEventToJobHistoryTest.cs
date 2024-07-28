@@ -10,93 +10,38 @@ public class AddEventToJobHistoryTest : BaseReqlessClientTest
 {
     /// <summary>
     /// <see cref="ReqlessClient.AddEventToJobHistoryAsync"/> should throw if
-    /// jid is null.
+    /// jid is null, empty, or whitespace.
     /// </summary>
     [Fact]
-    public async void ThrowsIfJidIsNull()
+    public async void ThrowsIfJidIsNullOrEmptyOrWhitespace()
     {
-        var exception = await Assert.ThrowsAsync<ArgumentNullException>(
-            () =>
-            WithClientWithExecutorMockForExpectedArguments(
+        await Scenario.ThrowsWhenParameterIsNullOrEmptyOrWhitespaceAsync(
+            (invalidJid) => WithClientWithExecutorMockForExpectedArguments(
                 subject => subject.AddEventToJobHistoryAsync(
-                    jid: null!,
+                    jid: invalidJid!,
                     what: ExampleMessage
                 )
-            )
-        );
-        Assert.Equal(
-            "Value cannot be null. (Parameter 'jid')",
-            exception.Message
+            ),
+            "jid"
         );
     }
 
     /// <summary>
     /// <see cref="ReqlessClient.AddEventToJobHistoryAsync"/> should throw if
-    /// jid is empty or whitespace.
+    /// what is null, empty, or whitespace.
     /// </summary>
     [Fact]
-    public async void ThrowsIfJidIsEmptyOrWhitespace()
+    public async void ThrowsIfWhatIsNullOrEmptyOrWhitespace()
     {
-        foreach (var emptyString in TestConstants.EmptyStrings)
-        {
-            var exception = await Assert.ThrowsAsync<ArgumentException>(
-                () => WithClientWithExecutorMockForExpectedArguments(
-                    subject => subject.AddEventToJobHistoryAsync(
-                        jid: emptyString,
-                        what: ExampleMessage
-                    )
-                )
-            );
-            Assert.Equal(
-                "The value cannot be an empty string or composed entirely of whitespace. (Parameter 'jid')",
-                exception.Message
-            );
-        }
-    }
-
-    /// <summary>
-    /// <see cref="ReqlessClient.AddEventToJobHistoryAsync"/> should throw if
-    /// what is null.
-    /// </summary>
-    [Fact]
-    public async void ThrowsIfWhatIsNull()
-    {
-        var exception = await Assert.ThrowsAsync<ArgumentNullException>(
-            () => WithClientWithExecutorMockForExpectedArguments(
+        await Scenario.ThrowsWhenParameterIsNullOrEmptyOrWhitespaceAsync(
+            (invalidWhat) => WithClientWithExecutorMockForExpectedArguments(
                 subject => subject.AddEventToJobHistoryAsync(
                     jid: ExampleJid,
-                    what: null!
+                    what: invalidWhat!
                 )
-            )
+            ),
+            "what"
         );
-        Assert.Equal(
-            "Value cannot be null. (Parameter 'what')",
-            exception.Message
-        );
-    }
-
-    /// <summary>
-    /// <see cref="ReqlessClient.AddEventToJobHistoryAsync"/> should throw if
-    /// what is empty or whitespace.
-    /// </summary>
-    [Fact]
-    public async void ThrowsIfWhatIsEmptyOrWhitespace()
-    {
-        foreach (var emptyString in TestConstants.EmptyStrings)
-        {
-            var exception = await Assert.ThrowsAsync<ArgumentException>(
-                () => WithClientWithExecutorMockForExpectedArguments(
-                    subject => subject.AddEventToJobHistoryAsync(
-                        jid: ExampleJid,
-                        what: emptyString
-                    )
-                )
-            );
-            Assert.Equal(
-                "The value cannot be an empty string or composed entirely of whitespace. (Parameter 'what')",
-                exception.Message
-            );
-        }
     }
 
     /// <summary>
@@ -106,22 +51,16 @@ public class AddEventToJobHistoryTest : BaseReqlessClientTest
     [Fact]
     public async void ThrowsIfDataIsEmptyOrWhitespace()
     {
-        foreach (var emptyString in TestConstants.EmptyStrings)
-        {
-            var exception = await Assert.ThrowsAsync<ArgumentException>(
-                () => WithClientWithExecutorMockForExpectedArguments(
-                    subject => subject.AddEventToJobHistoryAsync(
-                        data: emptyString,
-                        jid: ExampleJid,
-                        what: ExampleMessage
-                    )
+        await Scenario.ThrowsWhenParameterIsEmptyOrWhitespaceAsync(
+            (invalidData) => WithClientWithExecutorMockForExpectedArguments(
+                subject => subject.AddEventToJobHistoryAsync(
+                    data: invalidData,
+                    jid: ExampleJid,
+                    what: ExampleMessage
                 )
-            );
-            Assert.Equal(
-                "The value cannot be an empty string or composed entirely of whitespace. (Parameter 'data')",
-                exception.Message
-            );
-        }
+            ),
+            "data"
+        );
     }
 
     /// <summary>

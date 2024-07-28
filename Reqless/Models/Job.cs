@@ -127,13 +127,9 @@ public class Job : BaseJob
         ValidationHelper.ThrowIfAnyNull(history, nameof(history));
         ValidationHelper.ThrowIfNotNullAndEmptyOrWhitespace(spawnedFromJid, nameof(spawnedFromJid));
         ValidationHelper.ThrowIfNotNullAndEmptyOrWhitespace(workerName, nameof(workerName));
-        if (expires <= 0)
+        if (expires is not null)
         {
-            throw new ArgumentOutOfRangeException(
-                nameof(expires),
-                expires,
-                "Value must be a positive whole number."
-            );
+            ValidationHelper.ThrowIfNotPositive(expires.Value, nameof(expires));
         }
         if (remaining < -1)
         {

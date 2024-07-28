@@ -3,7 +3,6 @@ using Reqless.Client;
 using Reqless.Models;
 using Reqless.Tests.TestHelpers;
 using Reqless.Tests.TestHelpers.Factories;
-using StackExchange.Redis;
 
 namespace Reqless.Tests.Client.ReqlessClientTests;
 
@@ -12,6 +11,22 @@ namespace Reqless.Tests.Client.ReqlessClientTests;
 /// </summary>
 public class GetJobTest : BaseReqlessClientTest
 {
+
+    /// <summary>
+    /// <see cref="ReqlessClient.AddTagToJobAsync"/> throws if the given jid is
+    /// null, empty, or whitespace.
+    /// </summary>
+    [Fact]
+    public async void ThrowsIfJidIsNullOrEmptyOrWhitespace()
+    {
+        await Scenario.ThrowsWhenParameterIsNullOrEmptyOrWhitespaceAsync(
+            (invalidJid) => WithClientWithExecutorMockForExpectedArguments(
+                subject => subject.GetJobAsync(invalidJid!)
+            ),
+            "jid"
+        );
+    }
+
     /// <summary>
     /// <see cref="ReqlessClient.GetJobAsync"/> should return the job returned
     /// by the server.

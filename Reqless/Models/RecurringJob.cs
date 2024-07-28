@@ -70,30 +70,9 @@ public class RecurringJob : BaseJob
         string[] throttles
     ) : base(className, data, jid, priority, queueName, retries, state, tags, throttles)
     {
-        if (count < 0)
-        {
-            throw new ArgumentOutOfRangeException(
-                nameof(count),
-                count,
-                "Value must be a non-negative whole number."
-            );
-        }
-        if (intervalSeconds <= 0)
-        {
-            throw new ArgumentOutOfRangeException(
-                nameof(intervalSeconds),
-                intervalSeconds,
-                "Value must be a positive whole number."
-            );
-        }
-        if (maximumBacklog < 0)
-        {
-            throw new ArgumentOutOfRangeException(
-                nameof(maximumBacklog),
-                maximumBacklog,
-                "Value must be a non-negative whole number."
-            );
-        }
+        ValidationHelper.ThrowIfNegative(count, nameof(count));
+        ValidationHelper.ThrowIfNotPositive(intervalSeconds, nameof(intervalSeconds));
+        ValidationHelper.ThrowIfNegative(maximumBacklog, nameof(maximumBacklog));
 
         Count = count;
         IntervalSeconds = intervalSeconds;

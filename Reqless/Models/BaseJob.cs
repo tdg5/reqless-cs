@@ -103,22 +103,8 @@ abstract public class BaseJob
         ArgumentException.ThrowIfNullOrWhiteSpace(state, nameof(state));
         ValidationHelper.ThrowIfAnyNullOrWhitespace(tags, nameof(tags));
         ValidationHelper.ThrowIfAnyNullOrWhitespace(throttles, nameof(throttles));
-        if (priority < 0)
-        {
-            throw new ArgumentOutOfRangeException(
-                nameof(priority),
-                priority,
-                "Value must be a non-negative whole number."
-            );
-        }
-        if (retries < 0)
-        {
-            throw new ArgumentOutOfRangeException(
-                nameof(retries),
-                retries,
-                "Value must be a non-negative whole number."
-            );
-        }
+        ValidationHelper.ThrowIfNegative(priority, nameof(priority));
+        ValidationHelper.ThrowIfNegative(retries, nameof(retries));
 
         ClassName = className;
         Data = data;

@@ -81,20 +81,14 @@ public class ValidationHelperTest
     [Fact]
     public void ThrowIfAnyNullOrWhitespace_ThrowsIfAnyValuesAreNullEmptyOrWhitespace()
     {
-        foreach (var invalidValue in TestConstants.EmptyStringsWithNull)
-        {
-            var values = new string[] { "a", invalidValue!, "c" };
-            var paramName = "values";
-
-            var exception = Assert.Throws<ArgumentException>(
-                () => ValidationHelper.ThrowIfAnyNullOrWhitespace(values, paramName)
-            );
-            Assert.Equal(
-                "Value cannot include null, empty string, or strings composed entirely of whitespace. (Parameter 'values')",
-                exception.Message
-            );
-            Assert.Equal(paramName, exception.ParamName);
-        }
+        var paramName = "values";
+        Scenario.ThrowsWhenParameterItemIsNullOrEmptyOrWhitespace(
+            (invalidValue) => ValidationHelper.ThrowIfAnyNullOrWhitespace(
+                ["a", invalidValue!, "c"],
+                paramName
+            ),
+            paramName
+        );
     }
 
     /// <summary>
@@ -124,18 +118,14 @@ public class ValidationHelperTest
     [Fact]
     public void ThrowIfNotNullAndEmptyOrWhitespace_ThrowsForEmptyOrWhitespace()
     {
-        foreach (var invalidValue in TestConstants.EmptyStrings)
-        {
-            var paramName = "param";
-            var exception = Assert.Throws<ArgumentException>(
-                () => ValidationHelper.ThrowIfNotNullAndEmptyOrWhitespace(invalidValue, paramName)
-            );
-            Assert.Equal(
-                "The value cannot be an empty string or composed entirely of whitespace. (Parameter 'param')",
-                exception.Message
-            );
-            Assert.Equal(paramName, exception.ParamName);
-        }
+        var paramName = "param";
+        Scenario.ThrowsWhenParameterIsEmptyOrWhitespace(
+            (invalidValue) => ValidationHelper.ThrowIfNotNullAndEmptyOrWhitespace(
+                invalidValue,
+                paramName
+            ),
+            paramName
+        );
     }
 
     /// <summary>
@@ -146,5 +136,41 @@ public class ValidationHelperTest
     public void ThrowIfNotNullAndEmptyOrWhitespace_DoesNotThrowForValidValue()
     {
         ValidationHelper.ThrowIfNotNullAndEmptyOrWhitespace("valid", "param");
+    }
+
+    /// <summary>
+    /// <see cref="ValidationHelper.ThrowIfNegative(int, string)"/> should
+    /// throw if a negative value is provided.
+    /// </summary>
+    [Fact]
+    public void ThrowIfNegative_Int_ThrowsIfValueIsNegative()
+    {
+        var paramName = "param";
+        ValidationHelper.ThrowIfNegative(0, paramName);
+        Scenario.ThrowsWhenParameterIsNegative(
+            (int invalidValue) => ValidationHelper.ThrowIfNegative(
+                invalidValue,
+                paramName
+            ),
+            paramName
+        );
+    }
+
+    /// <summary>
+    /// <see cref="ValidationHelper.ThrowIfNegative(long, string)"/> should
+    /// throw if a negative value is provided.
+    /// </summary>
+    [Fact]
+    public void ThrowIfNegative_Long_ThrowsIfValueIsNegative()
+    {
+        var paramName = "param";
+        ValidationHelper.ThrowIfNegative(0L, paramName);
+        Scenario.ThrowsWhenParameterIsNegative(
+            (long invalidValue) => ValidationHelper.ThrowIfNegative(
+                invalidValue,
+                paramName
+            ),
+            paramName
+        );
     }
 }

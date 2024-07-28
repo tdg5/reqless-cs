@@ -14,77 +14,29 @@ public class RemoveTagFromJobTest : BaseReqlessClientTest
     /// jid is null.
     /// </summary>
     [Fact]
-    public async void ThrowsIfJidIsNull()
+    public async void ThrowsIfJidIsNullOrEmptyOrOnlyWhitespace()
     {
-        var exception = await Assert.ThrowsAsync<ArgumentNullException>(
-            () => WithClientWithExecutorMockForExpectedArguments(
-                subject => subject.RemoveTagFromJobAsync(null!, ExampleTag)
-            )
-        );
-        Assert.Equal(
-            "Value cannot be null. (Parameter 'jid')",
-            exception.Message
+        await Scenario.ThrowsWhenParameterIsNullOrEmptyOrWhitespaceAsync(
+            (invalidJid) => WithClientWithExecutorMockForExpectedArguments(
+                subject => subject.RemoveTagFromJobAsync(invalidJid!, ExampleTag)
+            ),
+            "jid"
         );
     }
 
     /// <summary>
     /// <see cref="ReqlessClient.RemoveTagFromJobAsync"/> throws if the given
-    /// jid is empty or only whitespace.
+    /// tag argument is null, empty, or only whitespace.
     /// </summary>
     [Fact]
-    public async void ThrowsIfJidIsEmptyOrOnlyWhitespace()
+    public async void ThrowsIfTagIsNullOrEmptyOrOnlyWhitespace()
     {
-        foreach (var emptyString in TestConstants.EmptyStrings)
-        {
-            var exception = await Assert.ThrowsAsync<ArgumentException>(
-                () => WithClientWithExecutorMockForExpectedArguments(
-                    subject => subject.RemoveTagFromJobAsync(emptyString, ExampleTag)
-                )
-            );
-            Assert.Equal(
-                "The value cannot be an empty string or composed entirely of whitespace. (Parameter 'jid')",
-                exception.Message
-            );
-        }
-    }
-
-    /// <summary>
-    /// <see cref="ReqlessClient.RemoveTagFromJobAsync"/> throws if the given
-    /// tags argument is null.
-    /// </summary>
-    [Fact]
-    public async void ThrowsIfTagIsNull()
-    {
-        var exception = await Assert.ThrowsAsync<ArgumentNullException>(
-            () => WithClientWithExecutorMockForExpectedArguments(
-                subject => subject.RemoveTagFromJobAsync(ExampleJid, null!)
-            )
+        await Scenario.ThrowsWhenParameterIsNullOrEmptyOrWhitespaceAsync(
+            (invalidTag) => WithClientWithExecutorMockForExpectedArguments(
+                subject => subject.RemoveTagFromJobAsync(ExampleJid, invalidTag!)
+            ),
+            "tag"
         );
-        Assert.Equal(
-            "Value cannot be null. (Parameter 'tag')",
-            exception.Message
-        );
-    }
-
-    /// <summary>
-    /// <see cref="ReqlessClient.RemoveTagFromJobAsync"/> throws if any of the
-    /// tags are empty or composed entirely of whitespace.
-    /// </summary>
-    [Fact]
-    public async void ThrowsIfAnyTagIsEmptyOrOnlyWhitespace()
-    {
-        foreach (var emptyString in TestConstants.EmptyStrings)
-        {
-            var exception = await Assert.ThrowsAsync<ArgumentException>(
-                () => WithClientWithExecutorMockForExpectedArguments(
-                    subject => subject.RemoveTagFromJobAsync(ExampleJid, emptyString)
-                )
-            );
-            Assert.Equal(
-                "The value cannot be an empty string or composed entirely of whitespace. (Parameter 'tag')",
-                exception.Message
-            );
-        }
     }
 
     /// <summary>
@@ -111,11 +63,11 @@ public class RemoveTagFromJobTest : BaseReqlessClientTest
     }
 
     /// <summary>
-    /// <see cref="ReqlessClient.RemoveTagFromJobAsync" /> should throw if the
+    /// <see cref="ReqlessClient.RemoveTagFromJobAsync"/> should throw if the
     /// server returns null.
     /// </summary>
     [Fact]
-    public async void RemoveTagFromJobAsync_ThrowsIfServerReturnsNull()
+    public async void ThrowsIfServerReturnsNull()
     {
         var exception = await Assert.ThrowsAsync<InvalidOperationException>(
             () => WithClientWithExecutorMockForExpectedArguments(
@@ -141,7 +93,7 @@ public class RemoveTagFromJobTest : BaseReqlessClientTest
     /// JSON can't be deserialized.
     /// </summary>
     [Fact]
-    public async void RemoveTagFromJobAsync_ThrowsIfJsonCannotBeDeserialized()
+    public async void ThrowsIfJsonCannotBeDeserialized()
     {
         var exception = await Assert.ThrowsAsync<JsonException>(
             () => WithClientWithExecutorMockForExpectedArguments(

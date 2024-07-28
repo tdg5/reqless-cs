@@ -22,43 +22,17 @@ public class TimeoutJobsTest : BaseReqlessClientTest
     }
 
     /// <summary>
-    /// <see cref="ReqlessClient.TimeoutJobsAsync"/> should throw if the given
-    /// jid is null.
+    /// <see cref="ReqlessClient.TimeoutJobsAsync"/> should throw if any
+    /// jid is null, empty, or only whitespace.
     /// </summary>
     [Fact]
-    public async void ThrowsIfAnyJidIsNull()
+    public async void ThrowsIfAnyJidIsNullOrEmptyOrOnlyWhitespace()
     {
-        var exception = await Assert.ThrowsAsync<ArgumentException>(
-            () => WithClientWithExecutorMockForExpectedArguments(
-                subject => subject.TimeoutJobsAsync(null!, ExampleJidOther),
-                expectedArguments: ["job.timeout", 0, ExampleJid, ExampleJidOther]
-            )
+        await Scenario.ThrowsWhenParameterItemIsNullOrEmptyOrWhitespaceAsync(
+            (invalidJid) => WithClientWithExecutorMockForExpectedArguments(
+                subject => subject.TimeoutJobsAsync(invalidJid!, ExampleJidOther)
+            ),
+            "jids"
         );
-        Assert.Equal(
-            "Value cannot include null, empty string, or strings composed entirely of whitespace. (Parameter 'jids')",
-            exception.Message
-        );
-    }
-
-    /// <summary>
-    /// <see cref="ReqlessClient.TimeoutJobsAsync"/> should throw if the given
-    /// jid is empty or only whitespcae.
-    /// </summary>
-    [Fact]
-    public async void ThrowsIfAnyJidIsEmptyOrOnlyWhitespace()
-    {
-        foreach (var emptyString in TestConstants.EmptyStrings)
-        {
-            var exception = await Assert.ThrowsAsync<ArgumentException>(
-                () => WithClientWithExecutorMockForExpectedArguments(
-                    subject => subject.TimeoutJobsAsync(emptyString, ExampleJidOther),
-                    expectedArguments: ["job.timeout", 0, ExampleJid, ExampleJidOther]
-                )
-            );
-            Assert.Equal(
-                "Value cannot include null, empty string, or strings composed entirely of whitespace. (Parameter 'jids')",
-                exception.Message
-            );
-        }
     }
 }

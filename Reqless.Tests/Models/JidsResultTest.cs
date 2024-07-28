@@ -27,21 +27,16 @@ public class JidsResultTest
     /// empty, or whitespace.
     /// </summary>
     [Fact]
-    public void Constructor_ThrowsIfAnyJidIsNullOrEmptyOrWhitespace()
+    public void Constructor_Jids_ThrowsIfAnyJidIsNullOrEmptyOrWhitespace()
     {
-        string?[] invalidJids = [null, .. TestConstants.EmptyStrings];
-        foreach (var invalidJid in invalidJids)
-        {
-            string[] jids = ["jid1", "jid2", invalidJid!];
-            int total = 4;
-            var exception = Assert.Throws<ArgumentException>(
-                () => new JidsResult(jids, total)
-            );
-            Assert.Equal(
-                "Value cannot include null, empty string, or strings composed entirely of whitespace. (Parameter 'jids')",
-                exception.Message
-            );
-        }
+        int total = 4;
+        Scenario.ThrowsWhenParameterItemIsNullOrEmptyOrWhitespace(
+            (invalidJid) => new JidsResult(
+                ["jid1", "jid2", invalidJid!],
+                total
+            ),
+            "jids"
+        );
     }
 
     /// <summary>
@@ -50,10 +45,10 @@ public class JidsResultTest
     [Fact]
     public void Constructor_ThrowsIfJidsIsNull()
     {
-        var exception = Assert.Throws<ArgumentNullException>(
-            () => new JidsResult(null!, 4)
+        Scenario.ThrowsArgumentNullException(
+            () => new JidsResult(null!, 4),
+            "jids"
         );
-        Assert.Equal("Value cannot be null. (Parameter 'jids')", exception.Message);
     }
 
     /// <summary>

@@ -11,92 +11,38 @@ public class GetJobsByStateAsyncTest : BaseReqlessClientTest
 {
     /// <summary>
     /// <see cref="ReqlessClient.GetJobsByStateAsync"/> should throw if state is
-    /// null.
+    /// null, empty, or whitespace.
     /// </summary>
     [Fact]
-    public async void ThrowsIfStateIsNull()
+    public async void ThrowsIfStateIsNullOrEmptyOrOnlyWhitespace()
     {
-        var exception = await Assert.ThrowsAsync<ArgumentNullException>(
-            () => WithClientWithExecutorMockForExpectedArguments(
+        await Scenario.ThrowsWhenParameterIsNullOrEmptyOrWhitespaceAsync(
+            (invalidState) => WithClientWithExecutorMockForExpectedArguments(
                 subject => subject.GetJobsByStateAsync(
                     queueName: ExampleQueueName,
-                    state: null!
+                    state: invalidState!
                 )
-            )
+            ),
+            "state"
         );
-        Assert.Equal(
-            "Value cannot be null. (Parameter 'state')",
-            exception.Message
-        );
-    }
-
-    /// <summary>
-    /// <see cref="ReqlessClient.GetJobsByStateAsync"/> should throw if state is
-    /// empty or whitespace.
-    /// </summary>
-    [Fact]
-    public async void ThrowsIfStateIsEmptyOrWhitespace()
-    {
-        foreach (var emptyString in TestConstants.EmptyStrings)
-        {
-            var exception = await Assert.ThrowsAsync<ArgumentException>(
-                () => WithClientWithExecutorMockForExpectedArguments(
-                    subject => subject.GetJobsByStateAsync(
-                        queueName: ExampleQueueName,
-                        state: emptyString
-                    )
-                )
-            );
-            Assert.Equal(
-                "The value cannot be an empty string or composed entirely of whitespace. (Parameter 'state')",
-                exception.Message
-            );
-        }
     }
 
     /// <summary>
     /// <see cref="ReqlessClient.GetJobsByStateAsync"/> should throw if queue
-    /// name is null.
+    /// name is null, empty, or whitespace.
     /// </summary>
     [Fact]
-    public async void ThrowsIfQueueNameIsNull()
+    public async void ThrowsIfQueueNameIsNullOrEmptyOrOnlyWhitespace()
     {
-        var exception = await Assert.ThrowsAsync<ArgumentNullException>(
-            () => WithClientWithExecutorMockForExpectedArguments(
+        await Scenario.ThrowsWhenParameterIsNullOrEmptyOrWhitespaceAsync(
+            (invalidQueueName) => WithClientWithExecutorMockForExpectedArguments(
                 subject => subject.GetJobsByStateAsync(
-                    queueName: null!,
+                    queueName: invalidQueueName!,
                     state: "running"
                 )
-            )
+            ),
+            "queueName"
         );
-        Assert.Equal(
-            "Value cannot be null. (Parameter 'queueName')",
-            exception.Message
-        );
-    }
-
-    /// <summary>
-    /// <see cref="ReqlessClient.GetJobsByStateAsync"/> should throw if queue
-    /// name is empty or whitespace.
-    /// </summary>
-    [Fact]
-    public async void ThrowsIfQueueNameIsEmptyOrWhitespace()
-    {
-        foreach (var emptyString in TestConstants.EmptyStrings)
-        {
-            var exception = await Assert.ThrowsAsync<ArgumentException>(
-                () => WithClientWithExecutorMockForExpectedArguments(
-                    subject => subject.GetJobsByStateAsync(
-                        queueName: emptyString,
-                        state: "waiting"
-                    )
-                )
-            );
-            Assert.Equal(
-                "The value cannot be an empty string or composed entirely of whitespace. (Parameter 'queueName')",
-                exception.Message
-            );
-        }
     }
 
     /// <summary>

@@ -23,36 +23,16 @@ public class TimeoutJobTest : BaseReqlessClientTest
 
     /// <summary>
     /// <see cref="ReqlessClient.TimeoutJobAsync"/> should throw if the given
-    /// jid is null.
+    /// jid is null, empty, or only whitespace.
     /// </summary>
     [Fact]
-    public async void ThrowsIfJidIsNull()
+    public async void ThrowsIfJidIsNullOrEmptyOrOnlyWhitespace()
     {
-        var exception = await Assert.ThrowsAsync<ArgumentNullException>(
-            () => WithClientWithExecutorMockForExpectedArguments(
-                subject => subject.TimeoutJobAsync(null!),
-                expectedArguments: ["job.timeout", 0, ExampleJid]
-            )
+        await Scenario.ThrowsWhenParameterIsNullOrEmptyOrWhitespaceAsync(
+            (invalidJid) => WithClientWithExecutorMockForExpectedArguments(
+                subject => subject.TimeoutJobAsync(invalidJid!)
+            ),
+            "jid"
         );
-        Assert.Equal("Value cannot be null. (Parameter 'jid')", exception.Message);
-    }
-
-    /// <summary>
-    /// <see cref="ReqlessClient.TimeoutJobAsync"/> should throw if the given
-    /// jid is empty or only whitespcae.
-    /// </summary>
-    [Fact]
-    public async void ThrowsIfJidIsEmptyOrOnlyWhitespace()
-    {
-        foreach (var emptyString in TestConstants.EmptyStrings)
-        {
-            var exception = await Assert.ThrowsAsync<ArgumentException>(
-                () => WithClientWithExecutorMockForExpectedArguments(
-                    subject => subject.TimeoutJobAsync(emptyString),
-                    expectedArguments: ["job.timeout", 0, ExampleJid]
-                )
-            );
-            Assert.Equal("The value cannot be an empty string or composed entirely of whitespace. (Parameter 'jid')", exception.Message);
-        }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using Reqless.Models.JobEvents;
+using Reqless.Tests.TestHelpers;
 
 namespace Reqless.Tests.Models.JobEvents;
 
@@ -12,21 +13,12 @@ public class TimedOutEventTest
     /// parameter is negative.
     /// </summary>
     [Fact]
-    public void Constructor_ArgumentOutOfRangeExceptionThrownIfWhenIsNegative()
+    public void Constructor_When_ThrowsWhenNegative()
     {
-        var invalidWhen = -1;
-        var exception = Assert.Throws<ArgumentOutOfRangeException>(
-            () => new TimedOutEvent(invalidWhen)
+        Scenario.ThrowsWhenParameterIsNegative(
+            (long invalidWhen) => new TimedOutEvent(invalidWhen),
+            "when"
         );
-        Assert.Equal("when", exception.ParamName);
-        // Use a similar exception to compose the message to avoid
-        // inconsistencies with line endings across platforms.
-        var similarException = new ArgumentOutOfRangeException(
-            "when",
-            invalidWhen,
-            "when must be greater than or equal to 0"
-        );
-        Assert.Equal(similarException.Message, exception.Message);
     }
 
     /// <summary>

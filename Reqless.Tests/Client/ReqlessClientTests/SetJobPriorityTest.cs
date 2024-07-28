@@ -10,47 +10,20 @@ public class SetJobPriorityTest : BaseReqlessClientTest
 {
     /// <summary>
     /// <see cref="ReqlessClient.SetJobPriorityAsync"/> should throw if jid is
-    /// null.
+    /// null, empty, or only whitespace.
     /// </summary>
     [Fact]
-    public async void ThrowsIfJidIsNull()
+    public async void ThrowsIfJidIsNullOrEmptyOrOnlyWhitespace()
     {
-        var exception = await Assert.ThrowsAsync<ArgumentNullException>(
-            () => WithClientWithExecutorMockForExpectedArguments(
+        await Scenario.ThrowsWhenParameterIsNullOrEmptyOrWhitespaceAsync(
+            (invalidJid) => WithClientWithExecutorMockForExpectedArguments(
                 subject => subject.SetJobPriorityAsync(
-                    jid: null!,
+                    jid: invalidJid!,
                     priority: 21
                 )
-            )
+            ),
+            "jid"
         );
-        Assert.Equal(
-            "Value cannot be null. (Parameter 'jid')",
-            exception.Message
-        );
-    }
-
-    /// <summary>
-    /// <see cref="ReqlessClient.SetJobPriorityAsync"/> should throw if jid is
-    /// empty or whitespace.
-    /// </summary>
-    [Fact]
-    public async void ThrowsIfJidIsEmptyOrWhitespace()
-    {
-        foreach (var emptyString in TestConstants.EmptyStrings)
-        {
-            var exception = await Assert.ThrowsAsync<ArgumentException>(
-                () => WithClientWithExecutorMockForExpectedArguments(
-                    subject => subject.SetJobPriorityAsync(
-                        jid: emptyString,
-                        priority: 21
-                    )
-                )
-            );
-            Assert.Equal(
-                "The value cannot be an empty string or composed entirely of whitespace. (Parameter 'jid')",
-                exception.Message
-            );
-        }
     }
 
     /// <summary>

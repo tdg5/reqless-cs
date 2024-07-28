@@ -1,4 +1,5 @@
 using Reqless.Client;
+using Reqless.Tests.TestHelpers;
 
 namespace Reqless.Tests.Client.ReqlessClientTests;
 
@@ -7,6 +8,61 @@ namespace Reqless.Tests.Client.ReqlessClientTests;
 /// </summary>
 public class HeartbeatJobTest : BaseReqlessClientTest
 {
+    /// <summary>
+    /// <see cref="ReqlessClient.HeartbeatJobAsync"/> should throw if the
+    /// given job ID is null, empty, or only whitespace.
+    /// </summary>
+    [Fact]
+    public async void ThrowsIfJidIsNullOrEmptyOrWhitespace()
+    {
+        await Scenario.ThrowsWhenParameterIsNullOrEmptyOrWhitespaceAsync(
+            (invalidJid) => WithClientWithExecutorMockForExpectedArguments(
+                subject => subject.HeartbeatJobAsync(
+                    jid: invalidJid!,
+                    workerName: ExampleWorkerName
+                )
+            ),
+            "jid"
+        );
+    }
+
+    /// <summary>
+    /// <see cref="ReqlessClient.HeartbeatJobAsync"/> should throw if the
+    /// given worker name is null, empty, or only whitespace.
+    /// </summary>
+    [Fact]
+    public async void ThrowsIfWorkerNameIsNullOrEmptyOrWhitespace()
+    {
+        await Scenario.ThrowsWhenParameterIsNullOrEmptyOrWhitespaceAsync(
+            (invalidWorkerName) => WithClientWithExecutorMockForExpectedArguments(
+                subject => subject.HeartbeatJobAsync(
+                    jid: ExampleJid,
+                    workerName: invalidWorkerName!
+                )
+            ),
+            "workerName"
+        );
+    }
+
+    /// <summary>
+    /// <see cref="ReqlessClient.HeartbeatJobAsync"/> should throw if the
+    /// given data is empty or only whitespace.
+    /// </summary>
+    [Fact]
+    public async void ThrowsIfDataIsEmptyOrWhitespace()
+    {
+        await Scenario.ThrowsWhenParameterIsEmptyOrWhitespaceAsync(
+            (invalidData) => WithClientWithExecutorMockForExpectedArguments(
+                subject => subject.HeartbeatJobAsync(
+                    data: invalidData,
+                    jid: ExampleJid,
+                    workerName: ExampleWorkerName
+                )
+            ),
+            "data"
+        );
+    }
+
     /// <summary>
     /// <see cref="ReqlessClient.HeartbeatJobAsync"/> should return the new
     /// expiration time.

@@ -11,73 +11,28 @@ public class JobTest
 {
     /// <summary>
     /// The constructor should throw an exception if the given className
-    /// argument is null.
+    /// argument is null, empty, or composed entirely of whitespace.
     /// </summary>
     [Fact]
-    public void Constructor_ClassName_ThrowsWhenNull()
+    public void Constructor_ClassName_ThrowsWhenNullOrEmptyOrOnlyWhitespace()
     {
-        var exception = Assert.Throws<ArgumentNullException>(
-            () => MakeJob(className: null)
+        Scenario.ThrowsWhenParameterIsNullOrEmptyOrWhitespace(
+            (invalidClassName) => MakeJob(className: invalidClassName),
+            "className"
         );
-        Assert.Equal("className", exception.ParamName);
-        Assert.Equal(
-            "Value cannot be null. (Parameter 'className')",
-            exception.Message
-        );
-    }
-
-    /// <summary>
-    /// The constructor should throw an exception if the given className
-    /// argument is empty or composed entirely of whitespace.
-    /// </summary>
-    [Fact]
-    public void Constructor_ClassName_ThrowsWhenEmptyOrWhitespace()
-    {
-        foreach (var invalidClassName in TestConstants.EmptyStrings)
-        {
-            var exception = Assert.Throws<ArgumentException>(
-                () => MakeJob(className: invalidClassName)
-            );
-            Assert.Equal("className", exception.ParamName);
-            Assert.Equal(
-                "The value cannot be an empty string or composed entirely of whitespace. (Parameter 'className')",
-                exception.Message
-            );
-        }
     }
 
     /// <summary>
     /// The constructor should throw an exception if the given data argument is
-    /// null.
+    /// null, empty, or composed entirely of whitespace.
     /// </summary>
     [Fact]
-    public void Constructor_Data_ThrowsWhenNull()
+    public void Constructor_Data_ThrowsWhenNullOrEmptyOrOnlyWhitespace()
     {
-        var exception = Assert.Throws<ArgumentNullException>(
-            () => MakeJob(data: null)
+        Scenario.ThrowsWhenParameterIsNullOrEmptyOrWhitespace(
+            (invalidData) => MakeJob(data: invalidData),
+            "data"
         );
-        Assert.Equal("data", exception.ParamName);
-        Assert.Equal("Value cannot be null. (Parameter 'data')", exception.Message);
-    }
-
-    /// <summary>
-    /// The constructor should throw an exception if the given data is empty or
-    /// composed entirely of whitespace.
-    /// </summary>
-    [Fact]
-    public void Constructor_Data_ThrowsWhenEmptyOrWhitespace()
-    {
-        foreach (var invalidData in TestConstants.EmptyStrings)
-        {
-            var exception = Assert.Throws<ArgumentException>(
-                () => MakeJob(data: invalidData)
-            );
-            Assert.Equal("data", exception.ParamName);
-            Assert.Equal(
-                "The value cannot be an empty string or composed entirely of whitespace. (Parameter 'data')",
-                exception.Message
-            );
-        }
     }
 
     /// <summary>
@@ -87,11 +42,10 @@ public class JobTest
     [Fact]
     public void Constructor_Dependencies_ThrowsWhenNull()
     {
-        var exception = Assert.Throws<ArgumentNullException>(
-            () => MakeJob(dependencies: Maybe<string[]?>.Some(null))
+        Scenario.ThrowsArgumentNullException(
+            () => MakeJob(dependencies: Maybe<string[]?>.Some(null)),
+            "dependencies"
         );
-        Assert.Equal("dependencies", exception.ParamName);
-        Assert.Equal("Value cannot be null. (Parameter 'dependencies')", exception.Message);
     }
 
     /// <summary>
@@ -101,17 +55,12 @@ public class JobTest
     [Fact]
     public void Constructor_Dependencies_ThrowsWhenAnyValueIsNullEmptyOrOnlyWhitespace()
     {
-        foreach (var invalidValue in TestConstants.EmptyStringsWithNull)
-        {
-            var exception = Assert.Throws<ArgumentException>(
-                () => MakeJob(dependencies: Maybe<string[]?>.Some([invalidValue!]))
-            );
-            Assert.Equal("dependencies", exception.ParamName);
-            Assert.Equal(
-                "Value cannot include null, empty string, or strings composed entirely of whitespace. (Parameter 'dependencies')",
-                exception.Message
-            );
-        }
+        Scenario.ThrowsWhenParameterItemIsNullOrEmptyOrWhitespace(
+            (invalidDependency) => MakeJob(
+                dependencies: Maybe<string[]?>.Some([invalidDependency!])
+            ),
+            "dependencies"
+        );
     }
 
     /// <summary>
@@ -121,11 +70,10 @@ public class JobTest
     [Fact]
     public void Constructor_Dependents_ThrowsWhenNull()
     {
-        var exception = Assert.Throws<ArgumentNullException>(
-            () => MakeJob(dependents: Maybe<string[]?>.Some(null))
+        Scenario.ThrowsArgumentNullException(
+            () => MakeJob(dependents: Maybe<string[]?>.Some(null)),
+            "dependents"
         );
-        Assert.Equal("dependents", exception.ParamName);
-        Assert.Equal("Value cannot be null. (Parameter 'dependents')", exception.Message);
     }
 
     /// <summary>
@@ -135,17 +83,12 @@ public class JobTest
     [Fact]
     public void Constructor_Dependents_ThrowsWhenAnyValueIsNullEmptyOrOnlyWhitespace()
     {
-        foreach (var invalidValue in TestConstants.EmptyStringsWithNull)
-        {
-            var exception = Assert.Throws<ArgumentException>(
-                () => MakeJob(dependents: Maybe<string[]?>.Some([invalidValue!]))
-            );
-            Assert.Equal("dependents", exception.ParamName);
-            Assert.Equal(
-                "Value cannot include null, empty string, or strings composed entirely of whitespace. (Parameter 'dependents')",
-                exception.Message
-            );
-        }
+        Scenario.ThrowsWhenParameterItemIsNullOrEmptyOrWhitespace(
+            (invalidDependent) => MakeJob(
+                dependents: Maybe<string[]?>.Some([invalidDependent!])
+            ),
+            "dependents"
+        );
     }
 
     /// <summary>
@@ -155,20 +98,12 @@ public class JobTest
     [Fact]
     public void Constructor_Expires_ThrowsWhenNotPostive()
     {
-        foreach (var nonPositiveValue in new long[] { -100, -1, 0 })
-        {
-            var exception = Assert.Throws<ArgumentOutOfRangeException>(
-                () => MakeJob(expires: Maybe<long>.Some(nonPositiveValue))
-            );
-            Assert.Equal("expires", exception.ParamName);
-            Assert.Equal(
-                $"""
-                Value must be a positive whole number. (Parameter 'expires')
-                Actual value was {nonPositiveValue}.
-                """,
-                exception.Message
-            );
-        }
+        Scenario.ThrowsWhenParameterIsNotPositive(
+            (long invalidExpires) => MakeJob(
+                expires: Maybe<long>.Some(invalidExpires)
+            ),
+            "expires"
+        );
     }
 
     /// <summary>
@@ -178,11 +113,10 @@ public class JobTest
     [Fact]
     public void Constructor_History_ThrowsWhenNull()
     {
-        var exception = Assert.Throws<ArgumentNullException>(
-            () => MakeJob(history: Maybe<JobEvent[]?>.Some(null))
+        Scenario.ThrowsArgumentNullException(
+            () => MakeJob(history: Maybe<JobEvent[]?>.Some(null)),
+            "history"
         );
-        Assert.Equal("history", exception.ParamName);
-        Assert.Equal("Value cannot be null. (Parameter 'history')", exception.Message);
     }
 
     /// <summary>
@@ -201,36 +135,15 @@ public class JobTest
 
     /// <summary>
     /// The constructor should throw an exception if the given jid argument is
-    /// null.
+    /// null, empty, or only whitespace.
     /// </summary>
     [Fact]
-    public void Constructor_Jid_ThrowsWhenNull()
+    public void Constructor_Jid_ThrowsWhenNullOrEmptyOrOnlyWhitespace()
     {
-        var exception = Assert.Throws<ArgumentNullException>(
-            () => MakeJob(jid: null)
+        Scenario.ThrowsWhenParameterIsNullOrEmptyOrWhitespace(
+            (invalidJid) => MakeJob(jid: invalidJid),
+            "jid"
         );
-        Assert.Equal("jid", exception.ParamName);
-        Assert.Equal("Value cannot be null. (Parameter 'jid')", exception.Message);
-    }
-
-    /// <summary>
-    /// The constructor should throw an exception if the given jid argument is
-    /// empty or composed entirely of whitespace.
-    /// </summary>
-    [Fact]
-    public void Constructor_Jid_ThrowsWhenEmptyOrWhitespace()
-    {
-        foreach (var invalidJid in TestConstants.EmptyStrings)
-        {
-            var exception = Assert.Throws<ArgumentException>(
-                () => MakeJob(jid: invalidJid)
-            );
-            Assert.Equal("jid", exception.ParamName);
-            Assert.Equal(
-                "The value cannot be an empty string or composed entirely of whitespace. (Parameter 'jid')",
-                exception.Message
-            );
-        }
     }
 
     /// <summary>
@@ -240,20 +153,12 @@ public class JobTest
     [Fact]
     public void Constructor_Priority_ThrowsWhenNegative()
     {
-        foreach (var negativeValue in new int[] { -100, -1 })
-        {
-            var exception = Assert.Throws<ArgumentOutOfRangeException>(
-                () => MakeJob(priority: Maybe<int>.Some(negativeValue))
-            );
-            Assert.Equal("priority", exception.ParamName);
-            Assert.Equal(
-                $"""
-                Value must be a non-negative whole number. (Parameter 'priority')
-                Actual value was {negativeValue}.
-                """,
-                exception.Message
-            );
-        }
+        Scenario.ThrowsWhenParameterIsNegative(
+            (invalidPriority) => MakeJob(
+                priority: Maybe<int>.Some(invalidPriority)
+            ),
+            "priority"
+        );
     }
 
     /// <summary>
@@ -273,17 +178,10 @@ public class JobTest
     [Fact]
     public void Constructor_QueueName_ThrowsWhenEmptyOrWhitespace()
     {
-        foreach (var invalidQueueName in TestConstants.EmptyStrings)
-        {
-            var exception = Assert.Throws<ArgumentException>(
-                () => MakeJob(queueName: invalidQueueName)
-            );
-            Assert.Equal("queueName", exception.ParamName);
-            Assert.Equal(
-                "The value cannot be an empty string or composed entirely of whitespace. (Parameter 'queueName')",
-                exception.Message
-            );
-        }
+        Scenario.ThrowsWhenParameterIsEmptyOrWhitespace(
+            (invalidQueueName) => MakeJob(queueName: invalidQueueName),
+            "queueName"
+        );
     }
 
     /// <summary>
@@ -341,20 +239,10 @@ public class JobTest
     [Fact]
     public void Constructor_Retries_ThrowsWhenNegative()
     {
-        foreach (var negativeValue in new int[] { -100, -1 })
-        {
-            var exception = Assert.Throws<ArgumentOutOfRangeException>(
-                () => MakeJob(retries: Maybe<int>.Some(negativeValue))
-            );
-            Assert.Equal("retries", exception.ParamName);
-            Assert.Equal(
-                $"""
-                Value must be a non-negative whole number. (Parameter 'retries')
-                Actual value was {negativeValue}.
-                """,
-                exception.Message
-            );
-        }
+        Scenario.ThrowsWhenParameterIsNegative(
+            (invalidRetries) => MakeJob(retries: Maybe<int>.Some(invalidRetries)),
+            "retries"
+        );
     }
 
     /// <summary>
@@ -362,53 +250,25 @@ public class JobTest
     /// argument is empty or composed entirely of whitespace.
     /// </summary>
     [Fact]
-    public void Constructor_SpawnedFromJid_ThrowsWhenEmptyOrWhitespace()
+    public void Constructor_SpawnedFromJid_ThrowsWhenEmptyOrOnlyWhitespace()
     {
-        foreach (var invalidSpawnedFromJid in TestConstants.EmptyStrings)
-        {
-            var exception = Assert.Throws<ArgumentException>(
-                () => MakeJob(spawnedFromJid: invalidSpawnedFromJid)
-            );
-            Assert.Equal("spawnedFromJid", exception.ParamName);
-            Assert.Equal(
-                "The value cannot be an empty string or composed entirely of whitespace. (Parameter 'spawnedFromJid')",
-                exception.Message
-            );
-        }
-    }
-
-    /// <summary>
-    /// The constructor should throw an exception if the given state argument is
-    /// null.
-    /// </summary>
-    [Fact]
-    public void Constructor_State_ThrowsWhenNull()
-    {
-        var exception = Assert.Throws<ArgumentNullException>(
-            () => MakeJob(state: null)
+        Scenario.ThrowsWhenParameterIsEmptyOrWhitespace(
+            (invalidSpawnedFromJid) => MakeJob(spawnedFromJid: invalidSpawnedFromJid),
+            "spawnedFromJid"
         );
-        Assert.Equal("state", exception.ParamName);
-        Assert.Equal("Value cannot be null. (Parameter 'state')", exception.Message);
     }
 
     /// <summary>
     /// The constructor should throw an exception if the given state argument is
-    /// empty or composed entirely of whitespace.
+    /// null, empty, or composed entirely of whitespace.
     /// </summary>
     [Fact]
-    public void Constructor_State_ThrowsWhenEmptyOrWhitespace()
+    public void Constructor_State_ThrowsWhenNullOrEmptyOrOnlyWhitespace()
     {
-        foreach (var invalidState in TestConstants.EmptyStrings)
-        {
-            var exception = Assert.Throws<ArgumentException>(
-                () => MakeJob(state: invalidState)
-            );
-            Assert.Equal("state", exception.ParamName);
-            Assert.Equal(
-                "The value cannot be an empty string or composed entirely of whitespace. (Parameter 'state')",
-                exception.Message
-            );
-        }
+        Scenario.ThrowsWhenParameterIsNullOrEmptyOrWhitespace(
+            (invalidState) => MakeJob(state: invalidState),
+            "state"
+        );
     }
 
     /// <summary>
@@ -418,11 +278,10 @@ public class JobTest
     [Fact]
     public void Constructor_Tags_ThrowsWhenNull()
     {
-        var exception = Assert.Throws<ArgumentNullException>(
-            () => MakeJob(tags: Maybe<string[]?>.Some(null))
+        Scenario.ThrowsArgumentNullException(
+            () => MakeJob(tags: Maybe<string[]?>.Some(null)),
+            "tags"
         );
-        Assert.Equal("tags", exception.ParamName);
-        Assert.Equal("Value cannot be null. (Parameter 'tags')", exception.Message);
     }
 
     /// <summary>
@@ -432,17 +291,10 @@ public class JobTest
     [Fact]
     public void Constructor_Tags_ThrowsWhenAnyValueIsNullEmptyOrOnlyWhitespace()
     {
-        foreach (var invalidValue in TestConstants.EmptyStringsWithNull)
-        {
-            var exception = Assert.Throws<ArgumentException>(
-                () => MakeJob(tags: Maybe<string[]?>.Some([invalidValue!]))
-            );
-            Assert.Equal("tags", exception.ParamName);
-            Assert.Equal(
-                "Value cannot include null, empty string, or strings composed entirely of whitespace. (Parameter 'tags')",
-                exception.Message
-            );
-        }
+        Scenario.ThrowsWhenParameterItemIsNullOrEmptyOrWhitespace(
+            (invalidTag) => MakeJob(tags: Maybe<string[]?>.Some([invalidTag!])),
+            "tags"
+        );
     }
 
     /// <summary>
@@ -452,11 +304,10 @@ public class JobTest
     [Fact]
     public void Constructor_Throttles_ThrowsWhenNull()
     {
-        var exception = Assert.Throws<ArgumentNullException>(
-            () => MakeJob(throttles: Maybe<string[]?>.Some(null))
+        Scenario.ThrowsArgumentNullException(
+            () => MakeJob(throttles: Maybe<string[]?>.Some(null)),
+            "throttles"
         );
-        Assert.Equal("throttles", exception.ParamName);
-        Assert.Equal("Value cannot be null. (Parameter 'throttles')", exception.Message);
     }
 
     /// <summary>
@@ -466,17 +317,12 @@ public class JobTest
     [Fact]
     public void Constructor_Throttles_ThrowsWhenAnyValueIsNullEmptyOrOnlyWhitespace()
     {
-        foreach (var invalidValue in TestConstants.EmptyStringsWithNull)
-        {
-            var exception = Assert.Throws<ArgumentException>(
-                () => MakeJob(throttles: Maybe<string[]?>.Some([invalidValue!]))
-            );
-            Assert.Equal("throttles", exception.ParamName);
-            Assert.Equal(
-                "Value cannot include null, empty string, or strings composed entirely of whitespace. (Parameter 'throttles')",
-                exception.Message
-            );
-        }
+        Scenario.ThrowsWhenParameterItemIsNullOrEmptyOrWhitespace(
+            (invalidThrottle) => MakeJob(
+                throttles: Maybe<string[]?>.Some([invalidThrottle!])
+            ),
+            "throttles"
+        );
     }
 
     /// <summary>
@@ -496,17 +342,10 @@ public class JobTest
     [Fact]
     public void Constructor_WorkerName_ThrowsWhenEmptyOrWhitespace()
     {
-        foreach (var invalidWorkerName in TestConstants.EmptyStrings)
-        {
-            var exception = Assert.Throws<ArgumentException>(
-                () => MakeJob(workerName: invalidWorkerName)
-            );
-            Assert.Equal("workerName", exception.ParamName);
-            Assert.Equal(
-                "The value cannot be an empty string or composed entirely of whitespace. (Parameter 'workerName')",
-                exception.Message
-            );
-        }
+        Scenario.ThrowsWhenParameterIsEmptyOrWhitespace(
+            (invalidWorkerName) => MakeJob(workerName: invalidWorkerName),
+            "workerName"
+        );
     }
 
     /// <summary>
