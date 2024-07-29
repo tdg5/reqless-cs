@@ -972,6 +972,46 @@ public class ReqlessClientIntegrationTest
 
     /// <summary>
     /// <see cref="ReqlessClient.GetTrackedJobsAsync"/> should return an empty
+    /// result when no tags exist.
+    /// </summary>
+    [Fact]
+    public async Task GetTopTagsAsync_ReturnsEmptyListWhenNoTags()
+    {
+        var topTags = await _client.GetTopTagsAsync();
+        Assert.Empty(topTags);
+    }
+
+    /// <summary>
+    /// <see cref="ReqlessClient.GetTrackedJobsAsync"/> should return top tags
+    /// when tags exist.
+    /// </summary>
+    [Fact]
+    public async Task GetTopTagsAsync_ReturnsTopTags()
+    {
+        string[] exampleTags = ["tag-0", "tag-1", "tag-2", "tag-3", "tag-4"];
+        for (var index = 0; index < exampleTags.Length; index++)
+        {
+            List<string> tags = [];
+            for (var tagIndex = 0; tagIndex <= index; tagIndex++)
+            {
+                tags.Add(exampleTags[tagIndex]);
+            }
+            var jid = await PutJobAsync(
+                _client,
+                tags: Maybe<string[]>.Some([.. tags])
+            );
+        }
+
+        var topTags = await _client.GetTopTagsAsync();
+        // tag-4 is not included because it only appears on one job.
+        Assert.Equal(
+            new string[] { "tag-0", "tag-1", "tag-2", "tag-3" },
+            topTags
+        );
+    }
+
+    /// <summary>
+    /// <see cref="ReqlessClient.GetTrackedJobsAsync"/> should return an empty
     /// result when no jobs are tracked.
     /// </summary>
     [Fact]

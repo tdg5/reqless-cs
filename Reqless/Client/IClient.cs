@@ -292,6 +292,18 @@ public interface IClient
     Task<Throttle> GetThrottleAsync(string throttleName);
 
     /// <summary>
+    /// Get the most commonly used tags in order from most used to least used.
+    /// </summary>
+    /// <remarks>
+    /// Tags with only a single usage are ignored.
+    /// </remarks>
+    /// <param name="offset">The number of tags to skip before returning
+    /// results.</param>
+    /// <param name="limit">The maximum number of tags to retrieve.</param>
+    /// <returns></returns>
+    Task<List<string>> GetTopTagsAsync(int limit = 25, int offset = 0);
+
+    /// <summary>
     /// Gets the details of all currently traced jobs.
     /// </summary>
     Task<TrackedJobsResult> GetTrackedJobsAsync();

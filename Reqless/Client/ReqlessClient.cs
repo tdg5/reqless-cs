@@ -564,6 +564,39 @@ public class ReqlessClient : IClient, IDisposable
         return GetThrottleAsyncCore("throttle.get", throttleName);
     }
 
+    /// <inheritdocs/>
+    public async Task<List<string>> GetTopTagsAsync(int limit = 25, int offset = 0)
+    {
+        ValidationHelper.ThrowIfNotPositive(limit, nameof(limit));
+
+        var result = await _executor.ExecuteAsync([
+            "tags.top",
+            Now(),
+            offset,
+            limit,
+        ]);
+
+        var tagsJson = (string?)result
+            ?? throw new InvalidOperationException(
+                "Server returned unexpected null result."
+            );
+
+        // Redis cjson can't distinguish between an empty array and an empty
+        // object, so an empty object here actually represents an empty array,
+        // and, ergo, no tags.
+        if (tagsJson == "{}")
+        {
+            return [];
+        }
+
+        var tags = JsonSerializer.Deserialize<List<string>>(tagsJson)
+            ?? throw new JsonException(
+                $"Failed to deserialize JSON: {tagsJson}"
+            );
+
+        return tags;
+    }
+
     /// <inheritdoc/>
     public async Task<TrackedJobsResult> GetTrackedJobsAsync()
     {
