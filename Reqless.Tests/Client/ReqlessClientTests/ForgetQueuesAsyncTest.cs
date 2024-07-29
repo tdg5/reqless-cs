@@ -13,7 +13,7 @@ public class ForgetQueuesTest : BaseReqlessClientTest
     /// collection is null.
     /// </summary>
     [Fact]
-    public async void ThrowsIfQueueNamesIsNull()
+    public async Task ThrowsIfQueueNamesIsNull()
     {
         await Scenario.ThrowsArgumentNullExceptionAsync(
             () => WithClientWithExecutorMockForExpectedArguments(
@@ -29,7 +29,7 @@ public class ForgetQueuesTest : BaseReqlessClientTest
     /// whitespace.
     /// </summary>
     [Fact]
-    public async void ThrowsIfAnyQueueNameIsNullEmptyOrOnlyWhitespace()
+    public async Task ThrowsIfAnyQueueNameIsNullEmptyOrOnlyWhitespace()
     {
         await Scenario.ThrowsWhenParameterItemIsNullOrEmptyOrWhitespaceAsync(
             (invalidQueueName) => WithClientWithExecutorMockForExpectedArguments(
@@ -44,7 +44,7 @@ public class ForgetQueuesTest : BaseReqlessClientTest
     /// expected arguments.
     /// </summary>
     [Fact]
-    public async void CallsExecutorWithTheExpectedArguments()
+    public async Task CallsExecutorWithTheExpectedArguments()
     {
         var otherQueue = "other-queue";
         await WithClientWithExecutorMockForExpectedArguments(

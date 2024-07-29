@@ -13,7 +13,7 @@ public class GetAllConfigsTest : BaseReqlessClientTest
     /// with the expected arguments.
     /// </summary>
     [Fact]
-    public async void CallsExecutorWithTheExpectedArguments()
+    public async Task CallsExecutorWithTheExpectedArguments()
     {
         Dictionary<string, JsonElement> configs = await WithClientWithExecutorMockForExpectedArguments(
             subject => subject.GetAllConfigsAsync(),
@@ -29,7 +29,7 @@ public class GetAllConfigsTest : BaseReqlessClientTest
     /// server returns null.
     /// </summary>
     [Fact]
-    public async void ThrowsIfServerReturnsNull()
+    public async Task ThrowsIfServerReturnsNull()
     {
         var exception = await Assert.ThrowsAsync<InvalidOperationException>(
             () => WithClientWithExecutorMockForExpectedArguments(
@@ -46,7 +46,7 @@ public class GetAllConfigsTest : BaseReqlessClientTest
     /// be deserialized.
     /// </summary>
     [Fact]
-    public async void ThrowsIfJsonCannotBeDeserialized()
+    public async Task ThrowsIfJsonCannotBeDeserialized()
     {
         var exception = await Assert.ThrowsAsync<JsonException>(
             () => WithClientWithExecutorMockForExpectedArguments(

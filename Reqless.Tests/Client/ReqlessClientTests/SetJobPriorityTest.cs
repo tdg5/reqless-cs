@@ -13,7 +13,7 @@ public class SetJobPriorityTest : BaseReqlessClientTest
     /// null, empty, or only whitespace.
     /// </summary>
     [Fact]
-    public async void ThrowsIfJidIsNullOrEmptyOrOnlyWhitespace()
+    public async Task ThrowsIfJidIsNullOrEmptyOrOnlyWhitespace()
     {
         await Scenario.ThrowsWhenParameterIsNullOrEmptyOrWhitespaceAsync(
             (invalidJid) => WithClientWithExecutorMockForExpectedArguments(
@@ -31,7 +31,7 @@ public class SetJobPriorityTest : BaseReqlessClientTest
     /// with the expected arguments.
     /// </summary>
     [Fact]
-    public async void CallsExecutorWithExpectedArguments()
+    public async Task CallsExecutorWithExpectedArguments()
     {
         var newPriority = 42;
         var updatedSuccessfully = await WithClientWithExecutorMockForExpectedArguments(

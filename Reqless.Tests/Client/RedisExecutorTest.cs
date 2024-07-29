@@ -44,7 +44,7 @@ public class RedisExecutorTest
     /// ExecuteAsync makes the expected call to the connection.
     /// </summary>
     [Fact]
-    public async void ExecuteAsync_MakesTheExpectedRedisCall()
+    public async Task ExecuteAsync_MakesTheExpectedRedisCall()
     {
         var arguments = new RedisValue[] { "arg1", "arg2" };
         var databaseMock = new Mock<IDatabase>();

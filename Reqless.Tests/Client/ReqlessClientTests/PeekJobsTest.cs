@@ -17,7 +17,7 @@ public class PeekJobsTest : BaseReqlessClientTest
     /// is null, empty, or only whitespace.
     /// </summary>
     [Fact]
-    public async void ThrowsIfQueueNameIsNullOrEmptyOrOnlyWhitespace()
+    public async Task ThrowsIfQueueNameIsNullOrEmptyOrOnlyWhitespace()
     {
         await Scenario.ThrowsWhenParameterIsNullOrEmptyOrWhitespaceAsync(
             (invalidQueueName) => WithClientWithExecutorMockForExpectedArguments(
@@ -32,7 +32,7 @@ public class PeekJobsTest : BaseReqlessClientTest
     /// by the server.
     /// </summary>
     [Fact]
-    public async void ReturnsTheJobReturnedByTheServer()
+    public async Task ReturnsTheJobReturnedByTheServer()
     {
         var jobJson = JobFactory.JobJson(jid: Maybe<string?>.Some(ExampleJid));
         var otherJobJson = JobFactory.JobJson(jid: Maybe<string?>.Some(ExampleJidOther));
@@ -55,7 +55,7 @@ public class PeekJobsTest : BaseReqlessClientTest
     /// if the server responds with an empty array.
     /// /// </summary>
     [Fact]
-    public async void ReturnsEmptyArrayIfServerRespondsWithEmptyArray()
+    public async Task ReturnsEmptyArrayIfServerRespondsWithEmptyArray()
     {
         List<Job> jobs = await WithClientWithExecutorMockForExpectedArguments(
             subject => subject.PeekJobsAsync(ExampleQueueName),
@@ -70,7 +70,7 @@ public class PeekJobsTest : BaseReqlessClientTest
     /// if the server responds with an empty object.
     /// </summary>
     [Fact]
-    public async void ReturnsEmptyArrayIfServerRespondsWithEmptyObject()
+    public async Task ReturnsEmptyArrayIfServerRespondsWithEmptyObject()
     {
         List<Job> jobs = await WithClientWithExecutorMockForExpectedArguments(
             subject => subject.PeekJobsAsync(ExampleQueueName),
@@ -85,7 +85,7 @@ public class PeekJobsTest : BaseReqlessClientTest
     /// null.
     /// </summary>
     [Fact]
-    public async void ThrowsIfServerReturnsNull()
+    public async Task ThrowsIfServerReturnsNull()
     {
         var exception = await Assert.ThrowsAsync<InvalidOperationException>(
             () => WithClientWithExecutorMockForExpectedArguments(
@@ -102,7 +102,7 @@ public class PeekJobsTest : BaseReqlessClientTest
     /// deserialized into a job.
     /// </summary>
     [Fact]
-    public async void ThrowsIfJobJsonIsInvalid()
+    public async Task ThrowsIfJobJsonIsInvalid()
     {
         var exception = await Assert.ThrowsAsync<JsonException>(
             () => WithClientWithExecutorMockForExpectedArguments(

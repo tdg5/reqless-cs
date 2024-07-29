@@ -17,7 +17,7 @@ public class GetJobTest : BaseReqlessClientTest
     /// null, empty, or whitespace.
     /// </summary>
     [Fact]
-    public async void ThrowsIfJidIsNullOrEmptyOrWhitespace()
+    public async Task ThrowsIfJidIsNullOrEmptyOrWhitespace()
     {
         await Scenario.ThrowsWhenParameterIsNullOrEmptyOrWhitespaceAsync(
             (invalidJid) => WithClientWithExecutorMockForExpectedArguments(
@@ -32,7 +32,7 @@ public class GetJobTest : BaseReqlessClientTest
     /// by the server.
     /// </summary>
     [Fact]
-    public async void ReturnsTheJobReturnedByTheServer()
+    public async Task ReturnsTheJobReturnedByTheServer()
     {
         Job? job = await WithClientWithExecutorMockForExpectedArguments(
             subject => subject.GetJobAsync(jid: ExampleJid),
@@ -48,7 +48,7 @@ public class GetJobTest : BaseReqlessClientTest
     /// responds with null.
     /// </summary>
     [Fact]
-    public async void ReturnsNullIfServerRespondsWithNull()
+    public async Task ReturnsNullIfServerRespondsWithNull()
     {
         Job? job = await WithClientWithExecutorMockForExpectedArguments(
             subject => subject.GetJobAsync(jid: ExampleJid),
@@ -63,7 +63,7 @@ public class GetJobTest : BaseReqlessClientTest
     /// deserialized into a job.
     /// </summary>
     [Fact]
-    public async void ThrowsIfJobJsonIsInvalid()
+    public async Task ThrowsIfJobJsonIsInvalid()
     {
         var exception = await Assert.ThrowsAsync<JsonException>(
             () => WithClientWithExecutorMockForExpectedArguments(

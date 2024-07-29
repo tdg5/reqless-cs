@@ -13,7 +13,7 @@ public class FailJobTest : BaseReqlessClientTest
     /// empty or whitespace.
     /// </summary>
     [Fact]
-    public async void ThrowsIfDataIsEmptyOrWhitespace()
+    public async Task ThrowsIfDataIsEmptyOrWhitespace()
     {
         await Scenario.ThrowsWhenParameterIsEmptyOrWhitespaceAsync(
             (invalidData) => WithClientWithExecutorMockForExpectedArguments(
@@ -34,7 +34,7 @@ public class FailJobTest : BaseReqlessClientTest
     /// null, empty, or whitespace.
     /// </summary>
     [Fact]
-    public async void ThrowsIfJidIsNullOrEmptyOrWhitespace()
+    public async Task ThrowsIfJidIsNullOrEmptyOrWhitespace()
     {
         await Scenario.ThrowsWhenParameterIsNullOrEmptyOrWhitespaceAsync(
             (invalidJid) => WithClientWithExecutorMockForExpectedArguments(
@@ -55,7 +55,7 @@ public class FailJobTest : BaseReqlessClientTest
     /// is null, empty, or whitespace.
     /// </summary>
     [Fact]
-    public async void ThrowsIfGroupNameIsNullOrEmptyOrWhitespace()
+    public async Task ThrowsIfGroupNameIsNullOrEmptyOrWhitespace()
     {
         await Scenario.ThrowsWhenParameterIsNullOrEmptyOrWhitespaceAsync(
             (invalidGroupName) => WithClientWithExecutorMockForExpectedArguments(
@@ -76,7 +76,7 @@ public class FailJobTest : BaseReqlessClientTest
     /// null, empty, or whitespace.
     /// </summary>
     [Fact]
-    public async void ThrowsIfMessageIsNullOrEmptyOrOnlyWhitespace()
+    public async Task ThrowsIfMessageIsNullOrEmptyOrOnlyWhitespace()
     {
         await Scenario.ThrowsWhenParameterIsNullOrEmptyOrWhitespaceAsync(
             (invalidMessage) => WithClientWithExecutorMockForExpectedArguments(
@@ -97,7 +97,7 @@ public class FailJobTest : BaseReqlessClientTest
     /// is null, empty, or whitespace.
     /// </summary>
     [Fact]
-    public async void ThrowsIfWorkerNameIsNullOrEmptyOrOnlyWhitespace()
+    public async Task ThrowsIfWorkerNameIsNullOrEmptyOrOnlyWhitespace()
     {
         await Scenario.ThrowsWhenParameterIsNullOrEmptyOrWhitespaceAsync(
             (invalidWorkerName) => WithClientWithExecutorMockForExpectedArguments(
@@ -118,7 +118,7 @@ public class FailJobTest : BaseReqlessClientTest
     /// the expected arguments when data is given.
     /// </summary>
     [Fact]
-    public async void CallsExecutorWithTheExpectedArgumentsWhenGivenData()
+    public async Task CallsExecutorWithTheExpectedArgumentsWhenGivenData()
     {
         bool failedSuccessfully = await WithClientWithExecutorMockForExpectedArguments(
             subject => subject.FailJobAsync(
@@ -147,7 +147,7 @@ public class FailJobTest : BaseReqlessClientTest
     /// the expected arguments when data is not given.
     /// </summary>
     [Fact]
-    public async void CallsExecutorWithTheExpectedArgumentsWhenNotGivenData()
+    public async Task CallsExecutorWithTheExpectedArgumentsWhenNotGivenData()
     {
         bool failedSuccessfully = await WithClientWithExecutorMockForExpectedArguments(
             subject => subject.FailJobAsync(

@@ -16,7 +16,7 @@ public class PopJobsTest : BaseReqlessClientTest
     /// given queue name is null, empty, or only whitespace.
     /// </summary>
     [Fact]
-    public async void ThrowsIfQueueNameIsNullOrEmptyOrWhitespace()
+    public async Task ThrowsIfQueueNameIsNullOrEmptyOrWhitespace()
     {
         await Scenario.ThrowsWhenParameterIsNullOrEmptyOrWhitespaceAsync(
             (invalidQueueName) => WithClientWithExecutorMockForExpectedArguments(
@@ -35,7 +35,7 @@ public class PopJobsTest : BaseReqlessClientTest
     /// given worker name is null, empty, or only whitespace.
     /// </summary>
     [Fact]
-    public async void ThrowsIfWorkerNameIsNullOrEmptyOrWhitespace()
+    public async Task ThrowsIfWorkerNameIsNullOrEmptyOrWhitespace()
     {
         await Scenario.ThrowsWhenParameterIsNullOrEmptyOrWhitespaceAsync(
             (invalidWorkerName) => WithClientWithExecutorMockForExpectedArguments(
@@ -54,7 +54,7 @@ public class PopJobsTest : BaseReqlessClientTest
     /// the expected arguments.
     /// </summary>
     [Fact]
-    public async void CallsExecutorWithTheExpectedArguments()
+    public async Task CallsExecutorWithTheExpectedArguments()
     {
         var count = 2;
         var jobJson = JobFactory.JobJson(jid: Maybe<string?>.Some(ExampleJid));
@@ -87,7 +87,7 @@ public class PopJobsTest : BaseReqlessClientTest
     /// server returns no jobs.
     /// </summary>
     [Fact]
-    public async void ReturnsEmptyListIfTheServerReturnsNoJobs()
+    public async Task ReturnsEmptyListIfTheServerReturnsNoJobs()
     {
         var count = 2;
         foreach (var emptyResult in new string[] { "[]", "{}" })
@@ -116,7 +116,7 @@ public class PopJobsTest : BaseReqlessClientTest
     /// null.
     /// </summary>
     [Fact]
-    public async void ThrowsIfTheServerReturnsNull()
+    public async Task ThrowsIfTheServerReturnsNull()
     {
         var count = 2;
         var exception = await Assert.ThrowsAsync<InvalidOperationException>(
@@ -144,7 +144,7 @@ public class PopJobsTest : BaseReqlessClientTest
     /// deserialized.
     /// </summary>
     [Fact]
-    public async void ThrowsIfJobJSONCannotBeDeserialized()
+    public async Task ThrowsIfJobJSONCannotBeDeserialized()
     {
         var count = 2;
         var exception = await Assert.ThrowsAsync<JsonException>(

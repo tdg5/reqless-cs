@@ -13,7 +13,7 @@ public class SetQueueThrottleTest : BaseReqlessClientTest
     /// name is null, empty, or only whitespace.
     /// </summary>
     [Fact]
-    public async void ThrowsIfQueueNameIsNullOrEmptyOrOnlyWhitespace()
+    public async Task ThrowsIfQueueNameIsNullOrEmptyOrOnlyWhitespace()
     {
         await Scenario.ThrowsWhenParameterIsNullOrEmptyOrWhitespaceAsync(
             (invalidQueueName) => WithClientWithExecutorMockForExpectedArguments(
@@ -31,7 +31,7 @@ public class SetQueueThrottleTest : BaseReqlessClientTest
     /// maximum is negative.
     /// </summary>
     [Fact]
-    public async void ThrowsIfMaximumIsLessThanZero()
+    public async Task ThrowsIfMaximumIsLessThanZero()
     {
         await Scenario.ThrowsWhenParameterIsNegativeAsync(
             (invalidMaximum) => WithClientWithExecutorMockForExpectedArguments(
@@ -49,7 +49,7 @@ public class SetQueueThrottleTest : BaseReqlessClientTest
     /// with the expected arguments.
     /// </summary>
     [Fact]
-    public async void CallsExecutorWithExpectedArguments()
+    public async Task CallsExecutorWithExpectedArguments()
     {
         var newMaximum = 42;
         await WithClientWithExecutorMockForExpectedArguments(

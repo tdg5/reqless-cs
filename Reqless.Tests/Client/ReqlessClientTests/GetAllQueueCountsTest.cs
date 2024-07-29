@@ -14,7 +14,7 @@ public class GetAllQueueCountsTest : BaseReqlessClientTest
     /// returns null.
     /// </summary>
     [Fact]
-    public async void ThrowsIfServerReturnsNull()
+    public async Task ThrowsIfServerReturnsNull()
     {
         var exception = await Assert.ThrowsAsync<InvalidOperationException>(
             () => WithClientWithExecutorMockForExpectedArguments(
@@ -31,7 +31,7 @@ public class GetAllQueueCountsTest : BaseReqlessClientTest
     /// retruns JSON that can't be deserialized.
     /// </summary>
     [Fact]
-    public async void ThrowsIfServerReturnsJsonThatCannotBeDeserialized()
+    public async Task ThrowsIfServerReturnsJsonThatCannotBeDeserialized()
     {
         var exception = await Assert.ThrowsAsync<JsonException>(
             () => WithClientWithExecutorMockForExpectedArguments(
@@ -48,7 +48,7 @@ public class GetAllQueueCountsTest : BaseReqlessClientTest
     /// empty array when the server returns an empty JSON object.
     /// </summary>
     [Fact]
-    public async void ReturnsEmptyArrayWhenServerReturnsJsonObject()
+    public async Task ReturnsEmptyArrayWhenServerReturnsJsonObject()
     {
         var allQueueCounts = await WithClientWithExecutorMockForExpectedArguments(
             subject => subject.GetAllQueueCountsAsync(),
@@ -63,7 +63,7 @@ public class GetAllQueueCountsTest : BaseReqlessClientTest
     /// result returned by the server.
     /// </summary>
     [Fact]
-    public async void ReturnsValidResultFromTheServer()
+    public async Task ReturnsValidResultFromTheServer()
     {
         var expectedCounts = new QueueCounts
         {

@@ -14,7 +14,7 @@ public class GetJobsByStateAsyncTest : BaseReqlessClientTest
     /// null, empty, or whitespace.
     /// </summary>
     [Fact]
-    public async void ThrowsIfStateIsNullOrEmptyOrOnlyWhitespace()
+    public async Task ThrowsIfStateIsNullOrEmptyOrOnlyWhitespace()
     {
         await Scenario.ThrowsWhenParameterIsNullOrEmptyOrWhitespaceAsync(
             (invalidState) => WithClientWithExecutorMockForExpectedArguments(
@@ -32,7 +32,7 @@ public class GetJobsByStateAsyncTest : BaseReqlessClientTest
     /// name is null, empty, or whitespace.
     /// </summary>
     [Fact]
-    public async void ThrowsIfQueueNameIsNullOrEmptyOrOnlyWhitespace()
+    public async Task ThrowsIfQueueNameIsNullOrEmptyOrOnlyWhitespace()
     {
         await Scenario.ThrowsWhenParameterIsNullOrEmptyOrWhitespaceAsync(
             (invalidQueueName) => WithClientWithExecutorMockForExpectedArguments(
@@ -50,7 +50,7 @@ public class GetJobsByStateAsyncTest : BaseReqlessClientTest
     /// is null.
     /// </summary>
     [Fact]
-    public async void ThrowsIfResultIsNull()
+    public async Task ThrowsIfResultIsNull()
     {
         var exception = await Assert.ThrowsAsync<InvalidOperationException>(
             () => WithClientWithExecutorMockForExpectedArguments(
@@ -80,7 +80,7 @@ public class GetJobsByStateAsyncTest : BaseReqlessClientTest
     /// is null.
     /// </summary>
     [Fact]
-    public async void ThrowsIfAnyJidIsNull()
+    public async Task ThrowsIfAnyJidIsNull()
     {
         var exception = await Assert.ThrowsAsync<InvalidOperationException>(
             () => WithClientWithExecutorMockForExpectedArguments(
@@ -110,7 +110,7 @@ public class GetJobsByStateAsyncTest : BaseReqlessClientTest
     /// list when there are no jobs in the given state.
     /// </summary>
     [Fact]
-    public async void ReturnsEmptyListWhenNoSuchJobs()
+    public async Task ReturnsEmptyListWhenNoSuchJobs()
     {
         List<string> jobs = await WithClientWithExecutorMockForExpectedArguments(
             subject => subject.GetJobsByStateAsync(
@@ -137,7 +137,7 @@ public class GetJobsByStateAsyncTest : BaseReqlessClientTest
     /// there are jobs in the given state.
     /// </summary>
     [Fact]
-    public async void ReturnsJidsWhenThereAreJobsInTheGivenState()
+    public async Task ReturnsJidsWhenThereAreJobsInTheGivenState()
     {
         List<string> jids = await WithClientWithExecutorMockForExpectedArguments(
             subject => subject.GetJobsByStateAsync(

@@ -13,7 +13,7 @@ public class FailureGroupsCountsTest : BaseReqlessClientTest
     /// Executor with the expected arguments.
     /// </summary>
     [Fact]
-    public async void CallsExecutorWithTheExpectedArguments()
+    public async Task CallsExecutorWithTheExpectedArguments()
     {
         var expectedResult = new Dictionary<string, int>() {
             { ExampleGroupName, 1 },
@@ -32,7 +32,7 @@ public class FailureGroupsCountsTest : BaseReqlessClientTest
     /// server returns null.
     /// </summary>
     [Fact]
-    public async void ThrowsIfTheServerReturnsNull()
+    public async Task ThrowsIfTheServerReturnsNull()
     {
         var exception = await Assert.ThrowsAsync<InvalidOperationException>(
             () => WithClientWithExecutorMockForExpectedArguments(
@@ -49,7 +49,7 @@ public class FailureGroupsCountsTest : BaseReqlessClientTest
     /// can't be deserialized.
     /// </summary>
     [Fact]
-    public async void ThrowsIfJsonCannotBeDeserialized()
+    public async Task ThrowsIfJsonCannotBeDeserialized()
     {
         var exception = await Assert.ThrowsAsync<JsonException>(
             () => WithClientWithExecutorMockForExpectedArguments(

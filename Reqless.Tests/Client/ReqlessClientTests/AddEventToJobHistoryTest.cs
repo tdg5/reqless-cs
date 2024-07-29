@@ -13,7 +13,7 @@ public class AddEventToJobHistoryTest : BaseReqlessClientTest
     /// jid is null, empty, or whitespace.
     /// </summary>
     [Fact]
-    public async void ThrowsIfJidIsNullOrEmptyOrWhitespace()
+    public async Task ThrowsIfJidIsNullOrEmptyOrWhitespace()
     {
         await Scenario.ThrowsWhenParameterIsNullOrEmptyOrWhitespaceAsync(
             (invalidJid) => WithClientWithExecutorMockForExpectedArguments(
@@ -31,7 +31,7 @@ public class AddEventToJobHistoryTest : BaseReqlessClientTest
     /// what is null, empty, or whitespace.
     /// </summary>
     [Fact]
-    public async void ThrowsIfWhatIsNullOrEmptyOrWhitespace()
+    public async Task ThrowsIfWhatIsNullOrEmptyOrWhitespace()
     {
         await Scenario.ThrowsWhenParameterIsNullOrEmptyOrWhitespaceAsync(
             (invalidWhat) => WithClientWithExecutorMockForExpectedArguments(
@@ -49,7 +49,7 @@ public class AddEventToJobHistoryTest : BaseReqlessClientTest
     /// data is empty or whitespace.
     /// </summary>
     [Fact]
-    public async void ThrowsIfDataIsEmptyOrWhitespace()
+    public async Task ThrowsIfDataIsEmptyOrWhitespace()
     {
         await Scenario.ThrowsWhenParameterIsEmptyOrWhitespaceAsync(
             (invalidData) => WithClientWithExecutorMockForExpectedArguments(
@@ -68,7 +68,7 @@ public class AddEventToJobHistoryTest : BaseReqlessClientTest
     /// Executor with the expected arguments when not given data.
     /// </summary>
     [Fact]
-    public async void CallsExecutorWithTheExpectedArgumentsWithoutData()
+    public async Task CallsExecutorWithTheExpectedArgumentsWithoutData()
     {
         var result = await WithClientWithExecutorMockForExpectedArguments(
             subject => subject.AddEventToJobHistoryAsync(
@@ -93,7 +93,7 @@ public class AddEventToJobHistoryTest : BaseReqlessClientTest
     /// Executor with the expected arguments when given data.
     /// </summary>
     [Fact]
-    public async void CallsExecutorWithTheExpectedArgumentsWithData()
+    public async Task CallsExecutorWithTheExpectedArgumentsWithData()
     {
         var result = await WithClientWithExecutorMockForExpectedArguments(
             subject => subject.AddEventToJobHistoryAsync(

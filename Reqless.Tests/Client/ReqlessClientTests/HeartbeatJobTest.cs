@@ -13,7 +13,7 @@ public class HeartbeatJobTest : BaseReqlessClientTest
     /// given job ID is null, empty, or only whitespace.
     /// </summary>
     [Fact]
-    public async void ThrowsIfJidIsNullOrEmptyOrWhitespace()
+    public async Task ThrowsIfJidIsNullOrEmptyOrWhitespace()
     {
         await Scenario.ThrowsWhenParameterIsNullOrEmptyOrWhitespaceAsync(
             (invalidJid) => WithClientWithExecutorMockForExpectedArguments(
@@ -31,7 +31,7 @@ public class HeartbeatJobTest : BaseReqlessClientTest
     /// given worker name is null, empty, or only whitespace.
     /// </summary>
     [Fact]
-    public async void ThrowsIfWorkerNameIsNullOrEmptyOrWhitespace()
+    public async Task ThrowsIfWorkerNameIsNullOrEmptyOrWhitespace()
     {
         await Scenario.ThrowsWhenParameterIsNullOrEmptyOrWhitespaceAsync(
             (invalidWorkerName) => WithClientWithExecutorMockForExpectedArguments(
@@ -49,7 +49,7 @@ public class HeartbeatJobTest : BaseReqlessClientTest
     /// given data is empty or only whitespace.
     /// </summary>
     [Fact]
-    public async void ThrowsIfDataIsEmptyOrWhitespace()
+    public async Task ThrowsIfDataIsEmptyOrWhitespace()
     {
         await Scenario.ThrowsWhenParameterIsEmptyOrWhitespaceAsync(
             (invalidData) => WithClientWithExecutorMockForExpectedArguments(
@@ -68,7 +68,7 @@ public class HeartbeatJobTest : BaseReqlessClientTest
     /// expiration time.
     /// </summary>
     [Fact]
-    public async void ReturnsTheNewExpirationTimeWithoutData()
+    public async Task ReturnsTheNewExpirationTimeWithoutData()
     {
         var expectedExpiration = DateTimeOffset.Now.ToUnixTimeMilliseconds() + 60000;
         long newExpiration = await WithClientWithExecutorMockForExpectedArguments(
@@ -92,7 +92,7 @@ public class HeartbeatJobTest : BaseReqlessClientTest
     /// expiration time.
     /// </summary>
     [Fact]
-    public async void ReturnsTheNewExpirationTimeWithData()
+    public async Task ReturnsTheNewExpirationTimeWithData()
     {
         var expectedExpiration = DateTimeOffset.Now.ToUnixTimeMilliseconds() + 60000;
         long newExpiration = await WithClientWithExecutorMockForExpectedArguments(
@@ -118,7 +118,7 @@ public class HeartbeatJobTest : BaseReqlessClientTest
     /// time is unexpected.
     /// </summary>
     [Fact]
-    public async void ThrowsIfExpirationTimeIsUnexpected()
+    public async Task ThrowsIfExpirationTimeIsUnexpected()
     {
         var exception = await Assert.ThrowsAsync<InvalidOperationException>(
             () => WithClientWithExecutorMockForExpectedArguments(

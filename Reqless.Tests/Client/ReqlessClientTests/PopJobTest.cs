@@ -16,7 +16,7 @@ public class PopJobTest : BaseReqlessClientTest
     /// given queue name is null, empty, or only whitespace.
     /// </summary>
     [Fact]
-    public async void ThrowsIfQueueNameIsNullOrEmptyOrWhitespace()
+    public async Task ThrowsIfQueueNameIsNullOrEmptyOrWhitespace()
     {
         await Scenario.ThrowsWhenParameterIsNullOrEmptyOrWhitespaceAsync(
             (invalidQueueName) => WithClientWithExecutorMockForExpectedArguments(
@@ -34,7 +34,7 @@ public class PopJobTest : BaseReqlessClientTest
     /// given worker name is null, empty, or only whitespace.
     /// </summary>
     [Fact]
-    public async void ThrowsIfWorkerNameIsNullOrEmptyOrWhitespace()
+    public async Task ThrowsIfWorkerNameIsNullOrEmptyOrWhitespace()
     {
         await Scenario.ThrowsWhenParameterIsNullOrEmptyOrWhitespaceAsync(
             (invalidWorkerName) => WithClientWithExecutorMockForExpectedArguments(
@@ -52,7 +52,7 @@ public class PopJobTest : BaseReqlessClientTest
     /// the expected arguments.
     /// </summary>
     [Fact]
-    public async void CallsExecutorWithTheExpectedArguments()
+    public async Task CallsExecutorWithTheExpectedArguments()
     {
         var jobJson = JobFactory.JobJson(jid: Maybe<string?>.Some(ExampleJid));
         var jobsJson = $"[{jobJson}]";
@@ -81,7 +81,7 @@ public class PopJobTest : BaseReqlessClientTest
     /// server returns no jobs.
     /// </summary>
     [Fact]
-    public async void ReturnsNullIfTheServerReturnsNoJobs()
+    public async Task ReturnsNullIfTheServerReturnsNoJobs()
     {
         foreach (var emptyResult in new string[] { "[]", "{}" })
         {
@@ -107,7 +107,7 @@ public class PopJobTest : BaseReqlessClientTest
     /// <see cref="ReqlessClient.PopJobAsync"/> throws if the server returns null.
     /// </summary>
     [Fact]
-    public async void ThrowsIfTheServerReturnsNull()
+    public async Task ThrowsIfTheServerReturnsNull()
     {
         var exception = await Assert.ThrowsAsync<InvalidOperationException>(
             () => WithClientWithExecutorMockForExpectedArguments(
@@ -133,7 +133,7 @@ public class PopJobTest : BaseReqlessClientTest
     /// deserialized.
     /// </summary>
     [Fact]
-    public async void ThrowsIfJobJSONCannotBeDeserialized()
+    public async Task ThrowsIfJobJSONCannotBeDeserialized()
     {
         var exception = await Assert.ThrowsAsync<JsonException>(
             () => WithClientWithExecutorMockForExpectedArguments(

@@ -13,7 +13,7 @@ public class CancelJobTest : BaseReqlessClientTest
     /// is null, empty, or whitespace.
     /// </summary>
     [Fact]
-    public async void ThrowsIfJidIsNullOrEmptyOrWhitespace()
+    public async Task ThrowsIfJidIsNullOrEmptyOrWhitespace()
     {
         await Scenario.ThrowsWhenParameterIsNullOrEmptyOrWhitespaceAsync(
             (invalidJid) => WithClientWithExecutorMockForExpectedArguments(
@@ -28,7 +28,7 @@ public class CancelJobTest : BaseReqlessClientTest
     /// the expected arguments.
     /// </summary>
     [Fact]
-    public async void CallsExecutorWithTheExpectedArguments()
+    public async Task CallsExecutorWithTheExpectedArguments()
     {
         bool cancelledSuccessfully = await WithClientWithExecutorMockForExpectedArguments(
             subject => subject.CancelJobAsync(jid: ExampleJid),

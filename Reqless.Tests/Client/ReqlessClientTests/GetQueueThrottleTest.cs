@@ -15,7 +15,7 @@ public class GetQueueThrottleTest : BaseReqlessClientTest
     /// name is null, empty, or whitespace.
     /// </summary>
     [Fact]
-    public async void ThrowsIfQueueNameIsNullOrEmptyOrOnlyWhitespace()
+    public async Task ThrowsIfQueueNameIsNullOrEmptyOrOnlyWhitespace()
     {
         await Scenario.ThrowsWhenParameterIsNullOrEmptyOrWhitespaceAsync(
             (invalidQueueName) => WithClientWithExecutorMockForExpectedArguments(
@@ -30,7 +30,7 @@ public class GetQueueThrottleTest : BaseReqlessClientTest
     /// returns null.
     /// </summary>
     [Fact]
-    public async void ThrowsIfServerReturnsNull()
+    public async Task ThrowsIfServerReturnsNull()
     {
         var exception = await Assert.ThrowsAsync<InvalidOperationException>(
             () => WithClientWithExecutorMockForExpectedArguments(
@@ -47,7 +47,7 @@ public class GetQueueThrottleTest : BaseReqlessClientTest
     /// retruns JSON that can't be deserialized.
     /// </summary>
     [Fact]
-    public async void ThrowsIfServerReturnsJsonThatCannotBeDeserialized()
+    public async Task ThrowsIfServerReturnsJsonThatCannotBeDeserialized()
     {
         var exception = await Assert.ThrowsAsync<JsonException>(
             () => WithClientWithExecutorMockForExpectedArguments(
@@ -64,7 +64,7 @@ public class GetQueueThrottleTest : BaseReqlessClientTest
     /// result returned by the server.
     /// </summary>
     [Fact]
-    public async void ReturnsValidResultFromTheServer()
+    public async Task ReturnsValidResultFromTheServer()
     {
         var expectedThrottle = new Throttle
         {

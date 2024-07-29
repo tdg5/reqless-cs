@@ -13,7 +13,7 @@ public class UntrackJobTest : BaseReqlessClientTest
     /// null, empty, or only whitespace.
     /// </summary>
     [Fact]
-    public async void ThrowsIfJidIsNullOrEmptyOrOnlyWhitespace()
+    public async Task ThrowsIfJidIsNullOrEmptyOrOnlyWhitespace()
     {
         await Scenario.ThrowsWhenParameterIsNullOrEmptyOrWhitespaceAsync(
             (invalidJid) => WithClientWithExecutorMockForExpectedArguments(
@@ -28,7 +28,7 @@ public class UntrackJobTest : BaseReqlessClientTest
     /// returns a null result.
     /// </summary>
     [Fact]
-    public async void ThrowsIfServerReturnsNull()
+    public async Task ThrowsIfServerReturnsNull()
     {
         var exception = await Assert.ThrowsAsync<InvalidOperationException>(
             () => WithClientWithExecutorMockForExpectedArguments(
@@ -48,7 +48,7 @@ public class UntrackJobTest : BaseReqlessClientTest
     /// the expected arguments, returning true when the server returns 1.
     /// </summary>
     [Fact]
-    public async void CallsExecutorWithExpectedArgumentsReturningTrue()
+    public async Task CallsExecutorWithExpectedArgumentsReturningTrue()
     {
         var untrackedSuccessfully = await WithClientWithExecutorMockForExpectedArguments(
             subject => subject.UntrackJobAsync(ExampleJid),
@@ -63,7 +63,7 @@ public class UntrackJobTest : BaseReqlessClientTest
     /// the expected arguments, returning false when the server returns 0.
     /// </summary>
     [Fact]
-    public async void CallsExecutorWithExpectedArgumentsReturningFalse()
+    public async Task CallsExecutorWithExpectedArgumentsReturningFalse()
     {
         var untrackedSuccessfully = await WithClientWithExecutorMockForExpectedArguments(
             subject => subject.UntrackJobAsync(ExampleJid),

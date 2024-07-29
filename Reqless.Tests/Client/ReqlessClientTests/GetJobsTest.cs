@@ -17,7 +17,7 @@ public class GetJobsTest : BaseReqlessClientTest
     /// by the server.
     /// </summary>
     [Fact]
-    public async void ReturnsTheJobReturnedByTheServer()
+    public async Task ReturnsTheJobReturnedByTheServer()
     {
         var jobJson = JobFactory.JobJson(jid: Maybe<string?>.Some(ExampleJid));
         var otherJobJson = JobFactory.JobJson(jid: Maybe<string?>.Some(ExampleJidOther));
@@ -40,7 +40,7 @@ public class GetJobsTest : BaseReqlessClientTest
     /// the server responds with an empty list.
     /// </summary>
     [Fact]
-    public async void ReturnsEmptyArrayIfServerRespondsWithEmptyArray()
+    public async Task ReturnsEmptyArrayIfServerRespondsWithEmptyArray()
     {
         List<Job> jobs = await WithClientWithExecutorMockForExpectedArguments(
             subject => subject.GetJobsAsync(ExampleJid),
@@ -55,7 +55,7 @@ public class GetJobsTest : BaseReqlessClientTest
     /// the server responds with an empty object.
     /// </summary>
     [Fact]
-    public async void ReturnsEmptyArrayIfServerRespondsWithEmptyObject()
+    public async Task ReturnsEmptyArrayIfServerRespondsWithEmptyObject()
     {
         List<Job> jobs = await WithClientWithExecutorMockForExpectedArguments(
             subject => subject.GetJobsAsync(ExampleJid),
@@ -70,7 +70,7 @@ public class GetJobsTest : BaseReqlessClientTest
     /// deserialized into a job.
     /// </summary>
     [Fact]
-    public async void ThrowsIfJobJsonIsInvalid()
+    public async Task ThrowsIfJobJsonIsInvalid()
     {
         var exception = await Assert.ThrowsAsync<JsonException>(
             () => WithClientWithExecutorMockForExpectedArguments(
@@ -87,7 +87,7 @@ public class GetJobsTest : BaseReqlessClientTest
     /// argument is null.
     /// </summary>
     [Fact]
-    public async void ThrowsIfJidsIsNull()
+    public async Task ThrowsIfJidsIsNull()
     {
         await Scenario.ThrowsArgumentNullExceptionAsync(
             () => WithClientWithExecutorMockForExpectedArguments(
@@ -102,7 +102,7 @@ public class GetJobsTest : BaseReqlessClientTest
     /// are null, empty, or whitespace.
     /// </summary>
     [Fact]
-    public async void ThrowsIfAnyOfTheJidsAreNullOrEmptyOrOnlyWhitespace()
+    public async Task ThrowsIfAnyOfTheJidsAreNullOrEmptyOrOnlyWhitespace()
     {
         await Scenario.ThrowsWhenParameterItemIsNullOrEmptyOrWhitespaceAsync(
             (invalidJid) => WithClientWithExecutorMockForExpectedArguments(
@@ -119,7 +119,7 @@ public class GetJobsTest : BaseReqlessClientTest
     /// null.
     /// </summary>
     [Fact]
-    public async void ThrowsIfTheServerReturnsNull()
+    public async Task ThrowsIfTheServerReturnsNull()
     {
         var exception = await Assert.ThrowsAsync<InvalidOperationException>(
             () => WithClientWithExecutorMockForExpectedArguments(

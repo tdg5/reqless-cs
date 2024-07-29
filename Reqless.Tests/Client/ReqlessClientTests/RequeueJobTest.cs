@@ -16,7 +16,7 @@ public class RequeueJobTest : BaseReqlessClientTest
     /// is null, or empty, or only whitespace.
     /// </summary>
     [Fact]
-    public async void ThrowsIfWorkerNameIsNullOrEmptyOrWhitespace()
+    public async Task ThrowsIfWorkerNameIsNullOrEmptyOrWhitespace()
     {
         await Scenario.ThrowsWhenParameterIsNullOrEmptyOrWhitespaceAsync(
             (invalidWorkerName) => WithClientWithExecutorMockForExpectedArguments(
@@ -37,7 +37,7 @@ public class RequeueJobTest : BaseReqlessClientTest
     /// null, empty, or only whitespace.
     /// </summary>
     [Fact]
-    public async void ThrowsIfQueueNameIsNullOrEmptyOrOnlyWhitespace()
+    public async Task ThrowsIfQueueNameIsNullOrEmptyOrOnlyWhitespace()
     {
         await Scenario.ThrowsWhenParameterIsNullOrEmptyOrWhitespaceAsync(
             (invalidQueueName) => WithClientWithExecutorMockForExpectedArguments(
@@ -58,7 +58,7 @@ public class RequeueJobTest : BaseReqlessClientTest
     /// empty, or only whitespace.
     /// </summary>
     [Fact]
-    public async void ThrowsIfJidIsNullOrEmptyOrOnlyWhitespace()
+    public async Task ThrowsIfJidIsNullOrEmptyOrOnlyWhitespace()
     {
         await Scenario.ThrowsWhenParameterIsNullOrEmptyOrWhitespaceAsync(
             (invalidJid) => WithClientWithExecutorMockForExpectedArguments(
@@ -79,7 +79,7 @@ public class RequeueJobTest : BaseReqlessClientTest
     /// null, empty, or only whitespace.
     /// </summary>
     [Fact]
-    public async void ThrowsIfClassNameIsNullOrEmptyOrOnlyWhitespace()
+    public async Task ThrowsIfClassNameIsNullOrEmptyOrOnlyWhitespace()
     {
         await Scenario.ThrowsWhenParameterIsNullOrEmptyOrWhitespaceAsync(
             (invalidClassName) => WithClientWithExecutorMockForExpectedArguments(
@@ -100,7 +100,7 @@ public class RequeueJobTest : BaseReqlessClientTest
     /// null, empty, or only whitespace.
     /// </summary>
     [Fact]
-    public async void ThrowsIfDataIsNullOrEmptyOrOnlyWhitespace()
+    public async Task ThrowsIfDataIsNullOrEmptyOrOnlyWhitespace()
     {
         await Scenario.ThrowsWhenParameterIsNullOrEmptyOrWhitespaceAsync(
             (invalidData) => WithClientWithExecutorMockForExpectedArguments(
@@ -121,7 +121,7 @@ public class RequeueJobTest : BaseReqlessClientTest
     /// with the expected arguments when optional arguments are omitted.
     /// </summary>
     [Fact]
-    public async void CallsExecutorWithExpectedArgumentsWhenOptionalArgumentsAreOmitted()
+    public async Task CallsExecutorWithExpectedArgumentsWhenOptionalArgumentsAreOmitted()
     {
         await WithClientWithExecutorMockForExpectedArguments(
             subject => subject.RequeueJobAsync(
@@ -160,7 +160,7 @@ public class RequeueJobTest : BaseReqlessClientTest
     /// with the expected arguments when optional arguments are given.
     /// </summary>
     [Fact]
-    public async void CallsExecutorWithExpectedArgumentsWhenOptionalArgumentsAreGiven()
+    public async Task CallsExecutorWithExpectedArgumentsWhenOptionalArgumentsAreGiven()
     {
         var delay = 42;
         var dependencies = new string[] { ExampleJidOther };

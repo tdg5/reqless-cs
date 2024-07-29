@@ -14,7 +14,7 @@ public class RemoveTagFromJobTest : BaseReqlessClientTest
     /// jid is null.
     /// </summary>
     [Fact]
-    public async void ThrowsIfJidIsNullOrEmptyOrOnlyWhitespace()
+    public async Task ThrowsIfJidIsNullOrEmptyOrOnlyWhitespace()
     {
         await Scenario.ThrowsWhenParameterIsNullOrEmptyOrWhitespaceAsync(
             (invalidJid) => WithClientWithExecutorMockForExpectedArguments(
@@ -29,7 +29,7 @@ public class RemoveTagFromJobTest : BaseReqlessClientTest
     /// tag argument is null, empty, or only whitespace.
     /// </summary>
     [Fact]
-    public async void ThrowsIfTagIsNullOrEmptyOrOnlyWhitespace()
+    public async Task ThrowsIfTagIsNullOrEmptyOrOnlyWhitespace()
     {
         await Scenario.ThrowsWhenParameterIsNullOrEmptyOrWhitespaceAsync(
             (invalidTag) => WithClientWithExecutorMockForExpectedArguments(
@@ -44,7 +44,7 @@ public class RemoveTagFromJobTest : BaseReqlessClientTest
     /// Executor with the expected arguments.
     /// </summary>
     [Fact]
-    public async void CallsExecutorWithTheExpectedArguments()
+    public async Task CallsExecutorWithTheExpectedArguments()
     {
         List<string> tags = await WithClientWithExecutorMockForExpectedArguments(
             subject => subject.RemoveTagFromJobAsync(
@@ -67,7 +67,7 @@ public class RemoveTagFromJobTest : BaseReqlessClientTest
     /// server returns null.
     /// </summary>
     [Fact]
-    public async void ThrowsIfServerReturnsNull()
+    public async Task ThrowsIfServerReturnsNull()
     {
         var exception = await Assert.ThrowsAsync<InvalidOperationException>(
             () => WithClientWithExecutorMockForExpectedArguments(
@@ -93,7 +93,7 @@ public class RemoveTagFromJobTest : BaseReqlessClientTest
     /// JSON can't be deserialized.
     /// </summary>
     [Fact]
-    public async void ThrowsIfJsonCannotBeDeserialized()
+    public async Task ThrowsIfJsonCannotBeDeserialized()
     {
         var exception = await Assert.ThrowsAsync<JsonException>(
             () => WithClientWithExecutorMockForExpectedArguments(

@@ -16,7 +16,7 @@ public class GetRecurringJobTest : BaseReqlessClientTest
     /// given job ID is null, empty, or only whitespace.
     /// </summary>
     [Fact]
-    public async void ThrowsIfJidIsNullOrEmptyOrWhitespace()
+    public async Task ThrowsIfJidIsNullOrEmptyOrWhitespace()
     {
         await Scenario.ThrowsWhenParameterIsNullOrEmptyOrWhitespaceAsync(
             (invalidJid) => WithClientWithExecutorMockForExpectedArguments(
@@ -31,7 +31,7 @@ public class GetRecurringJobTest : BaseReqlessClientTest
     /// the server returns null.
     /// </summary>
     [Fact]
-    public async void ReturnsNullIfTheServerReturnsNull()
+    public async Task ReturnsNullIfTheServerReturnsNull()
     {
         RecurringJob? result = await WithClientWithExecutorMockForExpectedArguments(
             subject => subject.GetRecurringJobAsync(ExampleJid),
@@ -46,7 +46,7 @@ public class GetRecurringJobTest : BaseReqlessClientTest
     /// recurring job JSON can't be deserialized.
     /// </summary>
     [Fact]
-    public async void ThrowsIfResultJsonCannotBeDeserialized()
+    public async Task ThrowsIfResultJsonCannotBeDeserialized()
     {
         var exception = await Assert.ThrowsAsync<JsonException>(
             () => WithClientWithExecutorMockForExpectedArguments(
@@ -66,7 +66,7 @@ public class GetRecurringJobTest : BaseReqlessClientTest
     /// recurring job when it exists.
     /// </summary>
     [Fact]
-    public async void ReturnsTheRecurringJob()
+    public async Task ReturnsTheRecurringJob()
     {
         var recurringJobJson = RecurringJobFactory.RecurringJobJson(
             jid: Maybe<string?>.Some(ExampleJid)

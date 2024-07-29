@@ -14,7 +14,7 @@ public class UnfailJobsFromFailureGroupIntoQueueTest : BaseReqlessClientTest
     /// should throw if queue name is null, empty, or only whitespace.
     /// </summary>
     [Fact]
-    public async void ThrowsIfQueueNameIsNullOrEmptyOrOnlyWhitespace()
+    public async Task ThrowsIfQueueNameIsNullOrEmptyOrOnlyWhitespace()
     {
         await Scenario.ThrowsWhenParameterIsNullOrEmptyOrWhitespaceAsync(
             (invalidQueueName) => WithClientWithExecutorMockForExpectedArguments(
@@ -32,7 +32,7 @@ public class UnfailJobsFromFailureGroupIntoQueueTest : BaseReqlessClientTest
     /// should throw if group name is null, empty, or only whitespace.
     /// </summary>
     [Fact]
-    public async void ThrowsIfGroupNameIsNullOrEmptyOrWhitespace()
+    public async Task ThrowsIfGroupNameIsNullOrEmptyOrWhitespace()
     {
         await Scenario.ThrowsWhenParameterIsNullOrEmptyOrWhitespaceAsync(
             (invalidGroupName) => WithClientWithExecutorMockForExpectedArguments(
@@ -50,7 +50,7 @@ public class UnfailJobsFromFailureGroupIntoQueueTest : BaseReqlessClientTest
     /// should throw if count is not a positive number.
     /// </summary>
     [Fact]
-    public async void ThrowsIfCountIsNotAPositiveNumber()
+    public async Task ThrowsIfCountIsNotAPositiveNumber()
     {
         await Scenario.ThrowsWhenParameterIsNotPositiveAsync(
             (invalidCount) => WithClientWithExecutorMockForExpectedArguments(
@@ -69,7 +69,7 @@ public class UnfailJobsFromFailureGroupIntoQueueTest : BaseReqlessClientTest
     /// should throw if server returns null.
     /// </summary>
     [Fact]
-    public async void ThrowsIfServerReturnsNull()
+    public async Task ThrowsIfServerReturnsNull()
     {
         var count = 1;
         var exception = await Assert.ThrowsAsync<InvalidOperationException>(
@@ -91,7 +91,7 @@ public class UnfailJobsFromFailureGroupIntoQueueTest : BaseReqlessClientTest
     /// should call the executor with the expected arguments.
     /// </summary>
     [Fact]
-    public async void CallsExecutorWithExpectedArguments()
+    public async Task CallsExecutorWithExpectedArguments()
     {
         var count = 10;
         var unfailedCount = await WithClientWithExecutorMockForExpectedArguments(

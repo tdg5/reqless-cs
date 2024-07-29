@@ -13,7 +13,7 @@ public class TimeoutJobsTest : BaseReqlessClientTest
     /// with the expected arguments.
     /// </summary>
     [Fact]
-    public async void CallsTheExecutorWithTheExpectedArguments()
+    public async Task CallsTheExecutorWithTheExpectedArguments()
     {
         await WithClientWithExecutorMockForExpectedArguments(
             subject => subject.TimeoutJobsAsync(ExampleJid, ExampleJidOther),
@@ -26,7 +26,7 @@ public class TimeoutJobsTest : BaseReqlessClientTest
     /// jid is null, empty, or only whitespace.
     /// </summary>
     [Fact]
-    public async void ThrowsIfAnyJidIsNullOrEmptyOrOnlyWhitespace()
+    public async Task ThrowsIfAnyJidIsNullOrEmptyOrOnlyWhitespace()
     {
         await Scenario.ThrowsWhenParameterItemIsNullOrEmptyOrWhitespaceAsync(
             (invalidJid) => WithClientWithExecutorMockForExpectedArguments(

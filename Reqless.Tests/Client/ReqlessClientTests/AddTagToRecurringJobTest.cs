@@ -13,7 +13,7 @@ public class AddTagToRecurringJobTest : BaseReqlessClientTest
     /// given jid is null, or empty, or whitespace.
     /// </summary>
     [Fact]
-    public async void ThrowsIfJidIsNullOrEmptyOrWhitespace()
+    public async Task ThrowsIfJidIsNullOrEmptyOrWhitespace()
     {
         await Scenario.ThrowsWhenParameterIsNullOrEmptyOrWhitespaceAsync(
             (invalidJid) => WithClientWithExecutorMockForExpectedArguments(
@@ -28,7 +28,7 @@ public class AddTagToRecurringJobTest : BaseReqlessClientTest
     /// given tag argument is null, empty, or whitespace.
     /// </summary>
     [Fact]
-    public async void ThrowsIfTagIsNull()
+    public async Task ThrowsIfTagIsNull()
     {
         await Scenario.ThrowsWhenParameterIsNullOrEmptyOrWhitespaceAsync(
             (invalidTag) => WithClientWithExecutorMockForExpectedArguments(
@@ -43,7 +43,7 @@ public class AddTagToRecurringJobTest : BaseReqlessClientTest
     /// Executor with the expected arguments.
     /// </summary>
     [Fact]
-    public async void CallsExecutorWithTheExpectedArguments()
+    public async Task CallsExecutorWithTheExpectedArguments()
     {
         List<string> tags = await WithClientWithExecutorMockForExpectedArguments(
             subject => subject.AddTagToRecurringJobAsync(

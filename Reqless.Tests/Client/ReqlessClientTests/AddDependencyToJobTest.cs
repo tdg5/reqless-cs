@@ -13,7 +13,7 @@ public class AddDependencyToJobTest : BaseReqlessClientTest
     /// is null, empty, or whitespace.
     /// </summary>
     [Fact]
-    public async void ThrowsIfJidIsNullOrEmptyOrWhitespace()
+    public async Task ThrowsIfJidIsNullOrEmptyOrWhitespace()
     {
         await Scenario.ThrowsWhenParameterIsNullOrEmptyOrWhitespaceAsync(
             (invalidJid) => WithClientWithExecutorMockForExpectedArguments(
@@ -31,7 +31,7 @@ public class AddDependencyToJobTest : BaseReqlessClientTest
     /// dependsOnJid is null, empty, or whitespace.
     /// </summary>
     [Fact]
-    public async void ThrowsIfDependsOnJidIsNullOrEmptyOrWhitespace()
+    public async Task ThrowsIfDependsOnJidIsNullOrEmptyOrWhitespace()
     {
         await Scenario.ThrowsWhenParameterIsNullOrEmptyOrWhitespaceAsync(
             (invalidDependsOnJid) => WithClientWithExecutorMockForExpectedArguments(
@@ -50,7 +50,7 @@ public class AddDependencyToJobTest : BaseReqlessClientTest
     /// arguments.
     /// </summary>
     [Fact]
-    public async void CallsExecutorWithTheExpectedArguments()
+    public async Task CallsExecutorWithTheExpectedArguments()
     {
         var otherJid = "otherJid";
         var result = await WithClientWithExecutorMockForExpectedArguments(

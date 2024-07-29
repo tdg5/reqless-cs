@@ -15,7 +15,7 @@ public class GetTrackedJobsTest : BaseReqlessClientTest
     /// server returns null.
     /// </summary>
     [Fact]
-    public async void ThrowsIfTheServerReturnsNull()
+    public async Task ThrowsIfTheServerReturnsNull()
     {
         var exception = await Assert.ThrowsAsync<InvalidOperationException>(
             () => WithClientWithExecutorMockForExpectedArguments(
@@ -35,7 +35,7 @@ public class GetTrackedJobsTest : BaseReqlessClientTest
     /// server returns JSON that can't be deserialized.
     /// </summary>
     [Fact]
-    public async void ThrowsIfTheServerReturnsJsonThatCannotBeDeserialized()
+    public async Task ThrowsIfTheServerReturnsJsonThatCannotBeDeserialized()
     {
         var exception = await WithClientWithExecutorMockForExpectedArguments(
             subject => Assert.ThrowsAsync<JsonException>(
@@ -58,7 +58,7 @@ public class GetTrackedJobsTest : BaseReqlessClientTest
     /// expected tracked jobs data.
     /// </summary>
     [Fact]
-    public async void ReturnsExpectedTrackedJobs()
+    public async Task ReturnsExpectedTrackedJobs()
     {
         var expiredJid = "expired-jid";
         var expiredJob = JobFactory.NewJob();

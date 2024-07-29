@@ -48,7 +48,7 @@ public class ReqlessClientIntegrationTest
     /// a client successfully.
     /// </summary>
     [Fact]
-    public async void Constructor_ConnectionString_CreatesClient()
+    public async Task Constructor_ConnectionString_CreatesClient()
     {
         using var subject = new ReqlessClient("localhost:6379");
         Assert.NotNull(subject);
@@ -61,7 +61,7 @@ public class ReqlessClientIntegrationTest
     /// when successful.
     /// </summary>
     [Fact]
-    public async void AddDependencyToJobAsync_ReturnsTrueWhenSuccessful()
+    public async Task AddDependencyToJobAsync_ReturnsTrueWhenSuccessful()
     {
         var dependsOnJid = await PutJobAsync(_client);
         var jid = await PutJobAsync(
@@ -81,7 +81,7 @@ public class ReqlessClientIntegrationTest
     /// event to the job history.
     /// </summary>
     [Fact]
-    public async void AddEventToJobHistoryAsync_ReturnsTrueWhenSuccessful()
+    public async Task AddEventToJobHistoryAsync_ReturnsTrueWhenSuccessful()
     {
         var jid = await PutJobAsync(_client);
         var loggedSuccessfully = await _client.AddEventToJobHistoryAsync(
@@ -106,7 +106,7 @@ public class ReqlessClientIntegrationTest
     /// list of tags.
     /// </summary>
     [Fact]
-    public async void AddTagToJobAsync_ReturnsTheUpdatedTagsList()
+    public async Task AddTagToJobAsync_ReturnsTheUpdatedTagsList()
     {
         var initialTag = "initial-tag";
         var newTag = "new-tag";
@@ -127,7 +127,7 @@ public class ReqlessClientIntegrationTest
     /// list of tags.
     /// </summary>
     [Fact]
-    public async void AddTagsToJobAsync_ReturnsTheUpdatedTagsList()
+    public async Task AddTagsToJobAsync_ReturnsTheUpdatedTagsList()
     {
         var initialTag = "initial-tag";
         var newTag = "new-tag";
@@ -149,7 +149,7 @@ public class ReqlessClientIntegrationTest
     /// updated list of tags.
     /// </summary>
     [Fact]
-    public async void AddTagToRecurringJobAsync_ReturnsTheUpdatedTagsList()
+    public async Task AddTagToRecurringJobAsync_ReturnsTheUpdatedTagsList()
     {
         var initialTag = "initial-tag";
         var newTag = "new-tag";
@@ -170,7 +170,7 @@ public class ReqlessClientIntegrationTest
     /// updated list of tags.
     /// </summary>
     [Fact]
-    public async void AddTagsToRecurringJobAsync_ReturnsTheUpdatedTagsList()
+    public async Task AddTagsToRecurringJobAsync_ReturnsTheUpdatedTagsList()
     {
         var initialTag = "initial-tag";
         var newTag = "new-tag";
@@ -196,7 +196,7 @@ public class ReqlessClientIntegrationTest
     /// successful.
     /// </summary>
     [Fact]
-    public async void CancelJobAsync_ReturnsTrueWhenSuccessful()
+    public async Task CancelJobAsync_ReturnsTrueWhenSuccessful()
     {
         var jid = await PutJobAsync(_client);
         var cancelledSuccessfully = await _client.CancelJobAsync(jid);
@@ -209,7 +209,7 @@ public class ReqlessClientIntegrationTest
     /// is no such job.
     /// </summary>
     [Fact]
-    public async void CancelJobAsync_ReturnsTrueIfTheJobDoesNotExist()
+    public async Task CancelJobAsync_ReturnsTrueIfTheJobDoesNotExist()
     {
         var cancelledSuccessfully = await _client.CancelJobAsync("no-such-jid");
         Assert.True(cancelledSuccessfully);
@@ -220,7 +220,7 @@ public class ReqlessClientIntegrationTest
     /// successful.
     /// </summary>
     [Fact]
-    public async void CancelJobsAsync_ReturnsTrueWhenSuccessful()
+    public async Task CancelJobsAsync_ReturnsTrueWhenSuccessful()
     {
         var jid = await PutJobAsync(_client);
         var otherJid = await PutJobAsync(_client);
@@ -235,7 +235,7 @@ public class ReqlessClientIntegrationTest
     /// there is no such job.
     /// </summary>
     [Fact]
-    public async void CancelJobsAsync_ReturnsTrueIfTheJobsDoNotExist()
+    public async Task CancelJobsAsync_ReturnsTrueIfTheJobsDoNotExist()
     {
         var cancelledSuccessfully = await _client.CancelJobsAsync(
             "no-such-jid",
@@ -249,7 +249,7 @@ public class ReqlessClientIntegrationTest
     /// jids are given.
     /// </summary>
     [Fact]
-    public async void CancelJobsAsync_ReturnsTrueIfNoJidsAreGiven()
+    public async Task CancelJobsAsync_ReturnsTrueIfNoJidsAreGiven()
     {
         var cancelledSuccessfully = await _client.CancelJobsAsync();
         Assert.True(cancelledSuccessfully);
@@ -262,7 +262,7 @@ public class ReqlessClientIntegrationTest
     /// successful.
     /// </summary>
     [Fact]
-    public async void CancelRecurringJobAsync_SucceedsIfTheJobExists()
+    public async Task CancelRecurringJobAsync_SucceedsIfTheJobExists()
     {
         var jid = await RecurJobAsync(_client);
         await _client.CancelRecurringJobAsync(jid);
@@ -274,7 +274,7 @@ public class ReqlessClientIntegrationTest
     /// is no such job.
     /// </summary>
     [Fact]
-    public async void CancelRecurringJobAsync_SucceedsIfTheJobDoesNotExist()
+    public async Task CancelRecurringJobAsync_SucceedsIfTheJobDoesNotExist()
     {
         var jid = "no-such-jid";
         Assert.Null(await _client.GetRecurringJobAsync(jid));
@@ -286,7 +286,7 @@ public class ReqlessClientIntegrationTest
     /// successful completion.
     /// </summary>
     [Fact]
-    public async void CompleteJobAsync_ReturnsTrueUponCompletion()
+    public async Task CompleteJobAsync_ReturnsTrueUponCompletion()
     {
         var jid = await PutJobAsync(
             _client,
@@ -311,7 +311,7 @@ public class ReqlessClientIntegrationTest
     /// complete and requeue a job.
     /// </summary>
     [Fact]
-    public async void CompleteAndRequeueJobAsync_CanCompleteAndRequeue()
+    public async Task CompleteAndRequeueJobAsync_CanCompleteAndRequeue()
     {
         var firstQueueName = "first-queue";
         var jid = await PutJobAsync(
@@ -408,7 +408,7 @@ public class ReqlessClientIntegrationTest
     /// given data and successful.
     /// </summary>
     [Fact]
-    public async void FailJobAsync_ReturnsTrueWhenNotGivenDataAndSuccessful()
+    public async Task FailJobAsync_ReturnsTrueWhenNotGivenDataAndSuccessful()
     {
         var jid = await PutJobAsync(
             _client,
@@ -439,7 +439,7 @@ public class ReqlessClientIntegrationTest
     /// data and successful.
     /// </summary>
     [Fact]
-    public async void FailJobAsync_ReturnsTrueWhenGivenDataAndSuccessful()
+    public async Task FailJobAsync_ReturnsTrueWhenGivenDataAndSuccessful()
     {
         var jid = await PutJobAsync(
             _client,
@@ -473,7 +473,7 @@ public class ReqlessClientIntegrationTest
     /// failures.
     /// </summary>
     [Fact]
-    public async void FailureGroupsCountsAsync_ReturnsCountsOfVariousFailureGroups()
+    public async Task FailureGroupsCountsAsync_ReturnsCountsOfVariousFailureGroups()
     {
         var initialFailedCounts = await _client.FailureGroupsCountsAsync();
         Assert.Empty(initialFailedCounts);
@@ -504,7 +504,7 @@ public class ReqlessClientIntegrationTest
     /// queue to be removed from the set of known queues.
     /// </summary>
     [Fact]
-    public async void ForgetQueueAsync_CausesTheNamedQueueToBeForgotten()
+    public async Task ForgetQueueAsync_CausesTheNamedQueueToBeForgotten()
     {
         await PutJobAsync(_client, queueName: Maybe<string>.Some(ExampleQueueName));
         List<QueueCounts> allQueueCountsBefore = await _client.GetAllQueueCountsAsync();
@@ -520,7 +520,7 @@ public class ReqlessClientIntegrationTest
     /// queues to be removed from the set of known queues.
     /// </summary>
     [Fact]
-    public async void ForgetQueuesAsync_CausesTheNamedQueuesToBeForgotten()
+    public async Task ForgetQueuesAsync_CausesTheNamedQueuesToBeForgotten()
     {
         var otherQueueName = "other-queue";
         string[] expectedQueueNames = [ExampleQueueName, otherQueueName];
@@ -544,7 +544,7 @@ public class ReqlessClientIntegrationTest
     /// expected default configs.
     /// </summary>
     [Fact]
-    public async void GetAllConfigsAsync_ReturnsExpectedDefaultConfigs()
+    public async Task GetAllConfigsAsync_ReturnsExpectedDefaultConfigs()
     {
         var configs = await _client.GetAllConfigsAsync();
 
@@ -563,7 +563,7 @@ public class ReqlessClientIntegrationTest
     /// when no queues exist.
     /// </summary>
     [Fact]
-    public async void GetAllQueueCountsAsync_ReturnsEmptyArrayWhenNoQueues()
+    public async Task GetAllQueueCountsAsync_ReturnsEmptyArrayWhenNoQueues()
     {
         var allQueueCounts = await _client.GetAllQueueCountsAsync();
         Assert.Empty(allQueueCounts);
@@ -574,7 +574,7 @@ public class ReqlessClientIntegrationTest
     /// counts when queues exist.
     /// </summary>
     [Fact]
-    public async void GetAllQueueCountsAsync_ReturnsExpectedCounts()
+    public async Task GetAllQueueCountsAsync_ReturnsExpectedCounts()
     {
         await PutJobAsync(
             _client,
@@ -591,7 +591,7 @@ public class ReqlessClientIntegrationTest
     /// list when there are no completed jobs.
     /// </summary>
     [Fact]
-    public async void GetCompletedJobsAsync_ReturnsEmptyListWhenNoSuchJobs()
+    public async Task GetCompletedJobsAsync_ReturnsEmptyListWhenNoSuchJobs()
     {
         var jobs = await _client.GetCompletedJobsAsync();
         Assert.Empty(jobs);
@@ -602,7 +602,7 @@ public class ReqlessClientIntegrationTest
     /// jids when there are completed jobs.
     /// </summary>
     [Fact]
-    public async void GetCompletedJobsAsync_ReturnsExpectedCompletedJobJids()
+    public async Task GetCompletedJobsAsync_ReturnsExpectedCompletedJobJids()
     {
         var jid = await PutJobAsync(
             _client,
@@ -627,7 +627,7 @@ public class ReqlessClientIntegrationTest
     /// empty list when no matching jobs are found.
     /// </summary>
     [Fact]
-    public async void GetFailedJobsByGroupAsync_ReturnsEmptyListWhenNoSuchJobs()
+    public async Task GetFailedJobsByGroupAsync_ReturnsEmptyListWhenNoSuchJobs()
     {
         var jidsResult = await _client.GetFailedJobsByGroupAsync("no-such-group");
         Assert.Empty(jidsResult.Jids);
@@ -639,7 +639,7 @@ public class ReqlessClientIntegrationTest
     /// expected jids when matching jobs exist.
     /// </summary>
     [Fact]
-    public async void GetFailedJobsByGroupAsync_ReturnsMatchingJidsWhenJobsExist()
+    public async Task GetFailedJobsByGroupAsync_ReturnsMatchingJidsWhenJobsExist()
     {
         var failedJobCount = 5;
         var failedJids = new string[5];
@@ -680,7 +680,7 @@ public class ReqlessClientIntegrationTest
     /// does not exist.
     /// </summary>
     [Fact]
-    public async void GetJobAsync_ReturnsNullWhenJobDoesNotExist()
+    public async Task GetJobAsync_ReturnsNullWhenJobDoesNotExist()
     {
         var job = await _client.GetJobAsync("no-such-jid");
         Assert.Null(job);
@@ -691,7 +691,7 @@ public class ReqlessClientIntegrationTest
     /// job exists.
     /// </summary>
     [Fact]
-    public async void GetJobAsync_ReturnsTheJobWhenItExists()
+    public async Task GetJobAsync_ReturnsTheJobWhenItExists()
     {
         var jid = await PutJobAsync(_client);
         var job = await _client.GetJobAsync(jid);
@@ -704,7 +704,7 @@ public class ReqlessClientIntegrationTest
     /// when the jobs do not exist.
     /// </summary>
     [Fact]
-    public async void GetJobsAsync_ReturnsEmptyArrayWhenJobsDoNotExist()
+    public async Task GetJobsAsync_ReturnsEmptyArrayWhenJobsDoNotExist()
     {
         var jobs = await _client.GetJobsAsync(
             "no-such-jid",
@@ -718,7 +718,7 @@ public class ReqlessClientIntegrationTest
     /// jobs exist.
     /// </summary>
     [Fact]
-    public async void GetJobsAsync_ReturnsTheJobsWhenTheyExist()
+    public async Task GetJobsAsync_ReturnsTheJobsWhenTheyExist()
     {
         var jid = await PutJobAsync(_client);
         var otherJid = await PutJobAsync(_client);
@@ -738,7 +738,7 @@ public class ReqlessClientIntegrationTest
     /// list when there are no jobs in the given state.
     /// </summary>
     [Fact]
-    public async void GetJobsByStateAsync_ReturnsEmptyListWhenNoSuchJobs()
+    public async Task GetJobsByStateAsync_ReturnsEmptyListWhenNoSuchJobs()
     {
         var jobs = await _client.GetJobsByStateAsync(
             queueName: ExampleQueueName,
@@ -752,7 +752,7 @@ public class ReqlessClientIntegrationTest
     /// jids when there are jobs in the given state.
     /// </summary>
     [Fact]
-    public async void GetJobsByStateAsync_ReturnsJobsWhenThereAreMatchingJobs()
+    public async Task GetJobsByStateAsync_ReturnsJobsWhenThereAreMatchingJobs()
     {
         var jid = await PutJobAsync(
             _client,
@@ -769,7 +769,7 @@ public class ReqlessClientIntegrationTest
     /// empty list when no matching jobs are found.
     /// </summary>
     [Fact]
-    public async void GetJobsByTagAsync_ReturnsEmptyListWhenNoSuchJobs()
+    public async Task GetJobsByTagAsync_ReturnsEmptyListWhenNoSuchJobs()
     {
         var jidsResult = await _client.GetJobsByTagAsync("no-such-tag");
         Assert.Empty(jidsResult.Jids);
@@ -781,7 +781,7 @@ public class ReqlessClientIntegrationTest
     /// expected jids when matching jobs exist.
     /// </summary>
     [Fact]
-    public async void GetJobsByTagAsync_ReturnsMatchingJidsWhenJobsExist()
+    public async Task GetJobsByTagAsync_ReturnsMatchingJidsWhenJobsExist()
     {
         var taggedJobCount = 5;
         var taggedJids = new string[5];
@@ -813,7 +813,7 @@ public class ReqlessClientIntegrationTest
     /// for a newly created queue.
     /// </summary>
     [Fact]
-    public async void GetQueueCountsAsync_ReturnsZeroCountsForNascentQueue()
+    public async Task GetQueueCountsAsync_ReturnsZeroCountsForNascentQueue()
     {
         var counts = await _client.GetQueueCountsAsync(ExampleQueueName);
         Assert.Equal(0, counts.Depends);
@@ -832,7 +832,7 @@ public class ReqlessClientIntegrationTest
     /// the queue is empty.
     /// </summary>
     [Fact]
-    public async void GetQueueLengthAsync_ReturnsZeroWhenQueueIsEmpty()
+    public async Task GetQueueLengthAsync_ReturnsZeroWhenQueueIsEmpty()
     {
         var length = await _client.GetQueueLengthAsync(ExampleQueueName);
         Assert.Equal(0, length);
@@ -843,7 +843,7 @@ public class ReqlessClientIntegrationTest
     /// length for non-empty queue.
     /// </summary>
     [Fact]
-    public async void GetQueueLengthAsync_ReturnsExpectedLengthWhenQueueIsNotEmpty()
+    public async Task GetQueueLengthAsync_ReturnsExpectedLengthWhenQueueIsNotEmpty()
     {
         var count = 10;
         for (var i = 0; i < count; i++)
@@ -859,7 +859,7 @@ public class ReqlessClientIntegrationTest
     /// zeroes for a nacent queue.
     /// </summary>
     [Fact]
-    public async void GetQueueStatsAsync_ReturnsStatsForTheQueue()
+    public async Task GetQueueStatsAsync_ReturnsStatsForTheQueue()
     {
         var queueStats = await _client.GetQueueStatsAsync(ExampleQueueName);
         Assert.Equal(0, queueStats.Failed);
@@ -890,7 +890,7 @@ public class ReqlessClientIntegrationTest
     /// information.
     /// </summary>
     [Fact]
-    public async void GetQueueThrottleAsync_ReturnsThrottleData()
+    public async Task GetQueueThrottleAsync_ReturnsThrottleData()
     {
         var maximum = 25;
         await _client.SetQueueThrottleAsync(ExampleQueueName, maximum);
@@ -904,7 +904,7 @@ public class ReqlessClientIntegrationTest
     /// if the recurring job doesn't exist.
     /// </summary>
     [Fact]
-    public async void GetRecurringJobAsync_ReturnsNullIfThereIsNoSuchRecurringJob()
+    public async Task GetRecurringJobAsync_ReturnsNullIfThereIsNoSuchRecurringJob()
     {
         RecurringJob? subject = await _client.GetRecurringJobAsync("no-such-jid");
         Assert.Null(subject);
@@ -915,7 +915,7 @@ public class ReqlessClientIntegrationTest
     /// register recurrence and receive jid result.
     /// </summary>
     [Fact]
-    public async void GetRecurringJobAsync_CanRetrieveRecurringJobInfo()
+    public async Task GetRecurringJobAsync_CanRetrieveRecurringJobInfo()
     {
         var initialDelaySeconds = 300;
         var intervalSeconds = 180;
@@ -960,7 +960,7 @@ public class ReqlessClientIntegrationTest
     /// information.
     /// </summary>
     [Fact]
-    public async void GetThrottleAsync_ReturnsThrottleData()
+    public async Task GetThrottleAsync_ReturnsThrottleData()
     {
         var maximum = 25;
         await _client.SetThrottleAsync(ExampleThrottleName, maximum);
@@ -975,7 +975,7 @@ public class ReqlessClientIntegrationTest
     /// result when no jobs are tracked.
     /// </summary>
     [Fact]
-    public async void GetTrackedJobsAsync_ReturnsEmptyListWhenNoJobs()
+    public async Task GetTrackedJobsAsync_ReturnsEmptyListWhenNoJobs()
     {
         var trackedJobs = await _client.GetTrackedJobsAsync();
         Assert.Empty(trackedJobs.Jobs);
@@ -987,7 +987,7 @@ public class ReqlessClientIntegrationTest
     /// jobs when jobs are tracked.
     /// </summary>
     [Fact]
-    public async void GetTrackedJobsAsync_ReturnsExpectedJobsWhenJobsAreTracked()
+    public async Task GetTrackedJobsAsync_ReturnsExpectedJobsWhenJobsAreTracked()
     {
         var count = 10;
         var trackedJids = new string[count];
@@ -1026,7 +1026,7 @@ public class ReqlessClientIntegrationTest
     /// expiration time when not given data and when successful.
     /// </summary>
     [Fact]
-    public async void HeartbeatJobAsync_ReturnsTheNewExpirationTimeWithoutData()
+    public async Task HeartbeatJobAsync_ReturnsTheNewExpirationTimeWithoutData()
     {
         var jid = await PutJobAsync(
             _client,
@@ -1055,7 +1055,7 @@ public class ReqlessClientIntegrationTest
     /// expiration time when given data and when successful.
     /// </summary>
     [Fact]
-    public async void HeartbeatJobAsync_ReturnsTheNewExpirationTimeWithData()
+    public async Task HeartbeatJobAsync_ReturnsTheNewExpirationTimeWithData()
     {
         var jid = await PutJobAsync(
             _client,
@@ -1082,7 +1082,7 @@ public class ReqlessClientIntegrationTest
     /// <see cref="ReqlessClient.PauseQueueAsync"/> should pause the given queue.
     /// </summary>
     [Fact]
-    public async void PauseQueueAsync_PausesTheGivenQueue()
+    public async Task PauseQueueAsync_PausesTheGivenQueue()
     {
         var countsBefore = await _client.GetQueueCountsAsync(ExampleQueueName);
         Assert.False(countsBefore.Paused);
@@ -1096,7 +1096,7 @@ public class ReqlessClientIntegrationTest
     /// when the jobs do not exist.
     /// </summary>
     [Fact]
-    public async void PeekJobsAsync_ReturnsEmptyArrayWhenJobsDoNotExist()
+    public async Task PeekJobsAsync_ReturnsEmptyArrayWhenJobsDoNotExist()
     {
         var jobs = await _client.PeekJobsAsync("no-such-queue");
         Assert.Empty(jobs);
@@ -1107,7 +1107,7 @@ public class ReqlessClientIntegrationTest
     /// jobs exist.
     /// </summary>
     [Fact]
-    public async void PeekJobsAsync_ReturnsTheJobsWhenTheyExist()
+    public async Task PeekJobsAsync_ReturnsTheJobsWhenTheyExist()
     {
         var jid = await PutJobAsync(
             _client,
@@ -1136,7 +1136,7 @@ public class ReqlessClientIntegrationTest
     /// are no jobs in the queue.
     /// </summary>
     [Fact]
-    public async void PopJobAsync_ReturnsNullWhenNoJobsInQueue()
+    public async Task PopJobAsync_ReturnsNullWhenNoJobsInQueue()
     {
         var job = await _client.PopJobAsync(ExampleQueueName, ExampleWorkerName);
         Assert.Null(job);
@@ -1147,7 +1147,7 @@ public class ReqlessClientIntegrationTest
     /// a job in the queue.
     /// </summary>
     [Fact]
-    public async void PopJobAsync_ReturnsTheJobWhenOneExists()
+    public async Task PopJobAsync_ReturnsTheJobWhenOneExists()
     {
         var jid = await PutJobAsync(
             _client,
@@ -1164,7 +1164,7 @@ public class ReqlessClientIntegrationTest
     /// when there are no jobs in the queue.
     /// </summary>
     [Fact]
-    public async void PopJobsAsync_ReturnsEmptyListWhenNoJobsInQueue()
+    public async Task PopJobsAsync_ReturnsEmptyListWhenNoJobsInQueue()
     {
         var jobs = await _client.PopJobsAsync(ExampleQueueName, ExampleWorkerName, 4);
         Assert.Empty(jobs);
@@ -1175,7 +1175,7 @@ public class ReqlessClientIntegrationTest
     /// are jobs in the queue.
     /// </summary>
     [Fact]
-    public async void PopJobsAsync_ReturnsJobsWhenThereAreJobsInQueue()
+    public async Task PopJobsAsync_ReturnsJobsWhenThereAreJobsInQueue()
     {
         var jid = await PutJobAsync(
             _client,
@@ -1203,7 +1203,7 @@ public class ReqlessClientIntegrationTest
     /// receive jid result.
     /// </summary>
     [Fact]
-    public async void PutJobAsync_CanPutAndReceiveJid()
+    public async Task PutJobAsync_CanPutAndReceiveJid()
     {
         var dependencyJid = "dependencyJid";
         var dependencies = new string[] { dependencyJid };
@@ -1268,7 +1268,7 @@ public class ReqlessClientIntegrationTest
     /// register recurrence and receive jid result.
     /// </summary>
     [Fact]
-    public async void RecurJobAtIntervalAsync_CanScheduleRecurrenceAndReceiveJid()
+    public async Task RecurJobAtIntervalAsync_CanScheduleRecurrenceAndReceiveJid()
     {
         var initialDelaySeconds = 300;
         var intervalSeconds = 180;
@@ -1313,7 +1313,7 @@ public class ReqlessClientIntegrationTest
     /// true when successful.
     /// </summary>
     [Fact]
-    public async void RemoveDependencyFromJobAsync_ReturnsTrueWhenSuccessful()
+    public async Task RemoveDependencyFromJobAsync_ReturnsTrueWhenSuccessful()
     {
         var dependsOnJid = await PutJobAsync(_client);
         var otherDependsOnJid = await PutJobAsync(_client);
@@ -1336,7 +1336,7 @@ public class ReqlessClientIntegrationTest
     /// updated list of tags.
     /// </summary>
     [Fact]
-    public async void RemoveTagFromJobAsync_ReturnsTheUpdatedTagsList()
+    public async Task RemoveTagFromJobAsync_ReturnsTheUpdatedTagsList()
     {
         var initialTag = "initial-tag";
         var otherTag = "other-tag";
@@ -1357,7 +1357,7 @@ public class ReqlessClientIntegrationTest
     /// updated list of tags.
     /// </summary>
     [Fact]
-    public async void RemoveTagsFromJobAsync_ReturnsTheUpdatedTagsList()
+    public async Task RemoveTagsFromJobAsync_ReturnsTheUpdatedTagsList()
     {
         var initialTag = "initial-tag";
         var otherTag = "other-tag";
@@ -1383,7 +1383,7 @@ public class ReqlessClientIntegrationTest
     /// expected updates.
     /// </summary>
     [Fact]
-    public async void RequeueJobAsync_RequeuesAndUpdatesTheJob()
+    public async Task RequeueJobAsync_RequeuesAndUpdatesTheJob()
     {
         var jid = await PutJobAsync(_client);
         var jobBefore = await _client.GetJobAsync(jid);
@@ -1453,7 +1453,7 @@ public class ReqlessClientIntegrationTest
     /// retry.
     /// </summary>
     [Fact]
-    public async void RetryJobAsync_SchedulesAJobForRetryIfTheJobHasRetriesRemaining()
+    public async Task RetryJobAsync_SchedulesAJobForRetryIfTheJobHasRetriesRemaining()
     {
         var retries = 5;
         var jid = await PutJobAsync(
@@ -1491,7 +1491,7 @@ public class ReqlessClientIntegrationTest
     /// to reflect the failure.
     /// </summary>
     [Fact]
-    public async void RetryJobAsync_DoesNotScheduleAJobForRetryIfTheJobHasNoRetriesRemaining()
+    public async Task RetryJobAsync_DoesNotScheduleAJobForRetryIfTheJobHasNoRetriesRemaining()
     {
         var retries = 0;
         var jid = await PutJobAsync(
@@ -1527,7 +1527,7 @@ public class ReqlessClientIntegrationTest
     /// delay is given.
     /// </summary>
     [Fact]
-    public async void RetryJobAsync_SchedulesARetryWithADelayWhenGivenADelay()
+    public async Task RetryJobAsync_SchedulesARetryWithADelayWhenGivenADelay()
     {
         var retries = 5;
         var jid = await PutJobAsync(
@@ -1564,7 +1564,7 @@ public class ReqlessClientIntegrationTest
     /// priority.
     /// </summary>
     [Fact]
-    public async void SetJobPriorityAsync_UpdatesTheJobPriority()
+    public async Task SetJobPriorityAsync_UpdatesTheJobPriority()
     {
         var priority = 0;
         var jid = await PutJobAsync(
@@ -1587,7 +1587,7 @@ public class ReqlessClientIntegrationTest
     /// throttle maximum.
     /// </summary>
     [Fact]
-    public async void SetQueueThrottleAsync_SetsThrottleMaximum()
+    public async Task SetQueueThrottleAsync_SetsThrottleMaximum()
     {
         var maximum = 25;
         await _client.SetQueueThrottleAsync(ExampleQueueName, maximum);
@@ -1601,7 +1601,7 @@ public class ReqlessClientIntegrationTest
     /// throttle maximum.
     /// </summary>
     [Fact]
-    public async void SetThrottleAsync_SetsThrottleMaximumAndTtl()
+    public async Task SetThrottleAsync_SetsThrottleMaximumAndTtl()
     {
         var maximum = 25;
         var ttl = 300;
@@ -1617,7 +1617,7 @@ public class ReqlessClientIntegrationTest
     /// out.
     /// </summary>
     [Fact]
-    public async void TimeoutJobAsync_TimesOutTheJob()
+    public async Task TimeoutJobAsync_TimesOutTheJob()
     {
         var jid = await PutJobAsync(
             _client,
@@ -1638,7 +1638,7 @@ public class ReqlessClientIntegrationTest
     /// time out.
     /// </summary>
     [Fact]
-    public async void TimeoutJobsAsync_TimesOutTheJobs()
+    public async Task TimeoutJobsAsync_TimesOutTheJobs()
     {
         var jid = await PutJobAsync(
             _client,
@@ -1671,7 +1671,7 @@ public class ReqlessClientIntegrationTest
     /// tracked.
     /// </summary>
     [Fact]
-    public async void TrackJobAsync_CausesTheJobToBeTracked()
+    public async Task TrackJobAsync_CausesTheJobToBeTracked()
     {
         var jid = await PutJobAsync(
             _client,
@@ -1692,7 +1692,7 @@ public class ReqlessClientIntegrationTest
     /// <see cref="ReqlessClient.UnfailJobsFromFailureGroupIntoQueueAsync"/> should unpause the given queue.
     /// </summary>
     [Fact]
-    public async void UnfailJobsFromFailureGroupIntoQueueAsync_UnpausesTheGivenQueue()
+    public async Task UnfailJobsFromFailureGroupIntoQueueAsync_UnpausesTheGivenQueue()
     {
         var jid = await PutJobAsync(
             _client,
@@ -1731,7 +1731,7 @@ public class ReqlessClientIntegrationTest
     /// <see cref="ReqlessClient.UnpauseQueueAsync"/> should unpause the given queue.
     /// </summary>
     [Fact]
-    public async void UnpauseQueueAsync_UnpausesTheGivenQueue()
+    public async Task UnpauseQueueAsync_UnpausesTheGivenQueue()
     {
         await _client.PauseQueueAsync(ExampleQueueName);
         var countsBefore = await _client.GetQueueCountsAsync(ExampleQueueName);
@@ -1746,7 +1746,7 @@ public class ReqlessClientIntegrationTest
     /// untracked.
     /// </summary>
     [Fact]
-    public async void UntrackJobAsync_CausesTheJobToBeUntracked()
+    public async Task UntrackJobAsync_CausesTheJobToBeUntracked()
     {
         var jid = await PutJobAsync(
             _client,

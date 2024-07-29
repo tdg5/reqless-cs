@@ -14,7 +14,7 @@ public class AddTagsToRecurringJobTest : BaseReqlessClientTest
     /// given jid is null, empty, or whitespace.
     /// </summary>
     [Fact]
-    public async void ThrowsIfJidIsNullOrEmptyOrWhitespace()
+    public async Task ThrowsIfJidIsNullOrEmptyOrWhitespace()
     {
         await Scenario.ThrowsWhenParameterIsNullOrEmptyOrWhitespaceAsync(
             (invalidJid) => WithClientWithExecutorMockForExpectedArguments(
@@ -29,7 +29,7 @@ public class AddTagsToRecurringJobTest : BaseReqlessClientTest
     /// given tags argument is null.
     /// </summary>
     [Fact]
-    public async void ThrowsIfTagsIsNull()
+    public async Task ThrowsIfTagsIsNull()
     {
         await Scenario.ThrowsArgumentNullExceptionAsync(
             () => WithClientWithExecutorMockForExpectedArguments(
@@ -44,7 +44,7 @@ public class AddTagsToRecurringJobTest : BaseReqlessClientTest
     /// the tags are null, empty, or composed entirely of whitespace.
     /// </summary>
     [Fact]
-    public async void ThrowsIfAnyTagsAreNullOrEmptyOrOnlyWhitespace()
+    public async Task ThrowsIfAnyTagsAreNullOrEmptyOrOnlyWhitespace()
     {
         await Scenario.ThrowsWhenParameterItemIsNullOrEmptyOrWhitespaceAsync(
             (invalidTag) => WithClientWithExecutorMockForExpectedArguments(
@@ -59,7 +59,7 @@ public class AddTagsToRecurringJobTest : BaseReqlessClientTest
     /// Executor with the expected arguments.
     /// </summary>
     [Fact]
-    public async void CallsExecutorWithTheExpectedArguments()
+    public async Task CallsExecutorWithTheExpectedArguments()
     {
         List<string> tags = await WithClientWithExecutorMockForExpectedArguments(
             subject => subject.AddTagsToRecurringJobAsync(
@@ -87,7 +87,7 @@ public class AddTagsToRecurringJobTest : BaseReqlessClientTest
     /// the server returns null.
     /// </summary>
     [Fact]
-    public async void ThrowsIfServerReturnsNull()
+    public async Task ThrowsIfServerReturnsNull()
     {
         var exception = await Assert.ThrowsAsync<InvalidOperationException>(
             () => WithClientWithExecutorMockForExpectedArguments(
@@ -112,7 +112,7 @@ public class AddTagsToRecurringJobTest : BaseReqlessClientTest
     /// the JSON can't be deserialized.
     /// </summary>
     [Fact]
-    public async void ThrowsIfJsonCannotBeDeserialized()
+    public async Task ThrowsIfJsonCannotBeDeserialized()
     {
         var exception = await Assert.ThrowsAsync<JsonException>(
             () => WithClientWithExecutorMockForExpectedArguments(

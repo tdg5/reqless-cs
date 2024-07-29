@@ -13,7 +13,7 @@ public class RemoveDependencyFromJobTest : BaseReqlessClientTest
     /// jid is null, empty, or only whitespace.
     /// </summary>
     [Fact]
-    public async void ThrowsIfJidIsNullOrEmptyOrOnlyWhitespace()
+    public async Task ThrowsIfJidIsNullOrEmptyOrOnlyWhitespace()
     {
         await Scenario.ThrowsWhenParameterIsNullOrEmptyOrWhitespaceAsync(
             (invalidJid) => WithClientWithExecutorMockForExpectedArguments(
@@ -31,7 +31,7 @@ public class RemoveDependencyFromJobTest : BaseReqlessClientTest
     /// dependsOnJid is null, empty, or only whitespace.
     /// </summary>
     [Fact]
-    public async void ThrowsIfDependsOnJidIsNullOrEmptyOrOnlyWhitespace()
+    public async Task ThrowsIfDependsOnJidIsNullOrEmptyOrOnlyWhitespace()
     {
         await Scenario.ThrowsWhenParameterIsNullOrEmptyOrWhitespaceAsync(
             (invalidDependsOnJid) => WithClientWithExecutorMockForExpectedArguments(
@@ -49,7 +49,7 @@ public class RemoveDependencyFromJobTest : BaseReqlessClientTest
     /// Executor with the expected arguments.
     /// </summary>
     [Fact]
-    public async void CallsExecutorWithTheExpectedArguments()
+    public async Task CallsExecutorWithTheExpectedArguments()
     {
         bool result = await WithClientWithExecutorMockForExpectedArguments(
             subject => subject.RemoveDependencyFromJobAsync(

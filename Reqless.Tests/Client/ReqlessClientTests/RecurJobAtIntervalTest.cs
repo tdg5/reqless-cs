@@ -20,7 +20,7 @@ public class RecurJobAtIntervalTest : BaseReqlessClientTest
     /// expiration time.
     /// </summary>
     [Fact]
-    public async void CallsExecutorWithExpectedDefaultValuesForOptionalArguments()
+    public async Task CallsExecutorWithExpectedDefaultValuesForOptionalArguments()
     {
         // All this ceremony stems from the default jid being unpredictable.
         var executorMock = new Mock<RedisExecutor>();
@@ -67,7 +67,7 @@ public class RecurJobAtIntervalTest : BaseReqlessClientTest
     /// server returns null.
     /// </summary>
     [Fact]
-    public async void ThrowsIfTheServerReturnsNull()
+    public async Task ThrowsIfTheServerReturnsNull()
     {
         var exception = await Assert.ThrowsAsync<InvalidOperationException>(
             () => WithClientWithExecutorMockForExpectedArguments(
@@ -109,7 +109,7 @@ public class RecurJobAtIntervalTest : BaseReqlessClientTest
     /// successful.
     /// </summary>
     [Fact]
-    public async void ReturnsJidWhenSuccessful()
+    public async Task ReturnsJidWhenSuccessful()
     {
         var maximumBacklog = 10;
         var priority = 20;
@@ -161,7 +161,7 @@ public class RecurJobAtIntervalTest : BaseReqlessClientTest
     /// null, empty, or only whitespace.
     /// </summary>
     [Fact]
-    public async void ThrowsIfQueueNameIsNullOrEmptyOrOnlyWhitespace()
+    public async Task ThrowsIfQueueNameIsNullOrEmptyOrOnlyWhitespace()
     {
         await Scenario.ThrowsWhenParameterIsNullOrEmptyOrWhitespaceAsync(
             (invalidQueueName) => WithClientWithExecutorMockForExpectedArguments(
@@ -181,7 +181,7 @@ public class RecurJobAtIntervalTest : BaseReqlessClientTest
     /// null, empty, or only whitespace.
     /// </summary>
     [Fact]
-    public async void ThrowsIfClassNameIsNullOrEmptyOrOnlyWhitespace()
+    public async Task ThrowsIfClassNameIsNullOrEmptyOrOnlyWhitespace()
     {
         await Scenario.ThrowsWhenParameterIsNullOrEmptyOrWhitespaceAsync(
             (invalidClassName) => WithClientWithExecutorMockForExpectedArguments(
@@ -201,7 +201,7 @@ public class RecurJobAtIntervalTest : BaseReqlessClientTest
     /// empty, or only whitespace.
     /// </summary>
     [Fact]
-    public async void ThrowsIfDataIsNullOrEmptyOrOnlyWhitespace()
+    public async Task ThrowsIfDataIsNullOrEmptyOrOnlyWhitespace()
     {
         await Scenario.ThrowsWhenParameterIsNullOrEmptyOrWhitespaceAsync(
             (invalidData) => WithClientWithExecutorMockForExpectedArguments(
@@ -221,7 +221,7 @@ public class RecurJobAtIntervalTest : BaseReqlessClientTest
     /// only whitespace.
     /// </summary>
     [Fact]
-    public async void ThrowsIfJidIsEmptyOrOnlyWhitespace()
+    public async Task ThrowsIfJidIsEmptyOrOnlyWhitespace()
     {
         await Scenario.ThrowsWhenParameterIsEmptyOrWhitespaceAsync(
             (invalidJid) => WithClientWithExecutorMockForExpectedArguments(

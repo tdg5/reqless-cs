@@ -13,7 +13,7 @@ public class GetQueueLengthTest : BaseReqlessClientTest
     /// name is null, empty, or whitespace.
     /// </summary>
     [Fact]
-    public async void ThrowsIfQueueNameIsNullOrEmptyOrOnlyWhitespace()
+    public async Task ThrowsIfQueueNameIsNullOrEmptyOrOnlyWhitespace()
     {
         await Scenario.ThrowsWhenParameterIsNullOrEmptyOrWhitespaceAsync(
             (invalidQueueName) => WithClientWithExecutorMockForExpectedArguments(
@@ -28,7 +28,7 @@ public class GetQueueLengthTest : BaseReqlessClientTest
     /// returns null.
     /// </summary>
     [Fact]
-    public async void ThrowsIfServerReturnsNull()
+    public async Task ThrowsIfServerReturnsNull()
     {
         var exception = await Assert.ThrowsAsync<InvalidOperationException>(
             () => WithClientWithExecutorMockForExpectedArguments(
@@ -49,7 +49,7 @@ public class GetQueueLengthTest : BaseReqlessClientTest
     /// result returned by the server.
     /// </summary>
     [Fact]
-    public async void ReturnsValidResultFromTheServer()
+    public async Task ReturnsValidResultFromTheServer()
     {
         int expectedLength = 5;
         int actualLength = await WithClientWithExecutorMockForExpectedArguments(

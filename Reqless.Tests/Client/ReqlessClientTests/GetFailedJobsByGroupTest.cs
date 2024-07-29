@@ -15,7 +15,7 @@ public class GetFailedJobsByGroupTest : BaseReqlessClientTest
     /// name is null, empty, or only whitespace.
     /// </summary>
     [Fact]
-    public async void ShouldThrowIfGroupNameIsNullOrEmptyOrOnlyWhitespace()
+    public async Task ShouldThrowIfGroupNameIsNullOrEmptyOrOnlyWhitespace()
     {
         await Scenario.ThrowsWhenParameterIsNullOrEmptyOrWhitespaceAsync(
             (invalidGroupName) => WithClientWithExecutorMockForExpectedArguments(
@@ -32,7 +32,7 @@ public class GetFailedJobsByGroupTest : BaseReqlessClientTest
     /// server returns null.
     /// </summary>
     [Fact]
-    public async void ShouldThrowIfServerReturnsNull()
+    public async Task ShouldThrowIfServerReturnsNull()
     {
         var limit = 25;
         var offset = 0;
@@ -64,7 +64,7 @@ public class GetFailedJobsByGroupTest : BaseReqlessClientTest
     /// JSON can't be deserialized.
     /// </summary>
     [Fact]
-    public async void ShouldThrowIfJsonCannotBeDeserialized()
+    public async Task ShouldThrowIfJsonCannotBeDeserialized()
     {
         var limit = 25;
         var offset = 0;
@@ -96,7 +96,7 @@ public class GetFailedJobsByGroupTest : BaseReqlessClientTest
     /// JidsResult.
     /// </summary>
     [Fact]
-    public async void ShouldReturnJidsResult()
+    public async Task ShouldReturnJidsResult()
     {
         var limit = 25;
         var offset = 0;

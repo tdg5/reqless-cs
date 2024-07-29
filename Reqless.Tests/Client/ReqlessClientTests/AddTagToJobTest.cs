@@ -13,7 +13,7 @@ public class AddTagToJobTest : BaseReqlessClientTest
     /// null, empty, or whitespace.
     /// </summary>
     [Fact]
-    public async void ThrowsIfJidIsNullOrEmptyOrWhitespace()
+    public async Task ThrowsIfJidIsNullOrEmptyOrWhitespace()
     {
         await Scenario.ThrowsWhenParameterIsNullOrEmptyOrWhitespaceAsync(
             (invalidJid) => WithClientWithExecutorMockForExpectedArguments(
@@ -28,7 +28,7 @@ public class AddTagToJobTest : BaseReqlessClientTest
     /// argument is null, empty, or whitespace.
     /// </summary>
     [Fact]
-    public async void ThrowsIfTagIsNullOrEmptyOrOnlyWhitespace()
+    public async Task ThrowsIfTagIsNullOrEmptyOrOnlyWhitespace()
     {
         await Scenario.ThrowsWhenParameterIsNullOrEmptyOrWhitespaceAsync(
             (invalidTag) => WithClientWithExecutorMockForExpectedArguments(
@@ -43,7 +43,7 @@ public class AddTagToJobTest : BaseReqlessClientTest
     /// the expected arguments.
     /// </summary>
     [Fact]
-    public async void CallsExecutorWithTheExpectedArguments()
+    public async Task CallsExecutorWithTheExpectedArguments()
     {
         List<string> tags = await WithClientWithExecutorMockForExpectedArguments(
             subject => subject.AddTagToJobAsync(

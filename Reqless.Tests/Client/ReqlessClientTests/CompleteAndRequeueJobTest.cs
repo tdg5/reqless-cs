@@ -14,7 +14,7 @@ public class CompleteAndRequeueJobTest : BaseReqlessClientTest
     /// data is null, empty, or whitespace.
     /// </summary>
     [Fact]
-    public async void ThrowsIfDataIsNullOrEmptyOrWhitespace()
+    public async Task ThrowsIfDataIsNullOrEmptyOrWhitespace()
     {
         await Scenario.ThrowsWhenParameterIsNullOrEmptyOrWhitespaceAsync(
             (invalidData) => WithClientWithExecutorMockForExpectedArguments(
@@ -35,7 +35,7 @@ public class CompleteAndRequeueJobTest : BaseReqlessClientTest
     /// jid is null, empty, or whitespace.
     /// </summary>
     [Fact]
-    public async void ThrowsIfJidIsNullOrEmptyOrWhitespace()
+    public async Task ThrowsIfJidIsNullOrEmptyOrWhitespace()
     {
         await Scenario.ThrowsWhenParameterIsNullOrEmptyOrWhitespaceAsync(
             (invalidJid) => WithClientWithExecutorMockForExpectedArguments(
@@ -56,7 +56,7 @@ public class CompleteAndRequeueJobTest : BaseReqlessClientTest
     /// queue name is null, empty, or whitespace.
     /// </summary>
     [Fact]
-    public async void ThrowsIfQueueNameIsNullOrEmptyOrWhitespace()
+    public async Task ThrowsIfQueueNameIsNullOrEmptyOrWhitespace()
     {
         await Scenario.ThrowsWhenParameterIsNullOrEmptyOrWhitespaceAsync(
             (invalidQueueName) => WithClientWithExecutorMockForExpectedArguments(
@@ -77,7 +77,7 @@ public class CompleteAndRequeueJobTest : BaseReqlessClientTest
     /// worker name is null, empty, or whitespace.
     /// </summary>
     [Fact]
-    public async void ThrowsIfWorkerNameIsNullOrEmptyOrOnlyWhitespace()
+    public async Task ThrowsIfWorkerNameIsNullOrEmptyOrOnlyWhitespace()
     {
         await Scenario.ThrowsWhenParameterIsNullOrEmptyOrWhitespaceAsync(
             (invalidWorkerName) => WithClientWithExecutorMockForExpectedArguments(
@@ -98,7 +98,7 @@ public class CompleteAndRequeueJobTest : BaseReqlessClientTest
     /// Executor with the expected arguments.
     /// </summary>
     [Fact]
-    public async void CallsExecutorWithTheExpectedArguments()
+    public async Task CallsExecutorWithTheExpectedArguments()
     {
         var dependencies = new string[] { "dependency1", "dependency2" };
         var delay = 42;

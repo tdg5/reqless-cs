@@ -13,7 +13,7 @@ public class GetCompletedJobsTest : BaseReqlessClientTest
     /// is null.
     /// </summary>
     [Fact]
-    public async void ThrowsIfResultIsNull()
+    public async Task ThrowsIfResultIsNull()
     {
         var exception = await Assert.ThrowsAsync<InvalidOperationException>(
             () => WithClientWithExecutorMockForExpectedArguments(
@@ -33,7 +33,7 @@ public class GetCompletedJobsTest : BaseReqlessClientTest
     /// jid is null.
     /// </summary>
     [Fact]
-    public async void ThrowsIfAnyJidIsNull()
+    public async Task ThrowsIfAnyJidIsNull()
     {
         var exception = await Assert.ThrowsAsync<InvalidOperationException>(
             () => WithClientWithExecutorMockForExpectedArguments(
@@ -53,7 +53,7 @@ public class GetCompletedJobsTest : BaseReqlessClientTest
     /// list when there are no completed jobs.
     /// </summary>
     [Fact]
-    public async void ReturnsEmptyListWhenNoSuchJobs()
+    public async Task ReturnsEmptyListWhenNoSuchJobs()
     {
         List<string> jobs = await WithClientWithExecutorMockForExpectedArguments(
             subject => subject.GetCompletedJobsAsync(limit: 25, offset: 0),
@@ -68,7 +68,7 @@ public class GetCompletedJobsTest : BaseReqlessClientTest
     /// when there are completed jobs.
     /// </summary>
     [Fact]
-    public async void ReturnsJidsWhenThereAreCompletedJobs()
+    public async Task ReturnsJidsWhenThereAreCompletedJobs()
     {
         List<string> jids = await WithClientWithExecutorMockForExpectedArguments(
             subject => subject.GetCompletedJobsAsync(

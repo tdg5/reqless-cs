@@ -16,7 +16,7 @@ public class GetJobsByTagTest : BaseReqlessClientTest
     /// null, empty, or only whitespace.
     /// </summary>
     [Fact]
-    public async void ShouldThrowIfTagIsNullOrEmptyOrOnlyWhitespace()
+    public async Task ShouldThrowIfTagIsNullOrEmptyOrOnlyWhitespace()
     {
         await Scenario.ThrowsWhenParameterIsNullOrEmptyOrWhitespaceAsync(
             (invalidTag) => WithClientWithExecutorMockForExpectedArguments(
@@ -31,7 +31,7 @@ public class GetJobsByTagTest : BaseReqlessClientTest
     /// returns null.
     /// </summary>
     [Fact]
-    public async void ShouldThrowIfServerReturnsNull()
+    public async Task ShouldThrowIfServerReturnsNull()
     {
         var limit = 25;
         var offset = 0;
@@ -63,7 +63,7 @@ public class GetJobsByTagTest : BaseReqlessClientTest
     /// be deserialized.
     /// </summary>
     [Fact]
-    public async void ShouldThrowIfJsonCannotBeDeserialized()
+    public async Task ShouldThrowIfJsonCannotBeDeserialized()
     {
         var limit = 25;
         var offset = 0;
@@ -94,7 +94,7 @@ public class GetJobsByTagTest : BaseReqlessClientTest
     /// <see cref="ReqlessClient.GetJobsByTagAsync"/> should return JidsResult.
     /// </summary>
     [Fact]
-    public async void ShouldReturnJidsResult()
+    public async Task ShouldReturnJidsResult()
     {
         var limit = 25;
         var offset = 0;
