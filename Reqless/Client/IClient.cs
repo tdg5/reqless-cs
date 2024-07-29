@@ -606,4 +606,35 @@ public interface IClient
     /// tracked.</param>
     /// <returns>False if the job is not tracked, otherwise true.</returns>
     Task<bool> UntrackJobAsync(string jid);
+
+    /// <summary>
+    /// Update the given recurring job.
+    /// </summary>
+    /// <param name="jid">The ID of the recurring job to update.</param>
+    /// <param name="className">The new class name for the recurring job, if
+    /// any.</param>
+    /// <param name="data">The new data for the recurring job, if any.</param>
+    /// <param name="intervalSeconds">The new interval, in seconds, for the
+    /// recurring job, if any.</param>
+    /// <param name="maximumBacklog">The new maximum backlog for the recurring
+    /// job, if any.</param>
+    /// <param name="priority">The new priority for the recurring job, if
+    /// any.</param>
+    /// <param name="queueName">The new queue for the recurring job, if
+    /// any.</param>
+    /// <param name="retries">The new number of retries for the recurring job,
+    /// if any.</param>
+    /// <param name="throttles">The new throttles for the recurring job, if
+    /// any.</param>
+    Task UpdateRecurringJobAsync(
+        string jid,
+        string? className = null,
+        string? data = null,
+        int? intervalSeconds = null,
+        int? maximumBacklog = null,
+        int? priority = null,
+        string? queueName = null,
+        int? retries = null,
+        string[]? throttles = null
+    );
 }

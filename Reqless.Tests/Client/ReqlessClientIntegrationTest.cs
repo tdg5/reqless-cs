@@ -1767,6 +1767,46 @@ public class ReqlessClientIntegrationTest
         Assert.False(jobAfter.Tracked);
     }
 
+    /// <summary>
+    /// <see cref="ReqlessClient.UpdateRecurringJobAsync"/> should update the
+    /// recurring job.
+    /// </summary>
+    [Fact]
+    public async Task UpdateRecurringJobAsync_UpdatesTheRecurringJob()
+    {
+        var jid = await RecurJobAsync(_client);
+        var recurringJob = await _client.GetRecurringJobAsync(jid);
+        Assert.NotNull(recurringJob);
+        var newClassName = "other-class-name";
+        var newIntervalSeconds = recurringJob.IntervalSeconds + 60;
+        var newMaximumBacklog = recurringJob.MaximumBacklog + 5;
+        var newPriority = recurringJob.Priority + 10;
+        var newQueueName = "other-queue-name";
+        var newRetries = recurringJob.Retries + 10;
+        string[] newThrottles = ["new-throttle"];
+        await _client.UpdateRecurringJobAsync(
+            className: newClassName,
+            data: ExampleUpdatedData,
+            intervalSeconds: newIntervalSeconds,
+            jid: jid,
+            maximumBacklog: newMaximumBacklog,
+            priority: newPriority,
+            queueName: newQueueName,
+            retries: newRetries,
+            throttles: newThrottles
+        );
+        recurringJob = await _client.GetRecurringJobAsync(jid);
+        Assert.NotNull(recurringJob);
+        Assert.Equal(newClassName, recurringJob.ClassName);
+        Assert.Equal(ExampleUpdatedData, recurringJob.Data);
+        Assert.Equal(newIntervalSeconds, recurringJob.IntervalSeconds);
+        Assert.Equal(newMaximumBacklog, recurringJob.MaximumBacklog);
+        Assert.Equal(newPriority, recurringJob.Priority);
+        Assert.Equal(newQueueName, recurringJob.QueueName);
+        Assert.Equal(newRetries, recurringJob.Retries);
+        Assert.Equivalent(newThrottles, recurringJob.Throttles);
+    }
+
     private static async Task<string> PutJobAsync(
         ReqlessClient _client,
         Maybe<string>? className = null,

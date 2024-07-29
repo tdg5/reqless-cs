@@ -56,11 +56,6 @@ public partial class BaseReqlessClientTest
     protected static readonly string ExampleTagOther = "example-tag-other";
 
     /// <summary>
-    /// Example throttle.
-    /// </summary>
-    protected static readonly string ExampleThrottle = "example-throttle";
-
-    /// <summary>
     /// An example throttle name.
     /// </summary>
     protected static readonly string ExampleThrottleName = "example-throttle-name";

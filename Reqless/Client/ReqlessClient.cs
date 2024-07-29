@@ -1086,6 +1086,121 @@ public class ReqlessClient : IClient, IDisposable
         return removedCount == 1;
     }
 
+    /// <inheritdoc/>
+    public async Task UpdateRecurringJobAsync(
+        string jid,
+        string? className = null,
+        string? data = null,
+        int? intervalSeconds = null,
+        int? maximumBacklog = null,
+        int? priority = null,
+        string? queueName = null,
+        int? retries = null,
+        string[]? throttles = null
+    )
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(jid, nameof(jid));
+
+        var argumentCount = 3;
+        if (className is not null)
+        {
+            ArgumentException.ThrowIfNullOrWhiteSpace(className, nameof(className));
+            argumentCount += 2;
+        }
+        if (data is not null)
+        {
+            ArgumentException.ThrowIfNullOrWhiteSpace(data, nameof(data));
+            argumentCount += 2;
+        }
+        if (intervalSeconds is not null)
+        {
+            ValidationHelper.ThrowIfNotPositive(intervalSeconds.Value, nameof(intervalSeconds));
+            argumentCount += 2;
+        }
+        if (maximumBacklog is not null)
+        {
+            argumentCount += 2;
+        }
+        if (priority is not null)
+        {
+            argumentCount += 2;
+        }
+        if (queueName is not null)
+        {
+            ArgumentException.ThrowIfNullOrWhiteSpace(queueName, nameof(queueName));
+            argumentCount += 2;
+        }
+        if (retries is not null)
+        {
+            argumentCount += 2;
+        }
+        if (throttles is not null)
+        {
+            ValidationHelper.ThrowIfAnyNullOrWhitespace(throttles, nameof(throttles));
+            argumentCount += 2;
+        }
+
+        // If no arguments were provided, there's nothing to update.
+        if (argumentCount == 3)
+        {
+            return;
+        }
+
+        var arguments = new RedisValue[argumentCount];
+        arguments[0] = "recurringJob.update";
+        arguments[1] = Now();
+        arguments[2] = jid;
+        var index = 3;
+        if (className is not null)
+        {
+            arguments[index] = "klass";
+            arguments[index + 1] = className;
+            index += 2;
+        }
+        if (data is not null)
+        {
+            arguments[index] = "data";
+            arguments[index + 1] = data;
+            index += 2;
+        }
+        if (intervalSeconds is not null)
+        {
+            arguments[index] = "interval";
+            arguments[index + 1] = intervalSeconds.Value;
+            index += 2;
+        }
+        if (maximumBacklog is not null)
+        {
+            arguments[index] = "backlog";
+            arguments[index + 1] = maximumBacklog.Value;
+            index += 2;
+        }
+        if (priority is not null)
+        {
+            arguments[index] = "priority";
+            arguments[index + 1] = priority.Value;
+            index += 2;
+        }
+        if (queueName is not null)
+        {
+            arguments[index] = "queue";
+            arguments[index + 1] = queueName;
+            index += 2;
+        }
+        if (retries is not null)
+        {
+            arguments[index] = "retries";
+            arguments[index + 1] = retries.Value;
+            index += 2;
+        }
+        if (throttles is not null)
+        {
+            arguments[index] = "throttles";
+            arguments[index + 1] = JsonSerializer.Serialize(throttles);
+        }
+        await _executor.ExecuteAsync(arguments);
+    }
+
     /// <summary>
     /// Handle the common logic of adding or removing tags to/from a job or
     /// recurring job.

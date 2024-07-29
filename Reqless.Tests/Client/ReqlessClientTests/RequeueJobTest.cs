@@ -167,7 +167,7 @@ public class RequeueJobTest : BaseReqlessClientTest
         var priority = 23;
         var retries = 7;
         var tags = new string[] { ExampleTag };
-        var throttles = new string[] { ExampleThrottle };
+        var throttles = new string[] { ExampleThrottleName };
 
         await WithClientWithExecutorMockForExpectedArguments(
             subject => subject.RequeueJobAsync(
