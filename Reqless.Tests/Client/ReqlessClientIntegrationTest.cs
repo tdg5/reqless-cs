@@ -404,6 +404,37 @@ public class ReqlessClientIntegrationTest
     }
 
     /// <summary>
+    /// <see cref="ReqlessClient.DeleteThrottleAsync"/> should delete the
+    /// throttle.
+    /// </summary>
+    [Fact]
+    public async Task DeleteThrottleAsync_DeletesTheThrottle()
+    {
+        var maximum = 25;
+        await _client.SetThrottleAsync(ExampleThrottleName, 25);
+        Throttle subject = await _client.GetThrottleAsync(ExampleThrottleName);
+        Assert.Equal(maximum, subject.Maximum);
+        Assert.Equal(-1, subject.Ttl);
+        await _client.DeleteThrottleAsync(ExampleThrottleName);
+        subject = await _client.GetThrottleAsync(ExampleThrottleName);
+        Assert.Equal(0, subject.Maximum);
+        Assert.Equal(-2, subject.Ttl);
+    }
+
+    /// <summary>
+    /// <see cref="ReqlessClient.DeleteThrottleAsync"/> should succeed if the
+    /// throttle doesn't exist.
+    /// </summary>
+    [Fact]
+    public async Task DeleteThrottleAsync_SucceedsWhenThrottleDoesNotExist()
+    {
+        await _client.DeleteThrottleAsync(ExampleThrottleName);
+        var subject = await _client.GetThrottleAsync(ExampleThrottleName);
+        Assert.Equal(0, subject.Maximum);
+        Assert.Equal(-2, subject.Ttl);
+    }
+
+    /// <summary>
     /// <see cref="ReqlessClient.FailJobAsync"/> should return true when not
     /// given data and successful.
     /// </summary>

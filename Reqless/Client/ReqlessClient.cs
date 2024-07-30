@@ -239,6 +239,18 @@ public class ReqlessClient : IClient, IDisposable
     }
 
     /// <inheritdoc />
+    public async Task DeleteThrottleAsync(string throttleName)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(throttleName, nameof(throttleName));
+
+        await _executor.ExecuteAsync([
+            "throttle.delete",
+            Now(),
+            throttleName,
+        ]);
+    }
+
+    /// <inheritdoc />
     public async Task<bool> FailJobAsync(
         string jid,
         string workerName,

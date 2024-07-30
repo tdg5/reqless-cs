@@ -130,6 +130,13 @@ public interface IClient
     );
 
     /// <summary>
+    /// Delete the throttle with the given name.
+    /// </summary>
+    /// <param name="throttleName">The name of the throttle that should be
+    /// deleted.</param>
+    Task DeleteThrottleAsync(string throttleName);
+
+    /// <summary>
     /// Fails a job.
     /// </summary>
     /// <param name="jid">The job ID.</param>
