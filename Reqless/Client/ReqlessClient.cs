@@ -569,6 +569,20 @@ public class ReqlessClient : IClient, IDisposable
         return GetThrottleAsyncCore("throttle.get", throttleName);
     }
 
+    /// <inheritdoc/>
+    public Task<List<string>> GetThrottleLockOwnersAsync(string throttleName)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(throttleName, nameof(throttleName));
+        return GetThrottleMembersAsyncCore("throttle.locks", throttleName);
+    }
+
+    /// <inheritdoc/>
+    public Task<List<string>> GetThrottleLockWaitersAsync(string throttleName)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(throttleName, nameof(throttleName));
+        return GetThrottleMembersAsyncCore("throttle.pending", throttleName);
+    }
+
     /// <inheritdocs/>
     public async Task<List<string>> GetTopTagsAsync(int limit = 25, int offset = 0)
     {
@@ -1315,6 +1329,42 @@ public class ReqlessClient : IClient, IDisposable
             );
 
         return throttle;
+    }
+
+    /// <summary>
+    /// Query the members of a given throttle and return the result.
+    /// </summary>
+    /// <param name="getMembersCommand">The specific throttle query to
+    /// execute.</param>
+    /// <param name="throttleName">The name of the throttle to query members
+    /// for.</param>
+    /// <exception cref="InvalidOperationException">Thrown if the server returns
+    /// a null result.</exception>
+    /// <exception cref="JsonException">Thrown if the JSON returned by the
+    /// server can't be deserialized.</exception>
+    protected async Task<List<string>> GetThrottleMembersAsyncCore(
+        string getMembersCommand,
+        string throttleName
+    )
+    {
+        var result = await _executor.ExecuteAsync([
+            getMembersCommand,
+            Now(),
+            throttleName,
+        ]);
+
+        var throttleMembersJson = (string?)result
+            ?? throw new InvalidOperationException(
+                "Server returned unexpected null result."
+            );
+
+        var throttleMembers = JsonSerializer.Deserialize<List<string>>(
+            throttleMembersJson
+        ) ?? throw new JsonException(
+            $"Failed to deserialize throttle members JSON: {throttleMembersJson}"
+        );
+
+        return throttleMembers;
     }
 
     /// <inheritdoc/>

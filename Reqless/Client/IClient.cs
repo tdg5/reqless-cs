@@ -299,6 +299,25 @@ public interface IClient
     Task<Throttle> GetThrottleAsync(string throttleName);
 
     /// <summary>
+    /// Get the list of job IDs that currently hold locks for the given throttle.
+    /// </summary>
+    /// <param name="throttleName">The name of the throttle for which lock
+    /// owners should be retieved.</param>
+    /// <returns>The list of job IDs that currently own locks for the given
+    /// throttle.</returns>
+    Task<List<string>> GetThrottleLockOwnersAsync(string throttleName);
+
+    /// <summary>
+    /// Get the list of job IDs that are currently waiting for locks for the
+    /// given throttle.
+    /// </summary>
+    /// <param name="throttleName">The name of the throttle for which lock
+    /// waiters should be retieved.</param>
+    /// <returns>The list of job IDs that are currently waiting for locks for
+    /// the given throttle.</returns>
+    Task<List<string>> GetThrottleLockWaitersAsync(string throttleName);
+
+    /// <summary>
     /// Get the most commonly used tags in order from most used to least used.
     /// </summary>
     /// <remarks>

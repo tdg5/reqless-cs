@@ -1002,6 +1002,57 @@ public class ReqlessClientIntegrationTest
     }
 
     /// <summary>
+    /// <see cref="ReqlessClient.GetThrottleLockOwnersAsync"/> should return the
+    /// jids that own locks for the throttle.
+    /// </summary>
+    [Fact]
+    public async Task GetThrottleLockOwnersAsync_ReturnsJidsThatOwnLocksForTheThrottle()
+    {
+        var jid = await PutJobAsync(
+            _client,
+            queueName: Maybe<string>.Some(ExampleQueueName),
+            throttles: Maybe<string[]>.Some([ExampleThrottleName])
+        );
+        await _client.SetThrottleAsync(ExampleThrottleName, 1);
+        var job = await _client.PopJobAsync(ExampleQueueName, ExampleWorkerName);
+        Assert.NotNull(job);
+        Assert.Equal(jid, job.Jid);
+        List<string> lockOwners = await _client.GetThrottleLockOwnersAsync(
+            ExampleThrottleName
+        );
+        Assert.Single(lockOwners);
+        Assert.Equal(jid, lockOwners[0]);
+    }
+
+    /// <summary>
+    /// <see cref="ReqlessClient.GetThrottleLockWaitersAsync"/> should return the
+    /// jids that are waiting for locks for the throttle.
+    /// </summary>
+    [Fact]
+    public async Task GetThrottleLockWaitersAsync_ReturnsJidsThatAreWaitinForTheThrottle()
+    {
+        var jid = await PutJobAsync(
+            _client,
+            queueName: Maybe<string>.Some(ExampleQueueName),
+            throttles: Maybe<string[]>.Some([ExampleThrottleName])
+        );
+        await _client.SetThrottleAsync(ExampleThrottleName, 1);
+        var job = await _client.PopJobAsync(ExampleQueueName, ExampleWorkerName);
+        Assert.NotNull(job);
+        Assert.Equal(jid, job.Jid);
+        var waitingJid = await PutJobAsync(
+            _client,
+            queueName: Maybe<string>.Some(ExampleQueueName),
+            throttles: Maybe<string[]>.Some([ExampleThrottleName])
+        );
+        List<string> lockWaiters = await _client.GetThrottleLockWaitersAsync(
+            ExampleThrottleName
+        );
+        Assert.Single(lockWaiters);
+        Assert.Equal(waitingJid, lockWaiters[0]);
+    }
+
+    /// <summary>
     /// <see cref="ReqlessClient.GetTrackedJobsAsync"/> should return an empty
     /// result when no tags exist.
     /// </summary>
@@ -1887,6 +1938,7 @@ public class ReqlessClientIntegrationTest
         Maybe<string>? queueName = null,
         Maybe<int>? retries = null,
         Maybe<string[]>? tags = null,
+        Maybe<string[]>? throttles = null,
         Maybe<string>? workerName = null
     )
     {
@@ -1898,6 +1950,7 @@ public class ReqlessClientIntegrationTest
             retries: (retries ?? Maybe<int>.None).GetOrDefault(5),
             queueName: (queueName ?? Maybe<string>.None).GetOrDefault(ExampleQueueName),
             tags: (tags ?? Maybe<string[]>.None).GetOrDefault([]),
+            throttles: (throttles ?? Maybe<string[]>.None).GetOrDefault([]),
             workerName: (workerName ?? Maybe<string>.None).GetOrDefault(ExampleWorkerName)
         );
         return jid;
