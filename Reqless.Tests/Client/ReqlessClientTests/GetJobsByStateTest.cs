@@ -1,3 +1,4 @@
+using System.Text.Json;
 using Reqless.Client;
 using Reqless.Tests.TestHelpers;
 using StackExchange.Redis;
@@ -76,6 +77,36 @@ public class GetJobsByStateAsyncTest : BaseReqlessClientTest
     }
 
     /// <summary>
+    /// <see cref="ReqlessClient.GetJobsByStateAsync"/> should throw if result
+    /// JSON cannot be deserialized.
+    /// </summary>
+    [Fact]
+    public async Task ThrowsIfResultJsonCannotBeDeserialized()
+    {
+        var exception = await Assert.ThrowsAsync<JsonException>(
+            () => WithClientWithExecutorMockForExpectedArguments(
+                subject => subject.GetJobsByStateAsync(
+                    queueName: ExampleQueueName,
+                    state: "running"
+                ),
+                expectedArguments: [
+                    "queue.jobsByState",
+                    0,
+                    "running",
+                    ExampleQueueName,
+                    0,
+                    25,
+                ],
+                returnValue: "null"
+            )
+        );
+        Assert.Equal(
+            "Failed to deserialize JSON: null",
+            exception.Message
+        );
+    }
+
+    /// <summary>
     /// <see cref="ReqlessClient.GetJobsByStateAsync"/> should throw if any jid
     /// is null.
     /// </summary>
@@ -96,7 +127,7 @@ public class GetJobsByStateAsyncTest : BaseReqlessClientTest
                     0,
                     25,
                 ],
-                returnValues: [RedisValue.Null]
+                returnValue: "[null]"
             )
         );
         Assert.Equal(
@@ -127,35 +158,37 @@ public class GetJobsByStateAsyncTest : BaseReqlessClientTest
                 0,
                 25,
             ],
-            returnValues: []
+            returnValue: "[]"
         );
         Assert.Empty(jobs);
     }
 
     /// <summary>
-    /// <see cref="ReqlessClient.GetJobsByStateAsync"/> should return jids when
-    /// there are jobs in the given state.
+    /// <see cref="ReqlessClient.GetJobsByStateAsync"/> should return no jids
+    /// when there are jobs in the given state.
     /// </summary>
     [Fact]
-    public async Task ReturnsJidsWhenThereAreJobsInTheGivenState()
+    public async Task ReturnsNoJidsWhenThereAreJobsInTheGivenState()
     {
         List<string> jids = await WithClientWithExecutorMockForExpectedArguments(
-            subject => subject.GetJobsByStateAsync(
-                    limit: 25,
-                    offset: 0,
-                    queueName: ExampleQueueName,
-                    state: "running"
-                ),
-            expectedArguments: [
-                "queue.jobsByState",
-                0,
-                "running",
-                ExampleQueueName,
-                0,
-                25,
-            ],
-            returnValues: [ExampleJid, ExampleJidOther]
-        );
+             subject => subject.GetJobsByStateAsync(
+                     limit: 25,
+                     offset: 0,
+                     queueName: ExampleQueueName,
+                     state: "running"
+                 ),
+             expectedArguments: [
+                 "queue.jobsByState",
+                 0,
+                 "running",
+                 ExampleQueueName,
+                 0,
+                 25,
+             ],
+             returnValue: JsonSerializer.Serialize(
+                 new string[] { ExampleJid, ExampleJidOther }
+             )
+         );
         var expectedJids = new string[] { ExampleJid, ExampleJidOther };
         Assert.Equal(expectedJids.Length, jids.Count);
         Assert.Contains(jids[0], expectedJids);

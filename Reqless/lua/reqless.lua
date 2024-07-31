@@ -1,5 +1,11 @@
--- Current SHA: 7265737b4cc1b4e134b58435e91666d567bb83da
+-- Current SHA: feca2d39bf868312b0cbb5cc6a99934c766ad3f1
 -- This is a generated file
+local function cjsonArrayDegenerationWorkaround(array)
+  if #array == 0 then
+    return "[]"
+  end
+  return cjson.encode(array)
+end
 local Reqless = {
   ns = 'ql:'
 }
@@ -127,32 +133,32 @@ function Reqless.jobs(now, state, ...)
   if state == 'complete' then
     local offset = assert(tonumber(arg[1] or 0),
       'Jobs(): Arg "offset" not a number: ' .. tostring(arg[1]))
-    local count  = assert(tonumber(arg[2] or 25),
-      'Jobs(): Arg "count" not a number: ' .. tostring(arg[2]))
+    local limit  = assert(tonumber(arg[2] or 25),
+      'Jobs(): Arg "limit" not a number: ' .. tostring(arg[2]))
     return redis.call('zrevrange', 'ql:completed', offset,
-      offset + count - 1)
+      offset + limit - 1)
   end
 
   local queue_name  = assert(arg[1], 'Jobs(): Arg "queue" missing')
   local offset = assert(tonumber(arg[2] or 0),
     'Jobs(): Arg "offset" not a number: ' .. tostring(arg[2]))
-  local count  = assert(tonumber(arg[3] or 25),
-    'Jobs(): Arg "count" not a number: ' .. tostring(arg[3]))
+  local limit  = assert(tonumber(arg[3] or 25),
+    'Jobs(): Arg "limit" not a number: ' .. tostring(arg[3]))
 
   local queue = Reqless.queue(queue_name)
   if state == 'running' then
-    return queue.locks.peek(now, offset, count)
+    return queue.locks.peek(now, offset, limit)
   elseif state == 'stalled' then
-    return queue.locks.expired(now, offset, count)
+    return queue.locks.expired(now, offset, limit)
   elseif state == 'throttled' then
-    return queue.throttled.peek(now, offset, count)
+    return queue.throttled.peek(now, offset, limit)
   elseif state == 'scheduled' then
     queue:check_scheduled(now, queue.scheduled.length())
-    return queue.scheduled.peek(now, offset, count)
+    return queue.scheduled.peek(now, offset, limit)
   elseif state == 'depends' then
-    return queue.depends.peek(now, offset, count)
+    return queue.depends.peek(now, offset, limit)
   elseif state == 'recurring' then
-    return queue.recurring.peek(math.huge, offset, count)
+    return queue.recurring.peek(math.huge, offset, limit)
   end
 
   error('Jobs(): Unknown type "' .. state .. '"')
@@ -196,16 +202,16 @@ function Reqless.tag(now, command, ...)
     local tag    = assert(arg[1], 'Tag(): Arg "tag" missing')
     local offset = assert(tonumber(arg[2] or 0),
       'Tag(): Arg "offset" not a number: ' .. tostring(arg[2]))
-    local count  = assert(tonumber(arg[3] or 25),
-      'Tag(): Arg "count" not a number: ' .. tostring(arg[3]))
+    local limit  = assert(tonumber(arg[3] or 25),
+      'Tag(): Arg "limit" not a number: ' .. tostring(arg[3]))
     return {
       total = redis.call('zcard', 'ql:t:' .. tag),
-      jobs  = redis.call('zrange', 'ql:t:' .. tag, offset, offset + count - 1)
+      jobs  = redis.call('zrange', 'ql:t:' .. tag, offset, offset + limit - 1)
     }
   elseif command == 'top' then
     local offset = assert(tonumber(arg[1] or 0) , 'Tag(): Arg "offset" not a number: ' .. tostring(arg[1]))
-    local count  = assert(tonumber(arg[2] or 25), 'Tag(): Arg "count" not a number: ' .. tostring(arg[2]))
-    return redis.call('zrevrangebyscore', 'ql:tags', '+inf', 2, 'limit', offset, count)
+    local limit  = assert(tonumber(arg[2] or 25), 'Tag(): Arg "limit" not a number: ' .. tostring(arg[2]))
+    return redis.call('zrevrangebyscore', 'ql:tags', '+inf', 2, 'limit', offset, limit)
   elseif command ~= 'add' and command ~= 'remove' then
     error('Tag(): First argument must be "add", "remove", "get", or "top"')
   end
@@ -1039,11 +1045,11 @@ function Reqless.queue(name)
   queue.name = name
 
   queue.work = {
-    peek = function(offset, count)
-      if count <= 0 then
+    peek = function(offset, limit)
+      if limit <= 0 then
         return {}
       end
-      return redis.call('zrevrange', queue:prefix('work'), offset, offset + count - 1)
+      return redis.call('zrevrange', queue:prefix('work'), offset, offset + limit - 1)
     end, remove = function(...)
       if #arg > 0 then
         return redis.call('zrem', queue:prefix('work'), unpack(arg))
@@ -1059,12 +1065,12 @@ function Reqless.queue(name)
   }
 
   queue.locks = {
-    expired = function(now, offset, count)
+    expired = function(now, offset, limit)
       return redis.call('zrangebyscore',
-        queue:prefix('locks'), -math.huge, now, 'LIMIT', offset, count)
-    end, peek = function(now, offset, count)
+        queue:prefix('locks'), -math.huge, now, 'LIMIT', offset, limit)
+    end, peek = function(now, offset, limit)
       return redis.call('zrangebyscore', queue:prefix('locks'),
-        now, math.huge, 'LIMIT', offset, count)
+        now, math.huge, 'LIMIT', offset, limit)
     end, add = function(expires, jid)
       redis.call('zadd', queue:prefix('locks'), expires, jid)
     end, remove = function(...)
@@ -1083,9 +1089,9 @@ function Reqless.queue(name)
   }
 
   queue.depends = {
-    peek = function(now, offset, count)
+    peek = function(now, offset, limit)
       return redis.call('zrange',
-        queue:prefix('depends'), offset, offset + count - 1)
+        queue:prefix('depends'), offset, offset + limit - 1)
     end, add = function(now, jid)
       redis.call('zadd', queue:prefix('depends'), now, jid)
     end, remove = function(...)
@@ -1101,8 +1107,8 @@ function Reqless.queue(name)
   queue.throttled = {
     length = function()
       return (redis.call('zcard', queue:prefix('throttled')) or 0)
-    end, peek = function(now, offset, count)
-      return redis.call('zrange', queue:prefix('throttled'), offset, offset + count - 1)
+    end, peek = function(now, offset, limit)
+      return redis.call('zrange', queue:prefix('throttled'), offset, offset + limit - 1)
     end, add = function(...)
       if #arg > 0 then
         redis.call('zadd', queue:prefix('throttled'), unpack(arg))
@@ -1117,12 +1123,12 @@ function Reqless.queue(name)
   }
 
   queue.scheduled = {
-    peek = function(now, offset, count)
+    peek = function(now, offset, limit)
       return redis.call('zrange',
-        queue:prefix('scheduled'), offset, offset + count - 1)
-    end, ready = function(now, offset, count)
+        queue:prefix('scheduled'), offset, offset + limit - 1)
+    end, ready = function(now, offset, limit)
       return redis.call('zrangebyscore',
-        queue:prefix('scheduled'), 0, now, 'LIMIT', offset, count)
+        queue:prefix('scheduled'), 0, now, 'LIMIT', offset, limit)
     end, add = function(when, jid)
       redis.call('zadd', queue:prefix('scheduled'), when, jid)
     end, remove = function(...)
@@ -1135,10 +1141,10 @@ function Reqless.queue(name)
   }
 
   queue.recurring = {
-    peek = function(now, offset, count)
+    peek = function(now, offset, limit)
       return redis.call('zrangebyscore', queue:prefix('recur'),
-        0, now, 'LIMIT', offset, count)
-    end, ready = function(now, offset, count)
+        0, now, 'LIMIT', offset, limit)
+    end, ready = function(now, offset, limit)
     end, add = function(when, jid)
       redis.call('zadd', queue:prefix('recur'), when, jid)
     end, remove = function(...)
@@ -1218,29 +1224,29 @@ function ReqlessQueue:stats(now, date)
   }
 end
 
-function ReqlessQueue:peek(now, offset, count)
+function ReqlessQueue:peek(now, offset, limit)
   offset = assert(tonumber(offset),
     'Peek(): Arg "offset" missing or not a number: ' .. tostring(offset))
 
-  count = assert(tonumber(count),
-    'Peek(): Arg "count" missing or not a number: ' .. tostring(count))
+  limit = assert(tonumber(limit),
+    'Peek(): Arg "limit" missing or not a number: ' .. tostring(limit))
 
-  if count <= 0 then
+  if limit <= 0 then
     return {}
   end
 
-  local count_with_offset = offset + count
+  local offset_with_limit = offset + limit
 
-  local jids = self.locks.expired(now, 0, count_with_offset)
+  local jids = self.locks.expired(now, 0, offset_with_limit)
 
-  local remaining_capacity = count_with_offset - #jids
+  local remaining_capacity = offset_with_limit - #jids
 
   self:check_recurring(now, remaining_capacity)
 
   self:check_scheduled(now, remaining_capacity)
 
   if offset > #jids then
-    return self.work.peek(offset - #jids, count)
+    return self.work.peek(offset - #jids, limit)
   end
 
   table_extend(jids, self.work.peek(0, remaining_capacity))
@@ -1249,7 +1255,7 @@ function ReqlessQueue:peek(now, offset, count)
     return {}
   end
 
-  return {unpack(jids, offset + 1, count_with_offset)}
+  return {unpack(jids, offset + 1, offset_with_limit)}
 end
 
 function ReqlessQueue:paused()
@@ -1264,10 +1270,10 @@ function ReqlessQueue.unpause(...)
   redis.call('srem', 'ql:paused_queues', unpack(arg))
 end
 
-function ReqlessQueue:pop(now, worker, count)
+function ReqlessQueue:pop(now, worker, limit)
   assert(worker, 'Pop(): Arg "worker" missing')
-  count = assert(tonumber(count),
-    'Pop(): Arg "count" missing or not a number: ' .. tostring(count))
+  limit = assert(tonumber(limit),
+    'Pop(): Arg "limit" missing or not a number: ' .. tostring(limit))
 
   if self:paused() then
     return {}
@@ -1275,7 +1281,7 @@ function ReqlessQueue:pop(now, worker, count)
 
   redis.call('zadd', 'ql:workers', now, worker)
 
-  local dead_jids = self:invalidate_locks(now, count) or {}
+  local dead_jids = self:invalidate_locks(now, limit) or {}
   local popped = {}
 
   for _, jid in ipairs(dead_jids) do
@@ -1290,9 +1296,9 @@ function ReqlessQueue:pop(now, worker, count)
   end
 
 
-  self:check_recurring(now, count - #dead_jids)
+  self:check_recurring(now, limit - #dead_jids)
 
-  self:check_scheduled(now, count - #dead_jids)
+  self:check_scheduled(now, limit - #dead_jids)
 
 
   local pop_retry_limit = tonumber(
@@ -1300,9 +1306,9 @@ function ReqlessQueue:pop(now, worker, count)
     Reqless.config.get('max-pop-retry', 1)
   )
 
-  while #popped < count and pop_retry_limit > 0 do
+  while #popped < limit and pop_retry_limit > 0 do
 
-    local jids = self.work.peek(0, count - #popped) or {}
+    local jids = self.work.peek(0, limit - #popped) or {}
 
     if #jids == 0 then
       break
@@ -1971,6 +1977,7 @@ function ReqlessRecurringJob:update(now, ...)
       error('Recur(): Unrecognized option "' .. key .. '"')
     end
   end
+
   return true
 end
 
@@ -1992,7 +1999,7 @@ function ReqlessRecurringJob:tag(...)
     end
   end
 
-  tags = cjson.encode(tags)
+  tags = cjsonArrayDegenerationWorkaround(tags)
   redis.call('hset', 'ql:r:' .. self.jid, 'tags', tags)
 
   return tags
@@ -2182,7 +2189,8 @@ ReqlessAPI['job.addDependency'] = function(now, jid, ...)
 end
 
 ReqlessAPI['job.addTag'] = function(now, jid, ...)
-  return cjson.encode(Reqless.tag(now, 'add', jid, unpack(arg)))
+  local result = Reqless.tag(now, 'add', jid, unpack(arg))
+  return cjsonArrayDegenerationWorkaround(result)
 end
 
 ReqlessAPI['job.cancel'] = function(now, ...)
@@ -2213,7 +2221,7 @@ ReqlessAPI['job.getMulti'] = function(now, ...)
   for _, jid in ipairs(arg) do
     table.insert(results, Reqless.job(jid):data())
   end
-  return cjson.encode(results)
+  return cjsonArrayDegenerationWorkaround(results)
 end
 
 ReqlessAPI['job.heartbeat'] = function(now, jid, worker, data)
@@ -2238,7 +2246,8 @@ ReqlessAPI['job.removeDependency'] = function(now, jid, ...)
 end
 
 ReqlessAPI['job.removeTag'] = function(now, jid, ...)
-  return cjson.encode(Reqless.tag(now, 'remove', jid, unpack(arg)))
+  local result = Reqless.tag(now, 'remove', jid, unpack(arg))
+  return cjsonArrayDegenerationWorkaround(result)
 end
 
 ReqlessAPI['job.requeue'] = function(now, worker, queue, jid, klass, data, delay, ...)
@@ -2270,7 +2279,8 @@ ReqlessAPI['job.untrack'] = function(now, jid)
 end
 
 ReqlessAPI["jobs.completed"] = function(now, offset, limit)
-  return Reqless.jobs(now, 'complete', offset, limit)
+  local result = Reqless.jobs(now, 'complete', offset, limit)
+  return cjsonArrayDegenerationWorkaround(result)
 end
 
 ReqlessAPI['jobs.failedByGroup'] = function(now, group, start, limit)
@@ -2294,7 +2304,8 @@ ReqlessAPI['queue.forget'] = function(now, ...)
 end
 
 ReqlessAPI["queue.jobsByState"] = function(now, state, ...)
-  return Reqless.jobs(now, state, unpack(arg))
+  local result = Reqless.jobs(now, state, unpack(arg))
+  return cjsonArrayDegenerationWorkaround(result)
 end
 
 ReqlessAPI['queue.length'] = function(now, queue)
@@ -2305,22 +2316,22 @@ ReqlessAPI['queue.pause'] = function(now, ...)
   ReqlessQueue.pause(now, unpack(arg))
 end
 
-ReqlessAPI['queue.peek'] = function(now, queue, offset, count)
-  local jids = Reqless.queue(queue):peek(now, offset, count)
+ReqlessAPI['queue.peek'] = function(now, queue, offset, limit)
+  local jids = Reqless.queue(queue):peek(now, offset, limit)
   local response = {}
   for _, jid in ipairs(jids) do
     table.insert(response, Reqless.job(jid):data())
   end
-  return cjson.encode(response)
+  return cjsonArrayDegenerationWorkaround(response)
 end
 
-ReqlessAPI['queue.pop'] = function(now, queue, worker, count)
-  local jids = Reqless.queue(queue):pop(now, worker, count)
+ReqlessAPI['queue.pop'] = function(now, queue, worker, limit)
+  local jids = Reqless.queue(queue):pop(now, worker, limit)
   local response = {}
   for _, jid in ipairs(jids) do
     table.insert(response, Reqless.job(jid):data())
   end
-  return cjson.encode(response)
+  return cjsonArrayDegenerationWorkaround(response)
 end
 
 ReqlessAPI['queue.put'] = function(now, worker, queue, jid, klass, data, delay, ...)
@@ -2343,9 +2354,9 @@ ReqlessAPI['queue.throttle.set'] = function(now, queue, max)
   Reqless.throttle(ReqlessQueue.ns .. queue):set({maximum = max}, 0)
 end
 
-ReqlessAPI['queue.unfail'] = function(now, queue, group, count)
+ReqlessAPI['queue.unfail'] = function(now, queue, group, limit)
   assert(queue, 'queue.unfail(): Arg "queue" missing')
-  return Reqless.queue(queue):unfail(now, group, count)
+  return Reqless.queue(queue):unfail(now, group, limit)
 end
 
 ReqlessAPI['queue.unpause'] = function(now, ...)
@@ -2353,7 +2364,7 @@ ReqlessAPI['queue.unpause'] = function(now, ...)
 end
 
 ReqlessAPI['queues.counts'] = function(now)
-  return cjson.encode(ReqlessQueue.counts(now, nil))
+  return cjsonArrayDegenerationWorkaround(ReqlessQueue.counts(now, nil))
 end
 
 ReqlessAPI['recurringJob.cancel'] = function(now, jid)
@@ -2379,12 +2390,13 @@ ReqlessAPI['recurringJob.update'] = function(now, jid, ...)
   return Reqless.recurring(jid):update(now, unpack(arg))
 end
 
-ReqlessAPI['tags.top'] = function(now, ...)
-  return cjson.encode(Reqless.tag(now, 'top', unpack(arg)))
+ReqlessAPI['tags.top'] = function(now, offset, limit)
+  local result = Reqless.tag(now, 'top', offset, limit)
+  return cjsonArrayDegenerationWorkaround(result)
 end
 
 ReqlessAPI['throttle.delete'] = function(now, tid)
-  return Reqless.throttle(tid):unset()
+  Reqless.throttle(tid):unset()
 end
 
 ReqlessAPI['throttle.get'] = function(now, tid)
@@ -2392,11 +2404,13 @@ ReqlessAPI['throttle.get'] = function(now, tid)
 end
 
 ReqlessAPI['throttle.locks'] = function(now, tid)
-  return Reqless.throttle(tid).locks.members()
+  local result = Reqless.throttle(tid).locks.members()
+  return cjsonArrayDegenerationWorkaround(result)
 end
 
 ReqlessAPI['throttle.pending'] = function(now, tid)
-  return Reqless.throttle(tid).pending.members()
+  local result = Reqless.throttle(tid).pending.members()
+  return cjsonArrayDegenerationWorkaround(result)
 end
 
 ReqlessAPI['throttle.release'] = function(now, tid, ...)
@@ -2424,185 +2438,7 @@ ReqlessAPI['worker.forget'] = function(now, ...)
 end
 
 ReqlessAPI['workers.counts'] = function(now)
-  return cjson.encode(ReqlessWorker.counts(now, nil))
-end
-
-
-ReqlessAPI['cancel'] = function(now, ...)
-  return ReqlessAPI['job.cancel'](now, unpack(arg))
-end
-
-ReqlessAPI['complete'] = function(now, jid, worker, queue, data, ...)
-  return Reqless.job(jid):complete(now, worker, queue, data, unpack(arg))
-end
-
-ReqlessAPI['depends'] = function(now, jid, command, ...)
-  if command == "on" then
-    return ReqlessAPI['job.addDependency'](now, jid, unpack(arg))
-  elseif command == "off" then
-    return ReqlessAPI['job.removeDependency'](now, jid, unpack(arg))
-  end
-  error('Depends(): Argument "command" must be "on" or "off"')
-end
-
-ReqlessAPI['fail'] = function(now, jid, worker, group, message, data)
-  return ReqlessAPI['job.fail'](now, jid, worker, group, message, data)
-end
-
-ReqlessAPI['failed'] = function(now, group, start, limit)
-  if group then
-    return ReqlessAPI['jobs.failedByGroup'](now, group, start, limit)
-  end
-  return ReqlessAPI['failureGroups.counts'](now, start, limit)
-end
-
-ReqlessAPI['get'] = function(now, jid)
-  return ReqlessAPI['job.get'](now, jid)
-end
-
-ReqlessAPI.heartbeat = function(now, jid, worker, data)
-  return ReqlessAPI['job.heartbeat'](now, jid, worker, data)
-end
-
-ReqlessAPI['jobs'] = function(now, state, ...)
-  if state == 'complete' then
-    return ReqlessAPI['jobs.completed'](now, unpack(arg))
-  end
-  return ReqlessAPI['queue.jobsByState'](now, state, unpack(arg))
-end
-
-ReqlessAPI['length'] = function(now, queue)
-  return ReqlessAPI['queue.length'](now, queue)
-end
-
-ReqlessAPI['log'] = function(now, jid, message, data)
-  return ReqlessAPI['job.log'](now, jid, message, data)
-end
-
-ReqlessAPI['multiget'] = function(now, ...)
-  return ReqlessAPI['job.getMulti'](now, unpack(arg))
-end
-
-ReqlessAPI['pause'] = function(now, ...)
-  return ReqlessAPI['queue.pause'](now, unpack(arg))
-end
-
-ReqlessAPI['peek'] = function(now, queue, offset, count)
-  return ReqlessAPI['queue.peek'](now, queue, offset, count)
-end
-
-ReqlessAPI['pop'] = function(now, queue, worker, count)
-  return ReqlessAPI['queue.pop'](now, queue, worker, count)
-end
-
-ReqlessAPI['priority'] = function(now, jid, priority)
-  return ReqlessAPI['job.setPriority'](now, jid, priority)
-end
-
-ReqlessAPI['put'] = function(now, worker, queue, jid, klass, data, delay, ...)
-  return ReqlessAPI['queue.put'](now, worker, queue, jid, klass, data, delay, unpack(arg))
-end
-
-ReqlessAPI['queues'] = function(now, queue)
-  if queue then
-    return ReqlessAPI['queue.counts'](now, queue)
-  end
-  return ReqlessAPI['queues.counts'](now)
-end
-
-ReqlessAPI['recur'] = function(now, queue, jid, klass, data, spec, ...)
-  if spec == 'interval' then
-    return Reqless.queue(queue):recurAtInterval(now, jid, klass, data, unpack(arg))
-  end
-
-  error('Recur(): schedule type "' .. tostring(spec) .. '" unknown')
-end
-
-ReqlessAPI['recur.get'] = function(now, jid)
-  return ReqlessAPI['recurringJob.get'](now, jid)
-end
-
-ReqlessAPI['recur.tag'] = function(now, jid, ...)
-  return ReqlessAPI['recurringJob.addTag'](now, jid, unpack(arg))
-end
-
-ReqlessAPI['recur.untag'] = function(now, jid, ...)
-  return ReqlessAPI['recurringJob.removeTag'](now, jid, unpack(arg))
-end
-
-ReqlessAPI['recur.update'] = function(now, jid, ...)
-  return ReqlessAPI['recurringJob.update'](now, jid, unpack(arg))
-end
-
-ReqlessAPI['requeue'] = function(now, worker, queue, jid, ...)
-  return ReqlessAPI['job.requeue'](now, worker, queue, jid, unpack(arg))
-end
-
-ReqlessAPI['retry'] = function(now, jid, queue, worker, delay, group, message)
-  return ReqlessAPI['job.retry'](now, jid, queue, worker, delay, group, message)
-end
-
-ReqlessAPI['stats'] = function(now, queue, date)
-  return ReqlessAPI['queue.stats'](now, queue, date)
-end
-
-ReqlessAPI['tag'] = function(now, command, ...)
-  if command == 'add' then
-    return ReqlessAPI['job.addTag'](now, unpack(arg))
-  end
-  if command == 'remove' then
-    return ReqlessAPI['job.removeTag'](now, unpack(arg))
-  end
-  if command == 'get' then
-    return ReqlessAPI['jobs.tagged'](now, unpack(arg))
-  end
-  if command == 'top' then
-    return ReqlessAPI['tags.top'](now, unpack(arg))
-  end
-  error('Tag(): Unknown command ' .. command)
-end
-
-ReqlessAPI['throttle.ttl'] = function(now, tid)
-  return Reqless.throttle(tid):ttl()
-end
-
-ReqlessAPI['timeout'] = function(now, ...)
-  return ReqlessAPI['job.timeout'](now, unpack(arg))
-end
-
-ReqlessAPI['track'] = function(now, command, jid)
-  if command == 'track' then
-    return ReqlessAPI['job.track'](now, jid)
-  end
-
-  if command == 'untrack' then
-    return ReqlessAPI['job.untrack'](now, jid)
-  end
-
-  return ReqlessAPI['jobs.tracked'](now)
-end
-
-ReqlessAPI['unfail'] = function(now, queue, group, count)
-  return ReqlessAPI['queue.unfail'](now, queue, group, count)
-end
-
-ReqlessAPI['unpause'] = function(now, ...)
-  ReqlessAPI['queue.unpause'](now, unpack(arg))
-end
-
-ReqlessAPI['unrecur'] = function(now, jid)
-  return ReqlessAPI['recurringJob.cancel'](now, jid)
-end
-
-ReqlessAPI['worker.deregister'] = function(now, ...)
-  return ReqlessAPI['worker.forget'](now, unpack(arg))
-end
-
-ReqlessAPI['workers'] = function(now, worker)
-  if worker then
-    return ReqlessAPI['worker.counts'](now, worker)
-  end
-  return ReqlessAPI['workers.counts'](now)
+  return cjsonArrayDegenerationWorkaround(ReqlessWorker.counts(now, nil))
 end
 
 

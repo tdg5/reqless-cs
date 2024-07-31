@@ -1,3 +1,4 @@
+using System.Text.Json;
 using Reqless.Client;
 using StackExchange.Redis;
 
@@ -29,6 +30,26 @@ public class GetCompletedJobsTest : BaseReqlessClientTest
     }
 
     /// <summary>
+    /// <see cref="ReqlessClient.GetCompletedJobsAsync"/> should throw if result
+    /// JSON can't be deserialized.
+    /// </summary>
+    [Fact]
+    public async Task ThrowsIfResultJsonCannotBeDeserialized()
+    {
+        var exception = await Assert.ThrowsAsync<JsonException>(
+            () => WithClientWithExecutorMockForExpectedArguments(
+                subject => subject.GetCompletedJobsAsync(),
+                expectedArguments: ["jobs.completed", 0, 0, 25],
+                returnValue: "null"
+            )
+        );
+        Assert.Equal(
+            "Failed to deserialize JSON: null",
+            exception.Message
+        );
+    }
+
+    /// <summary>
     /// <see cref="ReqlessClient.GetCompletedJobsAsync"/> should throw if any
     /// jid is null.
     /// </summary>
@@ -39,7 +60,7 @@ public class GetCompletedJobsTest : BaseReqlessClientTest
             () => WithClientWithExecutorMockForExpectedArguments(
                 subject => subject.GetCompletedJobsAsync(),
                 expectedArguments: ["jobs.completed", 0, 0, 25],
-                returnValues: [RedisValue.Null]
+                returnValue: "[null]"
             )
         );
         Assert.Equal(
@@ -58,7 +79,7 @@ public class GetCompletedJobsTest : BaseReqlessClientTest
         List<string> jobs = await WithClientWithExecutorMockForExpectedArguments(
             subject => subject.GetCompletedJobsAsync(limit: 25, offset: 0),
             expectedArguments: ["jobs.completed", 0, 0, 25],
-            returnValues: []
+            returnValue: "[]"
         );
         Assert.Empty(jobs);
     }
@@ -76,7 +97,7 @@ public class GetCompletedJobsTest : BaseReqlessClientTest
                 offset: 0
             ),
             expectedArguments: ["jobs.completed", 0, 0, 25],
-            returnValues: [ExampleJid, ExampleJidOther]
+            returnValue: $"""["{ExampleJid}","{ExampleJidOther}"]"""
         );
         var expectedJids = new string[] { ExampleJid, ExampleJidOther };
         Assert.Equal(expectedJids.Length, jids.Count);

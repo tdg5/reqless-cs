@@ -454,13 +454,6 @@ public class ReqlessClient : IClient, IDisposable
             limit,
         ]);
 
-        if (result.IsNull)
-        {
-            throw new InvalidOperationException(
-                "Server returned unexpected null result."
-            );
-        }
-
         return ValidateJidsResult(result);
     }
 
@@ -1433,17 +1426,17 @@ public class ReqlessClient : IClient, IDisposable
     /// null.</exception>
     protected static List<string> ValidateJidsResult(RedisResult result)
     {
-        if (result.IsNull)
-        {
-            throw new InvalidOperationException(
-                "Server returned unexpected null result."
-            );
-        }
-
         // For whatever reason, if result is null, this cast results in
         // string?[] { null }, so we check for null directly above and forgive
         // null here.
-        var jidsResult = ((string?[]?)result)!;
+        var jidsResultJson = (string?)result ?? throw new InvalidOperationException(
+            "Server returned unexpected null result."
+        );
+
+        var jidsResult = JsonSerializer.Deserialize<List<string>>(jidsResultJson)
+            ?? throw new JsonException(
+                $"Failed to deserialize JSON: {jidsResultJson}"
+            );
 
         List<string> jids = jidsResult.Select(jid =>
             jid ?? throw new InvalidOperationException(
