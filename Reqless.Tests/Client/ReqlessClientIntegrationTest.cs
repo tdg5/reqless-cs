@@ -1431,6 +1431,95 @@ public class ReqlessClientIntegrationTest
     }
 
     /// <summary>
+    /// <see cref="ReqlessClient.ReleaseJobThrottleAsync"/> should release the
+    /// throttle for the given jobs.
+    /// </summary>
+    [Fact]
+    public async Task ReleaseJobThrottleAsync_ReleasesTheThrottleForTheGivenJobs()
+    {
+        var jid = await PutJobAsync(
+            _client,
+            queueName: Maybe<string>.Some(ExampleQueueName),
+            throttles: Maybe<string[]>.Some([ExampleThrottleName])
+        );
+        await _client.SetThrottleAsync(ExampleThrottleName, 1);
+        var job = await _client.PopJobAsync(ExampleQueueName, ExampleWorkerName);
+        Assert.NotNull(job);
+        Assert.Equal(jid, job.Jid);
+        List<string> lockOwners = await _client.GetThrottleLockOwnersAsync(
+            ExampleThrottleName
+        );
+        Assert.Single(lockOwners);
+        Assert.Equal(jid, lockOwners[0]);
+        var waitingJid = await PutJobAsync(
+            _client,
+            queueName: Maybe<string>.Some(ExampleQueueName),
+            throttles: Maybe<string[]>.Some([ExampleThrottleName])
+        );
+        List<string> lockWaiters = await _client.GetThrottleLockWaitersAsync(
+            ExampleThrottleName
+        );
+        Assert.Single(lockWaiters);
+        Assert.Equal(waitingJid, lockWaiters[0]);
+        await _client.ReleaseJobThrottleAsync(waitingJid, ExampleThrottleName);
+        lockWaiters = await _client.GetThrottleLockWaitersAsync(
+            ExampleThrottleName
+        );
+        Assert.Empty(lockWaiters);
+        await _client.ReleaseJobThrottleAsync(jid, ExampleThrottleName);
+        lockOwners = await _client.GetThrottleLockOwnersAsync(
+            ExampleThrottleName
+        );
+        Assert.Empty(lockOwners);
+    }
+
+    /// <summary>
+    /// <see cref="ReqlessClient.ReleaseThrottleForJobsAsync"/> should release the
+    /// throttle for the given jobs.
+    /// </summary>
+    [Fact]
+    public async Task ReleaseThrottleForJobsAsync_ReleasesTheThrottleForTheGivenJobs()
+    {
+        var jid = await PutJobAsync(
+            _client,
+            queueName: Maybe<string>.Some(ExampleQueueName),
+            throttles: Maybe<string[]>.Some([ExampleThrottleName])
+        );
+        await _client.SetThrottleAsync(ExampleThrottleName, 1);
+        var job = await _client.PopJobAsync(ExampleQueueName, ExampleWorkerName);
+        Assert.NotNull(job);
+        Assert.Equal(jid, job.Jid);
+        List<string> lockOwners = await _client.GetThrottleLockOwnersAsync(
+            ExampleThrottleName
+        );
+        Assert.Single(lockOwners);
+        Assert.Equal(jid, lockOwners[0]);
+        var waitingJid = await PutJobAsync(
+            _client,
+            queueName: Maybe<string>.Some(ExampleQueueName),
+            throttles: Maybe<string[]>.Some([ExampleThrottleName])
+        );
+        List<string> lockWaiters = await _client.GetThrottleLockWaitersAsync(
+            ExampleThrottleName
+        );
+        Assert.Single(lockWaiters);
+        Assert.Equal(waitingJid, lockWaiters[0]);
+        await _client.ReleaseThrottleForJobsAsync(
+            ExampleThrottleName,
+            jid,
+            waitingJid
+        );
+        lockWaiters = await _client.GetThrottleLockWaitersAsync(
+            ExampleThrottleName
+        );
+        Assert.Empty(lockWaiters);
+        lockOwners = await _client.GetThrottleLockOwnersAsync(
+            ExampleThrottleName
+        );
+        Assert.Empty(lockOwners);
+    }
+
+    /// <summary>
     /// <see cref="ReqlessClient.RemoveDependencyFromJobAsync"/> should return
     /// true when successful.
     /// </summary>

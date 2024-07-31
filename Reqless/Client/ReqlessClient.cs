@@ -850,6 +850,29 @@ public class ReqlessClient : IClient, IDisposable
     }
 
     /// <inheritdoc />
+    public Task ReleaseJobThrottleAsync(string jid, string throttleName)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(jid, nameof(jid));
+        ArgumentException.ThrowIfNullOrWhiteSpace(throttleName, nameof(throttleName));
+        return ReleaseThrottleForJobsAsync(throttleName, jid);
+    }
+
+    /// <inheritdoc />
+    public async Task ReleaseThrottleForJobsAsync(string throttleName, params string[] jids)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(throttleName, nameof(throttleName));
+        ValidationHelper.ThrowIfAnyNullOrWhitespace(jids, nameof(jids));
+
+        var arguments = new RedisValue[jids.Length + 3];
+        arguments[0] = "throttle.release";
+        arguments[1] = Now();
+        arguments[2] = throttleName;
+        CopyStringArguments(jids, ref arguments, 3);
+
+        await _executor.ExecuteAsync(arguments);
+    }
+
+    /// <inheritdoc />
     public async Task<bool> RemoveDependencyFromJobAsync(string jid, string dependsOnJid)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(jid, nameof(jid));

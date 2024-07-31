@@ -3,7 +3,6 @@ using Reqless.Client;
 using Reqless.Models;
 using Reqless.Tests.TestHelpers;
 using Reqless.Tests.TestHelpers.Factories;
-using StackExchange.Redis;
 
 namespace Reqless.Tests.Client.ReqlessClientTests;
 
@@ -106,9 +105,7 @@ public class GetJobsTest : BaseReqlessClientTest
     {
         await Scenario.ThrowsWhenParameterItemIsNullOrEmptyOrWhitespaceAsync(
             (invalidJid) => WithClientWithExecutorMockForExpectedArguments(
-                subject => subject.GetJobsAsync(ExampleJid, null!),
-                expectedArguments: ["job.getMulti", 0, ExampleJid, invalidJid],
-                returnValue: null
+                subject => subject.GetJobsAsync(ExampleJid, null!)
             ),
             "jids"
         );

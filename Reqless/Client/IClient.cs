@@ -463,6 +463,26 @@ public interface IClient
     );
 
     /// <summary>
+    /// Release any pending or owned locks for the throttle with the given name
+    /// that are owned by the job with the given ID.
+    /// </summary>
+    /// <param name="jid">The ID of job that should release any pending or owned
+    /// locks for the given throttle.</param>
+    /// <param name="throttleName">The name of the throttle that the jobs should
+    /// no longer be constrained by.</param>
+    Task ReleaseJobThrottleAsync(string jid, string throttleName);
+
+    /// <summary>
+    /// Release any pending or owned locks for the throttle with the given name
+    /// that are owned by the jobs with the given job IDs.
+    /// </summary>
+    /// <param name="throttleName">The name of the throttle for which pending or
+    /// owned locks should be released.</param>
+    /// <param name="jids">The IDs of jobs that should release any pending or
+    /// owned locks for the given throttle.</param>
+    Task ReleaseThrottleForJobsAsync(string throttleName, params string[] jids);
+
+    /// <summary>
     /// Update the given job to remove the dependency on the job identified by
     /// the given jid.
     /// </summary>
