@@ -1,6 +1,5 @@
 using System.Text.Json;
 using Reqless.Client;
-using StackExchange.Redis;
 
 namespace Reqless.Tests.Client.ReqlessClientTests;
 

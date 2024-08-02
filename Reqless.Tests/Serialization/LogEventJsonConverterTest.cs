@@ -1,7 +1,5 @@
 using Reqless.Models.JobEvents;
 using Reqless.Serialization;
-using System.Configuration.Assemblies;
-using System.Text;
 using System.Text.Json;
 
 namespace Reqless.Tests.Serialization;

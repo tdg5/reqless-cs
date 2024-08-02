@@ -3,7 +3,6 @@ using Reqless.Client;
 using Reqless.Models;
 using Reqless.Tests.TestHelpers;
 using Reqless.Tests.TestHelpers.Factories;
-using StackExchange.Redis;
 
 namespace Reqless.Tests.Client.ReqlessClientTests;
 

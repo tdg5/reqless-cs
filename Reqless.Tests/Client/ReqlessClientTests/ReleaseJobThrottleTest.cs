@@ -1,6 +1,5 @@
 using Reqless.Client;
 using Reqless.Tests.TestHelpers;
-using Reqless.Tests.TestHelpers.Factories;
 
 namespace Reqless.Tests.Client.ReqlessClientTests;
 

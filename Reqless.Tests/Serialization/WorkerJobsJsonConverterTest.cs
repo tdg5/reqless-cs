@@ -1,6 +1,5 @@
 using Reqless.Models;
 using Reqless.Serialization;
-using Reqless.Tests.TestHelpers.Factories;
 using System.Text.Json;
 
 namespace Reqless.Tests.Serialization;
