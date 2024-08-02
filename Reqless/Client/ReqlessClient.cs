@@ -662,6 +662,26 @@ public class ReqlessClient : IClient, IDisposable
     }
 
     /// <inheritdoc/>
+    public async Task<WorkerJobs> GetWorkerJobsAsync(string workerName)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(workerName, nameof(workerName));
+
+        var result = await _executor.ExecuteAsync(["worker.jobs", Now(), workerName]);
+
+        var jobsJson = (string?)result
+            ?? throw new InvalidOperationException(
+                "Server returned unexpected null result."
+            );
+
+        var workerJobs = JsonSerializer.Deserialize<WorkerJobs>(jobsJson)
+            ?? throw new JsonException(
+                $"Failed to deserialize worker jobs JSON: {jobsJson}"
+            );
+
+        return workerJobs;
+    }
+
+    /// <inheritdoc/>
     public async Task<long> HeartbeatJobAsync(
         string jid,
         string workerName,

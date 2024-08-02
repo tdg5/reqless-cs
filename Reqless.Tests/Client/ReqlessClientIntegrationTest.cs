@@ -1174,6 +1174,36 @@ public class ReqlessClientIntegrationTest
     }
 
     /// <summary>
+    /// <see cref="ReqlessClient.GetWorkerJobsAsync"/> returns empty arrays
+    /// when the worker is responsible for no jobs.
+    /// </summary>
+    [Fact]
+    public async Task GetWorkerJobsAsync_ReturnsEmptyArrayWhenNoWorkers()
+    {
+        var allWorkerCounts = await _client.GetAllWorkerCountsAsync();
+        Assert.Empty(allWorkerCounts);
+    }
+
+    /// <summary>
+    /// <see cref="ReqlessClient.GetWorkerJobsAsync"/> returns expected
+    /// jobs when worker exists and is responsible for jobs.
+    /// </summary>
+    [Fact]
+    public async Task GetWorkerJobsAsync_ReturnsExpectedCounts()
+    {
+        var jid = await PutJobAsync(
+            _client,
+            queueName: Maybe<string>.Some(ExampleQueueName)
+        );
+        var job = await _client.PopJobAsync(ExampleQueueName, ExampleWorkerName);
+        Assert.Equal(jid, job?.Jid);
+        var workerJobs = await _client.GetWorkerJobsAsync(ExampleWorkerName);
+        Assert.Single(workerJobs.Jobs);
+        Assert.Equal(jid, workerJobs.Jobs[0]);
+        Assert.Empty(workerJobs.Stalled);
+    }
+
+    /// <summary>
     /// <see cref="ReqlessClient.HeartbeatJobAsync"/> should return the new
     /// expiration time when not given data and when successful.
     /// </summary>

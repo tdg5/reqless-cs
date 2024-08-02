@@ -341,6 +341,13 @@ public interface IClient
     Task<TrackedJobsResult> GetTrackedJobsAsync();
 
     /// <summary>
+    /// Get the IDs of jobs, both expired and unexpired, that are the
+    /// responsibility of the worker with the given name.
+    /// </summary>
+    /// <param name="workerName">The name of the worker to retrieve jobs for.</param>
+    Task<WorkerJobs> GetWorkerJobsAsync(string workerName);
+
+    /// <summary>
     /// Renew the lease on the job with the given jid. Throws if the job does
     /// not exist, is not running, or is not locked by the given worker.
     /// </summary>

@@ -1,4 +1,4 @@
--- Current SHA: feca2d39bf868312b0cbb5cc6a99934c766ad3f1
+-- Current SHA: e7f026b2bb294eb7d0fa0f3ffdb1d0768036d629
 -- This is a generated file
 local function cjsonArrayDegenerationWorkaround(array)
   if #array == 0 then
@@ -2429,12 +2429,12 @@ ReqlessAPI['throttle.set'] = function(now, tid, max, ...)
   Reqless.throttle(tid):set(data, tonumber(expiration or 0))
 end
 
-ReqlessAPI['worker.counts'] = function(now, worker)
-  return cjson.encode(ReqlessWorker.counts(now, worker))
+ReqlessAPI['worker.forget'] = function(now, ...)
+  ReqlessWorker.deregister(unpack(arg))
 end
 
-ReqlessAPI['worker.forget'] = function(now, ...)
-  return ReqlessWorker.deregister(unpack(arg))
+ReqlessAPI['worker.jobs'] = function(now, worker)
+  return cjson.encode(ReqlessWorker.counts(now, worker))
 end
 
 ReqlessAPI['workers.counts'] = function(now)

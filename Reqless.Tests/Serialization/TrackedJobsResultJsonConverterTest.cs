@@ -68,12 +68,12 @@ public class TrackedJobsResultJsonConverterTest
     public void Read_HandlesJobsWithJsonObjectAsEmptyArray()
     {
         var json = """{"expired": [], "jobs": {}}""";
-        var job = JsonSerializer.Deserialize<TrackedJobsResult>(
+        var trackedJobs = JsonSerializer.Deserialize<TrackedJobsResult>(
             json,
             _jsonSerializerOptions
         );
-        Assert.NotNull(job);
-        Assert.Empty(job.Jobs);
+        Assert.NotNull(trackedJobs);
+        Assert.Empty(trackedJobs.Jobs);
     }
 
     /// <summary>
@@ -120,12 +120,12 @@ public class TrackedJobsResultJsonConverterTest
     public void Read_HandlesExpiredWithJsonObjectAsEmptyArray()
     {
         var json = """{"expired": {}, "jobs": []}""";
-        var job = JsonSerializer.Deserialize<TrackedJobsResult>(
+        var trackedJobs = JsonSerializer.Deserialize<TrackedJobsResult>(
             json,
             _jsonSerializerOptions
         );
-        Assert.NotNull(job);
-        Assert.Empty(job.ExpiredJids);
+        Assert.NotNull(trackedJobs);
+        Assert.Empty(trackedJobs.ExpiredJids);
     }
 
     /// <summary>
