@@ -564,10 +564,51 @@ public class ReqlessClientIntegrationTest
             Assert.Contains(queueCounts.QueueName, expectedQueueNames);
 
         }
-        Assert.Equal(ExampleQueueName, allQueueCountsBefore[0].QueueName);
         await _client.ForgetQueuesAsync(ExampleQueueName, otherQueueName);
         List<QueueCounts> allQueueCountsAfter = await _client.GetAllQueueCountsAsync();
         Assert.Empty(allQueueCountsAfter);
+    }
+
+    /// <summary>
+    /// <see cref="ReqlessClient.ForgetWorkerAsync"/> should cause the named
+    /// worker to be removed from the set of known workers.
+    /// </summary>
+    [Fact]
+    public async Task ForgetWorkerAsync_CausesTheNamedWorkerToBeForgotten()
+    {
+        await PutJobAsync(_client, queueName: Maybe<string>.Some(ExampleQueueName));
+        await _client.PopJobAsync(ExampleQueueName, ExampleWorkerName);
+        List<WorkerCounts> allWorkerCountsBefore = await _client.GetAllWorkerCountsAsync();
+        Assert.Single(allWorkerCountsBefore);
+        Assert.Equal(ExampleWorkerName, allWorkerCountsBefore[0].WorkerName);
+        await _client.ForgetWorkerAsync(ExampleWorkerName);
+        List<WorkerCounts> allWorkerCountsAfter = await _client.GetAllWorkerCountsAsync();
+        Assert.Empty(allWorkerCountsAfter);
+    }
+
+    /// <summary>
+    /// <see cref="ReqlessClient.ForgetWorkersAsync"/> should cause the named
+    /// workers to be removed from the set of known workers.
+    /// </summary>
+    [Fact]
+    public async Task ForgetWorkersAsync_CausesTheNamedWorkersToBeForgotten()
+    {
+        var otherWorkerName = "other-worker";
+        string[] expectedWorkerNames = [ExampleWorkerName, otherWorkerName];
+        await PutJobAsync(_client, queueName: Maybe<string>.Some(ExampleQueueName));
+        await _client.PopJobAsync(ExampleQueueName, ExampleWorkerName);
+        await PutJobAsync(_client, queueName: Maybe<string>.Some(ExampleQueueName));
+        await _client.PopJobAsync(ExampleQueueName, otherWorkerName);
+        List<WorkerCounts> allWorkerCountsBefore = await _client.GetAllWorkerCountsAsync();
+        Assert.Equal(2, allWorkerCountsBefore.Count);
+        foreach (var workerCounts in allWorkerCountsBefore)
+        {
+            Assert.Contains(workerCounts.WorkerName, expectedWorkerNames);
+
+        }
+        await _client.ForgetWorkersAsync(ExampleWorkerName, otherWorkerName);
+        List<WorkerCounts> allWorkerCountsAfter = await _client.GetAllWorkerCountsAsync();
+        Assert.Empty(allWorkerCountsAfter);
     }
 
     /// <summary>

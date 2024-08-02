@@ -329,6 +329,27 @@ public class ReqlessClient : IClient, IDisposable
     }
 
     /// <inheritdoc/>
+    public Task ForgetWorkerAsync(string workerName)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(workerName, nameof(workerName));
+
+        return ForgetWorkersAsync(workerName);
+    }
+
+    /// <inheritdoc/>
+    public async Task ForgetWorkersAsync(params string[] workerNames)
+    {
+        ValidationHelper.ThrowIfAnyNullOrWhitespace(workerNames, nameof(workerNames));
+
+        var arguments = new RedisValue[workerNames.Length + 2];
+        arguments[0] = "worker.forget";
+        arguments[1] = Now();
+        CopyStringArguments(workerNames, ref arguments, 2);
+
+        await _executor.ExecuteAsync(arguments);
+    }
+
+    /// <inheritdoc/>
     public async Task<Dictionary<string, JsonElement>> GetAllConfigsAsync()
     {
         var result = await _executor.ExecuteAsync(["config.getAll", Now()]);

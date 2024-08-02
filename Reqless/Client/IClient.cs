@@ -199,6 +199,20 @@ public interface IClient
     Task ForgetQueuesAsync(params string[] queueNames);
 
     /// <summary>
+    /// Forget the worker with the given name.
+    /// </summary>
+    /// <param name="workerName">The name of the worker that should be removed
+    /// from the set of known worker.</param>
+    Task ForgetWorkerAsync(string workerName);
+
+    /// <summary>
+    /// Forget the workers with the given names.
+    /// </summary>
+    /// <param name="workerNames">The names of workers that should be removed
+    /// from the set of known workers.</param>
+    Task ForgetWorkersAsync(params string[] workerNames);
+
+    /// <summary>
     /// Get all Reqless configuration values.
     /// </summary>
     /// <returns>Zero or more job IDs of completed jobs.</returns>
