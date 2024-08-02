@@ -618,6 +618,36 @@ public class ReqlessClientIntegrationTest
     }
 
     /// <summary>
+    /// <see cref="ReqlessClient.GetAllWorkerCountsAsync"/> returns empty array
+    /// when no workers exist.
+    /// </summary>
+    [Fact]
+    public async Task GetAllWorkerCountsAsync_ReturnsEmptyArrayWhenNoWorkers()
+    {
+        var allWorkerCounts = await _client.GetAllWorkerCountsAsync();
+        Assert.Empty(allWorkerCounts);
+    }
+
+    /// <summary>
+    /// <see cref="ReqlessClient.GetAllWorkerCountsAsync"/> returns expected
+    /// counts when workers exist.
+    /// </summary>
+    [Fact]
+    public async Task GetAllWorkerCountsAsync_ReturnsExpectedCounts()
+    {
+        var jid = await PutJobAsync(
+            _client,
+            queueName: Maybe<string>.Some(ExampleQueueName)
+        );
+        var poppedJid = await _client.PopJobAsync(ExampleQueueName, ExampleWorkerName);
+        var allWorkerCounts = await _client.GetAllWorkerCountsAsync();
+        Assert.Single(allWorkerCounts);
+        Assert.Equal(ExampleWorkerName, allWorkerCounts[0].WorkerName);
+        Assert.Equal(1, allWorkerCounts[0].Jobs);
+        Assert.Equal(0, allWorkerCounts[0].Stalled);
+    }
+
+    /// <summary>
     /// <see cref="ReqlessClient.GetCompletedJobsAsync"/> should return an empty
     /// list when there are no completed jobs.
     /// </summary>

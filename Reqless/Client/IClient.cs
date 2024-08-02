@@ -210,6 +210,12 @@ public interface IClient
     Task<List<QueueCounts>> GetAllQueueCountsAsync();
 
     /// <summary>
+    /// Get the counts of the number of jobs, both expired and unexpired, that
+    /// each worker is responsible for.
+    /// </summary>
+    Task<List<WorkerCounts>> GetAllWorkerCountsAsync();
+
+    /// <summary>
     /// Gets a job by its job ID.
     /// </summary>
     /// <param name="jid">The ID of the job that should be retreived.</param>

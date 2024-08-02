@@ -13,7 +13,7 @@ public class QueueCountsTest
     /// only whitespace.
     /// </summary>
     [Fact]
-    public void Constructor_ThrowsIfNameIsNull()
+    public void Constructor_ThrowsIfNameIsNullOrEmptyOrOnlyWhitespace()
     {
         Scenario.ThrowsWhenParameterIsNullOrEmptyOrWhitespace(
             (invalidName) => new QueueCounts

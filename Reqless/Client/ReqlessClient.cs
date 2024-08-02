@@ -372,6 +372,32 @@ public class ReqlessClient : IClient, IDisposable
     }
 
     /// <inheritdoc/>
+    public async Task<List<WorkerCounts>> GetAllWorkerCountsAsync()
+    {
+        var result = await _executor.ExecuteAsync(["workers.counts", Now()]);
+
+        var countsJson = (string?)result
+            ?? throw new InvalidOperationException(
+                "Server returned unexpected null result."
+            );
+
+        // Redis cjson can't distinguish between an empty array and an empty
+        // object, so an empty object here actually represents an empty array,
+        // and, ergo, no worker counts.
+        if (countsJson == "{}")
+        {
+            return [];
+        }
+
+        var counts = JsonSerializer.Deserialize<List<WorkerCounts>>(countsJson)
+            ?? throw new JsonException(
+                $"Failed to deserialize all worker counts JSON: {countsJson}"
+            );
+
+        return counts;
+    }
+
+    /// <inheritdoc/>
     public async Task<List<string>> GetCompletedJobsAsync(
         int limit = 25,
         int offset = 0
