@@ -350,7 +350,7 @@ public class ReqlessClient : IClient, IDisposable
     }
 
     /// <inheritdoc/>
-    public async Task<Dictionary<string, JsonElement>> GetAllConfigsAsync()
+    public async Task<Dictionary<string, string>> GetAllConfigsAsync()
     {
         var result = await _executor.ExecuteAsync(["config.getAll", Now()]);
 
@@ -359,7 +359,7 @@ public class ReqlessClient : IClient, IDisposable
                 "Server returned unexpected null result."
             );
 
-        var configs = JsonSerializer.Deserialize<Dictionary<string, JsonElement>>(
+        var configs = JsonSerializer.Deserialize<Dictionary<string, string>>(
             configsJson
         ) ?? throw new JsonException($"Failed to deserialize config JSON: {result}");
 

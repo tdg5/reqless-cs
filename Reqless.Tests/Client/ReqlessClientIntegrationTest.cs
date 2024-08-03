@@ -620,14 +620,14 @@ public class ReqlessClientIntegrationTest
     {
         var configs = await _client.GetAllConfigsAsync();
 
-        Assert.Equal("reqless", configs["application"].GetString());
-        Assert.Equal(10, configs["grace-period"].GetInt16());
-        Assert.Equal(60, configs["heartbeat"].GetInt16());
-        Assert.Equal(604800, configs["jobs-history"].GetInt32());
-        Assert.Equal(50000, configs["jobs-history-count"].GetInt32());
-        Assert.Equal(100, configs["max-job-history"].GetInt16());
-        Assert.Equal(1, configs["max-pop-retry"].GetInt16());
-        Assert.Equal(86400, configs["max-worker-age"].GetInt32());
+        Assert.Equal("reqless", configs["application"]);
+        Assert.Equal("10", configs["grace-period"]);
+        Assert.Equal("60", configs["heartbeat"]);
+        Assert.Equal("604800", configs["jobs-history"]);
+        Assert.Equal("50000", configs["jobs-history-count"]);
+        Assert.Equal("100", configs["max-job-history"]);
+        Assert.Equal("1", configs["max-pop-retry"]);
+        Assert.Equal("86400", configs["max-worker-age"]);
     }
 
     /// <summary>

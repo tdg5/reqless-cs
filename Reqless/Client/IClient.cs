@@ -1,4 +1,3 @@
-using System.Text.Json;
 using Reqless.Models;
 
 namespace Reqless.Client;
@@ -216,7 +215,7 @@ public interface IClient
     /// Get all Reqless configuration values.
     /// </summary>
     /// <returns>Zero or more job IDs of completed jobs.</returns>
-    Task<Dictionary<string, JsonElement>> GetAllConfigsAsync();
+    Task<Dictionary<string, string>> GetAllConfigsAsync();
 
     /// <summary>
     /// Get the counts of the number of jobs in various states for all queues.

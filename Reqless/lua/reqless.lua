@@ -1,4 +1,4 @@
--- Current SHA: e7f026b2bb294eb7d0fa0f3ffdb1d0768036d629
+-- Current SHA: c89ea35ba45aee61c5c6baeb10d53fb503287a5e
 -- This is a generated file
 local function cjsonArrayDegenerationWorkaround(array)
   if #array == 0 then
@@ -331,13 +331,13 @@ end
 
 Reqless.config.defaults = {
   ['application']        = 'reqless',
-  ['grace-period']       = 10,
-  ['heartbeat']          = 60,
-  ['jobs-history']       = 604800,
-  ['jobs-history-count'] = 50000,
-  ['max-job-history']    = 100,
-  ['max-pop-retry']      = 1,
-  ['max-worker-age']     = 86400,
+  ['grace-period']       = '10',
+  ['heartbeat']          = '60',
+  ['jobs-history']       = '604800',
+  ['jobs-history-count'] = '50000',
+  ['max-job-history']    = '100',
+  ['max-pop-retry']      = '1',
+  ['max-worker-age']     = '86400',
 }
 
 Reqless.config.get = function(key, default)
@@ -2177,7 +2177,7 @@ ReqlessAPI['config.set'] = function(now, key, value)
 end
 
 ReqlessAPI['config.unset'] = function(now, key)
-  return Reqless.config.unset(key)
+  Reqless.config.unset(key)
 end
 
 ReqlessAPI['failureGroups.counts'] = function(now, start, limit)
