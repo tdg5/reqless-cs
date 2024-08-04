@@ -158,30 +158,10 @@ public interface IClient
     Task<Dictionary<string, int>> FailureGroupsCountsAsync();
 
     /// <summary>
-    /// Gets the IDs of jobs that have completed successfully.
+    /// Forget the config with the given name.
     /// </summary>
-    /// <param name="limit">The maximum number of job IDs to retrieve.</param>
-    /// <param name="offset">The number of job IDs to skip before returning
-    /// results.</param>
-    /// <returns>Zero or more job IDs of completed jobs.</returns>
-    Task<List<string>> GetCompletedJobsAsync(
-        int limit = 25,
-        int offset = 0
-    );
-
-    /// <summary>
-    /// Gets the IDs of jobs that have failed with the given failure group name.
-    /// </summary>
-    /// <param name="groupName">The name of the failure group to retrieve job
-    /// failures for.</param>
-    /// <param name="limit">The maximum number of job IDs to retrieve.</param>
-    /// <param name="offset">The number of job IDs to skip before returning
-    /// results.</param>
-    Task<JidsResult> GetFailedJobsByGroupAsync(
-        string groupName,
-        int limit = 25,
-        int offset = 0
-    );
+    /// <param name="configName">The name of the config that should be forgotten.</param>
+    Task ForgetConfigAsync(string configName);
 
     /// <summary>
     /// Forget the queue with the given name.
@@ -227,6 +207,40 @@ public interface IClient
     /// each worker is responsible for.
     /// </summary>
     Task<List<WorkerCounts>> GetAllWorkerCountsAsync();
+
+    /// <summary>
+    /// Gets the IDs of jobs that have completed successfully.
+    /// </summary>
+    /// <param name="limit">The maximum number of job IDs to retrieve.</param>
+    /// <param name="offset">The number of job IDs to skip before returning
+    /// results.</param>
+    /// <returns>Zero or more job IDs of completed jobs.</returns>
+    Task<List<string>> GetCompletedJobsAsync(
+        int limit = 25,
+        int offset = 0
+    );
+
+    /// <summary>
+    /// Retrieve the value of the config with the given name, if such a config
+    /// is defined.
+    /// </summary>
+    /// <param name="configName"></param>
+    /// <returns></returns>
+    Task<string?> GetConfigAsync(string configName);
+
+    /// <summary>
+    /// Gets the IDs of jobs that have failed with the given failure group name.
+    /// </summary>
+    /// <param name="groupName">The name of the failure group to retrieve job
+    /// failures for.</param>
+    /// <param name="limit">The maximum number of job IDs to retrieve.</param>
+    /// <param name="offset">The number of job IDs to skip before returning
+    /// results.</param>
+    Task<JidsResult> GetFailedJobsByGroupAsync(
+        string groupName,
+        int limit = 25,
+        int offset = 0
+    );
 
     /// <summary>
     /// Gets a job by its job ID.
@@ -610,6 +624,14 @@ public interface IClient
         string message,
         int delay = 0
     );
+
+    /// <summary>
+    /// Set the config with the given name to the given value.
+    /// </summary>
+    /// <param name="configName">The name that should be used to store the config.</param>
+    /// <param name="value">The value that should be stored.</param>
+    /// <returns></returns>
+    Task SetConfigAsync(string configName, string value);
 
     /// <summary>
     /// Update the priority of the given job.

@@ -304,6 +304,18 @@ public class ReqlessClient : IClient, IDisposable
     }
 
     /// <inheritdoc/>
+    public async Task ForgetConfigAsync(string configName)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(configName, nameof(configName));
+
+        await _executor.ExecuteAsync([
+            "config.unset",
+            Now(),
+            configName,
+        ]);
+    }
+
+    /// <inheritdoc/>
     public async Task ForgetQueueAsync(string queueName)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(queueName, nameof(queueName));
@@ -432,6 +444,20 @@ public class ReqlessClient : IClient, IDisposable
         ]);
 
         return ValidateJidsResult(result);
+    }
+
+    /// <inheritdoc/>
+    public async Task<string?> GetConfigAsync(string configName)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(configName, nameof(configName));
+
+        var result = await _executor.ExecuteAsync([
+            "config.get",
+            Now(),
+            configName,
+        ]);
+
+        return (string?)result;
     }
 
     /// <inheritdoc/>
@@ -1082,6 +1108,20 @@ public class ReqlessClient : IClient, IDisposable
             );
 
         return remainingRetries > 0;
+    }
+
+    /// <inheritdoc/>
+    public async Task SetConfigAsync(string configName, string value)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(configName, nameof(configName));
+        ArgumentException.ThrowIfNullOrWhiteSpace(value, nameof(value));
+
+        await _executor.ExecuteAsync([
+            "config.set",
+            Now(),
+            configName,
+            value,
+        ]);
     }
 
     /// <inheritdoc/>

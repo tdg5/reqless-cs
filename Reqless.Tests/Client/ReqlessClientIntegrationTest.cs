@@ -531,6 +531,23 @@ public class ReqlessClientIntegrationTest
     }
 
     /// <summary>
+    /// <see cref="ReqlessClient.ForgetConfigAsync"/> should cause the named
+    /// config to be removed from the set of known configs.
+    /// </summary>
+    [Fact]
+    public async Task ForgetConfigAsync_CausesTheNamedConfigToBeForgotten()
+    {
+        var configName = "example-config";
+        var configValue = "example-value";
+        await _client.SetConfigAsync(configName, configValue);
+        string? retrievedValue = await _client.GetConfigAsync(configName);
+        Assert.Equal(configValue, retrievedValue);
+        await _client.ForgetConfigAsync(configName);
+        retrievedValue = await _client.GetConfigAsync(configName);
+        Assert.Null(retrievedValue);
+    }
+
+    /// <summary>
     /// <see cref="ReqlessClient.ForgetQueueAsync"/> should cause the named
     /// queue to be removed from the set of known queues.
     /// </summary>
@@ -722,6 +739,23 @@ public class ReqlessClientIntegrationTest
         Assert.True(completedSuccessfully);
         var jobs = await _client.GetCompletedJobsAsync();
         Assert.Equivalent(new string[] { jid }, jobs);
+    }
+
+    /// <summary>
+    /// <see cref="ReqlessClient.GetConfigAsync"/> should retrieve the named
+    /// config, if it exists.
+    /// </summary>
+    [Fact]
+    public async Task GetConfigAsync_RetrievesTheConfigValue()
+    {
+        var configName = "example-config";
+        var configValue = "example-value";
+        await _client.SetConfigAsync(configName, configValue);
+        string? retrievedValue = await _client.GetConfigAsync(configName);
+        Assert.Equal(configValue, retrievedValue);
+        await _client.ForgetConfigAsync(configName);
+        retrievedValue = await _client.GetConfigAsync(configName);
+        Assert.Null(retrievedValue);
     }
 
     /// <summary>
@@ -1869,6 +1903,22 @@ public class ReqlessClientIntegrationTest
         Assert.Equal(ExampleWorkerName, failedJob.Failure.WorkerName);
         Assert.Equal(ExampleGroupName, failedJob.Failure.Group);
         Assert.Equal(ExampleMessage, failedJob.Failure.Message);
+    }
+
+    /// <summary>
+    /// <see cref="ReqlessClient.SetConfigAsync"/> should set the named
+    /// config.
+    /// </summary>
+    [Fact]
+    public async Task SetConfigAsync_SetsTheConfigValue()
+    {
+        var configName = "example-config";
+        var configValue = "example-value";
+        string? retrievedValue = await _client.GetConfigAsync(configName);
+        Assert.Null(retrievedValue);
+        await _client.SetConfigAsync(configName, configValue);
+        retrievedValue = await _client.GetConfigAsync(configName);
+        Assert.Equal(configValue, retrievedValue);
     }
 
     /// <summary>
