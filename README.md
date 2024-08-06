@@ -7,7 +7,7 @@
 remote dictionary servers (like `redis` and `valkey`) inspired by
 [resque](https://github.com/defunkt/resque#readme), but built on a collection
 of Lua scripts, maintained in the
-[qless-core](https://github.com/tdg5/qless-core) repo.
+[reqless-core](https://github.com/tdg5/reqless-core) repo.
 
 ## Philosophy and Nomenclature
 
@@ -73,12 +73,12 @@ Install with NuGet:
 ```
 
 Alternatively, install reqless-cs from source by checking it out from github,
-and checking out the qless-core submodule:
+and checking out the reqless-core submodule:
 
 ```bash
 git clone git://github.com/tdg5/reqless-cs.git
 cd reqless-cs
-# qless-core is a submodule
+# reqless-core is a submodule
 git submodule init
 git submodule update
 # TODO
@@ -336,9 +336,9 @@ Frankly, these are best viewed using the web app.
 
 `qless` is a set of client language bindings, but the majority of the work is
 done in a collection of Lua scripts that comprise the
-[core](https://github.com/tdg5/qless-core) functionality. These scripts run
+[core](https://github.com/tdg5/reqless-core) functionality. These scripts run
 on `redis` and `valkey` 7.0+ server atomically and allow for portability with
-the same functionality guarantees. Consult the documentation for `qless-core`
+the same functionality guarantees. Consult the documentation for `reqless-core`
 to learn more about its internals.
 
 ### Web App

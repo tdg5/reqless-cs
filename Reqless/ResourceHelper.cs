@@ -3,7 +3,7 @@ using System.Reflection;
 namespace Reqless;
 
 /// <summary>
-/// Helper class for reading embedded resources, in particular the qless-core
+/// Helper class for reading embedded resources, in particular the reqless-core
 /// lua scripts.
 /// </summary>
 public static class ResourceHelper

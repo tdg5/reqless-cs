@@ -1,4 +1,4 @@
--- Current SHA: c89ea35ba45aee61c5c6baeb10d53fb503287a5e
+-- Current SHA: 8d94a2622af697a4df4837de2d2e67c0cb1629b2
 -- This is a generated file
 local function cjsonArrayDegenerationWorkaround(array)
   if #array == 0 then
@@ -2162,10 +2162,8 @@ end
 local ReqlessAPI = {}
 
 ReqlessAPI['config.get'] = function(now, key)
-  if key then
-    return Reqless.config.get(key)
-  end
-  return ReqlessAPI['config.getAll'](now)
+  assert(key, "config.get(): Argument 'key' missing")
+  return Reqless.config.get(key)
 end
 
 ReqlessAPI['config.getAll'] = function(now)

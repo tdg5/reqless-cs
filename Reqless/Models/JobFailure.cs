@@ -3,7 +3,7 @@ using System.Text.Json.Serialization;
 namespace Reqless.Models;
 
 /// <summary>
-/// Data class representing a job failure, as defined by qless-core.
+/// Data class representing a job failure, as defined by reqless-core.
 /// </summary>
 public class JobFailure
 {
