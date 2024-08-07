@@ -31,7 +31,7 @@ public class InternalsTest : BaseReqlessClientTest
         /// Initializes a new instance of the <see cref="RevealingReqlessClient"/>
         /// class using the given executor instance.
         /// </summary>
-        public RevealingReqlessClient() : base()
+        public RevealingReqlessClient() : base(true)
         {
         }
 

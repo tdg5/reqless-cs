@@ -23,11 +23,27 @@ public class ReqlessClient : IClient, IDisposable
     /// Initializes a new instance of the <see cref="ReqlessClient"/> class. This
     /// constructor is for testing purposes only.
     /// </summary>
-    protected ReqlessClient()
+    protected ReqlessClient(bool _)
     {
         // Forgive null here to silence warning about uninitialized field.
         _executor = null!;
         _responsibleForExecutor = false;
+    }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ReqlessClient"/> class with
+    /// default connection string "localhost:6379".
+    /// </summary>
+    public ReqlessClient() : this("localhost:6379")
+    {
+    }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ReqlessClient"/> class from
+    /// an existing <see cref="IConnectionMultiplexer"/> instance.
+    /// </summary>
+    public ReqlessClient(IConnectionMultiplexer connection) : this(new RedisExecutor(connection))
+    {
     }
 
     /// <summary>

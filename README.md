@@ -113,7 +113,17 @@ Great! With all this in place, let's put them in the queue so that they can
 get run
 
 ```csharp
-// TODO
+using Reqless.Client;
+
+# Connecting to localhost:6379.
+ReqlessClient defaultClient = new();
+
+# Connecting to a remote host.
+ReqlessClient remoteClient = new("foo.bar.com:1234");
+
+# Connect using an existing StackExchange.Redis.ConnectionMultiplexer.
+var existingConnection = ConnectionMultiplexer.Connect("localhost:6379");
+ReqlessClient clientFromExistingConnection = new(existingConnection);
 ```
 
 Now, reference a queue, and start putting your gnomes to work:

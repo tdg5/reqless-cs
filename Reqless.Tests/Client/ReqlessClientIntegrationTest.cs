@@ -24,7 +24,7 @@ public class ReqlessClientIntegrationTest
     public ReqlessClientIntegrationTest()
     {
         _connection.GetServers().First().FlushDatabase();
-        _client = new ReqlessClient(new RedisExecutor(_connection));
+        _client = new ReqlessClient(_connection);
     }
 
     private static readonly string ExampleClassName = "example-class-name";
@@ -44,6 +44,19 @@ public class ReqlessClientIntegrationTest
     private static readonly string ExampleWorkerName = "example-worker-name";
 
     /// <summary>
+    /// The constructor form that takes no value should create
+    /// a client using a default connection string successfully.
+    /// </summary>
+    [Fact]
+    public async Task Constructor_NoArgument_CreatesClientWithDefaultConnectionString()
+    {
+        using var subject = new ReqlessClient();
+        Assert.NotNull(subject);
+        var noSuchJob = await subject.GetJobAsync("no-such-jid");
+        Assert.Null(noSuchJob);
+    }
+
+    /// <summary>
     /// The constructor form that takes a redis connection string should create
     /// a client successfully.
     /// </summary>
@@ -54,6 +67,38 @@ public class ReqlessClientIntegrationTest
         Assert.NotNull(subject);
         var noSuchJob = await subject.GetJobAsync("no-such-jid");
         Assert.Null(noSuchJob);
+    }
+
+    /// <summary>
+    /// The constructor form that takes a <see cref="IConnectionMultiplexer"/>
+    /// should create a client successfully.
+    /// </summary>
+    [Fact]
+    public async Task Constructor_IConnectionMultiplexer_CreatesClient()
+    {
+        using var subject = new ReqlessClient(_connection);
+        {
+            Assert.NotNull(subject);
+            var noSuchJob = await subject.GetJobAsync("no-such-jid");
+            Assert.Null(noSuchJob);
+        }
+        Assert.True(_connection.IsConnected);
+    }
+
+    /// <summary>
+    /// The constructor form that takes a <see cref="RedisExecutor"/>
+    /// should create a client successfully.
+    /// </summary>
+    [Fact]
+    public async Task Constructor_RedisExecutor_CreatesClient()
+    {
+        using var subject = new ReqlessClient(new RedisExecutor(_connection));
+        {
+            Assert.NotNull(subject);
+            var noSuchJob = await subject.GetJobAsync("no-such-jid");
+            Assert.Null(noSuchJob);
+        }
+        Assert.True(_connection.IsConnected);
     }
 
     /// <summary>
