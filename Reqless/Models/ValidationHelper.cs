@@ -40,7 +40,7 @@ public static class ValidationHelper
     /// null.</exception>
     /// <exception cref="ArgumentException">If any of the values in the array
     /// are null, empty, or only whitespace.</exception>
-    public static void ThrowIfAnyNullOrWhitespace(string[] values, string paramName)
+    public static void ThrowIfAnyNullOrWhitespace(IEnumerable<string> values, string paramName)
     {
         ArgumentNullException.ThrowIfNull(values, paramName);
 

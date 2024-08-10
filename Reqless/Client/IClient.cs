@@ -203,6 +203,14 @@ public interface IClient
     Task<List<QueueCounts>> GetAllQueueCountsAsync();
 
     /// <summary>
+    /// Get all dynamic queue identifier patterns.
+    /// </summary>
+    /// <returns>A dictionary where each key is a queue identifier and each
+    /// value is a list of queues and patterns that map to that
+    /// identifier.</returns>
+    Task<Dictionary<string, List<string>>> GetAllQueueIdentifierPatternsAsync();
+
+    /// <summary>
     /// Get the counts of the number of jobs, both expired and unexpired, that
     /// each worker is responsible for.
     /// </summary>

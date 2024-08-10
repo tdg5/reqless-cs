@@ -609,6 +609,21 @@ public class ReqlessClientIntegrationTest
     }
 
     /// <summary>
+    /// <see cref="ReqlessClient.GetAllQueueIdentifierPatternsAsync"/> should be
+    /// able to fetch the default patterns.
+    /// </summary>
+    [Fact]
+    public async Task GetAllQueueIdentifierPatternsAsync_GetsDefaultPatterns()
+    {
+        var queueIdentifiers = await _client.GetAllQueueIdentifierPatternsAsync();
+        Assert.Single(queueIdentifiers);
+        Assert.Contains("default", queueIdentifiers);
+        var identifiers = queueIdentifiers["default"];
+        Assert.Single(identifiers);
+        Assert.Equal("*", identifiers[0]);
+    }
+
+    /// <summary>
     /// <see cref="ReqlessClient.ForgetQueuesAsync"/> should cause the named
     /// queues to be removed from the set of known queues.
     /// </summary>

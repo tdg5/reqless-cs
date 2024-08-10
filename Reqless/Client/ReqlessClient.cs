@@ -421,6 +421,48 @@ public class ReqlessClient : IClient, IDisposable
     }
 
     /// <inheritdoc/>
+    public async Task<Dictionary<string, List<string>>> GetAllQueueIdentifierPatternsAsync()
+    {
+        var result = await _executor.ExecuteAsync(
+            "queueIdentifierPatterns.getAll",
+            Now()
+        );
+
+        var identifiersJson = (string?)result
+            ?? throw new InvalidOperationException(
+                "Server returned unexpected null result."
+            );
+
+        var identifiersWithSerializedValues = (
+            JsonSerializer.Deserialize<Dictionary<string, string>>(
+                identifiersJson
+            ) ?? throw new JsonException(
+                $"Failed to deserialize all queue identifiers JSON: {identifiersJson}"
+            )
+        );
+
+        var identifierMapping = new Dictionary<string, List<string>>();
+        foreach (var (key, value) in identifiersWithSerializedValues)
+        {
+            var identifierValues = JsonSerializer.Deserialize<List<string>>(value)
+                ?? throw new JsonException(
+                    $"Failed to deserialize queue identifiers JSON: {value}"
+                );
+
+            if (identifierValues.Count > 0)
+            {
+                ValidationHelper.ThrowIfAnyNullOrWhitespace(
+                    identifierValues,
+                    nameof(identifierValues)
+                );
+                identifierMapping[key] = identifierValues;
+            }
+        }
+
+        return identifierMapping;
+    }
+
+    /// <inheritdoc/>
     public async Task<List<WorkerCounts>> GetAllWorkerCountsAsync()
     {
         var result = await _executor.ExecuteAsync(["workers.counts", Now()]);
