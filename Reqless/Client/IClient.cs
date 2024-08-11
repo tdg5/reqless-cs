@@ -634,6 +634,16 @@ public interface IClient
     );
 
     /// <summary>
+    /// Set all dynamic queue identifier patterns.
+    /// </summary>
+    /// <param name="identifierPatterns">A dictionary where each key is a queue
+    /// identifier and each value is a list of queues and patterns that should
+    /// map to that identifier.</param>
+    Task SetAllQueueIdentifierPatternsAsync(
+        Dictionary<string, IEnumerable<string>> identifierPatterns
+    );
+
+    /// <summary>
     /// Set the config with the given name to the given value.
     /// </summary>
     /// <param name="configName">The name that should be used to store the config.</param>

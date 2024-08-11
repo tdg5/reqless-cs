@@ -61,7 +61,7 @@ public class GetAllQueueIdentifierPatternsTest : BaseReqlessClientTest
             )
         );
         Assert.Equal(
-            "Failed to deserialize queue identifiers JSON: null",
+            "Failed to deserialize queue identifier patterns JSON: null",
             exception.Message
         );
     }

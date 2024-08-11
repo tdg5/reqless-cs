@@ -624,6 +624,23 @@ public class ReqlessClientIntegrationTest
     }
 
     /// <summary>
+    /// <see cref="ReqlessClient.GetAllQueueIdentifierPatternsAsync"/> should be
+    /// able to fetch the default patterns.
+    /// </summary>
+    [Fact]
+    public async Task GetAllQueueIdentifierPatternsAsync_GetsCustomPatterns()
+    {
+        Dictionary<string, IEnumerable<string>> expectedQueueIdentifiers = new()
+        {
+            ["default"] = ["*", "other"],
+            ["something"] = ["something"],
+        };
+        await _client.SetAllQueueIdentifierPatternsAsync(expectedQueueIdentifiers);
+        var queueIdentifiers = await _client.GetAllQueueIdentifierPatternsAsync();
+        Assert.Equivalent(expectedQueueIdentifiers, queueIdentifiers);
+    }
+
+    /// <summary>
     /// <see cref="ReqlessClient.ForgetQueuesAsync"/> should cause the named
     /// queues to be removed from the set of known queues.
     /// </summary>
@@ -1963,6 +1980,30 @@ public class ReqlessClientIntegrationTest
         Assert.Equal(ExampleWorkerName, failedJob.Failure.WorkerName);
         Assert.Equal(ExampleGroupName, failedJob.Failure.Group);
         Assert.Equal(ExampleMessage, failedJob.Failure.Message);
+    }
+
+    /// <summary>
+    /// <see cref="ReqlessClient.SetAllQueueIdentifierPatternsAsync"/> should be
+    /// able to set identifier patterns.
+    /// </summary>
+    [Fact]
+    public async Task SetAllQueueIdentifierPatternsAsync_CanSetIdentifierPatterns()
+    {
+        Dictionary<string, IEnumerable<string>> defaultQueueIdentifiers = new()
+        {
+            ["default"] = ["*"],
+        };
+        var queueIdentifiers = await _client.GetAllQueueIdentifierPatternsAsync();
+        Assert.Equivalent(defaultQueueIdentifiers, queueIdentifiers);
+
+        Dictionary<string, IEnumerable<string>> expectedQueueIdentifiers = new()
+        {
+            ["default"] = ["*", "other"],
+            ["something"] = ["something"],
+        };
+        await _client.SetAllQueueIdentifierPatternsAsync(expectedQueueIdentifiers);
+        queueIdentifiers = await _client.GetAllQueueIdentifierPatternsAsync();
+        Assert.Equivalent(expectedQueueIdentifiers, queueIdentifiers);
     }
 
     /// <summary>

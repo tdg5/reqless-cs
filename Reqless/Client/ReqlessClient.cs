@@ -446,7 +446,7 @@ public class ReqlessClient : IClient, IDisposable
         {
             var identifierValues = JsonSerializer.Deserialize<List<string>>(value)
                 ?? throw new JsonException(
-                    $"Failed to deserialize queue identifiers JSON: {value}"
+                    $"Failed to deserialize queue identifier patterns JSON: {value}"
                 );
 
             if (identifierValues.Count > 0)
@@ -1166,6 +1166,40 @@ public class ReqlessClient : IClient, IDisposable
             );
 
         return remainingRetries > 0;
+    }
+
+    /// <inheritdoc/>
+    public async Task SetAllQueueIdentifierPatternsAsync(
+        Dictionary<string, IEnumerable<string>> identifierPatterns
+    )
+    {
+        ArgumentNullException.ThrowIfNull(identifierPatterns, nameof(identifierPatterns));
+        int argumentCount = 2;
+        foreach (var (key, value) in identifierPatterns)
+        {
+            ArgumentException.ThrowIfNullOrWhiteSpace(key, $"{nameof(identifierPatterns)}.key");
+            ValidationHelper.ThrowIfAnyNullOrWhitespace(value, $"{nameof(identifierPatterns)}.value");
+            if (value.Any())
+            {
+                argumentCount += 2;
+            }
+        }
+        var arguments = new RedisValue[argumentCount];
+        arguments[0] = "queueIdentifierPatterns.setAll";
+        arguments[1] = Now();
+        int index = 2;
+        foreach (var (key, value) in identifierPatterns)
+        {
+            if (!value.Any())
+            {
+                continue;
+            }
+            arguments[index] = key;
+            arguments[index + 1] = JsonSerializer.Serialize(value);
+            index += 2;
+        }
+
+        await _executor.ExecuteAsync(arguments);
     }
 
     /// <inheritdoc/>
