@@ -15,7 +15,7 @@ public class TimedOutEventTest
     [Fact]
     public void Constructor_When_ThrowsWhenNegative()
     {
-        Scenario.ThrowsWhenParameterIsNegative(
+        Scenario.ThrowsWhenArgumentIsNegative(
             (long invalidWhen) => new TimedOutEvent(invalidWhen),
             "when"
         );

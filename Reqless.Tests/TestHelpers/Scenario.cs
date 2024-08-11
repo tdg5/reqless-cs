@@ -12,7 +12,7 @@ public static class Scenario
     /// <param name="action">An action that should be used to cause an exception
     /// to be thrown.</param>
     /// <param name="parameterName">The name of the parameter under test.</param>
-    public static void ThrowsArgumentNullException(
+    public static void ThrowsWhenArgumentIsNull(
         Action action,
         string parameterName
     )
@@ -35,7 +35,7 @@ public static class Scenario
     /// thrown.</param>
     /// <param name="parameterName">The name of the parameter under
     /// test.</param>
-    public static async Task ThrowsArgumentNullExceptionAsync(
+    public static async Task ThrowsWhenArgumentIsNullAsync(
         Func<Task> action,
         string parameterName
     )
@@ -57,7 +57,7 @@ public static class Scenario
     /// <param name="action">An action taking a nullable string value that
     /// should be used to cause an exception to be thrown.</param>
     /// <param name="parameterName">The name of the parameter under test.</param>
-    public static void ThrowsWhenParameterIsEmptyOrWhitespace(
+    public static void ThrowsWhenArgumentIsEmptyOrWhitespace(
         Action<string> action,
         string parameterName
     )
@@ -84,7 +84,7 @@ public static class Scenario
     /// <param name="action">An action taking a nullable string value that
     /// should be used to cause an exception to be thrown.</param>
     /// <param name="parameterName">The name of the parameter under test.</param>
-    public static async Task ThrowsWhenParameterIsEmptyOrWhitespaceAsync(
+    public static async Task ThrowsWhenArgumentIsEmptyOrWhitespaceAsync(
         Func<string, Task> action,
         string parameterName
     )
@@ -111,13 +111,13 @@ public static class Scenario
     /// <param name="action">An action taking a nullable string value that
     /// should be used to cause an exception to be thrown.</param>
     /// <param name="parameterName">The name of the parameter under test.</param>
-    public static void ThrowsWhenParameterIsNullOrEmptyOrWhitespace(
+    public static void ThrowsWhenArgumentIsNullOrEmptyOrWhitespace(
         Action<string?> action,
         string parameterName
     )
     {
-        ThrowsArgumentNullException(() => action(null!), parameterName);
-        ThrowsWhenParameterIsEmptyOrWhitespace(action, parameterName);
+        ThrowsWhenArgumentIsNull(() => action(null!), parameterName);
+        ThrowsWhenArgumentIsEmptyOrWhitespace(action, parameterName);
     }
 
     /// <summary>
@@ -129,13 +129,13 @@ public static class Scenario
     /// <param name="action">An action taking a nullable string value that
     /// should be used to cause an exception to be thrown.</param>
     /// <param name="parameterName">The name of the parameter under test.</param>
-    public static async Task ThrowsWhenParameterIsNullOrEmptyOrWhitespaceAsync(
+    public static async Task ThrowsWhenArgumentIsNullOrEmptyOrWhitespaceAsync(
         Func<string?, Task> action,
         string parameterName
     )
     {
-        await ThrowsArgumentNullExceptionAsync(() => action(null!), parameterName);
-        await ThrowsWhenParameterIsEmptyOrWhitespaceAsync(action, parameterName);
+        await ThrowsWhenArgumentIsNullAsync(() => action(null!), parameterName);
+        await ThrowsWhenArgumentIsEmptyOrWhitespaceAsync(action, parameterName);
     }
 
     /// <summary>
@@ -145,15 +145,15 @@ public static class Scenario
     /// <param name="action">An action taking a nullable string value that
     /// should be used to cause the appropriate exception to be thrown.</param>
     /// <param name="parameterName">The name of the parameter under test.</param>
-    public static void ThrowsWhenParameterItemIsNullOrEmptyOrWhitespace(
+    public static void ThrowsWhenArgumentElementIsNullOrEmptyOrWhitespace(
         Action<string?> action,
         string parameterName
     )
     {
-        foreach (var invalidItem in TestConstants.EmptyStringsWithNull)
+        foreach (var invalidElement in TestConstants.EmptyStringsWithNull)
         {
             var argumentException = Assert.Throws<ArgumentException>(
-                () => action(invalidItem)
+                () => action(invalidElement)
             );
             Assert.Equal(
                 $"Value cannot include null, empty string, or strings composed entirely of whitespace. (Parameter '{parameterName}')",
@@ -170,15 +170,15 @@ public static class Scenario
     /// <param name="action">An action taking a nullable string value that
     /// should be used to cause the appropriate exception to be thrown.</param>
     /// <param name="parameterName">The name of the parameter under test.</param>
-    public static async Task ThrowsWhenParameterItemIsNullOrEmptyOrWhitespaceAsync(
+    public static async Task ThrowsWhenArgumentElementIsNullOrEmptyOrWhitespaceAsync(
         Func<string?, Task> action,
         string parameterName
     )
     {
-        foreach (var invalidItem in TestConstants.EmptyStringsWithNull)
+        foreach (var invalidElement in TestConstants.EmptyStringsWithNull)
         {
             var argumentException = await Assert.ThrowsAsync<ArgumentException>(
-                () => action(invalidItem)
+                () => action(invalidElement)
             );
             Assert.Equal(
                 $"Value cannot include null, empty string, or strings composed entirely of whitespace. (Parameter '{parameterName}')",
@@ -195,7 +195,7 @@ public static class Scenario
     /// <param name="action">An action taking a int value that should be used to
     /// cause the appropriate exception to be thrown.</param>
     /// <param name="parameterName">The name of the parameter under test.</param>
-    public static void ThrowsWhenParameterIsNegative(
+    public static void ThrowsWhenArgumentIsNegative(
         Action<int> action,
         string parameterName
     )
@@ -221,7 +221,7 @@ public static class Scenario
     /// <param name="action">An action taking a int value that should be used to
     /// cause the appropriate exception to be thrown.</param>
     /// <param name="parameterName">The name of the parameter under test.</param>
-    public static async Task ThrowsWhenParameterIsNegativeAsync(
+    public static async Task ThrowsWhenArgumentIsNegativeAsync(
         Func<int, Task> action,
         string parameterName
     )
@@ -247,7 +247,7 @@ public static class Scenario
     /// <param name="action">An action taking a long value that should be used to
     /// cause the appropriate exception to be thrown.</param>
     /// <param name="parameterName">The name of the parameter under test.</param>
-    public static void ThrowsWhenParameterIsNegative(
+    public static void ThrowsWhenArgumentIsNegative(
         Action<long> action,
         string parameterName
     )
@@ -273,7 +273,7 @@ public static class Scenario
     /// <param name="action">An action taking a long value that should be used to
     /// cause the appropriate exception to be thrown.</param>
     /// <param name="parameterName">The name of the parameter under test.</param>
-    public static async Task ThrowsWhenParameterIsNegativeAsync(
+    public static async Task ThrowsWhenArgumentIsNegativeAsync(
         Func<long, Task> action,
         string parameterName
     )
@@ -299,7 +299,7 @@ public static class Scenario
     /// <param name="action">An action taking a int value that should be used to
     /// cause the appropriate exception to be thrown.</param>
     /// <param name="parameterName">The name of the parameter under test.</param>
-    public static void ThrowsWhenParameterIsNotPositive(
+    public static void ThrowsWhenArgumentIsNotPositive(
         Action<int> action,
         string parameterName
     )
@@ -325,7 +325,7 @@ public static class Scenario
     /// <param name="action">An action taking a int value that should be used to
     /// cause the appropriate exception to be thrown.</param>
     /// <param name="parameterName">The name of the parameter under test.</param>
-    public static async Task ThrowsWhenParameterIsNotPositiveAsync(
+    public static async Task ThrowsWhenArgumentIsNotPositiveAsync(
         Func<int, Task> action,
         string parameterName
     )
@@ -351,7 +351,7 @@ public static class Scenario
     /// <param name="action">An action taking a long value that should be used to
     /// cause the appropriate exception to be thrown.</param>
     /// <param name="parameterName">The name of the parameter under test.</param>
-    public static void ThrowsWhenParameterIsNotPositive(
+    public static void ThrowsWhenArgumentIsNotPositive(
         Action<long> action,
         string parameterName
     )
@@ -377,7 +377,7 @@ public static class Scenario
     /// <param name="action">An action taking a long value that should be used to
     /// cause the appropriate exception to be thrown.</param>
     /// <param name="parameterName">The name of the parameter under test.</param>
-    public static async Task ThrowsWhenParameterIsNotPositiveAsync(
+    public static async Task ThrowsWhenArgumentIsNotPositiveAsync(
         Func<long, Task> action,
         string parameterName
     )

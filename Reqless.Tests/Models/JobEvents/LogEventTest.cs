@@ -16,7 +16,7 @@ public class LogEventTest
     [Fact]
     public void Constructor_When_ThrowsIfNegative()
     {
-        Scenario.ThrowsWhenParameterIsNegative(
+        Scenario.ThrowsWhenArgumentIsNegative(
             (long invalidWhen) => new LogEvent("what", invalidWhen),
             "when"
         );
@@ -29,7 +29,7 @@ public class LogEventTest
     [Fact]
     public void Constructor_What_ThrowsIfNullOrEmptyOrOnlyWhitespace()
     {
-        Scenario.ThrowsWhenParameterIsNullOrEmptyOrWhitespace(
+        Scenario.ThrowsWhenArgumentIsNullOrEmptyOrWhitespace(
             (invalidWhat) => new LogEvent(invalidWhat!, 123),
             "what"
         );

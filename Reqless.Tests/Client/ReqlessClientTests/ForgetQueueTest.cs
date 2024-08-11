@@ -15,7 +15,7 @@ public class ForgetQueueTest : BaseReqlessClientTest
     [Fact]
     public async Task ThrowsIfQueueNameIsNullOrEmptyOrOnlyWhitespace()
     {
-        await Scenario.ThrowsWhenParameterIsNullOrEmptyOrWhitespaceAsync(
+        await Scenario.ThrowsWhenArgumentIsNullOrEmptyOrWhitespaceAsync(
             (invalidQueueName) => WithClientWithExecutorMockForExpectedArguments(
                 subject => subject.ForgetQueueAsync(invalidQueueName!)
             ),

@@ -15,7 +15,7 @@ public class SetConfigTest : BaseReqlessClientTest
     [Fact]
     public async Task ThrowsIfConfigNameIsNullOrEmptyOrOnlyWhitespace()
     {
-        await Scenario.ThrowsWhenParameterIsNullOrEmptyOrWhitespaceAsync(
+        await Scenario.ThrowsWhenArgumentIsNullOrEmptyOrWhitespaceAsync(
             (invalidConfigName) => WithClientWithExecutorMockForExpectedArguments(
                 subject => subject.SetConfigAsync(
                     configName: invalidConfigName!,
@@ -33,7 +33,7 @@ public class SetConfigTest : BaseReqlessClientTest
     [Fact]
     public async Task ThrowsIfValueIsNullOrEmptyOrOnlyWhitespace()
     {
-        await Scenario.ThrowsWhenParameterIsNullOrEmptyOrWhitespaceAsync(
+        await Scenario.ThrowsWhenArgumentIsNullOrEmptyOrWhitespaceAsync(
             (invalidValue) => WithClientWithExecutorMockForExpectedArguments(
                 subject => subject.SetConfigAsync(
                     configName: "config-name",

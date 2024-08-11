@@ -36,7 +36,7 @@ public class ReleaseThrottleForJobsTest : BaseReqlessClientTest
     [Fact]
     public async Task ThrowsIfJidsIsNull()
     {
-        await Scenario.ThrowsArgumentNullExceptionAsync(
+        await Scenario.ThrowsWhenArgumentIsNullAsync(
             () => WithClientWithExecutorMockForExpectedArguments(
                 subject => subject.ReleaseThrottleForJobsAsync(
                     ExampleThrottleName,
@@ -54,7 +54,7 @@ public class ReleaseThrottleForJobsTest : BaseReqlessClientTest
     [Fact]
     public async Task ThrowsIfAnyOfTheJidsAreNullOrEmptyOrOnlyWhitespace()
     {
-        await Scenario.ThrowsWhenParameterItemIsNullOrEmptyOrWhitespaceAsync(
+        await Scenario.ThrowsWhenArgumentElementIsNullOrEmptyOrWhitespaceAsync(
             (invalidJid) => WithClientWithExecutorMockForExpectedArguments(
                 subject => subject.ReleaseThrottleForJobsAsync(
                     ExampleThrottleName,

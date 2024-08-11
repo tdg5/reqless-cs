@@ -16,7 +16,7 @@ public class TrackedJobsResultTest
     [Fact]
     public void Constructor_Jobs_ThrowsWhenNull()
     {
-        Scenario.ThrowsArgumentNullException(
+        Scenario.ThrowsWhenArgumentIsNull(
             () => new TrackedJobsResult(expiredJids: [], jobs: null!),
             "jobs"
         );
@@ -43,7 +43,7 @@ public class TrackedJobsResultTest
     [Fact]
     public void Constructor_ThrowsWhenExpiredJidsIsNull()
     {
-        Scenario.ThrowsArgumentNullException(
+        Scenario.ThrowsWhenArgumentIsNull(
             () => new TrackedJobsResult(expiredJids: null!, jobs: []),
             "expiredJids"
         );
@@ -56,7 +56,7 @@ public class TrackedJobsResultTest
     [Fact]
     public void Constructor_ThrowsWhenExpiredJidsIncludesNullEmptyOrOnlyWhitespaceValue()
     {
-        Scenario.ThrowsWhenParameterItemIsNullOrEmptyOrWhitespace(
+        Scenario.ThrowsWhenArgumentElementIsNullOrEmptyOrWhitespace(
             (invalidJid) => new TrackedJobsResult(
                 expiredJids: [invalidJid!],
                 jobs: []

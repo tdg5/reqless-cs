@@ -15,7 +15,7 @@ public class FailJobTest : BaseReqlessClientTest
     [Fact]
     public async Task ThrowsIfDataIsEmptyOrWhitespace()
     {
-        await Scenario.ThrowsWhenParameterIsEmptyOrWhitespaceAsync(
+        await Scenario.ThrowsWhenArgumentIsEmptyOrWhitespaceAsync(
             (invalidData) => WithClientWithExecutorMockForExpectedArguments(
                 subject => subject.FailJobAsync(
                     data: invalidData!,
@@ -36,7 +36,7 @@ public class FailJobTest : BaseReqlessClientTest
     [Fact]
     public async Task ThrowsIfJidIsNullOrEmptyOrWhitespace()
     {
-        await Scenario.ThrowsWhenParameterIsNullOrEmptyOrWhitespaceAsync(
+        await Scenario.ThrowsWhenArgumentIsNullOrEmptyOrWhitespaceAsync(
             (invalidJid) => WithClientWithExecutorMockForExpectedArguments(
                 subject => subject.FailJobAsync(
                     data: ExampleData!,
@@ -57,7 +57,7 @@ public class FailJobTest : BaseReqlessClientTest
     [Fact]
     public async Task ThrowsIfGroupNameIsNullOrEmptyOrWhitespace()
     {
-        await Scenario.ThrowsWhenParameterIsNullOrEmptyOrWhitespaceAsync(
+        await Scenario.ThrowsWhenArgumentIsNullOrEmptyOrWhitespaceAsync(
             (invalidGroupName) => WithClientWithExecutorMockForExpectedArguments(
                 subject => subject.FailJobAsync(
                     data: ExampleData!,
@@ -78,7 +78,7 @@ public class FailJobTest : BaseReqlessClientTest
     [Fact]
     public async Task ThrowsIfMessageIsNullOrEmptyOrOnlyWhitespace()
     {
-        await Scenario.ThrowsWhenParameterIsNullOrEmptyOrWhitespaceAsync(
+        await Scenario.ThrowsWhenArgumentIsNullOrEmptyOrWhitespaceAsync(
             (invalidMessage) => WithClientWithExecutorMockForExpectedArguments(
                 subject => subject.FailJobAsync(
                     data: ExampleData!,
@@ -99,7 +99,7 @@ public class FailJobTest : BaseReqlessClientTest
     [Fact]
     public async Task ThrowsIfWorkerNameIsNullOrEmptyOrOnlyWhitespace()
     {
-        await Scenario.ThrowsWhenParameterIsNullOrEmptyOrWhitespaceAsync(
+        await Scenario.ThrowsWhenArgumentIsNullOrEmptyOrWhitespaceAsync(
             (invalidWorkerName) => WithClientWithExecutorMockForExpectedArguments(
                 subject => subject.FailJobAsync(
                     data: ExampleData!,

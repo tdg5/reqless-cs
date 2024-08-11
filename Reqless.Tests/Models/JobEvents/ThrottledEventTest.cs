@@ -15,7 +15,7 @@ public class ThrottledEventTest
     [Fact]
     public void Constructor_When_ThrowsIfNegative()
     {
-        Scenario.ThrowsWhenParameterIsNegative(
+        Scenario.ThrowsWhenArgumentIsNegative(
             (long invalidWhen) => new ThrottledEvent(invalidWhen, "QueueName"),
             "when"
         );
@@ -28,7 +28,7 @@ public class ThrottledEventTest
     [Fact]
     public void Constructor_QueueName_ThrowsIfNullOrEmptyOrOnlyWhitespace()
     {
-        Scenario.ThrowsWhenParameterIsNullOrEmptyOrWhitespace(
+        Scenario.ThrowsWhenArgumentIsNullOrEmptyOrWhitespace(
             (invalidQueueName) => new ThrottledEvent(1, invalidQueueName!),
             "queueName"
         );

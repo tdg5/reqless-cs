@@ -16,7 +16,7 @@ public class GetThrottleLockOwnersTest : BaseReqlessClientTest
     [Fact]
     public async Task ThrowsIfThrottleNameIsNullOrEmptyOrOnlyWhitespace()
     {
-        await Scenario.ThrowsWhenParameterIsNullOrEmptyOrWhitespaceAsync(
+        await Scenario.ThrowsWhenArgumentIsNullOrEmptyOrWhitespaceAsync(
             (invalidThrottleName) => WithClientWithExecutorMockForExpectedArguments(
                 subject => subject.GetThrottleLockOwnersAsync(
                     throttleName: invalidThrottleName!

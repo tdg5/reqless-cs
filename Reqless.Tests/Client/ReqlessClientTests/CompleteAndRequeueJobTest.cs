@@ -16,7 +16,7 @@ public class CompleteAndRequeueJobTest : BaseReqlessClientTest
     [Fact]
     public async Task ThrowsIfDataIsNullOrEmptyOrWhitespace()
     {
-        await Scenario.ThrowsWhenParameterIsNullOrEmptyOrWhitespaceAsync(
+        await Scenario.ThrowsWhenArgumentIsNullOrEmptyOrWhitespaceAsync(
             (invalidData) => WithClientWithExecutorMockForExpectedArguments(
                 subject => subject.CompleteAndRequeueJobAsync(
                     data: invalidData!,
@@ -37,7 +37,7 @@ public class CompleteAndRequeueJobTest : BaseReqlessClientTest
     [Fact]
     public async Task ThrowsIfJidIsNullOrEmptyOrWhitespace()
     {
-        await Scenario.ThrowsWhenParameterIsNullOrEmptyOrWhitespaceAsync(
+        await Scenario.ThrowsWhenArgumentIsNullOrEmptyOrWhitespaceAsync(
             (invalidJid) => WithClientWithExecutorMockForExpectedArguments(
                 subject => subject.CompleteAndRequeueJobAsync(
                     data: ExampleData,
@@ -58,7 +58,7 @@ public class CompleteAndRequeueJobTest : BaseReqlessClientTest
     [Fact]
     public async Task ThrowsIfQueueNameIsNullOrEmptyOrWhitespace()
     {
-        await Scenario.ThrowsWhenParameterIsNullOrEmptyOrWhitespaceAsync(
+        await Scenario.ThrowsWhenArgumentIsNullOrEmptyOrWhitespaceAsync(
             (invalidQueueName) => WithClientWithExecutorMockForExpectedArguments(
                 subject => subject.CompleteAndRequeueJobAsync(
                     data: ExampleData,
@@ -79,7 +79,7 @@ public class CompleteAndRequeueJobTest : BaseReqlessClientTest
     [Fact]
     public async Task ThrowsIfWorkerNameIsNullOrEmptyOrOnlyWhitespace()
     {
-        await Scenario.ThrowsWhenParameterIsNullOrEmptyOrWhitespaceAsync(
+        await Scenario.ThrowsWhenArgumentIsNullOrEmptyOrWhitespaceAsync(
             (invalidWorkerName) => WithClientWithExecutorMockForExpectedArguments(
                 subject => subject.CompleteAndRequeueJobAsync(
                     data: ExampleData,

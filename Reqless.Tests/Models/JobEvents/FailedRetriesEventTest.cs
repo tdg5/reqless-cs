@@ -15,7 +15,7 @@ public class FailedRetriesEventTest
     [Fact]
     public void Constructor_ArgumentOutOfRangeExceptionThrownIfWhenIsNegative()
     {
-        Scenario.ThrowsWhenParameterIsNegative(
+        Scenario.ThrowsWhenArgumentIsNegative(
             (long invalidWhen) => new FailedRetriesEvent(invalidWhen, "Group"),
             "when"
         );
@@ -28,7 +28,7 @@ public class FailedRetriesEventTest
     [Fact]
     public void Constructor_ArgumentNullExceptionThrownIfGroupIsNullOrEmptyOrOnlyWhitespace()
     {
-        Scenario.ThrowsWhenParameterIsNullOrEmptyOrWhitespace(
+        Scenario.ThrowsWhenArgumentIsNullOrEmptyOrWhitespace(
             (invalidGroup) => new FailedRetriesEvent(1, invalidGroup!),
             "group"
         );

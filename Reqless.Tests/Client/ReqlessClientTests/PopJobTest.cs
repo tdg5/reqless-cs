@@ -18,7 +18,7 @@ public class PopJobTest : BaseReqlessClientTest
     [Fact]
     public async Task ThrowsIfQueueNameIsNullOrEmptyOrWhitespace()
     {
-        await Scenario.ThrowsWhenParameterIsNullOrEmptyOrWhitespaceAsync(
+        await Scenario.ThrowsWhenArgumentIsNullOrEmptyOrWhitespaceAsync(
             (invalidQueueName) => WithClientWithExecutorMockForExpectedArguments(
                 subject => subject.PopJobAsync(
                     queueName: invalidQueueName!,
@@ -36,7 +36,7 @@ public class PopJobTest : BaseReqlessClientTest
     [Fact]
     public async Task ThrowsIfWorkerNameIsNullOrEmptyOrWhitespace()
     {
-        await Scenario.ThrowsWhenParameterIsNullOrEmptyOrWhitespaceAsync(
+        await Scenario.ThrowsWhenArgumentIsNullOrEmptyOrWhitespaceAsync(
             (invalidWorkerName) => WithClientWithExecutorMockForExpectedArguments(
                 subject => subject.PopJobAsync(
                     queueName: ExampleQueueName,

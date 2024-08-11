@@ -16,7 +16,7 @@ public class RemoveTagsFromJobTest : BaseReqlessClientTest
     [Fact]
     public async Task ThrowsIfJidIsNullOrEmptyOrOnlyWhitespace()
     {
-        await Scenario.ThrowsWhenParameterIsNullOrEmptyOrWhitespaceAsync(
+        await Scenario.ThrowsWhenArgumentIsNullOrEmptyOrWhitespaceAsync(
             (invalidJid) => WithClientWithExecutorMockForExpectedArguments(
                 subject => subject.RemoveTagsFromJobAsync(
                     jid: invalidJid!,
@@ -34,7 +34,7 @@ public class RemoveTagsFromJobTest : BaseReqlessClientTest
     [Fact]
     public async Task ThrowsIfTagsIsNull()
     {
-        await Scenario.ThrowsArgumentNullExceptionAsync(
+        await Scenario.ThrowsWhenArgumentIsNullAsync(
             () => WithClientWithExecutorMockForExpectedArguments(
                 subject => subject.RemoveTagsFromJobAsync(ExampleJid, null!)
             ),
@@ -49,7 +49,7 @@ public class RemoveTagsFromJobTest : BaseReqlessClientTest
     [Fact]
     public async Task ThrowsIfAnyTagsAreNullOrEmptyOrWhitespace()
     {
-        await Scenario.ThrowsWhenParameterItemIsNullOrEmptyOrWhitespaceAsync(
+        await Scenario.ThrowsWhenArgumentElementIsNullOrEmptyOrWhitespaceAsync(
             (invalidTag) => WithClientWithExecutorMockForExpectedArguments(
                 subject => subject.RemoveTagsFromJobAsync(
                     jid: ExampleJid,

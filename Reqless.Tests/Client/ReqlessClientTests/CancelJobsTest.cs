@@ -51,7 +51,7 @@ public class CancelJobsTest : BaseReqlessClientTest
     [Fact]
     public async Task ThrowsIfJidsArgumentIsNull()
     {
-        await Scenario.ThrowsArgumentNullExceptionAsync(
+        await Scenario.ThrowsWhenArgumentIsNullAsync(
             () => WithClientWithExecutorMockForExpectedArguments(
                 subject => subject.CancelJobsAsync(null!)
             ),
@@ -66,7 +66,7 @@ public class CancelJobsTest : BaseReqlessClientTest
     [Fact]
     public async Task ThrowsIfAnyJidsAreNullOrEmptyOrOnlyWhitespace()
     {
-        await Scenario.ThrowsWhenParameterItemIsNullOrEmptyOrWhitespaceAsync(
+        await Scenario.ThrowsWhenArgumentElementIsNullOrEmptyOrWhitespaceAsync(
             (invalidJid) => WithClientWithExecutorMockForExpectedArguments(
                 subject => subject.CancelJobsAsync(ExampleJid, invalidJid!)
             ),

@@ -15,7 +15,7 @@ public class QueueCountsTest
     [Fact]
     public void Constructor_ThrowsIfNameIsNullOrEmptyOrOnlyWhitespace()
     {
-        Scenario.ThrowsWhenParameterIsNullOrEmptyOrWhitespace(
+        Scenario.ThrowsWhenArgumentIsNullOrEmptyOrWhitespace(
             (invalidName) => new QueueCounts
             {
                 Depends = 0,

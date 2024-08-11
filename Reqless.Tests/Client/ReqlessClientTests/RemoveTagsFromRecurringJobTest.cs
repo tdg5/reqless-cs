@@ -16,7 +16,7 @@ public class RemoveTagsFromRecurringJobTest : BaseReqlessClientTest
     [Fact]
     public async Task ThrowsIfJidIsNullOrEmptyOrOnlyWhitespace()
     {
-        await Scenario.ThrowsWhenParameterIsNullOrEmptyOrWhitespaceAsync(
+        await Scenario.ThrowsWhenArgumentIsNullOrEmptyOrWhitespaceAsync(
             (invalidJid) => WithClientWithExecutorMockForExpectedArguments(
                 subject => subject.RemoveTagsFromRecurringJobAsync(
                     jid: invalidJid!,
@@ -34,7 +34,7 @@ public class RemoveTagsFromRecurringJobTest : BaseReqlessClientTest
     [Fact]
     public async Task ThrowsIfTagsIsNull()
     {
-        await Scenario.ThrowsArgumentNullExceptionAsync(
+        await Scenario.ThrowsWhenArgumentIsNullAsync(
             () => WithClientWithExecutorMockForExpectedArguments(
                 subject => subject.RemoveTagsFromRecurringJobAsync(
                     jid: ExampleJid,
@@ -52,7 +52,7 @@ public class RemoveTagsFromRecurringJobTest : BaseReqlessClientTest
     [Fact]
     public async Task ThrowsIfAnyTagsAreNullOrEmptyOrWhitespace()
     {
-        await Scenario.ThrowsWhenParameterItemIsNullOrEmptyOrWhitespaceAsync(
+        await Scenario.ThrowsWhenArgumentElementIsNullOrEmptyOrWhitespaceAsync(
             (invalidTag) => WithClientWithExecutorMockForExpectedArguments(
                 subject => subject.RemoveTagsFromRecurringJobAsync(
                     jid: ExampleJid,

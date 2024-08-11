@@ -17,7 +17,7 @@ public class GetQueueCountsTest : BaseReqlessClientTest
     [Fact]
     public async Task ThrowsIfQueueNameIsNullOrEmptyOrOnlyWhitespace()
     {
-        await Scenario.ThrowsWhenParameterIsEmptyOrWhitespaceAsync(
+        await Scenario.ThrowsWhenArgumentIsEmptyOrWhitespaceAsync(
             (invalidQueueName) => WithClientWithExecutorMockForExpectedArguments(
                 subject => subject.GetQueueCountsAsync(queueName: invalidQueueName!)
             ),

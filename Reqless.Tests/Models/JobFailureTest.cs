@@ -15,7 +15,7 @@ public class JobFailureTest
     [Fact]
     public void Constructor_Group_ThrowsWhenGroupIsNullOrEmptyOrOnlyWhitespace()
     {
-        Scenario.ThrowsWhenParameterIsNullOrEmptyOrWhitespace(
+        Scenario.ThrowsWhenArgumentIsNullOrEmptyOrWhitespace(
             (invalidGroup) => new JobFailure(
                 group: invalidGroup!,
                 message: "message",
@@ -33,7 +33,7 @@ public class JobFailureTest
     [Fact]
     public void Constructor_Message_ThrowsWhenNullOrEmptyOrOnlyWhitespace()
     {
-        Scenario.ThrowsWhenParameterIsNullOrEmptyOrWhitespace(
+        Scenario.ThrowsWhenArgumentIsNullOrEmptyOrWhitespace(
             (invalidMessage) => new JobFailure(
                 group: "group",
                 message: invalidMessage!,
@@ -50,7 +50,7 @@ public class JobFailureTest
     [Fact]
     public void Constructor_When_ThrowsWhenNotPositive()
     {
-        Scenario.ThrowsWhenParameterIsNotPositive(
+        Scenario.ThrowsWhenArgumentIsNotPositive(
             (long invalidWhen) => new JobFailure(
                 "group",
                 "message",
@@ -68,7 +68,7 @@ public class JobFailureTest
     [Fact]
     public void Constructor_WorkerName_ThrowsWhenNullOrEmptyOrOnlyWhitespace()
     {
-        Scenario.ThrowsWhenParameterIsNullOrEmptyOrWhitespace(
+        Scenario.ThrowsWhenArgumentIsNullOrEmptyOrWhitespace(
             (invalidWorkerName) => new JobFailure(
                 "group",
                 "message",

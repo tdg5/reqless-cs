@@ -15,7 +15,7 @@ public class ForgetWorkerTest : BaseReqlessClientTest
     [Fact]
     public async Task ThrowsIfWorkerNameIsNullOrEmptyOrOnlyWhitespace()
     {
-        await Scenario.ThrowsWhenParameterIsNullOrEmptyOrWhitespaceAsync(
+        await Scenario.ThrowsWhenArgumentIsNullOrEmptyOrWhitespaceAsync(
             (invalidWorkerName) => WithClientWithExecutorMockForExpectedArguments(
                 subject => subject.ForgetWorkerAsync(invalidWorkerName!)
             ),

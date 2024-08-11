@@ -17,7 +17,7 @@ public class SetAllQueueIdentifierPatternsTest : BaseReqlessClientTest
     [Fact]
     public async Task ThrowsIfIdentifierPatternsIsNull()
     {
-        await Scenario.ThrowsArgumentNullExceptionAsync(
+        await Scenario.ThrowsWhenArgumentIsNullAsync(
             () => WithClientWithExecutorMockForExpectedArguments(
                 subject => subject.SetAllQueueIdentifierPatternsAsync(null!)
             ),
@@ -34,7 +34,7 @@ public class SetAllQueueIdentifierPatternsTest : BaseReqlessClientTest
     {
         // Dictionary throws if the key is null, so only check empty string and
         // whitespace.
-        await Scenario.ThrowsWhenParameterIsEmptyOrWhitespaceAsync(
+        await Scenario.ThrowsWhenArgumentIsEmptyOrWhitespaceAsync(
             (invalidIdentifier) => WithClientWithExecutorMockForExpectedArguments(
                 subject => subject.SetAllQueueIdentifierPatternsAsync(
                     new Dictionary<string, IEnumerable<string>>()
@@ -54,7 +54,7 @@ public class SetAllQueueIdentifierPatternsTest : BaseReqlessClientTest
     [Fact]
     public async Task ThrowsIfPatternsIsNull()
     {
-        await Scenario.ThrowsArgumentNullExceptionAsync(
+        await Scenario.ThrowsWhenArgumentIsNullAsync(
             () => WithClientWithExecutorMockForExpectedArguments(
                 subject => subject.SetAllQueueIdentifierPatternsAsync(
                     new Dictionary<string, IEnumerable<string>>()
@@ -74,7 +74,7 @@ public class SetAllQueueIdentifierPatternsTest : BaseReqlessClientTest
     [Fact]
     public async Task ThrowsIfIAnyPatternsListIsNullEmptyOrOnlyWhitespace()
     {
-        await Scenario.ThrowsWhenParameterItemIsNullOrEmptyOrWhitespaceAsync(
+        await Scenario.ThrowsWhenArgumentElementIsNullOrEmptyOrWhitespaceAsync(
             (invalidPattern) => WithClientWithExecutorMockForExpectedArguments(
                 subject => subject.SetAllQueueIdentifierPatternsAsync(
                     new Dictionary<string, IEnumerable<string>>()

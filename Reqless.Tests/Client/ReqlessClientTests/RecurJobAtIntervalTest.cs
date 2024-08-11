@@ -163,7 +163,7 @@ public class RecurJobAtIntervalTest : BaseReqlessClientTest
     [Fact]
     public async Task ThrowsIfQueueNameIsNullOrEmptyOrOnlyWhitespace()
     {
-        await Scenario.ThrowsWhenParameterIsNullOrEmptyOrWhitespaceAsync(
+        await Scenario.ThrowsWhenArgumentIsNullOrEmptyOrWhitespaceAsync(
             (invalidQueueName) => WithClientWithExecutorMockForExpectedArguments(
                 subject => subject.RecurJobAtIntervalAsync(
                     className: ExampleClassName,
@@ -183,7 +183,7 @@ public class RecurJobAtIntervalTest : BaseReqlessClientTest
     [Fact]
     public async Task ThrowsIfClassNameIsNullOrEmptyOrOnlyWhitespace()
     {
-        await Scenario.ThrowsWhenParameterIsNullOrEmptyOrWhitespaceAsync(
+        await Scenario.ThrowsWhenArgumentIsNullOrEmptyOrWhitespaceAsync(
             (invalidClassName) => WithClientWithExecutorMockForExpectedArguments(
                 subject => subject.RecurJobAtIntervalAsync(
                     className: invalidClassName!,
@@ -203,7 +203,7 @@ public class RecurJobAtIntervalTest : BaseReqlessClientTest
     [Fact]
     public async Task ThrowsIfDataIsNullOrEmptyOrOnlyWhitespace()
     {
-        await Scenario.ThrowsWhenParameterIsNullOrEmptyOrWhitespaceAsync(
+        await Scenario.ThrowsWhenArgumentIsNullOrEmptyOrWhitespaceAsync(
             (invalidData) => WithClientWithExecutorMockForExpectedArguments(
                 subject => subject.RecurJobAtIntervalAsync(
                     className: ExampleClassName,
@@ -223,7 +223,7 @@ public class RecurJobAtIntervalTest : BaseReqlessClientTest
     [Fact]
     public async Task ThrowsIfJidIsEmptyOrOnlyWhitespace()
     {
-        await Scenario.ThrowsWhenParameterIsEmptyOrWhitespaceAsync(
+        await Scenario.ThrowsWhenArgumentIsEmptyOrWhitespaceAsync(
             (invalidJid) => WithClientWithExecutorMockForExpectedArguments(
                 subject => subject.RecurJobAtIntervalAsync(
                     className: ExampleClassName,

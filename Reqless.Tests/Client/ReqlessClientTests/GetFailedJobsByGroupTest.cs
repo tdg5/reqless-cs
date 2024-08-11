@@ -17,7 +17,7 @@ public class GetFailedJobsByGroupTest : BaseReqlessClientTest
     [Fact]
     public async Task ShouldThrowIfGroupNameIsNullOrEmptyOrOnlyWhitespace()
     {
-        await Scenario.ThrowsWhenParameterIsNullOrEmptyOrWhitespaceAsync(
+        await Scenario.ThrowsWhenArgumentIsNullOrEmptyOrWhitespaceAsync(
             (invalidGroupName) => WithClientWithExecutorMockForExpectedArguments(
                 subject => subject.GetFailedJobsByGroupAsync(
                     groupName: invalidGroupName!

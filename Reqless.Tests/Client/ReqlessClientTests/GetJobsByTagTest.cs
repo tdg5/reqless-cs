@@ -17,7 +17,7 @@ public class GetJobsByTagTest : BaseReqlessClientTest
     [Fact]
     public async Task ShouldThrowIfTagIsNullOrEmptyOrOnlyWhitespace()
     {
-        await Scenario.ThrowsWhenParameterIsNullOrEmptyOrWhitespaceAsync(
+        await Scenario.ThrowsWhenArgumentIsNullOrEmptyOrWhitespaceAsync(
             (invalidTag) => WithClientWithExecutorMockForExpectedArguments(
                 subject => subject.GetJobsByTagAsync(tag: invalidTag!)
             ),

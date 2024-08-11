@@ -15,7 +15,7 @@ public class DeleteThrottleTest : BaseReqlessClientTest
     [Fact]
     public async Task ThrowsIfThrottleNameIsNullOrEmptyOrOnlyWhitespace()
     {
-        await Scenario.ThrowsWhenParameterIsNullOrEmptyOrWhitespaceAsync(
+        await Scenario.ThrowsWhenArgumentIsNullOrEmptyOrWhitespaceAsync(
             (invalidThrottleName) => WithClientWithExecutorMockForExpectedArguments(
                 subject => subject.DeleteThrottleAsync(invalidThrottleName!)
             ),

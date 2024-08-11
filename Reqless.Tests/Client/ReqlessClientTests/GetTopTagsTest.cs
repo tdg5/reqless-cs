@@ -16,7 +16,7 @@ public class GetTopTagsTest : BaseReqlessClientTest
     [Fact]
     public async Task ThrowsIfLimitIsNotPositive()
     {
-        await Scenario.ThrowsWhenParameterIsNotPositiveAsync(
+        await Scenario.ThrowsWhenArgumentIsNotPositiveAsync(
             (invalidLimit) => WithClientWithExecutorMockForExpectedArguments(
                 subject => subject.GetTopTagsAsync(limit: invalidLimit)
             ),

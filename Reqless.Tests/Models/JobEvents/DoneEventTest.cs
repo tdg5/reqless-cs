@@ -15,7 +15,7 @@ public class DoneEventTest
     [Fact]
     public void Constructor_ArgumentOutOfRangeExceptionThrownIfWhenIsNegative()
     {
-        Scenario.ThrowsWhenParameterIsNegative(
+        Scenario.ThrowsWhenArgumentIsNegative(
             (long invalidWhen) => new DoneEvent(invalidWhen),
             "when"
         );

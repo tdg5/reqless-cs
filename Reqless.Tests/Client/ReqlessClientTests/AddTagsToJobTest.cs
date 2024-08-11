@@ -16,7 +16,7 @@ public class AddTagsToJobTest : BaseReqlessClientTest
     [Fact]
     public async Task ThrowsIfJidIsNullOrEmptyOrWhitespace()
     {
-        await Scenario.ThrowsWhenParameterIsNullOrEmptyOrWhitespaceAsync(
+        await Scenario.ThrowsWhenArgumentIsNullOrEmptyOrWhitespaceAsync(
             (invalidJid) => WithClientWithExecutorMockForExpectedArguments(
                 subject => subject.AddTagsToJobAsync(invalidJid!, ExampleTag)
             ),
@@ -31,7 +31,7 @@ public class AddTagsToJobTest : BaseReqlessClientTest
     [Fact]
     public async Task ThrowsIfTagsIsNull()
     {
-        await Scenario.ThrowsArgumentNullExceptionAsync(
+        await Scenario.ThrowsWhenArgumentIsNullAsync(
             () => WithClientWithExecutorMockForExpectedArguments(
                 subject => subject.AddTagsToJobAsync(ExampleJid, null!)
             ),
@@ -46,7 +46,7 @@ public class AddTagsToJobTest : BaseReqlessClientTest
     [Fact]
     public async Task ThrowsIfAnyTagsAreNullOrEmptyOrOnlyWhitespace()
     {
-        await Scenario.ThrowsWhenParameterItemIsNullOrEmptyOrWhitespaceAsync(
+        await Scenario.ThrowsWhenArgumentElementIsNullOrEmptyOrWhitespaceAsync(
             (invalidTag) => WithClientWithExecutorMockForExpectedArguments(
                 subject => subject.AddTagsToJobAsync(ExampleJid, [invalidTag!])
             ),

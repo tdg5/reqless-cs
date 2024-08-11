@@ -30,7 +30,7 @@ public class JidsResultTest
     public void Constructor_Jids_ThrowsIfAnyJidIsNullOrEmptyOrWhitespace()
     {
         int total = 4;
-        Scenario.ThrowsWhenParameterItemIsNullOrEmptyOrWhitespace(
+        Scenario.ThrowsWhenArgumentElementIsNullOrEmptyOrWhitespace(
             (invalidJid) => new JidsResult(
                 ["jid1", "jid2", invalidJid!],
                 total
@@ -45,7 +45,7 @@ public class JidsResultTest
     [Fact]
     public void Constructor_ThrowsIfJidsIsNull()
     {
-        Scenario.ThrowsArgumentNullException(
+        Scenario.ThrowsWhenArgumentIsNull(
             () => new JidsResult(null!, 4),
             "jids"
         );

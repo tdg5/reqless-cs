@@ -15,7 +15,7 @@ public class ForgetQueuesTest : BaseReqlessClientTest
     [Fact]
     public async Task ThrowsIfQueueNamesIsNull()
     {
-        await Scenario.ThrowsArgumentNullExceptionAsync(
+        await Scenario.ThrowsWhenArgumentIsNullAsync(
             () => WithClientWithExecutorMockForExpectedArguments(
                 subject => subject.ForgetQueuesAsync(null!)
             ),
@@ -31,7 +31,7 @@ public class ForgetQueuesTest : BaseReqlessClientTest
     [Fact]
     public async Task ThrowsIfAnyQueueNameIsNullEmptyOrOnlyWhitespace()
     {
-        await Scenario.ThrowsWhenParameterItemIsNullOrEmptyOrWhitespaceAsync(
+        await Scenario.ThrowsWhenArgumentElementIsNullOrEmptyOrWhitespaceAsync(
             (invalidQueueName) => WithClientWithExecutorMockForExpectedArguments(
                 subject => subject.ForgetQueuesAsync(invalidQueueName!)
             ),

@@ -17,7 +17,7 @@ public class RequeueJobTest : BaseReqlessClientTest
     [Fact]
     public async Task ThrowsIfWorkerNameIsNullOrEmptyOrWhitespace()
     {
-        await Scenario.ThrowsWhenParameterIsNullOrEmptyOrWhitespaceAsync(
+        await Scenario.ThrowsWhenArgumentIsNullOrEmptyOrWhitespaceAsync(
             (invalidWorkerName) => WithClientWithExecutorMockForExpectedArguments(
                 subject => subject.RequeueJobAsync(
                     className: ExampleClassName,
@@ -38,7 +38,7 @@ public class RequeueJobTest : BaseReqlessClientTest
     [Fact]
     public async Task ThrowsIfQueueNameIsNullOrEmptyOrOnlyWhitespace()
     {
-        await Scenario.ThrowsWhenParameterIsNullOrEmptyOrWhitespaceAsync(
+        await Scenario.ThrowsWhenArgumentIsNullOrEmptyOrWhitespaceAsync(
             (invalidQueueName) => WithClientWithExecutorMockForExpectedArguments(
                 subject => subject.RequeueJobAsync(
                     className: ExampleClassName,
@@ -59,7 +59,7 @@ public class RequeueJobTest : BaseReqlessClientTest
     [Fact]
     public async Task ThrowsIfJidIsNullOrEmptyOrOnlyWhitespace()
     {
-        await Scenario.ThrowsWhenParameterIsNullOrEmptyOrWhitespaceAsync(
+        await Scenario.ThrowsWhenArgumentIsNullOrEmptyOrWhitespaceAsync(
             (invalidJid) => WithClientWithExecutorMockForExpectedArguments(
                 subject => subject.RequeueJobAsync(
                     className: ExampleClassName,
@@ -80,7 +80,7 @@ public class RequeueJobTest : BaseReqlessClientTest
     [Fact]
     public async Task ThrowsIfClassNameIsNullOrEmptyOrOnlyWhitespace()
     {
-        await Scenario.ThrowsWhenParameterIsNullOrEmptyOrWhitespaceAsync(
+        await Scenario.ThrowsWhenArgumentIsNullOrEmptyOrWhitespaceAsync(
             (invalidClassName) => WithClientWithExecutorMockForExpectedArguments(
                 subject => subject.RequeueJobAsync(
                     className: invalidClassName!,
@@ -101,7 +101,7 @@ public class RequeueJobTest : BaseReqlessClientTest
     [Fact]
     public async Task ThrowsIfDataIsNullOrEmptyOrOnlyWhitespace()
     {
-        await Scenario.ThrowsWhenParameterIsNullOrEmptyOrWhitespaceAsync(
+        await Scenario.ThrowsWhenArgumentIsNullOrEmptyOrWhitespaceAsync(
             (invalidData) => WithClientWithExecutorMockForExpectedArguments(
                 subject => subject.RequeueJobAsync(
                     className: ExampleClassName,

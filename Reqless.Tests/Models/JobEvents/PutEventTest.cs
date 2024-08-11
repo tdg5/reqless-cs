@@ -15,7 +15,7 @@ public class PutEventTest
     [Fact]
     public void Constructor_ArgumentOutOfRangeExceptionThrownIfWhenIsNegative()
     {
-        Scenario.ThrowsWhenParameterIsNegative(
+        Scenario.ThrowsWhenArgumentIsNegative(
             (long invalidWhen) => new PutEvent(invalidWhen, "QueueName"),
             "when"
         );

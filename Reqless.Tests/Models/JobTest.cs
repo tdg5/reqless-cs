@@ -16,7 +16,7 @@ public class JobTest
     [Fact]
     public void Constructor_ClassName_ThrowsWhenNullOrEmptyOrOnlyWhitespace()
     {
-        Scenario.ThrowsWhenParameterIsNullOrEmptyOrWhitespace(
+        Scenario.ThrowsWhenArgumentIsNullOrEmptyOrWhitespace(
             (invalidClassName) => MakeJob(className: invalidClassName),
             "className"
         );
@@ -29,7 +29,7 @@ public class JobTest
     [Fact]
     public void Constructor_Data_ThrowsWhenNullOrEmptyOrOnlyWhitespace()
     {
-        Scenario.ThrowsWhenParameterIsNullOrEmptyOrWhitespace(
+        Scenario.ThrowsWhenArgumentIsNullOrEmptyOrWhitespace(
             (invalidData) => MakeJob(data: invalidData),
             "data"
         );
@@ -42,7 +42,7 @@ public class JobTest
     [Fact]
     public void Constructor_Dependencies_ThrowsWhenNull()
     {
-        Scenario.ThrowsArgumentNullException(
+        Scenario.ThrowsWhenArgumentIsNull(
             () => MakeJob(dependencies: Maybe<string[]?>.Some(null)),
             "dependencies"
         );
@@ -55,7 +55,7 @@ public class JobTest
     [Fact]
     public void Constructor_Dependencies_ThrowsWhenAnyValueIsNullEmptyOrOnlyWhitespace()
     {
-        Scenario.ThrowsWhenParameterItemIsNullOrEmptyOrWhitespace(
+        Scenario.ThrowsWhenArgumentElementIsNullOrEmptyOrWhitespace(
             (invalidDependency) => MakeJob(
                 dependencies: Maybe<string[]?>.Some([invalidDependency!])
             ),
@@ -70,7 +70,7 @@ public class JobTest
     [Fact]
     public void Constructor_Dependents_ThrowsWhenNull()
     {
-        Scenario.ThrowsArgumentNullException(
+        Scenario.ThrowsWhenArgumentIsNull(
             () => MakeJob(dependents: Maybe<string[]?>.Some(null)),
             "dependents"
         );
@@ -83,7 +83,7 @@ public class JobTest
     [Fact]
     public void Constructor_Dependents_ThrowsWhenAnyValueIsNullEmptyOrOnlyWhitespace()
     {
-        Scenario.ThrowsWhenParameterItemIsNullOrEmptyOrWhitespace(
+        Scenario.ThrowsWhenArgumentElementIsNullOrEmptyOrWhitespace(
             (invalidDependent) => MakeJob(
                 dependents: Maybe<string[]?>.Some([invalidDependent!])
             ),
@@ -98,7 +98,7 @@ public class JobTest
     [Fact]
     public void Constructor_Expires_ThrowsWhenNotPostive()
     {
-        Scenario.ThrowsWhenParameterIsNotPositive(
+        Scenario.ThrowsWhenArgumentIsNotPositive(
             (long invalidExpires) => MakeJob(
                 expires: Maybe<long>.Some(invalidExpires)
             ),
@@ -113,7 +113,7 @@ public class JobTest
     [Fact]
     public void Constructor_History_ThrowsWhenNull()
     {
-        Scenario.ThrowsArgumentNullException(
+        Scenario.ThrowsWhenArgumentIsNull(
             () => MakeJob(history: Maybe<JobEvent[]?>.Some(null)),
             "history"
         );
@@ -140,7 +140,7 @@ public class JobTest
     [Fact]
     public void Constructor_Jid_ThrowsWhenNullOrEmptyOrOnlyWhitespace()
     {
-        Scenario.ThrowsWhenParameterIsNullOrEmptyOrWhitespace(
+        Scenario.ThrowsWhenArgumentIsNullOrEmptyOrWhitespace(
             (invalidJid) => MakeJob(jid: invalidJid),
             "jid"
         );
@@ -153,7 +153,7 @@ public class JobTest
     [Fact]
     public void Constructor_Priority_ThrowsWhenNegative()
     {
-        Scenario.ThrowsWhenParameterIsNegative(
+        Scenario.ThrowsWhenArgumentIsNegative(
             (invalidPriority) => MakeJob(
                 priority: Maybe<int>.Some(invalidPriority)
             ),
@@ -178,7 +178,7 @@ public class JobTest
     [Fact]
     public void Constructor_QueueName_ThrowsWhenEmptyOrWhitespace()
     {
-        Scenario.ThrowsWhenParameterIsEmptyOrWhitespace(
+        Scenario.ThrowsWhenArgumentIsEmptyOrWhitespace(
             (invalidQueueName) => MakeJob(queueName: invalidQueueName),
             "queueName"
         );
@@ -239,7 +239,7 @@ public class JobTest
     [Fact]
     public void Constructor_Retries_ThrowsWhenNegative()
     {
-        Scenario.ThrowsWhenParameterIsNegative(
+        Scenario.ThrowsWhenArgumentIsNegative(
             (invalidRetries) => MakeJob(retries: Maybe<int>.Some(invalidRetries)),
             "retries"
         );
@@ -252,7 +252,7 @@ public class JobTest
     [Fact]
     public void Constructor_SpawnedFromJid_ThrowsWhenEmptyOrOnlyWhitespace()
     {
-        Scenario.ThrowsWhenParameterIsEmptyOrWhitespace(
+        Scenario.ThrowsWhenArgumentIsEmptyOrWhitespace(
             (invalidSpawnedFromJid) => MakeJob(spawnedFromJid: invalidSpawnedFromJid),
             "spawnedFromJid"
         );
@@ -265,7 +265,7 @@ public class JobTest
     [Fact]
     public void Constructor_State_ThrowsWhenNullOrEmptyOrOnlyWhitespace()
     {
-        Scenario.ThrowsWhenParameterIsNullOrEmptyOrWhitespace(
+        Scenario.ThrowsWhenArgumentIsNullOrEmptyOrWhitespace(
             (invalidState) => MakeJob(state: invalidState),
             "state"
         );
@@ -278,7 +278,7 @@ public class JobTest
     [Fact]
     public void Constructor_Tags_ThrowsWhenNull()
     {
-        Scenario.ThrowsArgumentNullException(
+        Scenario.ThrowsWhenArgumentIsNull(
             () => MakeJob(tags: Maybe<string[]?>.Some(null)),
             "tags"
         );
@@ -291,7 +291,7 @@ public class JobTest
     [Fact]
     public void Constructor_Tags_ThrowsWhenAnyValueIsNullEmptyOrOnlyWhitespace()
     {
-        Scenario.ThrowsWhenParameterItemIsNullOrEmptyOrWhitespace(
+        Scenario.ThrowsWhenArgumentElementIsNullOrEmptyOrWhitespace(
             (invalidTag) => MakeJob(tags: Maybe<string[]?>.Some([invalidTag!])),
             "tags"
         );
@@ -304,7 +304,7 @@ public class JobTest
     [Fact]
     public void Constructor_Throttles_ThrowsWhenNull()
     {
-        Scenario.ThrowsArgumentNullException(
+        Scenario.ThrowsWhenArgumentIsNull(
             () => MakeJob(throttles: Maybe<string[]?>.Some(null)),
             "throttles"
         );
@@ -317,7 +317,7 @@ public class JobTest
     [Fact]
     public void Constructor_Throttles_ThrowsWhenAnyValueIsNullEmptyOrOnlyWhitespace()
     {
-        Scenario.ThrowsWhenParameterItemIsNullOrEmptyOrWhitespace(
+        Scenario.ThrowsWhenArgumentElementIsNullOrEmptyOrWhitespace(
             (invalidThrottle) => MakeJob(
                 throttles: Maybe<string[]?>.Some([invalidThrottle!])
             ),
@@ -342,7 +342,7 @@ public class JobTest
     [Fact]
     public void Constructor_WorkerName_ThrowsWhenEmptyOrWhitespace()
     {
-        Scenario.ThrowsWhenParameterIsEmptyOrWhitespace(
+        Scenario.ThrowsWhenArgumentIsEmptyOrWhitespace(
             (invalidWorkerName) => MakeJob(workerName: invalidWorkerName),
             "workerName"
         );

@@ -16,7 +16,7 @@ public class GetJobsByStateAsyncTest : BaseReqlessClientTest
     [Fact]
     public async Task ThrowsIfStateIsNullOrEmptyOrOnlyWhitespace()
     {
-        await Scenario.ThrowsWhenParameterIsNullOrEmptyOrWhitespaceAsync(
+        await Scenario.ThrowsWhenArgumentIsNullOrEmptyOrWhitespaceAsync(
             (invalidState) => WithClientWithExecutorMockForExpectedArguments(
                 subject => subject.GetJobsByStateAsync(
                     queueName: ExampleQueueName,
@@ -34,7 +34,7 @@ public class GetJobsByStateAsyncTest : BaseReqlessClientTest
     [Fact]
     public async Task ThrowsIfQueueNameIsNullOrEmptyOrOnlyWhitespace()
     {
-        await Scenario.ThrowsWhenParameterIsNullOrEmptyOrWhitespaceAsync(
+        await Scenario.ThrowsWhenArgumentIsNullOrEmptyOrWhitespaceAsync(
             (invalidQueueName) => WithClientWithExecutorMockForExpectedArguments(
                 subject => subject.GetJobsByStateAsync(
                     queueName: invalidQueueName!,

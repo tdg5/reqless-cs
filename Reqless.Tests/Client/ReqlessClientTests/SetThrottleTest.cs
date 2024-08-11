@@ -17,7 +17,7 @@ public class SetThrottleTest : BaseReqlessClientTest
     [Fact]
     public async Task ThrowsIfThrottleNameIsNullOrEmptyOrOnlyWhitespace()
     {
-        await Scenario.ThrowsWhenParameterIsNullOrEmptyOrWhitespaceAsync(
+        await Scenario.ThrowsWhenArgumentIsNullOrEmptyOrWhitespaceAsync(
             (invalidThrottleName) => WithClientWithExecutorMockForExpectedArguments(
                 subject => subject.SetThrottleAsync(
                     maximum: 21,
@@ -35,7 +35,7 @@ public class SetThrottleTest : BaseReqlessClientTest
     [Fact]
     public async Task ThrowsIfMaximumIsLessThanZero()
     {
-        await Scenario.ThrowsWhenParameterIsNegativeAsync(
+        await Scenario.ThrowsWhenArgumentIsNegativeAsync(
             (invalidMaximum) => WithClientWithExecutorMockForExpectedArguments(
                 subject => subject.SetThrottleAsync(
                     throttleName: ExampleThrottleName,

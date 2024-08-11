@@ -16,7 +16,7 @@ public class ThrottleTest
     [Fact]
     public void Constructor_ThrowsWhenIdIsNullOrEmptyOrWhitespace()
     {
-        Scenario.ThrowsWhenParameterIsNullOrEmptyOrWhitespace(
+        Scenario.ThrowsWhenArgumentIsNullOrEmptyOrWhitespace(
             (invalidId) => new Throttle
             {
                 Id = invalidId!,

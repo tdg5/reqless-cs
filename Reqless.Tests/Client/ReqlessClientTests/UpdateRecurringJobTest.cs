@@ -24,7 +24,7 @@ public class UpdateRecurringJobTest : BaseReqlessClientTest
     [Fact]
     public async Task ThrowsIfJidIsNullOrEmptyOrOnlyWhitespace()
     {
-        await Scenario.ThrowsWhenParameterIsNullOrEmptyOrWhitespaceAsync(
+        await Scenario.ThrowsWhenArgumentIsNullOrEmptyOrWhitespaceAsync(
             (invalidJid) => WithClientWithExecutorMockForExpectedArguments(
                 subject => subject.UpdateRecurringJobAsync(
                     jid: invalidJid!
@@ -41,7 +41,7 @@ public class UpdateRecurringJobTest : BaseReqlessClientTest
     [Fact]
     public async Task ThrowsIfClassNameIsEmptyOrOnlyWhitespace()
     {
-        await Scenario.ThrowsWhenParameterIsEmptyOrWhitespaceAsync(
+        await Scenario.ThrowsWhenArgumentIsEmptyOrWhitespaceAsync(
             (invalidClassName) => WithClientWithExecutorMockForExpectedArguments(
                 subject => subject.UpdateRecurringJobAsync(
                     className: invalidClassName!,
@@ -59,7 +59,7 @@ public class UpdateRecurringJobTest : BaseReqlessClientTest
     [Fact]
     public async Task ThrowsIfDataIsEmptyOrOnlyWhitespace()
     {
-        await Scenario.ThrowsWhenParameterIsEmptyOrWhitespaceAsync(
+        await Scenario.ThrowsWhenArgumentIsEmptyOrWhitespaceAsync(
             (invalidData) => WithClientWithExecutorMockForExpectedArguments(
                 subject => subject.UpdateRecurringJobAsync(
                     data: invalidData!,
@@ -77,7 +77,7 @@ public class UpdateRecurringJobTest : BaseReqlessClientTest
     [Fact]
     public async Task ThrowsIfIntervalSecondsIsNotPositive()
     {
-        await Scenario.ThrowsWhenParameterIsNotPositiveAsync(
+        await Scenario.ThrowsWhenArgumentIsNotPositiveAsync(
             (invalidIntervalSeconds) => WithClientWithExecutorMockForExpectedArguments(
                 subject => subject.UpdateRecurringJobAsync(
                     intervalSeconds: invalidIntervalSeconds,
@@ -95,7 +95,7 @@ public class UpdateRecurringJobTest : BaseReqlessClientTest
     [Fact]
     public async Task ThrowsIfQueueNameIsEmptyOrOnlyWhitespace()
     {
-        await Scenario.ThrowsWhenParameterIsEmptyOrWhitespaceAsync(
+        await Scenario.ThrowsWhenArgumentIsEmptyOrWhitespaceAsync(
             (invalidQueueName) => WithClientWithExecutorMockForExpectedArguments(
                 subject => subject.UpdateRecurringJobAsync(
                     jid: ExampleJid,
@@ -114,7 +114,7 @@ public class UpdateRecurringJobTest : BaseReqlessClientTest
     [Fact]
     public async Task ThrowsIfThrottlesContainsAnyValueThatIsNullOrEmptyOrOnlyWhitespace()
     {
-        await Scenario.ThrowsWhenParameterItemIsNullOrEmptyOrWhitespaceAsync(
+        await Scenario.ThrowsWhenArgumentElementIsNullOrEmptyOrWhitespaceAsync(
             (invalidThrottle) => WithClientWithExecutorMockForExpectedArguments(
                 subject => subject.UpdateRecurringJobAsync(
                     jid: ExampleJid,

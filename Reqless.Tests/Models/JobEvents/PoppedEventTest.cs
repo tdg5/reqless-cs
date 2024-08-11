@@ -15,7 +15,7 @@ public class PoppedEventTest
     [Fact]
     public void Constructor_When_ThrowsWhenNegative()
     {
-        Scenario.ThrowsWhenParameterIsNegative(
+        Scenario.ThrowsWhenArgumentIsNegative(
             (long invalidWhen) => new PoppedEvent(invalidWhen, "WorkerName"),
             "when"
         );
@@ -28,7 +28,7 @@ public class PoppedEventTest
     [Fact]
     public void Constructor_WorkerName_ThrowsWhenNullOrEmptyOrOnlyWhitespace()
     {
-        Scenario.ThrowsWhenParameterIsNullOrEmptyOrWhitespace(
+        Scenario.ThrowsWhenArgumentIsNullOrEmptyOrWhitespace(
             (invalidWorkerName) => new PoppedEvent(1, invalidWorkerName!),
             "workerName"
         );

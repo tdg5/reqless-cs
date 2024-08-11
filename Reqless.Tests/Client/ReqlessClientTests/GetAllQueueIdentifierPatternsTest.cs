@@ -73,7 +73,7 @@ public class GetAllQueueIdentifierPatternsTest : BaseReqlessClientTest
     [Fact]
     public async Task ThrowsIfAnyIdentifiersListContainsValueThatIsNullEmptyOrOnlyWhitespace()
     {
-        await Scenario.ThrowsWhenParameterItemIsNullOrEmptyOrWhitespaceAsync(
+        await Scenario.ThrowsWhenArgumentElementIsNullOrEmptyOrWhitespaceAsync(
             async (invalidIdentifier) =>
             {
                 string?[] invalidIdentifiers = ["fine", invalidIdentifier];

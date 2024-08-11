@@ -15,7 +15,7 @@ public class AddTagToRecurringJobTest : BaseReqlessClientTest
     [Fact]
     public async Task ThrowsIfJidIsNullOrEmptyOrWhitespace()
     {
-        await Scenario.ThrowsWhenParameterIsNullOrEmptyOrWhitespaceAsync(
+        await Scenario.ThrowsWhenArgumentIsNullOrEmptyOrWhitespaceAsync(
             (invalidJid) => WithClientWithExecutorMockForExpectedArguments(
                 subject => subject.AddTagToRecurringJobAsync(invalidJid!, ExampleTag)
             ),
@@ -30,7 +30,7 @@ public class AddTagToRecurringJobTest : BaseReqlessClientTest
     [Fact]
     public async Task ThrowsIfTagIsNull()
     {
-        await Scenario.ThrowsWhenParameterIsNullOrEmptyOrWhitespaceAsync(
+        await Scenario.ThrowsWhenArgumentIsNullOrEmptyOrWhitespaceAsync(
             (invalidTag) => WithClientWithExecutorMockForExpectedArguments(
                 subject => subject.AddTagToRecurringJobAsync(ExampleJid, invalidTag!)
             ),

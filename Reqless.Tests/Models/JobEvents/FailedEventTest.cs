@@ -15,7 +15,7 @@ public class FailedEventTest
     [Fact]
     public void Constructor_ArgumentOutOfRangeExceptionThrownIfWhenIsNegative()
     {
-        Scenario.ThrowsWhenParameterIsNegative(
+        Scenario.ThrowsWhenArgumentIsNegative(
             (long invalidWhen) => new FailedEvent(invalidWhen, "Group", "WorkerName"),
             "when"
         );
@@ -28,7 +28,7 @@ public class FailedEventTest
     [Fact]
     public void Constructor_ArgumentNullExceptionThrownIfGroupIsNullOrEmptyOrOnlyWhitespace()
     {
-        Scenario.ThrowsWhenParameterIsNullOrEmptyOrWhitespace(
+        Scenario.ThrowsWhenArgumentIsNullOrEmptyOrWhitespace(
             (invalidGroup) => new FailedEvent(1, invalidGroup!, "WorkerName"),
             "group"
         );
@@ -41,7 +41,7 @@ public class FailedEventTest
     [Fact]
     public void Constructor_ArgumentNullExceptionThrownIfWorkerNameIsNullOrEmptyOrOnlyWhitespace()
     {
-        Scenario.ThrowsWhenParameterIsNullOrEmptyOrWhitespace(
+        Scenario.ThrowsWhenArgumentIsNullOrEmptyOrWhitespace(
             (invalidWorkerName) => new FailedEvent(1, "Group", invalidWorkerName!),
             "workerName"
         );

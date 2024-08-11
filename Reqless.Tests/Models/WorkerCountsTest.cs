@@ -15,7 +15,7 @@ public class WorkerCountsTest
     [Fact]
     public void Constructor_ThrowsIfNameIsNullOrEmptyOrOnlyWhitespace()
     {
-        Scenario.ThrowsWhenParameterIsNullOrEmptyOrWhitespace(
+        Scenario.ThrowsWhenArgumentIsNullOrEmptyOrWhitespace(
             (invalidName) => new WorkerCounts
             {
                 Jobs = 0,

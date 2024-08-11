@@ -15,7 +15,7 @@ public class GetConfigTest : BaseReqlessClientTest
     [Fact]
     public async Task ThrowsIfConfigNameIsNullOrEmptyOrOnlyWhitespace()
     {
-        await Scenario.ThrowsWhenParameterIsNullOrEmptyOrWhitespaceAsync(
+        await Scenario.ThrowsWhenArgumentIsNullOrEmptyOrWhitespaceAsync(
             (invalidConfigName) => WithClientWithExecutorMockForExpectedArguments(
                 subject => subject.GetConfigAsync(invalidConfigName!)
             ),

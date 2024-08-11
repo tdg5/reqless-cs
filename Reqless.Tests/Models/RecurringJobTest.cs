@@ -15,7 +15,7 @@ public class RecurringJobTest
     [Fact]
     public void Constructor_ClassName_ThrowsWhenNullOrEmptyOrOnlyWhitespace()
     {
-        Scenario.ThrowsWhenParameterIsNullOrEmptyOrWhitespace(
+        Scenario.ThrowsWhenArgumentIsNullOrEmptyOrWhitespace(
             (invalidClassName) => MakeRecurringJob(className: invalidClassName),
             "className"
         );
@@ -28,7 +28,7 @@ public class RecurringJobTest
     [Fact]
     public void Constructor_Count_ThrowsWhenNegative()
     {
-        Scenario.ThrowsWhenParameterIsNegative(
+        Scenario.ThrowsWhenArgumentIsNegative(
             (invalidCount) => MakeRecurringJob(count: Maybe<int>.Some(invalidCount)),
             "count"
         );
@@ -41,7 +41,7 @@ public class RecurringJobTest
     [Fact]
     public void Constructor_Data_ThrowsWhenNullOrEmptyOrOnlyWhitespace()
     {
-        Scenario.ThrowsWhenParameterIsNullOrEmptyOrWhitespace(
+        Scenario.ThrowsWhenArgumentIsNullOrEmptyOrWhitespace(
             (invalidData) => MakeRecurringJob(data: invalidData),
             "data"
         );
@@ -54,7 +54,7 @@ public class RecurringJobTest
     [Fact]
     public void Constructor_IntervalSeconds_ThrowsWhenNegative()
     {
-        Scenario.ThrowsWhenParameterIsNotPositive(
+        Scenario.ThrowsWhenArgumentIsNotPositive(
             (invalidIntervalSeconds) => MakeRecurringJob(
                 intervalSeconds: Maybe<int>.Some(invalidIntervalSeconds)
             ),
@@ -69,7 +69,7 @@ public class RecurringJobTest
     [Fact]
     public void Constructor_Jid_ThrowsWhenNullOrEmptyOrOnlyWhitespace()
     {
-        Scenario.ThrowsWhenParameterIsNullOrEmptyOrWhitespace(
+        Scenario.ThrowsWhenArgumentIsNullOrEmptyOrWhitespace(
             (invalidJid) => MakeRecurringJob(jid: invalidJid),
             "jid"
         );
@@ -82,7 +82,7 @@ public class RecurringJobTest
     [Fact]
     public void Constructor_MaximumBacklog_ThrowsWhenNegative()
     {
-        Scenario.ThrowsWhenParameterIsNegative(
+        Scenario.ThrowsWhenArgumentIsNegative(
             (invalidMaximumBacklog) => MakeRecurringJob(
                 maximumBacklog: Maybe<int>.Some(invalidMaximumBacklog)
             ),
@@ -97,7 +97,7 @@ public class RecurringJobTest
     [Fact]
     public void Constructor_Priority_ThrowsWhenNegative()
     {
-        Scenario.ThrowsWhenParameterIsNegative(
+        Scenario.ThrowsWhenArgumentIsNegative(
             (invalidPriority) => MakeRecurringJob(
                 priority: Maybe<int>.Some(invalidPriority)
             ),
@@ -122,7 +122,7 @@ public class RecurringJobTest
     [Fact]
     public void Constructor_QueueName_ThrowsWhenEmptyOrWhitespace()
     {
-        Scenario.ThrowsWhenParameterIsEmptyOrWhitespace(
+        Scenario.ThrowsWhenArgumentIsEmptyOrWhitespace(
             (invalidQueueName) => MakeRecurringJob(queueName: invalidQueueName),
             "queueName"
         );
@@ -135,7 +135,7 @@ public class RecurringJobTest
     [Fact]
     public void Constructor_Retries_ThrowsWhenNegative()
     {
-        Scenario.ThrowsWhenParameterIsNegative(
+        Scenario.ThrowsWhenArgumentIsNegative(
             (invalidRetries) => MakeRecurringJob(
                 retries: Maybe<int>.Some(invalidRetries)
             ),
@@ -150,7 +150,7 @@ public class RecurringJobTest
     [Fact]
     public void Constructor_State_ThrowsWhenNullOrEmptyOrOnlyWhitespace()
     {
-        Scenario.ThrowsWhenParameterIsNullOrEmptyOrWhitespace(
+        Scenario.ThrowsWhenArgumentIsNullOrEmptyOrWhitespace(
             (invalidState) => MakeRecurringJob(state: invalidState),
             "state"
         );
@@ -163,7 +163,7 @@ public class RecurringJobTest
     [Fact]
     public void Constructor_Tags_ThrowsWhenNull()
     {
-        Scenario.ThrowsArgumentNullException(
+        Scenario.ThrowsWhenArgumentIsNull(
             () => MakeRecurringJob(tags: Maybe<string[]?>.Some(null)),
             "tags"
         );
@@ -176,7 +176,7 @@ public class RecurringJobTest
     [Fact]
     public void Constructor_Tags_ThrowsWhenAnyValueIsNullEmptyOrOnlyWhitespace()
     {
-        Scenario.ThrowsWhenParameterItemIsNullOrEmptyOrWhitespace(
+        Scenario.ThrowsWhenArgumentElementIsNullOrEmptyOrWhitespace(
             (invalidTag) => MakeRecurringJob(
                 tags: Maybe<string[]?>.Some([invalidTag!])
             ),
@@ -191,7 +191,7 @@ public class RecurringJobTest
     [Fact]
     public void Constructor_Throttles_ThrowsWhenNull()
     {
-        Scenario.ThrowsArgumentNullException(
+        Scenario.ThrowsWhenArgumentIsNull(
             () => MakeRecurringJob(throttles: Maybe<string[]?>.Some(null)),
             "throttles"
         );
@@ -204,7 +204,7 @@ public class RecurringJobTest
     [Fact]
     public void Constructor_Throttles_ThrowsWhenAnyValueIsNullEmptyOrOnlyWhitespace()
     {
-        Scenario.ThrowsWhenParameterItemIsNullOrEmptyOrWhitespace(
+        Scenario.ThrowsWhenArgumentElementIsNullOrEmptyOrWhitespace(
             (invalidThrottle) => MakeRecurringJob(
                 throttles: Maybe<string[]?>.Some([invalidThrottle!])
             ),

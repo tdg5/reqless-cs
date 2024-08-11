@@ -28,7 +28,7 @@ public class TimeoutJobsTest : BaseReqlessClientTest
     [Fact]
     public async Task ThrowsIfAnyJidIsNullOrEmptyOrOnlyWhitespace()
     {
-        await Scenario.ThrowsWhenParameterItemIsNullOrEmptyOrWhitespaceAsync(
+        await Scenario.ThrowsWhenArgumentElementIsNullOrEmptyOrWhitespaceAsync(
             (invalidJid) => WithClientWithExecutorMockForExpectedArguments(
                 subject => subject.TimeoutJobsAsync(invalidJid!, ExampleJidOther)
             ),

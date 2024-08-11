@@ -15,7 +15,7 @@ public class AddEventToJobHistoryTest : BaseReqlessClientTest
     [Fact]
     public async Task ThrowsIfJidIsNullOrEmptyOrWhitespace()
     {
-        await Scenario.ThrowsWhenParameterIsNullOrEmptyOrWhitespaceAsync(
+        await Scenario.ThrowsWhenArgumentIsNullOrEmptyOrWhitespaceAsync(
             (invalidJid) => WithClientWithExecutorMockForExpectedArguments(
                 subject => subject.AddEventToJobHistoryAsync(
                     jid: invalidJid!,
@@ -33,7 +33,7 @@ public class AddEventToJobHistoryTest : BaseReqlessClientTest
     [Fact]
     public async Task ThrowsIfWhatIsNullOrEmptyOrWhitespace()
     {
-        await Scenario.ThrowsWhenParameterIsNullOrEmptyOrWhitespaceAsync(
+        await Scenario.ThrowsWhenArgumentIsNullOrEmptyOrWhitespaceAsync(
             (invalidWhat) => WithClientWithExecutorMockForExpectedArguments(
                 subject => subject.AddEventToJobHistoryAsync(
                     jid: ExampleJid,
@@ -51,7 +51,7 @@ public class AddEventToJobHistoryTest : BaseReqlessClientTest
     [Fact]
     public async Task ThrowsIfDataIsEmptyOrWhitespace()
     {
-        await Scenario.ThrowsWhenParameterIsEmptyOrWhitespaceAsync(
+        await Scenario.ThrowsWhenArgumentIsEmptyOrWhitespaceAsync(
             (invalidData) => WithClientWithExecutorMockForExpectedArguments(
                 subject => subject.AddEventToJobHistoryAsync(
                     data: invalidData,

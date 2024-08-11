@@ -16,7 +16,7 @@ public class UnfailJobsFromFailureGroupIntoQueueTest : BaseReqlessClientTest
     [Fact]
     public async Task ThrowsIfQueueNameIsNullOrEmptyOrOnlyWhitespace()
     {
-        await Scenario.ThrowsWhenParameterIsNullOrEmptyOrWhitespaceAsync(
+        await Scenario.ThrowsWhenArgumentIsNullOrEmptyOrWhitespaceAsync(
             (invalidQueueName) => WithClientWithExecutorMockForExpectedArguments(
                 subject => subject.UnfailJobsFromFailureGroupIntoQueueAsync(
                     groupName: ExampleGroupName,
@@ -34,7 +34,7 @@ public class UnfailJobsFromFailureGroupIntoQueueTest : BaseReqlessClientTest
     [Fact]
     public async Task ThrowsIfGroupNameIsNullOrEmptyOrWhitespace()
     {
-        await Scenario.ThrowsWhenParameterIsNullOrEmptyOrWhitespaceAsync(
+        await Scenario.ThrowsWhenArgumentIsNullOrEmptyOrWhitespaceAsync(
             (invalidGroupName) => WithClientWithExecutorMockForExpectedArguments(
                 subject => subject.UnfailJobsFromFailureGroupIntoQueueAsync(
                     groupName: invalidGroupName!,
@@ -52,7 +52,7 @@ public class UnfailJobsFromFailureGroupIntoQueueTest : BaseReqlessClientTest
     [Fact]
     public async Task ThrowsIfCountIsNotAPositiveNumber()
     {
-        await Scenario.ThrowsWhenParameterIsNotPositiveAsync(
+        await Scenario.ThrowsWhenArgumentIsNotPositiveAsync(
             (invalidCount) => WithClientWithExecutorMockForExpectedArguments(
                 subject => subject.UnfailJobsFromFailureGroupIntoQueueAsync(
                     count: invalidCount,

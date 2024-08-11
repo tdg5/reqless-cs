@@ -82,7 +82,7 @@ public class ArgumentValidationTest
     public void ThrowIfAnyNullOrWhitespace_ThrowsIfAnyValuesAreNullEmptyOrWhitespace()
     {
         var paramName = "values";
-        Scenario.ThrowsWhenParameterItemIsNullOrEmptyOrWhitespace(
+        Scenario.ThrowsWhenArgumentElementIsNullOrEmptyOrWhitespace(
             (invalidValue) => ArgumentValidation.ThrowIfAnyNullOrWhitespace(
                 ["a", invalidValue!, "c"],
                 paramName
@@ -119,7 +119,7 @@ public class ArgumentValidationTest
     public void ThrowIfNotNullAndEmptyOrWhitespace_ThrowsForEmptyOrWhitespace()
     {
         var paramName = "param";
-        Scenario.ThrowsWhenParameterIsEmptyOrWhitespace(
+        Scenario.ThrowsWhenArgumentIsEmptyOrWhitespace(
             (invalidValue) => ArgumentValidation.ThrowIfNotNullAndEmptyOrWhitespace(
                 invalidValue,
                 paramName
@@ -147,7 +147,7 @@ public class ArgumentValidationTest
     {
         var paramName = "param";
         ArgumentValidation.ThrowIfNegative(0, paramName);
-        Scenario.ThrowsWhenParameterIsNegative(
+        Scenario.ThrowsWhenArgumentIsNegative(
             (int invalidValue) => ArgumentValidation.ThrowIfNegative(
                 invalidValue,
                 paramName
@@ -165,7 +165,7 @@ public class ArgumentValidationTest
     {
         var paramName = "param";
         ArgumentValidation.ThrowIfNegative(0L, paramName);
-        Scenario.ThrowsWhenParameterIsNegative(
+        Scenario.ThrowsWhenArgumentIsNegative(
             (long invalidValue) => ArgumentValidation.ThrowIfNegative(
                 invalidValue,
                 paramName

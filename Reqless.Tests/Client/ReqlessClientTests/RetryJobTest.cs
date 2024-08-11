@@ -15,7 +15,7 @@ public class RetryJobTest : BaseReqlessClientTest
     [Fact]
     public async Task ThrowsIfGroupNameIsNullOrEmptyOrWhitespace()
     {
-        await Scenario.ThrowsWhenParameterIsNullOrEmptyOrWhitespaceAsync(
+        await Scenario.ThrowsWhenArgumentIsNullOrEmptyOrWhitespaceAsync(
             (invalidGroupName) => WithClientWithExecutorMockForExpectedArguments(
                 subject => subject.RetryJobAsync(
                     groupName: invalidGroupName!,
@@ -36,7 +36,7 @@ public class RetryJobTest : BaseReqlessClientTest
     [Fact]
     public async Task ThrowsIfJidIsNullOrEmptyOrWhitespace()
     {
-        await Scenario.ThrowsWhenParameterIsNullOrEmptyOrWhitespaceAsync(
+        await Scenario.ThrowsWhenArgumentIsNullOrEmptyOrWhitespaceAsync(
             (invalidJid) => WithClientWithExecutorMockForExpectedArguments(
                 subject => subject.RetryJobAsync(
                     groupName: ExampleGroupName,
@@ -57,7 +57,7 @@ public class RetryJobTest : BaseReqlessClientTest
     [Fact]
     public async Task ThrowsIfMessageIsNullOrEmptyOrWhitespace()
     {
-        await Scenario.ThrowsWhenParameterIsNullOrEmptyOrWhitespaceAsync(
+        await Scenario.ThrowsWhenArgumentIsNullOrEmptyOrWhitespaceAsync(
             (invalidMessage) => WithClientWithExecutorMockForExpectedArguments(
                 subject => subject.RetryJobAsync(
                     groupName: ExampleGroupName,
@@ -78,7 +78,7 @@ public class RetryJobTest : BaseReqlessClientTest
     [Fact]
     public async Task ThrowsIfQueueNameIsNullOrEmptyOrWhitespace()
     {
-        await Scenario.ThrowsWhenParameterIsNullOrEmptyOrWhitespaceAsync(
+        await Scenario.ThrowsWhenArgumentIsNullOrEmptyOrWhitespaceAsync(
             (invalidQueueName) => WithClientWithExecutorMockForExpectedArguments(
                 subject => subject.RetryJobAsync(
                     groupName: ExampleGroupName,
@@ -99,7 +99,7 @@ public class RetryJobTest : BaseReqlessClientTest
     [Fact]
     public async Task ThrowsIfWorkerNameIsNullOrEmptyOrWhitespace()
     {
-        await Scenario.ThrowsWhenParameterIsNullOrEmptyOrWhitespaceAsync(
+        await Scenario.ThrowsWhenArgumentIsNullOrEmptyOrWhitespaceAsync(
             (invalidWorkerName) => WithClientWithExecutorMockForExpectedArguments(
                 subject => subject.RetryJobAsync(
                     groupName: ExampleGroupName,
@@ -120,7 +120,7 @@ public class RetryJobTest : BaseReqlessClientTest
     [Fact]
     public async Task ThrowsIfDelayIsNegative()
     {
-        await Scenario.ThrowsWhenParameterIsNegativeAsync(
+        await Scenario.ThrowsWhenArgumentIsNegativeAsync(
             (invalidDelay) => WithClientWithExecutorMockForExpectedArguments(
                 subject => subject.RetryJobAsync(
                     delay: invalidDelay,
