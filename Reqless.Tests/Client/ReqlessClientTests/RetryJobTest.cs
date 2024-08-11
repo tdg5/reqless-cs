@@ -177,7 +177,7 @@ public class RetryJobTest : BaseReqlessClientTest
     {
         var delay = 0;
 
-        var exception = await Assert.ThrowsAsync<InvalidOperationException>(
+        await Scenario.ThrowsWhenServerRespondsWithNullAsync(
             () => WithClientWithExecutorMockForExpectedArguments(
                 subject => subject.RetryJobAsync(
                     ExampleJid,
@@ -200,6 +200,5 @@ public class RetryJobTest : BaseReqlessClientTest
                 returnValue: null
             )
         );
-        Assert.Equal("Server returned unexpected null result.", exception.Message);
     }
 }

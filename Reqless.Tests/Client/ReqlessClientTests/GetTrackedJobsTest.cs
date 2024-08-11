@@ -1,5 +1,6 @@
 using System.Text.Json;
 using Reqless.Client;
+using Reqless.Tests.TestHelpers;
 using Reqless.Tests.TestHelpers.Factories;
 
 namespace Reqless.Tests.Client.ReqlessClientTests;
@@ -16,16 +17,12 @@ public class GetTrackedJobsTest : BaseReqlessClientTest
     [Fact]
     public async Task ThrowsIfTheServerReturnsNull()
     {
-        var exception = await Assert.ThrowsAsync<InvalidOperationException>(
+        await Scenario.ThrowsWhenServerRespondsWithNullAsync(
             () => WithClientWithExecutorMockForExpectedArguments(
                 subject => subject.GetTrackedJobsAsync(),
                 expectedArguments: ["jobs.tracked", 0],
                 returnValue: null
             )
-        );
-        Assert.Equal(
-            "Server returned unexpected null result.",
-            exception.Message
         );
     }
 

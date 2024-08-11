@@ -33,14 +33,13 @@ public class GetTopTagsTest : BaseReqlessClientTest
     {
         var limit = 100;
         var offset = 25;
-        var exception = await Assert.ThrowsAsync<InvalidOperationException>(
+        await Scenario.ThrowsWhenServerRespondsWithNullAsync(
             () => WithClientWithExecutorMockForExpectedArguments(
                 subject => subject.GetTopTagsAsync(limit: limit, offset: offset),
                 expectedArguments: ["tags.top", 0, offset, limit],
                 returnValue: null
             )
         );
-        Assert.Equal("Server returned unexpected null result.", exception.Message);
     }
 
     /// <summary>

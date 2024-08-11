@@ -395,4 +395,124 @@ public static class Scenario
             Assert.Equal(parameterName, argumentException.ParamName);
         }
     }
+
+    /// <summary>
+    /// Asserts that the given action throws an <see cref="InvalidOperationException"/>
+    /// for the expected subject name.
+    /// </summary>
+    /// <param name="action">An action that should be used to cause an exception
+    /// to be thrown.</param>
+    /// <param name="subjectName">The name of the subject under test.</param>
+    public static void ThrowsWhenOperationEncountersNull(
+        Action action,
+        string subjectName
+    )
+    {
+        var exception = Assert.Throws<InvalidOperationException>(
+            () => action()
+        );
+        Assert.Equal(
+            $"Value cannot be null. (Subject '{subjectName}')",
+            exception.Message
+        );
+    }
+
+    /// <summary>
+    /// Asserts that the given action throws an <see
+    /// cref="InvalidOperationException"/> for the expected subject name when
+    /// that subject includes a null value.
+    /// </summary>
+    /// <param name="action">An action that should be used to cause an exception
+    /// to be thrown.</param>
+    /// <param name="subjectName">The name of the subject under test.</param>
+    public static void ThrowsWhenOperationEncountersNullElement(
+        Action action,
+        string subjectName
+    )
+    {
+        var exception = Assert.Throws<InvalidOperationException>(
+            () => action()
+        );
+        Assert.Equal(
+            $"Value cannot include null. (Subject '{subjectName}')",
+            exception.Message
+        );
+    }
+
+    /// <summary>
+    /// Asserts that the given async action throws an <see
+    /// cref="InvalidOperationException"/> for the expected subject name when
+    /// that subject includes a null value.
+    /// </summary>
+    /// <param name="action">An action that should be used to cause an exception
+    /// to be thrown.</param>
+    /// <param name="subjectName">The name of the subject under test.</param>
+    public static async Task ThrowsWhenOperationEncountersElementThatIsNullAsync(
+        Func<Task> action,
+        string subjectName
+    )
+    {
+        var exception = await Assert.ThrowsAsync<InvalidOperationException>(action);
+        Assert.Equal(
+            $"Value cannot include null. (Subject '{subjectName}')",
+            exception.Message
+        );
+    }
+
+    /// <summary>
+    /// Asserts that the given action throws an <see cref="InvalidOperationException"/>
+    /// for the expected subject name when that subject includes a value that is null,
+    /// an empty string, or composed entirely of whitespace.
+    /// </summary>
+    /// <param name="action">An action that should be used to cause an exception
+    /// to be thrown.</param>
+    /// <param name="subjectName">The name of the subject under test.</param>
+    public static async Task ThrowsWhenOperationEncountersElementThatIsNullOrEmptyOrWhitespaceAsync(
+        Func<string, Task> action,
+        string subjectName
+    )
+    {
+        var nullException = await Assert.ThrowsAsync<InvalidOperationException>(
+            () => action(null!)
+        );
+        Assert.Equal(
+            $"Value cannot include null. (Subject '{subjectName}')",
+            nullException.Message
+        );
+
+        foreach (var emptyString in TestConstants.EmptyStrings)
+        {
+            var emptyException = await Assert.ThrowsAsync<InvalidOperationException>(
+                () => action(emptyString)
+            );
+            Assert.Equal(
+                $"Value cannot include empty string or strings composed entirely of whitespace. (Subject '{subjectName}')",
+                emptyException.Message
+            );
+        }
+    }
+
+    /// <summary>
+    /// Asserts that the given action throws an <see cref="InvalidOperationException"/>
+    /// for the expected subject name when the server returns a simulated null response.
+    /// </summary>
+    /// <param name="action">An action that should be used to cause an exception
+    /// to be thrown.</param>
+    public static void ThrowsWhenServerRespondsWithNull(Action action)
+    {
+        var exception = Assert.Throws<InvalidOperationException>(action);
+        Assert.Equal("Server returned unexpected null result.", exception.Message);
+    }
+
+    /// <summary>
+    /// Asserts that the given action throws an <see cref="InvalidOperationException"/>
+    /// for the expected subject name when the server returns a simulated null response.
+    /// </summary>
+    /// <param name="action">An action that should be used to cause an exception
+    /// to be thrown.</param>
+    public static async Task ThrowsWhenServerRespondsWithNullAsync(Func<Task> action)
+    {
+        var exception = await Assert.ThrowsAsync<InvalidOperationException>(action);
+        Assert.Equal("Server returned unexpected null result.", exception.Message);
+    }
 }

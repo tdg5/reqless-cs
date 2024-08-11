@@ -16,14 +16,13 @@ public class GetAllQueueIdentifierPatternsTest : BaseReqlessClientTest
     [Fact]
     public async Task ThrowsIfServerReturnsNull()
     {
-        var exception = await Assert.ThrowsAsync<InvalidOperationException>(
+        await Scenario.ThrowsWhenServerRespondsWithNullAsync(
             () => WithClientWithExecutorMockForExpectedArguments(
                 subject => subject.GetAllQueueIdentifierPatternsAsync(),
                 expectedArguments: ["queueIdentifierPatterns.getAll", 0],
                 returnValue: null
             )
         );
-        Assert.Equal("Server returned unexpected null result.", exception.Message);
     }
 
     /// <summary>
@@ -73,7 +72,7 @@ public class GetAllQueueIdentifierPatternsTest : BaseReqlessClientTest
     [Fact]
     public async Task ThrowsIfAnyIdentifiersListContainsValueThatIsNullEmptyOrOnlyWhitespace()
     {
-        await Scenario.ThrowsWhenArgumentElementIsNullOrEmptyOrWhitespaceAsync(
+        await Scenario.ThrowsWhenOperationEncountersElementThatIsNullOrEmptyOrWhitespaceAsync(
             async (invalidIdentifier) =>
             {
                 string?[] invalidIdentifiers = ["fine", invalidIdentifier];

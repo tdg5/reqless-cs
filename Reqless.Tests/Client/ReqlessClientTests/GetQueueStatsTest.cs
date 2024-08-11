@@ -37,7 +37,7 @@ public class GetQueueStatsTest : BaseReqlessClientTest
     [Fact]
     public async Task ThrowsIfServerReturnsNull()
     {
-        var exception = await Assert.ThrowsAsync<InvalidOperationException>(
+        await Scenario.ThrowsWhenServerRespondsWithNullAsync(
             () => WithClientWithExecutorMockForExpectedArguments(
                 subject => subject.GetQueueStatsAsync(ExampleQueueName, ExampleDate),
                 expectedArguments: [
@@ -49,7 +49,6 @@ public class GetQueueStatsTest : BaseReqlessClientTest
                 returnValue: null
             )
         );
-        Assert.Equal("Server returned unexpected null result.", exception.Message);
     }
 
     /// <summary>

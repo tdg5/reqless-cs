@@ -120,7 +120,7 @@ public class PutJobTest : BaseReqlessClientTest
         var dependencies = new string[] { "dependencies" };
         var tags = new string[] { "tags" };
         var throttles = new string[] { "throttles" };
-        var exception = await Assert.ThrowsAsync<InvalidOperationException>(
+        await Scenario.ThrowsWhenServerRespondsWithNullAsync(
             () => WithClientWithExecutorMockForExpectedArguments(
                 subject => subject.PutJobAsync(
                     ExampleWorkerName,
@@ -158,7 +158,6 @@ public class PutJobTest : BaseReqlessClientTest
                 returnValue: null
             )
         );
-        Assert.Equal("Server returned unexpected null result.", exception.Message);
     }
 
     /// <summary>

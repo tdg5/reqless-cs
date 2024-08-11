@@ -34,7 +34,7 @@ public class GetJobsByTagTest : BaseReqlessClientTest
     {
         var limit = 25;
         var offset = 0;
-        var exception = await Assert.ThrowsAsync<InvalidOperationException>(
+        await Scenario.ThrowsWhenServerRespondsWithNullAsync(
             () => WithClientWithExecutorMockForExpectedArguments(
                 subject => subject.GetJobsByTagAsync(
                     tag: ExampleTag,
@@ -50,10 +50,6 @@ public class GetJobsByTagTest : BaseReqlessClientTest
                 ],
                 returnValue: null
             )
-        );
-        Assert.Equal(
-            "Server returned unexpected null result.",
-            exception.Message
         );
     }
 

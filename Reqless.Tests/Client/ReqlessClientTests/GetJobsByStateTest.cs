@@ -52,7 +52,7 @@ public class GetJobsByStateAsyncTest : BaseReqlessClientTest
     [Fact]
     public async Task ThrowsIfResultIsNull()
     {
-        var exception = await Assert.ThrowsAsync<InvalidOperationException>(
+        await Scenario.ThrowsWhenServerRespondsWithNullAsync(
             () => WithClientWithExecutorMockForExpectedArguments(
                 subject => subject.GetJobsByStateAsync(
                     queueName: ExampleQueueName,
@@ -68,10 +68,6 @@ public class GetJobsByStateAsyncTest : BaseReqlessClientTest
                 ],
                 returnValue: null
             )
-        );
-        Assert.Equal(
-            "Server returned unexpected null result.",
-            exception.Message
         );
     }
 
@@ -112,8 +108,8 @@ public class GetJobsByStateAsyncTest : BaseReqlessClientTest
     [Fact]
     public async Task ThrowsIfAnyJidIsNull()
     {
-        var exception = await Assert.ThrowsAsync<InvalidOperationException>(
-            () => WithClientWithExecutorMockForExpectedArguments(
+        await Scenario.ThrowsWhenOperationEncountersElementThatIsNullOrEmptyOrWhitespaceAsync(
+            (invalidJid) => WithClientWithExecutorMockForExpectedArguments(
                 subject => subject.GetJobsByStateAsync(
                     queueName: ExampleQueueName,
                     state: "running"
@@ -126,12 +122,9 @@ public class GetJobsByStateAsyncTest : BaseReqlessClientTest
                     0,
                     25,
                 ],
-                returnValue: "[null]"
-            )
-        );
-        Assert.Equal(
-            "Server returned unexpected null jid.",
-            exception.Message
+                returnValue: $"[{JsonSerializer.Serialize(invalidJid)}]"
+            ),
+            "jidsResult"
         );
     }
 

@@ -119,7 +119,7 @@ public class PopJobsTest : BaseReqlessClientTest
     public async Task ThrowsIfTheServerReturnsNull()
     {
         var count = 2;
-        var exception = await Assert.ThrowsAsync<InvalidOperationException>(
+        await Scenario.ThrowsWhenServerRespondsWithNullAsync(
             () => WithClientWithExecutorMockForExpectedArguments(
                 subject => subject.PopJobsAsync(
                     limit: count,
@@ -136,7 +136,6 @@ public class PopJobsTest : BaseReqlessClientTest
                 returnValue: null
             )
         );
-        Assert.Equal("Server returned unexpected null result.", exception.Message);
     }
 
     /// <summary>

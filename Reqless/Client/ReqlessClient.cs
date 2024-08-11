@@ -306,10 +306,9 @@ public class ReqlessClient : IClient, IDisposable
             ["failureGroups.counts", Now()]
         );
 
-        var failedCountsJson = (string?)result
-            ?? throw new InvalidOperationException(
-                "Server returned unexpected null result."
-            );
+        var failedCountsJson = OperationValidation.ThrowIfServerResponseIsNull(
+            (string?)result
+        );
 
         var keyValues = JsonSerializer.Deserialize<Dictionary<string, int>>(
             failedCountsJson
@@ -383,10 +382,9 @@ public class ReqlessClient : IClient, IDisposable
     {
         var result = await _executor.ExecuteAsync(["config.getAll", Now()]);
 
-        var configsJson = (string?)result
-            ?? throw new InvalidOperationException(
-                "Server returned unexpected null result."
-            );
+        var configsJson = OperationValidation.ThrowIfServerResponseIsNull(
+            (string?)result
+        );
 
         var configs = JsonSerializer.Deserialize<Dictionary<string, string>>(
             configsJson
@@ -400,10 +398,9 @@ public class ReqlessClient : IClient, IDisposable
     {
         var result = await _executor.ExecuteAsync(["queue.counts", Now()]);
 
-        var countsJson = (string?)result
-            ?? throw new InvalidOperationException(
-                "Server returned unexpected null result."
-            );
+        var countsJson = OperationValidation.ThrowIfServerResponseIsNull(
+            (string?)result
+        );
 
         // Redis cjson can't distinguish between an empty array and an empty
         // object, so an empty object here actually represents an empty array,
@@ -429,10 +426,9 @@ public class ReqlessClient : IClient, IDisposable
             Now()
         );
 
-        var identifiersJson = (string?)result
-            ?? throw new InvalidOperationException(
-                "Server returned unexpected null result."
-            );
+        var identifiersJson = OperationValidation.ThrowIfServerResponseIsNull(
+            (string?)result
+        );
 
         var identifiersWithSerializedValues = (
             JsonSerializer.Deserialize<Dictionary<string, string>>(
@@ -452,7 +448,7 @@ public class ReqlessClient : IClient, IDisposable
 
             if (identifierValues.Count > 0)
             {
-                ArgumentValidation.ThrowIfAnyNullOrWhitespace(
+                OperationValidation.ThrowIfAnyNullOrWhitespace(
                     identifierValues,
                     nameof(identifierValues)
                 );
@@ -468,10 +464,9 @@ public class ReqlessClient : IClient, IDisposable
     {
         var result = await _executor.ExecuteAsync(["workers.counts", Now()]);
 
-        var countsJson = (string?)result
-            ?? throw new InvalidOperationException(
-                "Server returned unexpected null result."
-            );
+        var countsJson = OperationValidation.ThrowIfServerResponseIsNull(
+            (string?)result
+        );
 
         // Redis cjson can't distinguish between an empty array and an empty
         // object, so an empty object here actually represents an empty array,
@@ -608,10 +603,9 @@ public class ReqlessClient : IClient, IDisposable
 
         var result = await _executor.ExecuteAsync(["queue.counts", Now(), queueName]);
 
-        var countsJson = (string?)result
-            ?? throw new InvalidOperationException(
-                "Server returned unexpected null result."
-            );
+        var countsJson = OperationValidation.ThrowIfServerResponseIsNull(
+            (string?)result
+        );
 
         var counts = JsonSerializer.Deserialize<QueueCounts>(countsJson)
             ?? throw new JsonException(
@@ -627,10 +621,7 @@ public class ReqlessClient : IClient, IDisposable
         ArgumentException.ThrowIfNullOrWhiteSpace(queueName, nameof(queueName));
         var result = await _executor.ExecuteAsync(["queue.length", Now(), queueName]);
 
-        var length = (int?)result
-            ?? throw new InvalidOperationException(
-                "Server returned unexpected null result."
-            );
+        var length = OperationValidation.ThrowIfServerResponseIsNull((int?)result);
 
         return length;
     }
@@ -652,8 +643,8 @@ public class ReqlessClient : IClient, IDisposable
             _date.ToUnixTimeMilliseconds()
         ]);
 
-        var queueStatsJson = (string?)result ?? throw new InvalidOperationException(
-            "Server returned unexpected null result."
+        var queueStatsJson = OperationValidation.ThrowIfServerResponseIsNull(
+            (string?)result
         );
 
         var queueStats = JsonSerializer.Deserialize<QueueStats>(queueStatsJson)
@@ -727,10 +718,9 @@ public class ReqlessClient : IClient, IDisposable
             limit,
         ]);
 
-        var tagsJson = (string?)result
-            ?? throw new InvalidOperationException(
-                "Server returned unexpected null result."
-            );
+        var tagsJson = OperationValidation.ThrowIfServerResponseIsNull(
+            (string?)result
+        );
 
         // Redis cjson can't distinguish between an empty array and an empty
         // object, so an empty object here actually represents an empty array,
@@ -753,10 +743,9 @@ public class ReqlessClient : IClient, IDisposable
     {
         var result = await _executor.ExecuteAsync(["jobs.tracked", Now()]);
 
-        var trackedJobsJson = (string?)result ??
-            throw new InvalidOperationException(
-                "Server returned unexpected null result."
-            );
+        var trackedJobsJson = OperationValidation.ThrowIfServerResponseIsNull(
+            (string?)result
+        );
 
         var trackedJobsResult = JsonSerializer.Deserialize<TrackedJobsResult>(
             trackedJobsJson
@@ -774,10 +763,7 @@ public class ReqlessClient : IClient, IDisposable
 
         var result = await _executor.ExecuteAsync(["worker.jobs", Now(), workerName]);
 
-        var jobsJson = (string?)result
-            ?? throw new InvalidOperationException(
-                "Server returned unexpected null result."
-            );
+        var jobsJson = OperationValidation.ThrowIfServerResponseIsNull((string?)result);
 
         var workerJobs = JsonSerializer.Deserialize<WorkerJobs>(jobsJson)
             ?? throw new JsonException(
@@ -810,10 +796,9 @@ public class ReqlessClient : IClient, IDisposable
 
         var result = await _executor.ExecuteAsync(arguments);
 
-        long newExpires = (long?)result
-            ?? throw new InvalidOperationException(
-                "Server returned unexpected null result."
-            );
+        long newExpires = OperationValidation.ThrowIfServerResponseIsNull(
+            (long?)result
+        );
 
         return newExpires;
     }
@@ -873,10 +858,7 @@ public class ReqlessClient : IClient, IDisposable
             workerName,
             limit
         ]);
-        var jobsJson = (string?)result
-            ?? throw new InvalidOperationException(
-                "Server returned unexpected null result."
-            );
+        var jobsJson = OperationValidation.ThrowIfServerResponseIsNull((string?)result);
 
         // Redis cjson can't distinguish between an empty array and an empty
         // object, so an empty object here actually represents an empty
@@ -940,10 +922,9 @@ public class ReqlessClient : IClient, IDisposable
             JsonSerializer.Serialize(_throttles),
         ]);
 
-        var resultJid = (string?)result
-            ?? throw new InvalidOperationException(
-                "Server returned unexpected null result."
-            );
+        var resultJid = OperationValidation.ThrowIfServerResponseIsNull(
+            (string?)result
+        );
 
         return resultJid;
     }
@@ -993,10 +974,9 @@ public class ReqlessClient : IClient, IDisposable
             JsonSerializer.Serialize(_throttles),
         ]);
 
-        var resultJid = (string?)result
-            ?? throw new InvalidOperationException(
-                "Server returned unexpected null result."
-            );
+        var resultJid = OperationValidation.ThrowIfServerResponseIsNull(
+            (string?)result
+        );
 
         return resultJid;
     }
@@ -1161,10 +1141,9 @@ public class ReqlessClient : IClient, IDisposable
             message,
         ]);
 
-        var remainingRetries = (int?)result
-            ?? throw new InvalidOperationException(
-                "Server returned unexpected null result."
-            );
+        var remainingRetries = OperationValidation.ThrowIfServerResponseIsNull(
+            (int?)result
+        );
 
         return remainingRetries > 0;
     }
@@ -1298,9 +1277,7 @@ public class ReqlessClient : IClient, IDisposable
             jid,
         ]);
 
-        var addedCount = (int?)result ?? throw new InvalidOperationException(
-            "Server returned unexpected null result."
-        );
+        var addedCount = OperationValidation.ThrowIfServerResponseIsNull((int?)result);
 
         return addedCount == 1;
     }
@@ -1324,8 +1301,8 @@ public class ReqlessClient : IClient, IDisposable
             count,
         ]);
 
-        var unfailedCount = (int?)result ?? throw new InvalidOperationException(
-            "Server returned unexpected null result."
+        var unfailedCount = OperationValidation.ThrowIfServerResponseIsNull(
+            (int?)result
         );
 
         return unfailedCount;
@@ -1354,8 +1331,8 @@ public class ReqlessClient : IClient, IDisposable
             jid,
         ]);
 
-        var removedCount = (int?)result ?? throw new InvalidOperationException(
-            "Server returned unexpected null result."
+        var removedCount = OperationValidation.ThrowIfServerResponseIsNull(
+            (int?)result
         );
 
         return removedCount == 1;
@@ -1508,10 +1485,7 @@ public class ReqlessClient : IClient, IDisposable
 
         var result = await _executor.ExecuteAsync(arguments);
 
-        var tagsJson = (string?)result
-            ?? throw new InvalidOperationException(
-                "Server returned unexpected null result."
-            );
+        var tagsJson = OperationValidation.ThrowIfServerResponseIsNull((string?)result);
 
         var resultTags = JsonSerializer.Deserialize<List<string>>(tagsJson)
             ?? throw new JsonException($"Failed to deserialize tags JSON: {tagsJson}");
@@ -1541,10 +1515,9 @@ public class ReqlessClient : IClient, IDisposable
             identifier,
         ]);
 
-        var throttleJson = (string?)result
-            ?? throw new InvalidOperationException(
-                "Server returned unexpected null result."
-            );
+        var throttleJson = OperationValidation.ThrowIfServerResponseIsNull(
+            (string?)result
+        );
 
         var throttle = JsonSerializer.Deserialize<Throttle>(throttleJson)
             ?? throw new JsonException(
@@ -1576,10 +1549,9 @@ public class ReqlessClient : IClient, IDisposable
             throttleName,
         ]);
 
-        var throttleMembersJson = (string?)result
-            ?? throw new InvalidOperationException(
-                "Server returned unexpected null result."
-            );
+        var throttleMembersJson = OperationValidation.ThrowIfServerResponseIsNull(
+            (string?)result
+        );
 
         var throttleMembers = JsonSerializer.Deserialize<List<string>>(
             throttleMembersJson
@@ -1608,10 +1580,9 @@ public class ReqlessClient : IClient, IDisposable
             limit
         ]);
 
-        var queryResultsJson = (string?)result
-            ?? throw new InvalidOperationException(
-                "Server returned unexpected null result."
-            );
+        var queryResultsJson = OperationValidation.ThrowIfServerResponseIsNull(
+            (string?)result
+        );
 
         var queryResults = JsonSerializer.Deserialize<JidsResult>(
             queryResultsJson
@@ -1670,10 +1641,9 @@ public class ReqlessClient : IClient, IDisposable
     /// deserialized.</exception>
     protected static List<Job> ValidateJobsResult(RedisResult result)
     {
-        var jobsJson = (string?)result
-            ?? throw new InvalidOperationException(
-                "Server returned unexpected null result."
-            );
+        var jobsJson = OperationValidation.ThrowIfServerResponseIsNull(
+            (string?)result
+        );
 
         // Redis cjson can't distinguish between an empty array and an empty
         // object, so an empty object here actually represents an empty array,
@@ -1702,8 +1672,8 @@ public class ReqlessClient : IClient, IDisposable
         // For whatever reason, if result is null, this cast results in
         // string?[] { null }, so we check for null directly above and forgive
         // null here.
-        var jidsResultJson = (string?)result ?? throw new InvalidOperationException(
-            "Server returned unexpected null result."
+        var jidsResultJson = OperationValidation.ThrowIfServerResponseIsNull(
+            (string?)result
         );
 
         var jidsResult = JsonSerializer.Deserialize<List<string>>(jidsResultJson)
@@ -1711,13 +1681,9 @@ public class ReqlessClient : IClient, IDisposable
                 $"Failed to deserialize JSON: {jidsResultJson}"
             );
 
-        List<string> jids = jidsResult.Select(jid =>
-            jid ?? throw new InvalidOperationException(
-                "Server returned unexpected null jid."
-            )
-        ).ToList();
+        OperationValidation.ThrowIfAnyNullOrWhitespace(jidsResult, "jidsResult");
 
-        return jids;
+        return jidsResult;
     }
 
     /// <summary>

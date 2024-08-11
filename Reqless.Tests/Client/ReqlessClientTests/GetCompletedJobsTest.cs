@@ -1,5 +1,6 @@
 using System.Text.Json;
 using Reqless.Client;
+using Reqless.Tests.TestHelpers;
 
 namespace Reqless.Tests.Client.ReqlessClientTests;
 
@@ -13,18 +14,14 @@ public class GetCompletedJobsTest : BaseReqlessClientTest
     /// is null.
     /// </summary>
     [Fact]
-    public async Task ThrowsIfResultIsNull()
+    public async Task ThrowsWhenServerReturnsNull()
     {
-        var exception = await Assert.ThrowsAsync<InvalidOperationException>(
+        await Scenario.ThrowsWhenServerRespondsWithNullAsync(
             () => WithClientWithExecutorMockForExpectedArguments(
                 subject => subject.GetCompletedJobsAsync(),
                 expectedArguments: ["jobs.completed", 0, 0, 25],
                 returnValue: null
             )
-        );
-        Assert.Equal(
-            "Server returned unexpected null result.",
-            exception.Message
         );
     }
 
@@ -55,16 +52,13 @@ public class GetCompletedJobsTest : BaseReqlessClientTest
     [Fact]
     public async Task ThrowsIfAnyJidIsNull()
     {
-        var exception = await Assert.ThrowsAsync<InvalidOperationException>(
-            () => WithClientWithExecutorMockForExpectedArguments(
+        await Scenario.ThrowsWhenOperationEncountersElementThatIsNullOrEmptyOrWhitespaceAsync(
+            (invalidJid) => WithClientWithExecutorMockForExpectedArguments(
                 subject => subject.GetCompletedJobsAsync(),
                 expectedArguments: ["jobs.completed", 0, 0, 25],
-                returnValue: "[null]"
-            )
-        );
-        Assert.Equal(
-            "Server returned unexpected null jid.",
-            exception.Message
+                returnValue: $"[{JsonSerializer.Serialize(invalidJid)}]"
+            ),
+            "jidsResult"
         );
     }
 

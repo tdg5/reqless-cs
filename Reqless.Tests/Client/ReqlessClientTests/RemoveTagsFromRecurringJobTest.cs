@@ -96,7 +96,7 @@ public class RemoveTagsFromRecurringJobTest : BaseReqlessClientTest
     [Fact]
     public async Task ThrowsIfServerReturnsNull()
     {
-        var exception = await Assert.ThrowsAsync<InvalidOperationException>(
+        await Scenario.ThrowsWhenServerRespondsWithNullAsync(
             () => WithClientWithExecutorMockForExpectedArguments(
                 subject => subject.RemoveTagsFromRecurringJobAsync(
                     ExampleJid,
@@ -112,7 +112,6 @@ public class RemoveTagsFromRecurringJobTest : BaseReqlessClientTest
                 returnValue: null
             )
         );
-        Assert.Equal("Server returned unexpected null result.", exception.Message);
     }
 
     /// <summary>

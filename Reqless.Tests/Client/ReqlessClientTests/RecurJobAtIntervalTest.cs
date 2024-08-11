@@ -69,7 +69,7 @@ public class RecurJobAtIntervalTest : BaseReqlessClientTest
     [Fact]
     public async Task ThrowsIfTheServerReturnsNull()
     {
-        var exception = await Assert.ThrowsAsync<InvalidOperationException>(
+        await Scenario.ThrowsWhenServerRespondsWithNullAsync(
             () => WithClientWithExecutorMockForExpectedArguments(
                 subject => subject.RecurJobAtIntervalAsync(
                     className: ExampleClassName,
@@ -101,7 +101,6 @@ public class RecurJobAtIntervalTest : BaseReqlessClientTest
                 returnValue: null
             )
         );
-        Assert.Equal("Server returned unexpected null result.", exception.Message);
     }
 
     /// <summary>

@@ -120,7 +120,7 @@ public class HeartbeatJobTest : BaseReqlessClientTest
     [Fact]
     public async Task ThrowsIfExpirationTimeIsUnexpected()
     {
-        var exception = await Assert.ThrowsAsync<InvalidOperationException>(
+        await Scenario.ThrowsWhenServerRespondsWithNullAsync(
             () => WithClientWithExecutorMockForExpectedArguments(
                 subject => subject.HeartbeatJobAsync(
                     jid: ExampleJid,
@@ -135,6 +135,5 @@ public class HeartbeatJobTest : BaseReqlessClientTest
                 returnValue: null
             )
         );
-        Assert.Equal("Server returned unexpected null result.", exception.Message);
     }
 }

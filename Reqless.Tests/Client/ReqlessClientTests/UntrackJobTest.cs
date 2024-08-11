@@ -30,16 +30,12 @@ public class UntrackJobTest : BaseReqlessClientTest
     [Fact]
     public async Task ThrowsIfServerReturnsNull()
     {
-        var exception = await Assert.ThrowsAsync<InvalidOperationException>(
+        await Scenario.ThrowsWhenServerRespondsWithNullAsync(
             () => WithClientWithExecutorMockForExpectedArguments(
                 subject => subject.UntrackJobAsync(ExampleJid),
                 expectedArguments: ["job.untrack", 0, ExampleJid],
                 returnValue: null
             )
-        );
-        Assert.Equal(
-            "Server returned unexpected null result.",
-            exception.Message
         );
     }
 

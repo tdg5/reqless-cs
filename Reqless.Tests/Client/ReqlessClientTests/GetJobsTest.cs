@@ -118,13 +118,12 @@ public class GetJobsTest : BaseReqlessClientTest
     [Fact]
     public async Task ThrowsIfTheServerReturnsNull()
     {
-        var exception = await Assert.ThrowsAsync<InvalidOperationException>(
+        await Scenario.ThrowsWhenServerRespondsWithNullAsync(
             () => WithClientWithExecutorMockForExpectedArguments(
                 subject => subject.GetJobsAsync(ExampleJid),
                 expectedArguments: ["job.getMulti", 0, ExampleJid],
                 returnValue: null
             )
         );
-        Assert.Equal("Server returned unexpected null result.", exception.Message);
     }
 }

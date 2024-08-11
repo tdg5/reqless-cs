@@ -72,7 +72,7 @@ public class UnfailJobsFromFailureGroupIntoQueueTest : BaseReqlessClientTest
     public async Task ThrowsIfServerReturnsNull()
     {
         var count = 1;
-        var exception = await Assert.ThrowsAsync<InvalidOperationException>(
+        await Scenario.ThrowsWhenServerRespondsWithNullAsync(
             () => WithClientWithExecutorMockForExpectedArguments(
                 subject => subject.UnfailJobsFromFailureGroupIntoQueueAsync(
                     count: count,
@@ -83,7 +83,6 @@ public class UnfailJobsFromFailureGroupIntoQueueTest : BaseReqlessClientTest
                 returnValue: null
             )
         );
-        Assert.Equal("Server returned unexpected null result.", exception.Message);
     }
 
     /// <summary>

@@ -1,5 +1,6 @@
 using System.Text.Json;
 using Reqless.Client;
+using Reqless.Tests.TestHelpers;
 
 namespace Reqless.Tests.Client.ReqlessClientTests;
 
@@ -34,14 +35,13 @@ public class FailureGroupsCountsTest : BaseReqlessClientTest
     [Fact]
     public async Task ThrowsIfTheServerReturnsNull()
     {
-        var exception = await Assert.ThrowsAsync<InvalidOperationException>(
+        await Scenario.ThrowsWhenServerRespondsWithNullAsync(
             () => WithClientWithExecutorMockForExpectedArguments(
                 subject => subject.FailureGroupsCountsAsync(),
                 expectedArguments: ["failureGroups.counts", 0],
                 returnValue: null
             )
         );
-        Assert.Equal("Server returned unexpected null result.", exception.Message);
     }
 
     /// <summary>
