@@ -1,4 +1,5 @@
 using Reqless.Models;
+using Reqless.Validation;
 using StackExchange.Redis;
 using System.Text.Json;
 
@@ -133,7 +134,7 @@ public class ReqlessClient : IClient, IDisposable
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(jid, nameof(jid));
         ArgumentNullException.ThrowIfNull(tags, nameof(tags));
-        ValidationHelper.ThrowIfAnyNullOrWhitespace(tags, nameof(tags));
+        ArgumentValidation.ThrowIfAnyNullOrWhitespace(tags, nameof(tags));
         return UpdateJobTagsAsyncCore("job.addTag", jid, tags);
     }
 
@@ -150,14 +151,14 @@ public class ReqlessClient : IClient, IDisposable
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(jid, nameof(jid));
         ArgumentNullException.ThrowIfNull(tags, nameof(tags));
-        ValidationHelper.ThrowIfAnyNullOrWhitespace(tags, nameof(tags));
+        ArgumentValidation.ThrowIfAnyNullOrWhitespace(tags, nameof(tags));
         return UpdateJobTagsAsyncCore("recurringJob.addTag", jid, tags);
     }
 
     /// <inheritdoc />
     public Task<bool> CancelJobAsync(string jid)
     {
-        ArgumentNullException.ThrowIfNullOrWhiteSpace(jid, nameof(jid));
+        ArgumentException.ThrowIfNullOrWhiteSpace(jid, nameof(jid));
 
         return CancelJobsAsync(jid);
     }
@@ -166,7 +167,7 @@ public class ReqlessClient : IClient, IDisposable
     public async Task<bool> CancelJobsAsync(params string[] jids)
     {
         ArgumentNullException.ThrowIfNull(jids, nameof(jids));
-        ValidationHelper.ThrowIfAnyNullOrWhitespace(jids, nameof(jids));
+        ArgumentValidation.ThrowIfAnyNullOrWhitespace(jids, nameof(jids));
 
         if (jids.Length == 0)
         {
@@ -279,7 +280,7 @@ public class ReqlessClient : IClient, IDisposable
         ArgumentException.ThrowIfNullOrWhiteSpace(workerName, nameof(workerName));
         ArgumentException.ThrowIfNullOrWhiteSpace(groupName, nameof(groupName));
         ArgumentException.ThrowIfNullOrWhiteSpace(message, nameof(message));
-        ValidationHelper.ThrowIfNotNullAndEmptyOrWhitespace(data, nameof(data));
+        ArgumentValidation.ThrowIfNotNullAndEmptyOrWhitespace(data, nameof(data));
 
         var arguments = new RedisValue[6 + (data is null ? 0 : 1)];
         arguments[0] = "job.fail";
@@ -346,7 +347,7 @@ public class ReqlessClient : IClient, IDisposable
     /// <inheritdoc/>
     public async Task ForgetQueuesAsync(params string[] queueNames)
     {
-        ValidationHelper.ThrowIfAnyNullOrWhitespace(queueNames, nameof(queueNames));
+        ArgumentValidation.ThrowIfAnyNullOrWhitespace(queueNames, nameof(queueNames));
 
         var arguments = new RedisValue[queueNames.Length + 2];
         arguments[0] = "queue.forget";
@@ -367,7 +368,7 @@ public class ReqlessClient : IClient, IDisposable
     /// <inheritdoc/>
     public async Task ForgetWorkersAsync(params string[] workerNames)
     {
-        ValidationHelper.ThrowIfAnyNullOrWhitespace(workerNames, nameof(workerNames));
+        ArgumentValidation.ThrowIfAnyNullOrWhitespace(workerNames, nameof(workerNames));
 
         var arguments = new RedisValue[workerNames.Length + 2];
         arguments[0] = "worker.forget";
@@ -451,7 +452,7 @@ public class ReqlessClient : IClient, IDisposable
 
             if (identifierValues.Count > 0)
             {
-                ValidationHelper.ThrowIfAnyNullOrWhitespace(
+                ArgumentValidation.ThrowIfAnyNullOrWhitespace(
                     identifierValues,
                     nameof(identifierValues)
                 );
@@ -554,7 +555,7 @@ public class ReqlessClient : IClient, IDisposable
     public async Task<List<Job>> GetJobsAsync(params string[] jids)
     {
         ArgumentNullException.ThrowIfNull(jids, nameof(jids));
-        ValidationHelper.ThrowIfAnyNullOrWhitespace(jids, nameof(jids));
+        ArgumentValidation.ThrowIfAnyNullOrWhitespace(jids, nameof(jids));
 
         var arguments = new RedisValue[jids.Length + 2];
         arguments[0] = "job.getMulti";
@@ -717,7 +718,7 @@ public class ReqlessClient : IClient, IDisposable
     /// <inheritdocs/>
     public async Task<List<string>> GetTopTagsAsync(int limit = 25, int offset = 0)
     {
-        ValidationHelper.ThrowIfNotPositive(limit, nameof(limit));
+        ArgumentValidation.ThrowIfNotPositive(limit, nameof(limit));
 
         var result = await _executor.ExecuteAsync([
             "tags.top",
@@ -795,7 +796,7 @@ public class ReqlessClient : IClient, IDisposable
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(jid, nameof(jid));
         ArgumentException.ThrowIfNullOrWhiteSpace(workerName, nameof(workerName));
-        ValidationHelper.ThrowIfNotNullAndEmptyOrWhitespace(data, nameof(data));
+        ArgumentValidation.ThrowIfNotNullAndEmptyOrWhitespace(data, nameof(data));
 
         var arguments = new RedisValue[4 + (data is null ? 0 : 1)];
         arguments[0] = "job.heartbeat";
@@ -912,7 +913,7 @@ public class ReqlessClient : IClient, IDisposable
         ArgumentException.ThrowIfNullOrWhiteSpace(queueName, nameof(queueName));
         ArgumentException.ThrowIfNullOrWhiteSpace(className, nameof(className));
         ArgumentException.ThrowIfNullOrWhiteSpace(data, nameof(data));
-        ValidationHelper.ThrowIfNotNullAndEmptyOrWhitespace(jid, nameof(jid));
+        ArgumentValidation.ThrowIfNotNullAndEmptyOrWhitespace(jid, nameof(jid));
 
         var _jid = jid ?? MakeJid();
         var _dependencies = dependencies ?? [];
@@ -965,7 +966,7 @@ public class ReqlessClient : IClient, IDisposable
         ArgumentException.ThrowIfNullOrWhiteSpace(queueName, nameof(queueName));
         ArgumentException.ThrowIfNullOrWhiteSpace(className, nameof(className));
         ArgumentException.ThrowIfNullOrWhiteSpace(data, nameof(data));
-        ValidationHelper.ThrowIfNotNullAndEmptyOrWhitespace(jid, nameof(jid));
+        ArgumentValidation.ThrowIfNotNullAndEmptyOrWhitespace(jid, nameof(jid));
 
         var _jid = jid ?? MakeJid();
         var _tags = tags ?? [];
@@ -1012,7 +1013,7 @@ public class ReqlessClient : IClient, IDisposable
     public async Task ReleaseThrottleForJobsAsync(string throttleName, params string[] jids)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(throttleName, nameof(throttleName));
-        ValidationHelper.ThrowIfAnyNullOrWhitespace(jids, nameof(jids));
+        ArgumentValidation.ThrowIfAnyNullOrWhitespace(jids, nameof(jids));
 
         var arguments = new RedisValue[jids.Length + 3];
         arguments[0] = "throttle.release";
@@ -1053,7 +1054,7 @@ public class ReqlessClient : IClient, IDisposable
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(jid, nameof(jid));
         ArgumentNullException.ThrowIfNull(tags, nameof(tags));
-        ValidationHelper.ThrowIfAnyNullOrWhitespace(tags, nameof(tags));
+        ArgumentValidation.ThrowIfAnyNullOrWhitespace(tags, nameof(tags));
 
         return UpdateJobTagsAsyncCore("job.removeTag", jid, tags);
     }
@@ -1072,7 +1073,7 @@ public class ReqlessClient : IClient, IDisposable
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(jid, nameof(jid));
         ArgumentNullException.ThrowIfNull(tags, nameof(tags));
-        ValidationHelper.ThrowIfAnyNullOrWhitespace(tags, nameof(tags));
+        ArgumentValidation.ThrowIfAnyNullOrWhitespace(tags, nameof(tags));
 
         return UpdateJobTagsAsyncCore("recurringJob.removeTag", jid, tags);
     }
@@ -1147,7 +1148,7 @@ public class ReqlessClient : IClient, IDisposable
         ArgumentException.ThrowIfNullOrWhiteSpace(workerName, nameof(workerName));
         ArgumentException.ThrowIfNullOrWhiteSpace(groupName, nameof(groupName));
         ArgumentException.ThrowIfNullOrWhiteSpace(message, nameof(message));
-        ValidationHelper.ThrowIfNegative(delay, nameof(delay));
+        ArgumentValidation.ThrowIfNegative(delay, nameof(delay));
 
         RedisResult result = await _executor.ExecuteAsync([
             "job.retry",
@@ -1178,7 +1179,7 @@ public class ReqlessClient : IClient, IDisposable
         foreach (var (key, value) in identifierPatterns)
         {
             ArgumentException.ThrowIfNullOrWhiteSpace(key, $"{nameof(identifierPatterns)}.key");
-            ValidationHelper.ThrowIfAnyNullOrWhitespace(value, $"{nameof(identifierPatterns)}.value");
+            ArgumentValidation.ThrowIfAnyNullOrWhitespace(value, $"{nameof(identifierPatterns)}.value");
             if (value.Any())
             {
                 argumentCount += 2;
@@ -1238,7 +1239,7 @@ public class ReqlessClient : IClient, IDisposable
     )
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(queueName, nameof(queueName));
-        ValidationHelper.ThrowIfNegative(maximum, nameof(maximum));
+        ArgumentValidation.ThrowIfNegative(maximum, nameof(maximum));
 
         await _executor.ExecuteAsync([
             "queue.throttle.set",
@@ -1256,7 +1257,7 @@ public class ReqlessClient : IClient, IDisposable
     )
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(throttleName, nameof(throttleName));
-        ValidationHelper.ThrowIfNegative(maximum, nameof(maximum));
+        ArgumentValidation.ThrowIfNegative(maximum, nameof(maximum));
 
         await _executor.ExecuteAsync([
             "throttle.set",
@@ -1277,7 +1278,7 @@ public class ReqlessClient : IClient, IDisposable
     /// <inheritdoc/>
     public async Task TimeoutJobsAsync(params string[] jids)
     {
-        ValidationHelper.ThrowIfAnyNullOrWhitespace(jids, nameof(jids));
+        ArgumentValidation.ThrowIfAnyNullOrWhitespace(jids, nameof(jids));
 
         var arguments = new RedisValue[jids.Length + 2];
         arguments[0] = "job.timeout";
@@ -1313,7 +1314,7 @@ public class ReqlessClient : IClient, IDisposable
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(queueName, nameof(queueName));
         ArgumentException.ThrowIfNullOrWhiteSpace(groupName, nameof(groupName));
-        ValidationHelper.ThrowIfNotPositive(count, nameof(count));
+        ArgumentValidation.ThrowIfNotPositive(count, nameof(count));
 
         var result = await _executor.ExecuteAsync([
             "queue.unfail",
@@ -1388,7 +1389,7 @@ public class ReqlessClient : IClient, IDisposable
         }
         if (intervalSeconds is not null)
         {
-            ValidationHelper.ThrowIfNotPositive(intervalSeconds.Value, nameof(intervalSeconds));
+            ArgumentValidation.ThrowIfNotPositive(intervalSeconds.Value, nameof(intervalSeconds));
             argumentCount += 2;
         }
         if (maximumBacklog is not null)
@@ -1410,7 +1411,7 @@ public class ReqlessClient : IClient, IDisposable
         }
         if (throttles is not null)
         {
-            ValidationHelper.ThrowIfAnyNullOrWhitespace(throttles, nameof(throttles));
+            ArgumentValidation.ThrowIfAnyNullOrWhitespace(throttles, nameof(throttles));
             argumentCount += 2;
         }
 
@@ -1497,7 +1498,7 @@ public class ReqlessClient : IClient, IDisposable
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(jid, nameof(jid));
         ArgumentNullException.ThrowIfNull(tags, nameof(tags));
-        ValidationHelper.ThrowIfAnyNullOrWhitespace(tags, nameof(tags));
+        ArgumentValidation.ThrowIfAnyNullOrWhitespace(tags, nameof(tags));
 
         var arguments = new RedisValue[tags.Length + 3];
         arguments[0] = tagCommand;

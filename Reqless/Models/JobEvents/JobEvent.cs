@@ -1,4 +1,5 @@
 using Reqless.Serialization;
+using Reqless.Validation;
 using System.Text.Json.Serialization;
 
 namespace Reqless.Models.JobEvents;
@@ -33,7 +34,7 @@ public class JobEvent
     protected JobEvent(string what, long when)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(what, nameof(what));
-        ValidationHelper.ThrowIfNegative(when, nameof(when));
+        ArgumentValidation.ThrowIfNegative(when, nameof(when));
 
         What = what;
         When = when;

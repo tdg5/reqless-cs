@@ -1,15 +1,15 @@
-using Reqless.Models;
+using Reqless.Validation;
 using Reqless.Tests.TestHelpers;
 
-namespace Reqless.Tests.Models;
+namespace Reqless.Tests.Validation;
 
 /// <summary>
-/// Tests for the <see cref="ValidationHelper"/> class.
+/// Tests for the <see cref="ArgumentValidation"/> class.
 /// </summary>
-public class ValidationHelperTest
+public class ArgumentValidationTest
 {
     /// <summary>
-    /// <see cref="ValidationHelper.ThrowIfAnyNull"/> should throw if the
+    /// <see cref="ArgumentValidation.ThrowIfAnyNull"/> should throw if the
     /// collection is null.
     /// </summary>
     [Fact]
@@ -17,7 +17,7 @@ public class ValidationHelperTest
     {
         var paramName = "param";
         var exception = Assert.Throws<ArgumentNullException>(
-            () => ValidationHelper.ThrowIfAnyNull<string>(null!, paramName)
+            () => ArgumentValidation.ThrowIfAnyNull<string>(null!, paramName)
         );
         Assert.Equal(
             $"Value cannot be null. (Parameter '{paramName}')",
@@ -27,7 +27,7 @@ public class ValidationHelperTest
     }
 
     /// <summary>
-    /// <see cref="ValidationHelper.ThrowIfAnyNull"/> should throw if any
+    /// <see cref="ArgumentValidation.ThrowIfAnyNull"/> should throw if any
     /// values are null.
     /// </summary>
     [Fact]
@@ -37,7 +37,7 @@ public class ValidationHelperTest
         var paramName = "values";
 
         var exception = Assert.Throws<ArgumentException>(
-            () => ValidationHelper.ThrowIfAnyNull(values, paramName)
+            () => ArgumentValidation.ThrowIfAnyNull(values, paramName)
         );
         Assert.Equal(
             $"Value cannot include null. (Parameter '{paramName}')",
@@ -47,17 +47,17 @@ public class ValidationHelperTest
     }
 
     /// <summary>
-    /// <see cref="ValidationHelper.ThrowIfAnyNull"/> should not throw if none
+    /// <see cref="ArgumentValidation.ThrowIfAnyNull"/> should not throw if none
     /// of the values are null.
     /// </summary>
     [Fact]
     public void ThrowIfAnyNull_NotThrowWhenNoValuesAreNull()
     {
-        ValidationHelper.ThrowIfAnyNull(["a", "b", "c"], "param");
+        ArgumentValidation.ThrowIfAnyNull(["a", "b", "c"], "param");
     }
 
     /// <summary>
-    /// <see cref="ValidationHelper.ThrowIfAnyNullOrWhitespace"/> should throw
+    /// <see cref="ArgumentValidation.ThrowIfAnyNullOrWhitespace"/> should throw
     /// if the collection is null.
     /// </summary>
     [Fact]
@@ -65,7 +65,7 @@ public class ValidationHelperTest
     {
         var paramName = "param";
         var exception = Assert.Throws<ArgumentNullException>(
-            () => ValidationHelper.ThrowIfAnyNullOrWhitespace(null!, paramName)
+            () => ArgumentValidation.ThrowIfAnyNullOrWhitespace(null!, paramName)
         );
         Assert.Equal(
             $"Value cannot be null. (Parameter '{paramName}')",
@@ -75,7 +75,7 @@ public class ValidationHelperTest
     }
 
     /// <summary>
-    /// <see cref="ValidationHelper.ThrowIfAnyNullOrWhitespace"/> should throw if any
+    /// <see cref="ArgumentValidation.ThrowIfAnyNullOrWhitespace"/> should throw if any
     /// values are null, empty, or just whitespace.
     /// </summary>
     [Fact]
@@ -83,7 +83,7 @@ public class ValidationHelperTest
     {
         var paramName = "values";
         Scenario.ThrowsWhenParameterItemIsNullOrEmptyOrWhitespace(
-            (invalidValue) => ValidationHelper.ThrowIfAnyNullOrWhitespace(
+            (invalidValue) => ArgumentValidation.ThrowIfAnyNullOrWhitespace(
                 ["a", invalidValue!, "c"],
                 paramName
             ),
@@ -92,27 +92,27 @@ public class ValidationHelperTest
     }
 
     /// <summary>
-    /// <see cref="ValidationHelper.ThrowIfAnyNullOrWhitespace"/> should not
+    /// <see cref="ArgumentValidation.ThrowIfAnyNullOrWhitespace"/> should not
     /// throw if all the values are valid.
     /// </summary>
     [Fact]
     public void ThrowIfAnyNullOrWhitespace_NotThrowWhenNoValuesAreNull()
     {
-        ValidationHelper.ThrowIfAnyNullOrWhitespace(["a", "b", "c"], "param");
+        ArgumentValidation.ThrowIfAnyNullOrWhitespace(["a", "b", "c"], "param");
     }
 
     /// <summary>
-    /// <see cref="ValidationHelper.ThrowIfNotNullAndEmptyOrWhitespace"/> should
+    /// <see cref="ArgumentValidation.ThrowIfNotNullAndEmptyOrWhitespace"/> should
     /// not throw if the value is null.
     /// </summary>
     [Fact]
     public void ThrowIfNotNullAndEmptyOrWhitespace_DoesNotThrowForNull()
     {
-        ValidationHelper.ThrowIfNotNullAndEmptyOrWhitespace(null, "param");
+        ArgumentValidation.ThrowIfNotNullAndEmptyOrWhitespace(null, "param");
     }
 
     /// <summary>
-    /// <see cref="ValidationHelper.ThrowIfNotNullAndEmptyOrWhitespace"/> should
+    /// <see cref="ArgumentValidation.ThrowIfNotNullAndEmptyOrWhitespace"/> should
     /// throw the value is empty or whitespace.
     /// </summary>
     [Fact]
@@ -120,7 +120,7 @@ public class ValidationHelperTest
     {
         var paramName = "param";
         Scenario.ThrowsWhenParameterIsEmptyOrWhitespace(
-            (invalidValue) => ValidationHelper.ThrowIfNotNullAndEmptyOrWhitespace(
+            (invalidValue) => ArgumentValidation.ThrowIfNotNullAndEmptyOrWhitespace(
                 invalidValue,
                 paramName
             ),
@@ -129,26 +129,26 @@ public class ValidationHelperTest
     }
 
     /// <summary>
-    /// <see cref="ValidationHelper.ThrowIfAnyNullOrWhitespace"/> should not
+    /// <see cref="ArgumentValidation.ThrowIfAnyNullOrWhitespace"/> should not
     /// throw if all the values are valid.
     /// </summary>
     [Fact]
     public void ThrowIfNotNullAndEmptyOrWhitespace_DoesNotThrowForValidValue()
     {
-        ValidationHelper.ThrowIfNotNullAndEmptyOrWhitespace("valid", "param");
+        ArgumentValidation.ThrowIfNotNullAndEmptyOrWhitespace("valid", "param");
     }
 
     /// <summary>
-    /// <see cref="ValidationHelper.ThrowIfNegative(int, string)"/> should
+    /// <see cref="ArgumentValidation.ThrowIfNegative(int, string)"/> should
     /// throw if a negative value is provided.
     /// </summary>
     [Fact]
     public void ThrowIfNegative_Int_ThrowsIfValueIsNegative()
     {
         var paramName = "param";
-        ValidationHelper.ThrowIfNegative(0, paramName);
+        ArgumentValidation.ThrowIfNegative(0, paramName);
         Scenario.ThrowsWhenParameterIsNegative(
-            (int invalidValue) => ValidationHelper.ThrowIfNegative(
+            (int invalidValue) => ArgumentValidation.ThrowIfNegative(
                 invalidValue,
                 paramName
             ),
@@ -157,16 +157,16 @@ public class ValidationHelperTest
     }
 
     /// <summary>
-    /// <see cref="ValidationHelper.ThrowIfNegative(long, string)"/> should
+    /// <see cref="ArgumentValidation.ThrowIfNegative(long, string)"/> should
     /// throw if a negative value is provided.
     /// </summary>
     [Fact]
     public void ThrowIfNegative_Long_ThrowsIfValueIsNegative()
     {
         var paramName = "param";
-        ValidationHelper.ThrowIfNegative(0L, paramName);
+        ArgumentValidation.ThrowIfNegative(0L, paramName);
         Scenario.ThrowsWhenParameterIsNegative(
-            (long invalidValue) => ValidationHelper.ThrowIfNegative(
+            (long invalidValue) => ArgumentValidation.ThrowIfNegative(
                 invalidValue,
                 paramName
             ),

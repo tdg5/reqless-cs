@@ -1,9 +1,9 @@
-namespace Reqless.Models;
+namespace Reqless.Validation;
 
 /// <summary>
 /// A helper class for functions that help validating arguments.
 /// </summary>
-public static class ValidationHelper
+public static class ArgumentValidation
 {
     /// <summary>
     /// Checks an array for values that are null and throws an <see
@@ -16,7 +16,7 @@ public static class ValidationHelper
     /// null.</exception>
     /// <exception cref="ArgumentException">If any of the values in the array
     /// are null.</exception>
-    public static void ThrowIfAnyNull<T>(T[] values, string paramName) where T : class?
+    public static void ThrowIfAnyNull<T>(IEnumerable<T> values, string paramName) where T : class?
     {
         ArgumentNullException.ThrowIfNull(values, paramName);
 

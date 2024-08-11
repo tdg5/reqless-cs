@@ -1,4 +1,5 @@
 using Reqless.Serialization;
+using Reqless.Validation;
 using System.Text.Json.Serialization;
 
 namespace Reqless.Models;
@@ -28,7 +29,7 @@ public class JidsResult
     /// possibly incomplete.</param>
     public JidsResult(string[] jids, int total)
     {
-        ValidationHelper.ThrowIfAnyNullOrWhitespace(jids, nameof(jids));
+        ArgumentValidation.ThrowIfAnyNullOrWhitespace(jids, nameof(jids));
 
         Jids = jids;
         Total = total;

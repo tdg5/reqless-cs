@@ -1,5 +1,6 @@
 using Reqless.Models.JobEvents;
 using Reqless.Serialization;
+using Reqless.Validation;
 using System.Text.Json.Serialization;
 
 namespace Reqless.Models;
@@ -122,14 +123,14 @@ public class Job : BaseJob
         string? workerName
     ) : base(className, data, jid, priority, queueName, retries, state, tags, throttles)
     {
-        ValidationHelper.ThrowIfAnyNullOrWhitespace(dependencies, nameof(dependencies));
-        ValidationHelper.ThrowIfAnyNullOrWhitespace(dependents, nameof(dependents));
-        ValidationHelper.ThrowIfAnyNull(history, nameof(history));
-        ValidationHelper.ThrowIfNotNullAndEmptyOrWhitespace(spawnedFromJid, nameof(spawnedFromJid));
-        ValidationHelper.ThrowIfNotNullAndEmptyOrWhitespace(workerName, nameof(workerName));
+        ArgumentValidation.ThrowIfAnyNullOrWhitespace(dependencies, nameof(dependencies));
+        ArgumentValidation.ThrowIfAnyNullOrWhitespace(dependents, nameof(dependents));
+        ArgumentValidation.ThrowIfAnyNull(history, nameof(history));
+        ArgumentValidation.ThrowIfNotNullAndEmptyOrWhitespace(spawnedFromJid, nameof(spawnedFromJid));
+        ArgumentValidation.ThrowIfNotNullAndEmptyOrWhitespace(workerName, nameof(workerName));
         if (expires is not null)
         {
-            ValidationHelper.ThrowIfNotPositive(expires.Value, nameof(expires));
+            ArgumentValidation.ThrowIfNotPositive(expires.Value, nameof(expires));
         }
         if (remaining < -1)
         {

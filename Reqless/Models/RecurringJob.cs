@@ -1,4 +1,5 @@
 using Reqless.Serialization;
+using Reqless.Validation;
 using System.Text.Json.Serialization;
 
 namespace Reqless.Models;
@@ -70,9 +71,9 @@ public class RecurringJob : BaseJob
         string[] throttles
     ) : base(className, data, jid, priority, queueName, retries, state, tags, throttles)
     {
-        ValidationHelper.ThrowIfNegative(count, nameof(count));
-        ValidationHelper.ThrowIfNotPositive(intervalSeconds, nameof(intervalSeconds));
-        ValidationHelper.ThrowIfNegative(maximumBacklog, nameof(maximumBacklog));
+        ArgumentValidation.ThrowIfNegative(count, nameof(count));
+        ArgumentValidation.ThrowIfNotPositive(intervalSeconds, nameof(intervalSeconds));
+        ArgumentValidation.ThrowIfNegative(maximumBacklog, nameof(maximumBacklog));
 
         Count = count;
         IntervalSeconds = intervalSeconds;

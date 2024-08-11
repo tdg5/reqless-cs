@@ -1,3 +1,5 @@
+using Reqless.Validation;
+
 namespace Reqless.Models;
 
 /// <summary>
@@ -99,12 +101,12 @@ abstract public class BaseJob
         ArgumentException.ThrowIfNullOrWhiteSpace(data, nameof(data));
         ArgumentException.ThrowIfNullOrWhiteSpace(jid, nameof(jid));
         // Queue name can be null when a job is completed and no longer in a queue.
-        ValidationHelper.ThrowIfNotNullAndEmptyOrWhitespace(queueName, nameof(queueName));
+        ArgumentValidation.ThrowIfNotNullAndEmptyOrWhitespace(queueName, nameof(queueName));
         ArgumentException.ThrowIfNullOrWhiteSpace(state, nameof(state));
-        ValidationHelper.ThrowIfAnyNullOrWhitespace(tags, nameof(tags));
-        ValidationHelper.ThrowIfAnyNullOrWhitespace(throttles, nameof(throttles));
-        ValidationHelper.ThrowIfNegative(priority, nameof(priority));
-        ValidationHelper.ThrowIfNegative(retries, nameof(retries));
+        ArgumentValidation.ThrowIfAnyNullOrWhitespace(tags, nameof(tags));
+        ArgumentValidation.ThrowIfAnyNullOrWhitespace(throttles, nameof(throttles));
+        ArgumentValidation.ThrowIfNegative(priority, nameof(priority));
+        ArgumentValidation.ThrowIfNegative(retries, nameof(retries));
 
         ClassName = className;
         Data = data;

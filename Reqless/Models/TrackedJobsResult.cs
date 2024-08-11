@@ -1,5 +1,6 @@
 using System.Text.Json.Serialization;
 using Reqless.Serialization;
+using Reqless.Validation;
 
 namespace Reqless.Models;
 
@@ -28,8 +29,8 @@ public class TrackedJobsResult
     /// information is available for.</param>
     public TrackedJobsResult(Job[] jobs, string[] expiredJids)
     {
-        ValidationHelper.ThrowIfAnyNull(jobs, nameof(jobs));
-        ValidationHelper.ThrowIfAnyNullOrWhitespace(expiredJids, nameof(expiredJids));
+        ArgumentValidation.ThrowIfAnyNull(jobs, nameof(jobs));
+        ArgumentValidation.ThrowIfAnyNullOrWhitespace(expiredJids, nameof(expiredJids));
 
         Jobs = jobs;
         ExpiredJids = expiredJids;

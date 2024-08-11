@@ -1,5 +1,6 @@
 using System.Text.Json.Serialization;
 using Reqless.Serialization;
+using Reqless.Validation;
 
 namespace Reqless.Models;
 
@@ -28,9 +29,9 @@ public class WorkerJobs
     public WorkerJobs(string[] jobs, string[] stalled)
     {
         ArgumentNullException.ThrowIfNull(jobs, nameof(jobs));
-        ValidationHelper.ThrowIfAnyNullOrWhitespace(jobs, nameof(jobs));
+        ArgumentValidation.ThrowIfAnyNullOrWhitespace(jobs, nameof(jobs));
         ArgumentNullException.ThrowIfNull(stalled, nameof(stalled));
-        ValidationHelper.ThrowIfAnyNullOrWhitespace(stalled, nameof(stalled));
+        ArgumentValidation.ThrowIfAnyNullOrWhitespace(stalled, nameof(stalled));
         Jobs = jobs;
         Stalled = stalled;
     }

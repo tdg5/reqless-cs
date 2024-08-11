@@ -1,3 +1,5 @@
+using Reqless.Validation;
+
 using System.Text.Json.Serialization;
 
 namespace Reqless.Models;
@@ -50,7 +52,7 @@ public class JobFailure
         ArgumentException.ThrowIfNullOrWhiteSpace(group, nameof(group));
         ArgumentException.ThrowIfNullOrWhiteSpace(message, nameof(message));
         ArgumentException.ThrowIfNullOrWhiteSpace(workerName, nameof(workerName));
-        ValidationHelper.ThrowIfNotPositive(when, nameof(when));
+        ArgumentValidation.ThrowIfNotPositive(when, nameof(when));
 
         Group = group;
         Message = message;
