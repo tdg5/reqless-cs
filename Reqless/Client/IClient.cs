@@ -205,6 +205,14 @@ public interface IClient
     Task<Dictionary<string, List<string>>> GetAllQueueIdentifierPatternsAsync();
 
     /// <summary>
+    /// Get all dynamic queue priority patterns.
+    /// </summary>
+    /// <returns>An ordered collection of <see cref="QueuePriorityPattern"/>
+    /// where each element represents a priority class and those queues that are
+    /// part of that priority class.</returns>
+    Task<List<QueuePriorityPattern>> GetAllQueuePriorityPatternsAsync();
+
+    /// <summary>
     /// Get the counts of the number of jobs, both expired and unexpired, that
     /// each worker is responsible for.
     /// </summary>

@@ -439,6 +439,40 @@ public class ReqlessClient : IClient, IDisposable
         return identifierMapping;
     }
 
+    /// <summary>
+    /// Gets all queue priority patterns.
+    /// </summary>
+    public async Task<List<QueuePriorityPattern>> GetAllQueuePriorityPatternsAsync()
+    {
+        var result = await _executor.ExecuteAsync(
+            "queuePriorityPatterns.getAll",
+            Now()
+        );
+
+        string listJson = OperationValidation.ThrowIfServerResponseIsNull(
+            (string?)result
+        );
+
+        var listOfSerializedPriorities = JsonSerializer.Deserialize<List<string>>(listJson)
+            ?? throw new JsonException(
+                $"Failed to deserialize all queue priority patterns JSON: {listJson}"
+            );
+
+        var priorities = new List<QueuePriorityPattern>();
+        foreach (var serializedPriority in listOfSerializedPriorities)
+        {
+            var priority = (
+                JsonSerializer.Deserialize<QueuePriorityPattern>(serializedPriority)
+                    ?? throw new JsonException(
+                        $"Failed to deserialize queue priority pattern JSON: {serializedPriority}"
+                    )
+            );
+            priorities.Add(priority);
+        };
+
+        return priorities;
+    }
+
     /// <inheritdoc/>
     public async Task<List<WorkerCounts>> GetAllWorkerCountsAsync()
     {

@@ -609,6 +609,17 @@ public class ReqlessClientIntegrationTest
     }
 
     /// <summary>
+    /// <see cref="ReqlessClient.GetAllQueuePriorityPatternsAsync"/> should be
+    /// able to fetch the default priorities.
+    /// </summary>
+    [Fact]
+    public async Task GetAllQueuePriorityPatternsAsync_GetsDefaultPatterns()
+    {
+        var queuePriorities = await _client.GetAllQueuePriorityPatternsAsync();
+        Assert.Empty(queuePriorities);
+    }
+
+    /// <summary>
     /// <see cref="ReqlessClient.ForgetQueuesAsync"/> should cause the named
     /// queues to be removed from the set of known queues.
     /// </summary>
