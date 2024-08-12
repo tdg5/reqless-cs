@@ -544,38 +544,6 @@ public class ReqlessClientIntegrationTest
     }
 
     /// <summary>
-    /// <see cref="ReqlessClient.FailureGroupsCountsAsync"/> returns the counts
-    /// of the various groups of
-    /// failures.
-    /// </summary>
-    [Fact]
-    public async Task FailureGroupsCountsAsync_ReturnsCountsOfVariousFailureGroups()
-    {
-        var initialFailedCounts = await _client.FailureGroupsCountsAsync();
-        Assert.Empty(initialFailedCounts);
-        var jid = await PutJobAsync(
-            _client,
-            queueName: Maybe<string>.Some(ExampleQueueName),
-            workerName: Maybe<string>.Some(ExampleWorkerName)
-        );
-        Job? job = await _client.PopJobAsync(ExampleQueueName, ExampleWorkerName);
-        Assert.NotNull(job);
-        Assert.Equal(jid, job.Jid);
-        var failedSuccessfully = await _client.FailJobAsync(
-            jid,
-            ExampleWorkerName,
-            ExampleGroupName,
-            ExampleMessage
-        );
-        Assert.True(failedSuccessfully);
-        var failedCounts = await _client.FailureGroupsCountsAsync();
-        Assert.Equal(
-            new Dictionary<string, int> { { ExampleGroupName, 1 } },
-            failedCounts
-        );
-    }
-
-    /// <summary>
     /// <see cref="ReqlessClient.ForgetConfigAsync"/> should cause the named
     /// config to be removed from the set of known configs.
     /// </summary>
@@ -886,6 +854,38 @@ public class ReqlessClientIntegrationTest
         );
         Assert.Empty(jidsResult.Jids);
         Assert.Equal(failedJobCount, jidsResult.Total);
+    }
+
+    /// <summary>
+    /// <see cref="ReqlessClient.GetFailureGroupsCountsAsync"/> returns the counts
+    /// of the various groups of
+    /// failures.
+    /// </summary>
+    [Fact]
+    public async Task GetFailureGroupsCountsAsync_ReturnsCountsOfVariousFailureGroups()
+    {
+        var initialFailedCounts = await _client.GetFailureGroupsCountsAsync();
+        Assert.Empty(initialFailedCounts);
+        var jid = await PutJobAsync(
+            _client,
+            queueName: Maybe<string>.Some(ExampleQueueName),
+            workerName: Maybe<string>.Some(ExampleWorkerName)
+        );
+        Job? job = await _client.PopJobAsync(ExampleQueueName, ExampleWorkerName);
+        Assert.NotNull(job);
+        Assert.Equal(jid, job.Jid);
+        var failedSuccessfully = await _client.FailJobAsync(
+            jid,
+            ExampleWorkerName,
+            ExampleGroupName,
+            ExampleMessage
+        );
+        Assert.True(failedSuccessfully);
+        var failedCounts = await _client.GetFailureGroupsCountsAsync();
+        Assert.Equal(
+            new Dictionary<string, int> { { ExampleGroupName, 1 } },
+            failedCounts
+        );
     }
 
     /// <summary>

@@ -5,12 +5,12 @@ using Reqless.Tests.TestHelpers;
 namespace Reqless.Tests.Client.ReqlessClientTests;
 
 /// <summary>
-/// Unit tests for <see cref="ReqlessClient.FailureGroupsCountsAsync"/>.
+/// Unit tests for <see cref="ReqlessClient.GetFailureGroupsCountsAsync"/>.
 /// </summary>
-public class FailureGroupsCountsTest : BaseReqlessClientTest
+public class GetFailureGroupsCountsTest : BaseReqlessClientTest
 {
     /// <summary>
-    /// <see cref="ReqlessClient.FailureGroupsCountsAsync"/> should call
+    /// <see cref="ReqlessClient.GetFailureGroupsCountsAsync"/> should call
     /// Executor with the expected arguments.
     /// </summary>
     [Fact]
@@ -21,7 +21,7 @@ public class FailureGroupsCountsTest : BaseReqlessClientTest
         };
         string failedCountsJson = JsonSerializer.Serialize(expectedResult);
         Dictionary<string, int> failedCounts = await WithClientWithExecutorMockForExpectedArguments(
-            subject => subject.FailureGroupsCountsAsync(),
+            subject => subject.GetFailureGroupsCountsAsync(),
             expectedArguments: ["failureGroups.counts", 0],
             returnValue: failedCountsJson
         );
@@ -29,7 +29,7 @@ public class FailureGroupsCountsTest : BaseReqlessClientTest
     }
 
     /// <summary>
-    /// <see cref="ReqlessClient.FailureGroupsCountsAsync"/> throws if the
+    /// <see cref="ReqlessClient.GetFailureGroupsCountsAsync"/> throws if the
     /// server returns null.
     /// </summary>
     [Fact]
@@ -37,7 +37,7 @@ public class FailureGroupsCountsTest : BaseReqlessClientTest
     {
         await Scenario.ThrowsWhenServerRespondsWithNullAsync(
             () => WithClientWithExecutorMockForExpectedArguments(
-                subject => subject.FailureGroupsCountsAsync(),
+                subject => subject.GetFailureGroupsCountsAsync(),
                 expectedArguments: ["failureGroups.counts", 0],
                 returnValue: null
             )
@@ -45,7 +45,7 @@ public class FailureGroupsCountsTest : BaseReqlessClientTest
     }
 
     /// <summary>
-    /// <see cref="ReqlessClient.FailureGroupsCountsAsync"/> throws if the JSON
+    /// <see cref="ReqlessClient.GetFailureGroupsCountsAsync"/> throws if the JSON
     /// can't be deserialized.
     /// </summary>
     [Fact]
@@ -53,7 +53,7 @@ public class FailureGroupsCountsTest : BaseReqlessClientTest
     {
         var exception = await Assert.ThrowsAsync<JsonException>(
             () => WithClientWithExecutorMockForExpectedArguments(
-                subject => subject.FailureGroupsCountsAsync(),
+                subject => subject.GetFailureGroupsCountsAsync(),
                 expectedArguments: ["failureGroups.counts", 0],
                 returnValue: "null"
             )

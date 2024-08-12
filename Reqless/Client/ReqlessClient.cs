@@ -300,26 +300,6 @@ public class ReqlessClient : IClient, IDisposable
     }
 
     /// <inheritdoc/>
-    public async Task<Dictionary<string, int>> FailureGroupsCountsAsync()
-    {
-        RedisResult result = await _executor.ExecuteAsync(
-            ["failureGroups.counts", Now()]
-        );
-
-        var failedCountsJson = OperationValidation.ThrowIfServerResponseIsNull(
-            (string?)result
-        );
-
-        var keyValues = JsonSerializer.Deserialize<Dictionary<string, int>>(
-            failedCountsJson
-        ) ?? throw new JsonException(
-            $"Failed to deserialize failed counts JSON: {failedCountsJson}"
-        );
-
-        return keyValues;
-    }
-
-    /// <inheritdoc/>
     public async Task ForgetConfigAsync(string configName)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(configName, nameof(configName));
@@ -524,6 +504,26 @@ public class ReqlessClient : IClient, IDisposable
         ArgumentException.ThrowIfNullOrWhiteSpace(groupName, nameof(groupName));
 
         return ExecuteJobsQuery("jobs.failedByGroup", groupName, limit, offset);
+    }
+
+    /// <inheritdoc/>
+    public async Task<Dictionary<string, int>> GetFailureGroupsCountsAsync()
+    {
+        RedisResult result = await _executor.ExecuteAsync(
+            ["failureGroups.counts", Now()]
+        );
+
+        var failedCountsJson = OperationValidation.ThrowIfServerResponseIsNull(
+            (string?)result
+        );
+
+        var keyValues = JsonSerializer.Deserialize<Dictionary<string, int>>(
+            failedCountsJson
+        ) ?? throw new JsonException(
+            $"Failed to deserialize failed counts JSON: {failedCountsJson}"
+        );
+
+        return keyValues;
     }
 
     /// <inheritdoc/>

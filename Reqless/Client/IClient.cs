@@ -152,12 +152,6 @@ public interface IClient
     );
 
     /// <summary>
-    /// Returns a dictionary where each key is a known failure group name and
-    /// each value is the count of jobs that have failed with that group.
-    /// </summary>
-    Task<Dictionary<string, int>> FailureGroupsCountsAsync();
-
-    /// <summary>
     /// Forget the config with the given name.
     /// </summary>
     /// <param name="configName">The name of the config that should be forgotten.</param>
@@ -249,6 +243,12 @@ public interface IClient
         int limit = 25,
         int offset = 0
     );
+
+    /// <summary>
+    /// Returns a dictionary where each key is a known failure group name and
+    /// each value is the count of jobs that have failed with that group.
+    /// </summary>
+    Task<Dictionary<string, int>> GetFailureGroupsCountsAsync();
 
     /// <summary>
     /// Gets a job by its job ID.
