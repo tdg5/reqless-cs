@@ -652,6 +652,16 @@ public interface IClient
     );
 
     /// <summary>
+    /// Set all dynamic queue priority patterns.
+    /// </summary>
+    /// <param name="priorityPatterns">A collection of <see
+    /// cref="QueuePriorityPattern"/> that should replace any existing
+    /// records.</param>
+    Task SetAllQueuePriorityPatternsAsync(
+        IEnumerable<QueuePriorityPattern> priorityPatterns
+    );
+
+    /// <summary>
     /// Set the config with the given name to the given value.
     /// </summary>
     /// <param name="configName">The name that should be used to store the config.</param>

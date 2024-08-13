@@ -620,6 +620,27 @@ public class ReqlessClientIntegrationTest
     }
 
     /// <summary>
+    /// <see cref="ReqlessClient.GetAllQueuePriorityPatternsAsync"/> should be
+    /// able to get priority patterns.
+    /// </summary>
+    [Fact]
+    public async Task GetAllQueuePriorityPatternsAsync_CanGetPriorityPatterns()
+    {
+        List<QueuePriorityPattern> defaultQueuePriorities = [];
+        var queuePriorities = await _client.GetAllQueuePriorityPatternsAsync();
+        Assert.Equivalent(defaultQueuePriorities, queuePriorities);
+
+        List<QueuePriorityPattern> expectedQueuePriorities = [
+            new(fairly: false, pattern: ["*", "other"]),
+            new(fairly: true, pattern: ["something", "er", "other"]),
+            new(pattern: ["default", "fairly"]),
+        ];
+        await _client.SetAllQueuePriorityPatternsAsync(expectedQueuePriorities);
+        queuePriorities = await _client.GetAllQueuePriorityPatternsAsync();
+        Assert.Equivalent(expectedQueuePriorities, queuePriorities);
+    }
+
+    /// <summary>
     /// <see cref="ReqlessClient.ForgetQueuesAsync"/> should cause the named
     /// queues to be removed from the set of known queues.
     /// </summary>
@@ -2015,6 +2036,27 @@ public class ReqlessClientIntegrationTest
         await _client.SetAllQueueIdentifierPatternsAsync(expectedQueueIdentifiers);
         queueIdentifiers = await _client.GetAllQueueIdentifierPatternsAsync();
         Assert.Equivalent(expectedQueueIdentifiers, queueIdentifiers);
+    }
+
+    /// <summary>
+    /// <see cref="ReqlessClient.SetAllQueuePriorityPatternsAsync"/> should be
+    /// able to set priority patterns.
+    /// </summary>
+    [Fact]
+    public async Task SetAllQueuePriorityPatternsAsync_CanSetPriorityPatterns()
+    {
+        List<QueuePriorityPattern> defaultQueuePriorities = [];
+        var queuePriorities = await _client.GetAllQueuePriorityPatternsAsync();
+        Assert.Equivalent(defaultQueuePriorities, queuePriorities);
+
+        List<QueuePriorityPattern> expectedQueuePriorities = [
+            new(fairly: false, pattern: ["*", "other"]),
+            new(fairly: true, pattern: ["something", "er", "other"]),
+            new(pattern: ["default", "fairly"]),
+        ];
+        await _client.SetAllQueuePriorityPatternsAsync(expectedQueuePriorities);
+        queuePriorities = await _client.GetAllQueuePriorityPatternsAsync();
+        Assert.Equivalent(expectedQueuePriorities, queuePriorities);
     }
 
     /// <summary>

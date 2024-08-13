@@ -1217,6 +1217,39 @@ public class ReqlessClient : IClient, IDisposable
     }
 
     /// <inheritdoc/>
+    public async Task SetAllQueuePriorityPatternsAsync(
+         IEnumerable<QueuePriorityPattern> priorityPatterns
+     )
+    {
+        ArgumentValidation.ThrowIfAnyNull(priorityPatterns, nameof(priorityPatterns));
+        int argumentCount = 2;
+        foreach (var priorityPattern in priorityPatterns)
+        {
+            if (priorityPattern.Pattern.Count > 0)
+            {
+                ArgumentValidation.ThrowIfAnyNullOrWhitespace(
+                    priorityPattern.Pattern,
+                    $"{nameof(priorityPatterns)}[].Pattern"
+                );
+                argumentCount++;
+            }
+        }
+        var arguments = new RedisValue[argumentCount];
+        arguments[0] = "queuePriorityPatterns.setAll";
+        arguments[1] = Now();
+        int index = 2;
+        foreach (var priorityPattern in priorityPatterns)
+        {
+            if (priorityPattern.Pattern.Count > 0)
+            {
+                arguments[index++] = JsonSerializer.Serialize(priorityPattern);
+            }
+        }
+
+        await _executor.ExecuteAsync(arguments);
+    }
+
+    /// <inheritdoc/>
     public async Task SetConfigAsync(string configName, string value)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(configName, nameof(configName));
