@@ -16,6 +16,8 @@ public interface IClient
     /// jid.</param>
     /// <param name="dependsOnJid">The ID of the job that the given job should
     /// depend on.</param>
+    /// <returns>True if the dependency was successfully added, otherwise an
+    /// exception is raised.</returns>
     Task<bool> AddDependencyToJobAsync(string jid, string dependsOnJid);
 
     /// <summary>
@@ -24,6 +26,8 @@ public interface IClient
     /// <param name="jid">The ID of the job to add an event to.</param>
     /// <param name="what">The what or name for the event.</param>
     /// <param name="data">Optional data for the event.</param>
+    /// <returns>True if the event was successfully added to the job's history,
+    /// otherwise an exception is raised.</returns>
     Task<bool> AddEventToJobHistoryAsync(
         string jid,
         string what,
@@ -35,6 +39,7 @@ public interface IClient
     /// </summary>
     /// <param name="jid">The ID of the job that the tag should be added to.</param>
     /// <param name="tag">The tag that should be added to the job.</param>
+    /// <returns>The list of tags that are now on the job.</returns>
     Task<List<string>> AddTagToJobAsync(string jid, string tag);
 
     /// <summary>
@@ -42,6 +47,7 @@ public interface IClient
     /// </summary>
     /// <param name="jid">The ID of the job that should have tags added.</param>
     /// <param name="tags">The tags that should be added to the job.</param>
+    /// <returns>The list of tags that are now on the job.</returns>
     Task<List<string>> AddTagsToJobAsync(string jid, params string[] tags);
 
     /// <summary>
@@ -51,6 +57,7 @@ public interface IClient
     /// to.</param>
     /// <param name="tag">The tag that should be added to the recurring
     /// job.</param>
+    /// <returns>The list of tags that are now on the recurring job.</returns>
     Task<List<string>> AddTagToRecurringJobAsync(string jid, string tag);
 
     /// <summary>
@@ -60,18 +67,23 @@ public interface IClient
     /// added.</param>
     /// <param name="tags">The tags that should be added to the recurring
     /// job.</param>
+    /// <returns>The list of tags that are now on the recurring job.</returns>
     Task<List<string>> AddTagsToRecurringJobAsync(string jid, params string[] tags);
 
     /// <summary>
     /// Cancel a job.
     /// </summary>
     /// <param name="jid">The ID of the job that should be cancelled.</param>
+    /// <returns>Returns true if the job was successfully cancelled, otherwise
+    /// an exception is raised.</returns>
     Task<bool> CancelJobAsync(string jid);
 
     /// <summary>
     /// Cancel one or more jobs.
     /// </summary>
     /// <param name="jids">The IDs of the jobs that should be cancelled.</param>
+    /// <returns>Returns true if the jobs were successfully cancelled, otherwise
+    /// an exception is raised.</returns>
     Task<bool> CancelJobsAsync(params string[] jids);
 
     /// <summary>
@@ -143,6 +155,8 @@ public interface IClient
     /// <param name="groupName">The group name or kind of the failure.</param>
     /// <param name="message">The message for the failure.</param>
     /// <param name="data">Optional, updated data for the job.</param>
+    /// <returns>True if the job was successfully failed, otherwise an exception
+    /// is raised.</returns>
     Task<bool> FailJobAsync(
         string jid,
         string workerName,
@@ -188,12 +202,15 @@ public interface IClient
     /// <summary>
     /// Get all Reqless configuration values.
     /// </summary>
-    /// <returns>Zero or more job IDs of completed jobs.</returns>
+    /// <returns>A dictionary where each key is the name of a config and each
+    /// value is the respective value.</returns>
     Task<Dictionary<string, string>> GetAllConfigsAsync();
 
     /// <summary>
     /// Get the counts of the number of jobs in various states for all queues.
     /// </summary>
+    /// <returns>A <see cref="List{QueueCounts}"/> for each of the known
+    /// queues.</returns>
     Task<List<QueueCounts>> GetAllQueueCountsAsync();
 
     /// <summary>
@@ -216,6 +233,8 @@ public interface IClient
     /// Get the counts of the number of jobs, both expired and unexpired, that
     /// each worker is responsible for.
     /// </summary>
+    /// <returns>A <see cref="List{WorkerCounts}"/> for each of the known
+    /// workers.</returns>
     Task<List<WorkerCounts>> GetAllWorkerCountsAsync();
 
     /// <summary>
@@ -235,7 +254,7 @@ public interface IClient
     /// is defined.
     /// </summary>
     /// <param name="configName"></param>
-    /// <returns></returns>
+    /// <returns>The config value if it is defined.</returns>
     Task<string?> GetConfigAsync(string configName);
 
     /// <summary>
@@ -246,6 +265,8 @@ public interface IClient
     /// <param name="limit">The maximum number of job IDs to retrieve.</param>
     /// <param name="offset">The number of job IDs to skip before returning
     /// results.</param>
+    /// <returns>A <see cref="JidsResult"/> containing the job IDs of failed
+    /// jobs in the given group.</returns>
     Task<JidsResult> GetFailedJobsByGroupAsync(
         string groupName,
         int limit = 25,
@@ -256,6 +277,9 @@ public interface IClient
     /// Returns a dictionary where each key is a known failure group name and
     /// each value is the count of jobs that have failed with that group.
     /// </summary>
+    /// <returns>A dictionary where each key is a known failure group name and
+    /// each value is the count of jobs that have failed with that
+    /// group.</returns>
     Task<Dictionary<string, int>> GetFailureGroupsCountsAsync();
 
     /// <summary>
@@ -269,7 +293,7 @@ public interface IClient
     /// Get one or more jobs by their job IDs.
     /// </summary>
     /// <param name="jids">The IDs of the jobs that should be retreived.</param>
-    /// <returns>An array of the retrieved jobs.</returns>
+    /// <returns>An list of the retrieved jobs.</returns>
     Task<List<Job>> GetJobsAsync(params string[] jids);
 
     /// <summary>
@@ -296,6 +320,8 @@ public interface IClient
     /// <param name="limit">The maximum number of job IDs to retrieve.</param>
     /// <param name="offset">The number of job IDs to skip before returning
     /// results.</param>
+    /// <returns>A <see cref="JidsResult"/> containing the job IDs of jobs
+    /// with the given tag.</returns>
     Task<JidsResult> GetJobsByTagAsync(
         string tag,
         int limit = 25,
@@ -307,12 +333,15 @@ public interface IClient
     /// the given name.
     /// </summary>
     /// <param name="queueName">The name of the queue to get the counts of.</param>
+    /// <returns>A <see cref="QueueCounts"/> with defailts of the counts of jobs
+    /// in various states in the given queue.</returns>
     Task<QueueCounts> GetQueueCountsAsync(string queueName);
 
     /// <summary>
     /// Get the count of jobs in the given queue.
     /// </summary>
     /// <param name="queueName">The name of the queue to get the length of.</param>
+    /// <returns>The lengh of the queue.</returns>
     Task<int> GetQueueLengthAsync(string queueName);
 
     /// <summary>
@@ -324,6 +353,8 @@ public interface IClient
     /// <param name="date">The date to retrieve stats for. Defaults to now.
     /// Reqless will round the value to midnight of the given day, so exact
     /// precision is not required.</param>
+    /// <returns>A <see cref="QueueStats"/> instance with the stats for the
+    /// given queue on the given date.</returns>
     Task<QueueStats> GetQueueStatsAsync(string queueName, DateTimeOffset? date);
 
     /// <summary>
@@ -331,6 +362,8 @@ public interface IClient
     /// </summary>
     /// <param name="queueName">The name of the queue to retrieve the throttle
     /// for.</param>
+    /// <returns>A <see cref="Throttle"/> instance corresponding to the given
+    /// queue.</returns>
     Task<Throttle> GetQueueThrottleAsync(string queueName);
 
     /// <summary>
@@ -338,13 +371,15 @@ public interface IClient
     /// </summary>
     /// <param name="jid">The ID of the recurring job that should be
     /// retreived.</param>
-    /// <returns>The job, if it exists; otherwise, null.</returns>
+    /// <returns>The recurring job, if it exists; otherwise, null.</returns>
     Task<RecurringJob?> GetRecurringJobAsync(string jid);
 
     /// <summary>
     /// Get the throttle with the given name.
     /// </summary>
     /// <param name="throttleName">The name of the throttle to retrieve.</param>
+    /// <returns>A <see cref="Throttle"/> instance corresponding to the throttle
+    /// with the given name.</returns>
     Task<Throttle> GetThrottleAsync(string throttleName);
 
     /// <summary>
@@ -375,19 +410,25 @@ public interface IClient
     /// <param name="offset">The number of tags to skip before returning
     /// results.</param>
     /// <param name="limit">The maximum number of tags to retrieve.</param>
-    /// <returns></returns>
+    /// <returns>A list of any matching tags.</returns>
     Task<List<string>> GetTopTagsAsync(int limit = 25, int offset = 0);
 
     /// <summary>
-    /// Gets the details of all currently traced jobs.
+    /// Gets the details of all currently tracked jobs.
     /// </summary>
+    /// <returns>A <see cref="TrackedJobsResult"/> instance containing the
+    /// details of all currently tracked jobs.</returns>
     Task<TrackedJobsResult> GetTrackedJobsAsync();
 
     /// <summary>
     /// Get the IDs of jobs, both expired and unexpired, that are the
     /// responsibility of the worker with the given name.
     /// </summary>
-    /// <param name="workerName">The name of the worker to retrieve jobs for.</param>
+    /// <param name="workerName">The name of the worker to retrieve jobs
+    /// for.</param>
+    /// <returns>A <see cref="WorkerJobs"/> instance containing the details of
+    /// the jobs that are the responsibility of the worker with the given
+    /// name.</returns>
     Task<WorkerJobs> GetWorkerJobsAsync(string workerName);
 
     /// <summary>
@@ -420,7 +461,8 @@ public interface IClient
     /// <param name="limit">The maximum number of job IDs to retrieve.</param>
     /// <param name="offset">The number of job IDs to skip before returning
     /// results.</param>
-    /// <returns>Zero or more job IDs of completed jobs.</returns>
+    /// <returns>A <see cref="List{Job}"/> with the details of zero or more
+    /// jobs.</returns>
     Task<List<Job>> PeekJobsAsync(string queueName, int limit, int offset);
 
     /// <summary>
@@ -439,7 +481,8 @@ public interface IClient
     /// <param name="workerName">The name of the worker that is requesting
     /// work.</param>
     /// <param name="count">The maximum number of jobs to pop.</param>
-    /// <returns>The jobs that were popped, if any.</returns>
+    /// <returns>A <see cref="List{Job}"/> of the jobs that were popped, if
+    /// any.</returns>
     Task<List<Job>> PopJobsAsync(
         string queueName,
         string workerName,
@@ -554,6 +597,7 @@ public interface IClient
     /// <param name="jid">The ID of the job that the tag should be removed
     /// from</param>
     /// <param name="tag">The tag that should be removed from the job.</param>
+    /// <returns>A list of the tags that remain on the job.</returns>
     Task<List<string>> RemoveTagFromJobAsync(string jid, string tag);
 
     /// <summary>
@@ -561,6 +605,7 @@ public interface IClient
     /// </summary>
     /// <param name="jid">The ID of the job that should have tags removed.</param>
     /// <param name="tags">The tags that should be removed from the job.</param>
+    /// <returns>A list of the tags that remain on the job.</returns>
     Task<List<string>> RemoveTagsFromJobAsync(string jid, params string[] tags);
 
     /// <summary>
@@ -570,6 +615,7 @@ public interface IClient
     /// removed from</param>
     /// <param name="tag">The tag that should be removed from the recurring
     /// job.</param>
+    /// <returns>A list of the tags that remain on the remaining job.</returns>
     Task<List<string>> RemoveTagFromRecurringJobAsync(string jid, string tag);
 
     /// <summary>
@@ -579,6 +625,7 @@ public interface IClient
     /// removed.</param>
     /// <param name="tags">The tags that should be removed from the recurring
     /// job.</param>
+    /// <returns>A list of the tags that remain on the remaining job.</returns>
     Task<List<string>> RemoveTagsFromRecurringJobAsync(string jid, params string[] tags);
 
     /// <summary>
@@ -666,7 +713,6 @@ public interface IClient
     /// </summary>
     /// <param name="configName">The name that should be used to store the config.</param>
     /// <param name="value">The value that should be stored.</param>
-    /// <returns></returns>
     Task SetConfigAsync(string configName, string value);
 
     /// <summary>
