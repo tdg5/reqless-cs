@@ -615,8 +615,11 @@ public class ReqlessClientIntegrationTest
     [Fact]
     public async Task GetAllQueuePriorityPatternsAsync_GetsDefaultPatterns()
     {
+        List<QueuePriorityPattern> defaultQueuePriorities = [
+            new(fairly: false, pattern: ["default"]),
+        ];
         var queuePriorities = await _client.GetAllQueuePriorityPatternsAsync();
-        Assert.Empty(queuePriorities);
+        Assert.Equivalent(defaultQueuePriorities, queuePriorities);
     }
 
     /// <summary>
