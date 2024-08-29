@@ -1,4 +1,4 @@
-using Reqless.Models;
+using Reqless.Client.Models;
 
 namespace Reqless.Client;
 

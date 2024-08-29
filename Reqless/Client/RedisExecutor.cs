@@ -11,7 +11,7 @@ public class RedisExecutor : IRedisExecutor, IDisposable
     /// The Lua script that implements the full set of reqless commands.
     /// </summary>
     protected readonly static string _luaScript =
-        ResourceHelper.ReadTextResource("lua/reqless.lua");
+        ResourceHelper.ReadTextResource("LuaScripts/reqless.lua");
 
     /// <summary>
     /// The connection to the Redis server, concretely, <see

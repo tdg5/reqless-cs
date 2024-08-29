@@ -1,5 +1,4 @@
-using Reqless.Models;
-using Reqless.Models.JobEvents;
+using Reqless.Client.Models;
 using System.Text.Json;
 using System.Text;
 

@@ -1,7 +1,7 @@
 .PHONY: reqless-core
 reqless-core:
-	make -C Reqless/reqless-core/
-	cp Reqless/reqless-core/reqless.lua Reqless/lua/
+	make -C Reqless/Client/reqless-core/
+	cp Reqless/Client/reqless-core/reqless.lua Reqless/Client/LuaScripts/
 
 .PHONY: style
 style:

@@ -1,6 +1,5 @@
 using Reqless.Client;
-using Reqless.Models;
-using Reqless.Models.JobEvents;
+using Reqless.Client.Models;
 using Reqless.Tests.TestHelpers;
 using StackExchange.Redis;
 

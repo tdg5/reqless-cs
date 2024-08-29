@@ -10,8 +10,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Content Remove="lua/reqless.lua" />
-    <EmbeddedResource Include="lua/reqless.lua" />
+    <Content Remove="Client/LuaScripts/reqless.lua" />
+    <EmbeddedResource Include="Client/LuaScripts/reqless.lua" />
   </ItemGroup>
 
   <ItemGroup>

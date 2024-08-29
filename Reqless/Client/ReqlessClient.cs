@@ -1,5 +1,5 @@
-using Reqless.Models;
-using Reqless.Validation;
+using Reqless.Client.Models;
+using Reqless.Common.Validation;
 using StackExchange.Redis;
 using System.Text.Json;
 
