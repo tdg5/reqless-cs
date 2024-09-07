@@ -2,7 +2,7 @@ using Reqless.Client.Models;
 using System.Text.Json;
 using System.Text;
 
-namespace Reqless.Tests.TestHelpers.Factories;
+namespace Reqless.Tests.TestHelpers.Client.Models;
 
 /// <summary>
 /// Factory for creating <see cref="Job"/> instances and/or JSON for use in

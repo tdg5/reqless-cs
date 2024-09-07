@@ -1,6 +1,6 @@
 using Reqless.Client.Models;
 using Reqless.Tests.TestHelpers;
-using Reqless.Tests.TestHelpers.Factories;
+using Reqless.Tests.TestHelpers.Client.Models;
 
 namespace Reqless.Tests.Client.Models;
 
