@@ -100,13 +100,13 @@ abstract public class BaseJob
         ArgumentException.ThrowIfNullOrWhiteSpace(className, nameof(className));
         ArgumentException.ThrowIfNullOrWhiteSpace(data, nameof(data));
         ArgumentException.ThrowIfNullOrWhiteSpace(jid, nameof(jid));
+        ArgumentValidation.ThrowIfNegative(priority, nameof(priority));
         // Queue name can be null when a job is completed and no longer in a queue.
         ArgumentValidation.ThrowIfNotNullAndEmptyOrWhitespace(queueName, nameof(queueName));
+        ArgumentValidation.ThrowIfNegative(retries, nameof(retries));
         ArgumentException.ThrowIfNullOrWhiteSpace(state, nameof(state));
         ArgumentValidation.ThrowIfAnyNullOrWhitespace(tags, nameof(tags));
         ArgumentValidation.ThrowIfAnyNullOrWhitespace(throttles, nameof(throttles));
-        ArgumentValidation.ThrowIfNegative(priority, nameof(priority));
-        ArgumentValidation.ThrowIfNegative(retries, nameof(retries));
 
         ClassName = className;
         Data = data;
