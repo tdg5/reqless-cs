@@ -2,11 +2,15 @@
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Reqless", "Reqless\Reqless.csproj", "{AFD291AB-C564-4874-812F-42994E9F1BD9}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Reqless.Worker.Tests", "Reqless.Worker.Tests\Reqless.Worker.Tests.csproj", "{286131BC-CAFC-4AA8-9057-49E61219DA28}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Reqless.Tests", "Reqless.Tests\Reqless.Tests.csproj", "{2EB4E0B1-EB32-4042-9073-6E213EB3614F}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Reqless.Tests.Common", "Reqless.Tests.Common\Reqless.Tests.Common.csproj", "{8D3EB5FC-EED5-4B58-A900-70AD1A9DB79E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Reqless", "Reqless\Reqless.csproj", "{AFD291AB-C564-4874-812F-42994E9F1BD9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Reqless.Worker", "Reqless.Worker\Reqless.Worker.csproj", "{ECC6CCD2-B32F-44C6-A065-99E5FB6D1BBA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -17,10 +21,10 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{AFD291AB-C564-4874-812F-42994E9F1BD9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{AFD291AB-C564-4874-812F-42994E9F1BD9}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{AFD291AB-C564-4874-812F-42994E9F1BD9}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{AFD291AB-C564-4874-812F-42994E9F1BD9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{286131BC-CAFC-4AA8-9057-49E61219DA28}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{286131BC-CAFC-4AA8-9057-49E61219DA28}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{286131BC-CAFC-4AA8-9057-49E61219DA28}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{286131BC-CAFC-4AA8-9057-49E61219DA28}.Release|Any CPU.Build.0 = Release|Any CPU
 		{2EB4E0B1-EB32-4042-9073-6E213EB3614F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{2EB4E0B1-EB32-4042-9073-6E213EB3614F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2EB4E0B1-EB32-4042-9073-6E213EB3614F}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -29,5 +33,13 @@ Global
 		{8D3EB5FC-EED5-4B58-A900-70AD1A9DB79E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8D3EB5FC-EED5-4B58-A900-70AD1A9DB79E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8D3EB5FC-EED5-4B58-A900-70AD1A9DB79E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AFD291AB-C564-4874-812F-42994E9F1BD9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AFD291AB-C564-4874-812F-42994E9F1BD9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AFD291AB-C564-4874-812F-42994E9F1BD9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AFD291AB-C564-4874-812F-42994E9F1BD9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{ECC6CCD2-B32F-44C6-A065-99E5FB6D1BBA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{ECC6CCD2-B32F-44C6-A065-99E5FB6D1BBA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{ECC6CCD2-B32F-44C6-A065-99E5FB6D1BBA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{ECC6CCD2-B32F-44C6-A065-99E5FB6D1BBA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
