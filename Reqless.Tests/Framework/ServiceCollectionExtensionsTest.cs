@@ -1,4 +1,5 @@
 using Microsoft.Extensions.DependencyInjection;
+using Reqless.Client;
 using Reqless.Client.Models;
 using Reqless.Framework;
 
@@ -9,24 +10,6 @@ namespace Reqless.Tests.Framework;
 /// </summary>
 public class ServiceCollectionExtensionsTest
 {
-    class NoopJobContextFactory : IJobContextFactory
-    {
-        public IJobContext Create(Job _) => throw new NotImplementedException();
-    }
-
-    class NoopUnitOfWorkActivator : IUnitOfWorkActivator
-    {
-        public IUnitOfWork CreateInstance(IServiceProvider provider, Type instanceType)
-        {
-            throw new NotImplementedException();
-        }
-    }
-
-    class NoopUnitOfWorkResolver : IUnitOfWorkResolver
-    {
-        public Type Resolve(string _) => throw new NotImplementedException();
-    }
-
     /// <summary>
     /// cref="ServiceCollectionExtensions.AddReqlessServices"/> should add an
     /// <see cref="IUnitOfWorkActivator"/> service if none is registered.
@@ -112,5 +95,99 @@ public class ServiceCollectionExtensionsTest
         var provider = services.BuildServiceProvider();
         IJobContextFactory subject = provider.GetRequiredService<IJobContextFactory>();
         Assert.IsType<NoopJobContextFactory>(subject);
+    }
+
+    /// <summary>
+    /// cref="ServiceCollectionExtensions.AddReqlessServices"/> should add an
+    /// <see cref="IJobContextAccessor"/> service if none is registered.
+    /// </summary>
+    [Fact]
+    public void AddReqlessServices_AddsIJobContextAccessorIfNoneRegistered()
+    {
+        ServiceCollection services = new();
+        services.AddReqlessServices();
+        var provider = services.BuildServiceProvider();
+        IJobContextAccessor subject = provider.GetRequiredService<IJobContextAccessor>();
+        Assert.IsType<DefaultJobContextAccessor>(subject);
+    }
+
+    /// <summary>
+    /// cref="ServiceCollectionExtensions.AddReqlessServices"/> doesn't override
+    /// <see cref="IJobContextAccessor"/> service if one is registered.
+    /// </summary>
+    [Fact]
+    public void AddReqlessServices_DoesNotOverrideRegisteredIJobContextAccessor()
+    {
+        ServiceCollection services = new();
+        services.AddSingleton<IJobContextAccessor, NoopJobContextAccessor>();
+        services.AddReqlessServices();
+        var provider = services.BuildServiceProvider();
+        IJobContextAccessor subject = provider.GetRequiredService<IJobContextAccessor>();
+        Assert.IsType<NoopJobContextAccessor>(subject);
+    }
+
+    /// <summary>
+    /// cref="ServiceCollectionExtensions.AddReqlessServices"/> should add an
+    /// <see cref="IReqlessClientAccessor"/> service if none is registered.
+    /// </summary>
+    [Fact]
+    public void AddReqlessServices_AddsIReqlessClientAccessorIfNoneRegistered()
+    {
+        ServiceCollection services = new();
+        services.AddReqlessServices();
+        var provider = services.BuildServiceProvider();
+        IReqlessClientAccessor subject = provider.GetRequiredService<IReqlessClientAccessor>();
+        Assert.IsType<DefaultReqlessClientAccessor>(subject);
+    }
+
+    /// <summary>
+    /// cref="ServiceCollectionExtensions.AddReqlessServices"/> doesn't override
+    /// <see cref="IReqlessClientAccessor"/> service if one is registered.
+    /// </summary>
+    [Fact]
+    public void AddReqlessServices_DoesNotOverrideRegisteredIReqlessClientAccessor()
+    {
+        ServiceCollection services = new();
+        services.AddSingleton<IReqlessClientAccessor, NoopReqlessClientAccessor>();
+        services.AddReqlessServices();
+        var provider = services.BuildServiceProvider();
+        IReqlessClientAccessor subject = provider.GetRequiredService<IReqlessClientAccessor>();
+        Assert.IsType<NoopReqlessClientAccessor>(subject);
+    }
+
+    class NoopJobContextAccessor : IJobContextAccessor
+    {
+        public IJobContext? Value
+        {
+            get => throw new NotImplementedException();
+            set => throw new NotImplementedException();
+        }
+    }
+
+    class NoopJobContextFactory : IJobContextFactory
+    {
+        public IJobContext Create(Job _) => throw new NotImplementedException();
+    }
+
+    class NoopReqlessClientAccessor : IReqlessClientAccessor
+    {
+        public IClient? Value
+        {
+            get => throw new NotImplementedException();
+            set => throw new NotImplementedException();
+        }
+    }
+
+    class NoopUnitOfWorkActivator : IUnitOfWorkActivator
+    {
+        public IUnitOfWork CreateInstance(IServiceProvider provider, Type instanceType)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    class NoopUnitOfWorkResolver : IUnitOfWorkResolver
+    {
+        public Type Resolve(string _) => throw new NotImplementedException();
     }
 }

@@ -20,6 +20,7 @@ public static class ServiceCollectionExtensions
         this IServiceCollection services
     )
     {
+        services.TryAddSingleton<IReqlessClientAccessor, DefaultReqlessClientAccessor>();
         services.TryAddSingleton<IUnitOfWorkActivator, DefaultUnitOfWorkActivator>();
         services.TryAddSingleton<IUnitOfWorkResolver, DefaultUnitOfWorkResolver>();
         services.TryAddSingleton<IJobContextAccessor, DefaultJobContextAccessor>();

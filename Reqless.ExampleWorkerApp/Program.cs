@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Reqless.Client;
 using Reqless.Framework;
 using Reqless.Worker;
 
@@ -11,8 +12,16 @@ public class Program
     {
         HostApplicationBuilder builder = Host.CreateApplicationBuilder(args);
 
+        builder.Services.AddSingleton<IReqlessClientFactory>(
+            new ReqlessClientFactory(() => new ReqlessClient())
+        );
+        var workerCount = 2;
         builder.Services.AddReqlessServices();
-        builder.Services.AddHostedService<SerialWorker>();
+        foreach (var index in Enumerable.Range(0, workerCount))
+        {
+            Console.WriteLine(index);
+            builder.Services.AddSingleton<IHostedService, SerialWorker>();
+        }
         builder.Services.AddSingleton<IThinger, Thinger>();
 
         using IHost host = builder.Build();

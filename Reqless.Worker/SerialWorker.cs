@@ -1,6 +1,8 @@
 ﻿using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Reqless.Framework;
+using System.Threading;
+using Reqless.Client;
 
 namespace Reqless.Worker;
 
@@ -13,6 +15,17 @@ public class SerialWorker : BackgroundService
     /// An <see cref="IServiceProvider"/> instance to use for service resolution.
     /// </summary>
     protected readonly IServiceProvider _provider;
+
+    /// <summary>
+    /// An <see cref="IReqlessClientAccessor"/> instance to use for accessing
+    /// the Reqless client.
+    /// </summary>
+    protected readonly IReqlessClientAccessor _reqlessClientAccessor;
+
+    /// <summary>
+    /// An <see cref="IReqlessClientFactory"/> instance to use for creating Reqless clients.
+    /// </summary>
+    protected readonly IReqlessClientFactory _reqlessClientFactory;
 
     /// <summary>
     /// An <see cref="IUnitOfWorkResolver"/> instance to use for unit of work
@@ -31,21 +44,61 @@ public class SerialWorker : BackgroundService
     /// </summary>
     /// <param name="provider">An <see cref="IServiceProvider"/> instance to use
     /// for service resolution.</param>
-    public SerialWorker(IServiceProvider provider)
+    /// <param name="unitOfWorkActivator">An <see
+    /// cref="IUnitOfWorkActivator"/> instance to use for creating unit of work
+    /// instances.</param>
+    /// <param name="unitOfWorkResolver">An <see cref="IUnitOfWorkResolver"/>
+    /// instance to use for resolving unit of work types.</param>
+    /// <param name="reqlessClientAccessor">An <see
+    /// cref="IReqlessClientAccessor"/> instance to use for accessing the
+    /// Reqless client.</param>
+    /// <param name="reqlessClientFactory">An <see cref="IReqlessClientFactory"/> instance
+    /// to use for creating Reqless clients.</param>
+    public SerialWorker(
+        IServiceProvider provider,
+        IReqlessClientAccessor reqlessClientAccessor,
+        IReqlessClientFactory reqlessClientFactory,
+        IUnitOfWorkActivator unitOfWorkActivator,
+        IUnitOfWorkResolver unitOfWorkResolver
+    )
     {
         _provider = provider;
-        _unitOfWorkActivator = provider.GetRequiredService<IUnitOfWorkActivator>();
-        _unitOfWorkResolver = provider.GetRequiredService<IUnitOfWorkResolver>();
+        _reqlessClientAccessor = reqlessClientAccessor;
+        _reqlessClientFactory = reqlessClientFactory;
+        _unitOfWorkActivator = unitOfWorkActivator;
+        _unitOfWorkResolver = unitOfWorkResolver;
     }
 
     /// <inheritdoc/>
     protected override async Task ExecuteAsync(CancellationToken cancellationToken)
     {
+        ExecutionContext? initialExecutionContext = ExecutionContext.Capture();
         while (!cancellationToken.IsCancellationRequested)
         {
-            await ExecuteJobAsync(cancellationToken);
+            if (initialExecutionContext is not null)
+            {
+                // Clear any AsyncLocals set during job execution back to a
+                // clean state ready for next job.
+                ExecutionContext.Restore(initialExecutionContext);
+            }
+
+            IClient client = _reqlessClientFactory.Create();
+            _reqlessClientAccessor.Value = client;
+            try
+            {
+                await ExecuteJobAsync(cancellationToken);
+            }
+            finally
+            {
+                Reset();
+            }
             await Task.Delay(1_000, cancellationToken);
         }
+    }
+
+    private void Reset()
+    {
+        _reqlessClientAccessor.Value = null;
     }
 
     /// <summary>

@@ -27,7 +27,7 @@ public class DefaultJobContextFactory : IJobContextFactory
         DefaultJobContext jobContext = new(job);
         if (_jobContextAccessor != null)
         {
-            _jobContextAccessor.JobContext = jobContext;
+            _jobContextAccessor.Value = jobContext;
         }
         return jobContext;
     }

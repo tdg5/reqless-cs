@@ -10,5 +10,5 @@ public interface IJobContextAccessor
     /// Gets or sets the current <see cref="IJobContext"/>. Returns <see
     /// langword="null" /> if there is no active <see cref="IJobContext"/>.
     /// </summary>
-    IJobContext? JobContext { get; set; }
+    IJobContext? Value { get; set; }
 }

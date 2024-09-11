@@ -14,7 +14,7 @@ public interface IUnitOfWorkActivator
     /// for service resolution.</param>
     /// <param name="instanceType">The type of instance that should be
     /// created.</param>
-    /// <returns>The class if it could be resolved, otherwise null.</returns>
+    /// <returns>An <see cref="IUnitOfWork"/> instance.</returns>
     IUnitOfWork CreateInstance(
         IServiceProvider provider,
         Type instanceType
