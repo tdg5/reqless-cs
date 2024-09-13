@@ -1,21 +1,14 @@
-﻿using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.DependencyInjection;
-using Reqless.Framework;
-using System.Threading;
+﻿using Reqless.Framework;
 using Reqless.Client;
+using Reqless.Client.Models;
 
 namespace Reqless.Worker;
 
 /// <summary>
-/// Worker background service that performs jobs in a serial fashion.
+/// <see cref="IWorker"/> that performs jobs serially in an async context.
 /// </summary>
-public class SerialWorker : BackgroundService
+public class AsyncWorker : IWorker
 {
-    /// <summary>
-    /// An <see cref="IServiceProvider"/> instance to use for service resolution.
-    /// </summary>
-    protected readonly IServiceProvider _provider;
-
     /// <summary>
     /// An <see cref="IReqlessClientAccessor"/> instance to use for accessing
     /// the Reqless client.
@@ -28,41 +21,37 @@ public class SerialWorker : BackgroundService
     protected readonly IReqlessClientFactory _reqlessClientFactory;
 
     /// <summary>
-    /// An <see cref="IUnitOfWorkResolver"/> instance to use for unit of work
-    /// resolution.
-    /// </summary>
-    protected readonly IUnitOfWorkResolver _unitOfWorkResolver;
-
-    /// <summary>
     /// An <see cref="IUnitOfWorkActivator"/> instance to use for unit of work
     /// instantiation.
     /// </summary>
     protected readonly IUnitOfWorkActivator _unitOfWorkActivator;
 
     /// <summary>
-    /// Create an instance of <see cref="SerialWorker"/>.
+    /// An <see cref="IUnitOfWorkResolver"/> instance to use for unit of work
+    /// resolution.
     /// </summary>
-    /// <param name="provider">An <see cref="IServiceProvider"/> instance to use
-    /// for service resolution.</param>
-    /// <param name="unitOfWorkActivator">An <see
-    /// cref="IUnitOfWorkActivator"/> instance to use for creating unit of work
-    /// instances.</param>
-    /// <param name="unitOfWorkResolver">An <see cref="IUnitOfWorkResolver"/>
-    /// instance to use for resolving unit of work types.</param>
+    protected readonly IUnitOfWorkResolver _unitOfWorkResolver;
+
+    /// <summary>
+    /// Create an instance of <see cref="AsyncWorker"/>.
+    /// </summary>
     /// <param name="reqlessClientAccessor">An <see
     /// cref="IReqlessClientAccessor"/> instance to use for accessing the
     /// Reqless client.</param>
     /// <param name="reqlessClientFactory">An <see cref="IReqlessClientFactory"/> instance
     /// to use for creating Reqless clients.</param>
-    public SerialWorker(
-        IServiceProvider provider,
+    /// <param name="unitOfWorkActivator">An <see
+    /// cref="IUnitOfWorkActivator"/> instance to use for creating unit of work
+    /// instances.</param>
+    /// <param name="unitOfWorkResolver">An <see cref="IUnitOfWorkResolver"/>
+    /// instance to use for resolving unit of work types.</param>
+    public AsyncWorker(
         IReqlessClientAccessor reqlessClientAccessor,
         IReqlessClientFactory reqlessClientFactory,
         IUnitOfWorkActivator unitOfWorkActivator,
         IUnitOfWorkResolver unitOfWorkResolver
     )
     {
-        _provider = provider;
         _reqlessClientAccessor = reqlessClientAccessor;
         _reqlessClientFactory = reqlessClientFactory;
         _unitOfWorkActivator = unitOfWorkActivator;
@@ -70,7 +59,7 @@ public class SerialWorker : BackgroundService
     }
 
     /// <inheritdoc/>
-    protected override async Task ExecuteAsync(CancellationToken cancellationToken)
+    public async Task ExecuteAsync(CancellationToken cancellationToken)
     {
         ExecutionContext? initialExecutionContext = ExecutionContext.Capture();
         while (!cancellationToken.IsCancellationRequested)
@@ -86,7 +75,10 @@ public class SerialWorker : BackgroundService
             _reqlessClientAccessor.Value = client;
             try
             {
-                await ExecuteJobAsync(cancellationToken);
+                await ExecuteJobAsync(
+                    null!,
+                    cancellationToken
+                );
             }
             finally
             {
@@ -104,6 +96,7 @@ public class SerialWorker : BackgroundService
     /// <summary>
     /// Execute the job.
     /// </summary>
+    /// <param name="job">The job to execute.</param>
     /// <param name="cancellationToken">A <see cref="CancellationToken"/>
     /// indicating whether or not work on the job should be discontinued prior
     /// to completion.</param>
@@ -111,13 +104,18 @@ public class SerialWorker : BackgroundService
     /// completed.</returns>
     /// <exception cref="InvalidOperationException">Thrown if the unit of work
     /// class can't be resolved or instantiated.</exception>
-    public virtual async Task ExecuteJobAsync(CancellationToken cancellationToken)
+    public virtual Task ExecuteJobAsync(
+        Job job,
+        CancellationToken cancellationToken
+    )
     {
         var unitOfWorkClassName = "Reqless.ExampleWorkerApp.ConcreteUnitOfWork";
-        var unitOfWorkClass = _unitOfWorkResolver.Resolve(unitOfWorkClassName) ??
-            throw new InvalidOperationException($"Could not resolve the unit of work type '{unitOfWorkClassName}'.");
+        Type unitOfWorkClass = _unitOfWorkResolver.Resolve(unitOfWorkClassName) ??
+            throw new InvalidOperationException(
+                $"Could not resolve {nameof(IUnitOfWork)} type '{unitOfWorkClassName}'."
+            );
 
-        IUnitOfWork unitOfWork = _unitOfWorkActivator.CreateInstance(_provider, unitOfWorkClass);
-        await unitOfWork.PerformAsync();
+        IUnitOfWork unitOfWork = _unitOfWorkActivator.CreateInstance(unitOfWorkClass);
+        return unitOfWork.PerformAsync(cancellationToken);
     }
 }

@@ -2,6 +2,8 @@
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Reqless.ExampleWorkerApp", "Reqless.ExampleWorkerApp\Reqless.ExampleWorkerApp.csproj", "{2423897F-F1AA-4BD5-A376-05C520AA8151}"
+EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Reqless.Worker.Tests", "Reqless.Worker.Tests\Reqless.Worker.Tests.csproj", "{286131BC-CAFC-4AA8-9057-49E61219DA28}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Reqless.Tests", "Reqless.Tests\Reqless.Tests.csproj", "{2EB4E0B1-EB32-4042-9073-6E213EB3614F}"
@@ -21,6 +23,10 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{2423897F-F1AA-4BD5-A376-05C520AA8151}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2423897F-F1AA-4BD5-A376-05C520AA8151}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2423897F-F1AA-4BD5-A376-05C520AA8151}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2423897F-F1AA-4BD5-A376-05C520AA8151}.Release|Any CPU.Build.0 = Release|Any CPU
 		{286131BC-CAFC-4AA8-9057-49E61219DA28}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{286131BC-CAFC-4AA8-9057-49E61219DA28}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{286131BC-CAFC-4AA8-9057-49E61219DA28}.Release|Any CPU.ActiveCfg = Release|Any CPU

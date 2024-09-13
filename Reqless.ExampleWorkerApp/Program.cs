@@ -6,8 +6,15 @@ using Reqless.Worker;
 
 namespace Reqless.ExampleWorkerApp;
 
+/// <summary>
+/// Main program entry point.
+/// </summary>
 public class Program
 {
+    /// <summary>
+    /// Main program entry point.
+    /// </summary>
+    /// <param name="args">Command-line arguments.</param>
     public static void Main(string[] args)
     {
         HostApplicationBuilder builder = Host.CreateApplicationBuilder(args);
@@ -15,14 +22,15 @@ public class Program
         builder.Services.AddSingleton<IReqlessClientFactory>(
             new ReqlessClientFactory(() => new ReqlessClient())
         );
-        var workerCount = 2;
+        builder.Services.AddSingleton<IWorkerFactory, GenericWorkerFactory<AsyncWorker>>();
+        builder.Services.AddSingleton<IThinger, Thinger>();
         builder.Services.AddReqlessServices();
+
+        var workerCount = 2;
         foreach (var index in Enumerable.Range(0, workerCount))
         {
-            Console.WriteLine(index);
-            builder.Services.AddSingleton<IHostedService, SerialWorker>();
+            builder.Services.AddSingleton<IHostedService, WorkerService>();
         }
-        builder.Services.AddSingleton<IThinger, Thinger>();
 
         using IHost host = builder.Build();
         host.Run();

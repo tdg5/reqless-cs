@@ -5,6 +5,9 @@ using System.Text.Json;
 
 namespace Reqless.ExampleWorkerApp;
 
+/// <summary>
+/// A concrete <see cref="IUnitOfWork"/> that performs some arbitrary action.
+/// </summary>
 public class ConcreteUnitOfWork : IUnitOfWork
 {
     IClient _client;
@@ -13,6 +16,9 @@ public class ConcreteUnitOfWork : IUnitOfWork
 
     Job? _job = null;
 
+    /// <summary>
+    /// Create an instance of <see cref="ConcreteUnitOfWork"/>.
+    /// </summary>
     public ConcreteUnitOfWork(
         IThinger thinger,
         IReqlessClientAccessor reqlessClientAccessor,
@@ -25,7 +31,8 @@ public class ConcreteUnitOfWork : IUnitOfWork
         _thinger = thinger;
     }
 
-    public async Task PerformAsync()
+    /// <inheritdoc/>
+    public async Task PerformAsync(CancellationToken cancellationToken)
     {
         _thinger.DoThing();
         Console.WriteLine(

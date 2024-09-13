@@ -180,7 +180,7 @@ public class ServiceCollectionExtensionsTest
 
     class NoopUnitOfWorkActivator : IUnitOfWorkActivator
     {
-        public IUnitOfWork CreateInstance(IServiceProvider provider, Type instanceType)
+        public IUnitOfWork CreateInstance(Type instanceType)
         {
             throw new NotImplementedException();
         }
