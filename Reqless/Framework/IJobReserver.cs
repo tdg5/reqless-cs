@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using Reqless.Client.Models;
 
 namespace Reqless.Framework;
@@ -10,7 +11,7 @@ public interface IJobReserver
     /// <summary>
     /// Tries to reserve a job.
     /// </summary>
-    /// <param name="job">The job that was popped to be executed, if any.</param>
-    /// <returns>True if a job was reserved, false otherwise.</returns>
-    bool TryReserveJob(out Job? job);
+    /// <returns>A task containing a job if one could be reserved, otherwise
+    /// null.</returns>
+    Task<Job?> TryReserveJobAsync();
 }

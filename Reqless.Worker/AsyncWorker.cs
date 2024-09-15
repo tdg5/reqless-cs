@@ -75,6 +75,7 @@ public class AsyncWorker : IWorker
             _reqlessClientAccessor.Value = client;
             try
             {
+                Job? job = null;
                 await ExecuteJobAsync(
                     null!,
                     cancellationToken
