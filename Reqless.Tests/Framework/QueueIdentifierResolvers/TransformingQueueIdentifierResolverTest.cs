@@ -88,7 +88,9 @@ public class TransformingQueueIdentifierResolverTest
     /// </summary>
     class OrderReversingQueueIdentifiersTransformer : IQueueIdentifiersTransformer
     {
-        /// <inheritdoc />
+        /// <summary>
+        /// Transform the given queue identifiers by reversing their order.
+        /// </summary>
         public Task<List<string>> TransformAsync(List<string> queueIdentifiers)
         {
             List<string> transformedQueueIdentifiers = [.. queueIdentifiers];
