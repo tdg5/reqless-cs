@@ -376,7 +376,7 @@ public class ReqlessClient : IClient, IDisposable
     /// <inheritdoc/>
     public async Task<List<QueueCounts>> GetAllQueueCountsAsync()
     {
-        var result = await _executor.ExecuteAsync(["queue.counts", Now()]);
+        var result = await _executor.ExecuteAsync(["queues.counts", Now()]);
 
         var countsJson = OperationValidation.ThrowIfServerResponseIsNull(
             (string?)result
@@ -437,6 +437,23 @@ public class ReqlessClient : IClient, IDisposable
         }
 
         return identifierMapping;
+    }
+
+    /// <inheritdoc/>
+    public async Task<List<string>> GetAllQueueNamesAsync()
+    {
+        var result = await _executor.ExecuteAsync(["queues.names", Now()]);
+
+        var namesJson = OperationValidation.ThrowIfServerResponseIsNull(
+            (string?)result
+        );
+
+        var names = JsonSerializer.Deserialize<List<string>>(namesJson)
+            ?? throw new JsonException(
+                $"Failed to deserialize all queue names JSON: {namesJson}"
+            );
+
+        return names;
     }
 
     /// <summary>

@@ -1,4 +1,4 @@
--- Current SHA: 54efb0679992da71b576cf16c043e9c9f985f426
+-- Current SHA: 3a9b045b0139a993e8ef048f636c9e7d128cf632
 -- This is a generated file
 local function cjsonArrayDegenerationWorkaround(array)
   if #array == 0 then
@@ -1896,6 +1896,10 @@ function ReqlessQueue.counts(now, name)
   end
   return response
 end
+
+function ReqlessQueue.names(now)
+  return redis.call('zrange', 'ql:queues', 0, -1)
+end
 local ReqlessQueuePatterns = {
   default_identifiers_default_pattern = '["*"]',
   default_priority_pattern = '{"fairly": false, "pattern": ["default"]}',
@@ -2473,6 +2477,10 @@ end
 
 ReqlessAPI['queues.counts'] = function(now)
   return cjsonArrayDegenerationWorkaround(ReqlessQueue.counts(now, nil))
+end
+
+ReqlessAPI['queues.names'] = function(now)
+  return cjsonArrayDegenerationWorkaround(ReqlessQueue.names(now, nil))
 end
 
 ReqlessAPI['recurringJob.cancel'] = function(now, jid)

@@ -222,6 +222,12 @@ public interface IClient
     Task<Dictionary<string, List<string>>> GetAllQueueIdentifierPatternsAsync();
 
     /// <summary>
+    /// Get the names of all known queues.
+    /// </summary>
+    /// <returns>A list of the names of all known queues.</returns>
+    Task<List<string>> GetAllQueueNamesAsync();
+
+    /// <summary>
     /// Get all dynamic queue priority patterns.
     /// </summary>
     /// <returns>An ordered collection of <see cref="QueuePriorityPattern"/>

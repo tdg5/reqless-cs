@@ -567,12 +567,12 @@ public class ReqlessClientIntegrationTest
     public async Task ForgetQueueAsync_CausesTheNamedQueueToBeForgotten()
     {
         await PutJobAsync(_client, queueName: Maybe<string>.Some(ExampleQueueName));
-        List<QueueCounts> allQueueCountsBefore = await _client.GetAllQueueCountsAsync();
-        Assert.Single(allQueueCountsBefore);
-        Assert.Equal(ExampleQueueName, allQueueCountsBefore[0].QueueName);
+        List<string> allQueueNamesBefore = await _client.GetAllQueueNamesAsync();
+        Assert.Single(allQueueNamesBefore);
+        Assert.Equal(ExampleQueueName, allQueueNamesBefore[0]);
         await _client.ForgetQueueAsync(ExampleQueueName);
-        List<QueueCounts> allQueueCountsAfter = await _client.GetAllQueueCountsAsync();
-        Assert.Empty(allQueueCountsAfter);
+        List<string> allQueueNamesAfter = await _client.GetAllQueueNamesAsync();
+        Assert.Empty(allQueueNamesAfter);
     }
 
     /// <summary>
@@ -653,16 +653,16 @@ public class ReqlessClientIntegrationTest
         string[] expectedQueueNames = [ExampleQueueName, otherQueueName];
         await PutJobAsync(_client, queueName: Maybe<string>.Some(ExampleQueueName));
         await PutJobAsync(_client, queueName: Maybe<string>.Some(otherQueueName));
-        List<QueueCounts> allQueueCountsBefore = await _client.GetAllQueueCountsAsync();
-        Assert.Equal(2, allQueueCountsBefore.Count);
-        foreach (var queueCounts in allQueueCountsBefore)
+        List<string> allQueueNamesBefore = await _client.GetAllQueueNamesAsync();
+        Assert.Equal(2, allQueueNamesBefore.Count);
+        foreach (var queueName in allQueueNamesBefore)
         {
-            Assert.Contains(queueCounts.QueueName, expectedQueueNames);
+            Assert.Contains(queueName, expectedQueueNames);
 
         }
         await _client.ForgetQueuesAsync(ExampleQueueName, otherQueueName);
-        List<QueueCounts> allQueueCountsAfter = await _client.GetAllQueueCountsAsync();
-        Assert.Empty(allQueueCountsAfter);
+        List<string> allQueueNamesAfter = await _client.GetAllQueueNamesAsync();
+        Assert.Empty(allQueueNamesAfter);
     }
 
     /// <summary>
@@ -752,6 +752,33 @@ public class ReqlessClientIntegrationTest
         Assert.Single(allQueueCounts);
         Assert.Equal(ExampleQueueName, allQueueCounts[0].QueueName);
         Assert.Equal(1, allQueueCounts[0].Waiting);
+    }
+
+    /// <summary>
+    /// <see cref="ReqlessClient.GetAllQueueNamesAsync"/> returns empty array
+    /// when no queues exist.
+    /// </summary>
+    [Fact]
+    public async Task GetAllQueueNamesAsync_ReturnsEmptyArrayWhenNoQueues()
+    {
+        var allQueueNames = await _client.GetAllQueueNamesAsync();
+        Assert.Empty(allQueueNames);
+    }
+
+    /// <summary>
+    /// <see cref="ReqlessClient.GetAllQueueNamesAsync"/> returns expected
+    /// counts when queues exist.
+    /// </summary>
+    [Fact]
+    public async Task GetAllQueueNamesAsync_ReturnsExpectedNames()
+    {
+        await PutJobAsync(
+            _client,
+            queueName: Maybe<string>.Some(ExampleQueueName)
+        );
+        var allQueueNames = await _client.GetAllQueueNamesAsync();
+        Assert.Single(allQueueNames);
+        Assert.Equal(ExampleQueueName, allQueueNames[0]);
     }
 
     /// <summary>
