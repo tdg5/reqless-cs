@@ -360,7 +360,7 @@ public class DynamicPriorityQueueIdentifiersTransformerTest
                 await subject.TransformAsync(ExampleQueueIdentifiers)
             ),
             queuePriorityPatterns: [
-                new(["g", "*", "!a"], fairly: false),
+                new(["g", "2*", "*2", "b2bx", "*", "!a", "!2*", "!*2"], fairly: false),
                 DefaultQueuePriorityPattern,
             ]
         );

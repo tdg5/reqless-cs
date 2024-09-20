@@ -68,7 +68,6 @@ public partial class BaseReqlessClientTest
     /// <summary>
     /// A Regex for matching a UUID-based job ID.
     /// </summary>
-    /// <returns></returns>
     [GeneratedRegex("^[0-9a-f]{32}$")]
     protected static partial Regex JidRegex();
 

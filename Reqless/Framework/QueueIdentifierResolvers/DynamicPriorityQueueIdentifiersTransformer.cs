@@ -56,7 +56,7 @@ public class DynamicPriorityQueueIdentifiersTransformer : IQueueIdentifiersTrans
     /// </summary>
     /// <param name="queueIdentifiers">The queue identifiers that should be
     /// mapped to their respective concrete sorted queue names.</param>
-    /// <returns></returns>
+    /// <returns>The transformed list of queue identifiers.</returns>
     public async Task<List<string>> TransformAsync(List<string> queueIdentifiers)
     {
         var queuePriorityPatterns = await GetQueuePriorityPatternsAsync();
