@@ -6,7 +6,28 @@ namespace Reqless.Common.Validation;
 public static class ArgumentValidation
 {
     /// <summary>
-    /// Checks an array for values that are null and throws an <see
+    /// Throws a <see cref="ArgumentNullException"/> if the given value is null
+    /// or throws a <see cref="ArgumentException"/> if the collection has length
+    /// of zero.
+    /// </summary>
+    /// <param name="collection">The collection to validate.</param>
+    /// <param name="paramName">The name of the parameter that is being
+    /// validated.</param>
+    public static void ThrowIfNullOrEmpty<T>(
+        IEnumerable<T> collection,
+        string paramName
+    )
+    {
+        ArgumentNullException.ThrowIfNull(collection, paramName);
+
+        if (!collection.Any())
+        {
+            throw new ArgumentException("Value cannot be empty.", paramName);
+        }
+    }
+
+    /// <summary>
+    /// Checks an enumerable for values that are null and throws an <see
     /// cref="ArgumentException"/> if any are found.
     /// </summary>
     /// <param name="values">The array to validate.</param>

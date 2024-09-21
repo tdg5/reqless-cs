@@ -9,6 +9,42 @@ namespace Reqless.Tests.Common.Validation;
 public class ArgumentValidationTest
 {
     /// <summary>
+    /// <see cref="ArgumentValidation.ThrowIfNullOrEmpty"/> should throw if the
+    /// collection is null.
+    /// </summary>
+    [Fact]
+    public void ThrowIfNullOrEmpty_ThrowsIfCollectionIsNull()
+    {
+        var paramName = "param";
+        var exception = Assert.Throws<ArgumentNullException>(
+            () => ArgumentValidation.ThrowIfNullOrEmpty<string>(null!, paramName)
+        );
+        Assert.Equal(
+            $"Value cannot be null. (Parameter '{paramName}')",
+            exception.Message
+        );
+        Assert.Equal(paramName, exception.ParamName);
+    }
+
+    /// <summary>
+    /// <see cref="ArgumentValidation.ThrowIfNullOrEmpty"/> should throw if the
+    /// collection is empty.
+    /// </summary>
+    [Fact]
+    public void ThrowIfNullOrEmpty_ThrowsIfCollectionIsEmpty()
+    {
+        var paramName = "param";
+        var exception = Assert.Throws<ArgumentException>(
+            () => ArgumentValidation.ThrowIfNullOrEmpty<string>([], paramName)
+        );
+        Assert.Equal(
+            $"Value cannot be empty. (Parameter '{paramName}')",
+            exception.Message
+        );
+        Assert.Equal(paramName, exception.ParamName);
+    }
+
+    /// <summary>
     /// <see cref="ArgumentValidation.ThrowIfAnyNull"/> should throw if the
     /// collection is null.
     /// </summary>
