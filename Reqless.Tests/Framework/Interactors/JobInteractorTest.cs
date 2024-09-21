@@ -32,7 +32,7 @@ public class JobInteractorTest
     public void Constructor_Client_ThrowsWhenNull()
     {
         Scenario.ThrowsWhenArgumentIsNull(
-            () => MakeSubject(client: Maybe<IClient>.Some(null!)),
+            () => MakeSubject(client: Maybe<IReqlessClient>.Some(null!)),
             "client"
         );
     }
@@ -167,7 +167,7 @@ public class JobInteractorTest
     /// <returns></returns>
     static JobInteractor MakeSubject(
         Maybe<string>? className = null,
-        Maybe<IClient>? client = null,
+        Maybe<IReqlessClient>? client = null,
         Maybe<string>? jid = null,
         Maybe<int>? priority = null,
         Maybe<string>? queueName = null,

@@ -15,7 +15,7 @@ public static class JobInteractorFactory
     /// </summary>
     /// <param name="className">The name of the <see cref="IUnitOfWork"/> class
     /// that will be used to perform the job.</param>
-    /// <param name="client">An <see cref="IClient"/> that the job can use to
+    /// <param name="client">An <see cref="IReqlessClient"/> that the job can use to
     /// interact with the Reqless server.</param>
     /// <param name="jid">The unique identifier, or job ID, of the job.</param>
     /// <param name="priority">The priority of the job.</param>
@@ -31,7 +31,7 @@ public static class JobInteractorFactory
     /// scheduled when capacity is not available.</param>
     public static JobInteractor NewJobInteractor(
         Maybe<string>? className = null,
-        Maybe<IClient>? client = null,
+        Maybe<IReqlessClient>? client = null,
         Maybe<string>? jid = null,
         Maybe<int>? priority = null,
         Maybe<string>? queueName = null,
@@ -43,8 +43,8 @@ public static class JobInteractorFactory
     {
         Maybe<string> _className = className
             ?? Maybe<string>.Some("default-class-name");
-        Maybe<IClient> _client = client
-            ?? Maybe<IClient>.Some(new Mock<IClient>().Object);
+        Maybe<IReqlessClient> _client = client
+            ?? Maybe<IReqlessClient>.Some(new Mock<IReqlessClient>().Object);
         Maybe<string> _jid = jid ?? Maybe<string>.Some("default-jid");
         Maybe<int> _priority = priority ?? Maybe<int>.Some(0);
         Maybe<string> _queueName = queueName ?? Maybe<string>.Some("default-queue-name");

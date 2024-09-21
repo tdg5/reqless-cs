@@ -9,7 +9,7 @@ namespace Reqless.Tests.Framework.Interactors;
 /// </summary>
 public class JobInteractorIntegrationTest
 {
-    private readonly IClient _client;
+    private readonly IReqlessClient _client;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="JobInteractorIntegrationTest"/>

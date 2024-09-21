@@ -14,7 +14,7 @@ public class JobInteractor : BaseJobInteractor, IJobInteractor
     /// </summary>
     /// <param name="className">The name of the <see cref="IUnitOfWork"/> class
     /// that will be used to perform the job.</param>
-    /// <param name="client">An <see cref="IClient"/> that the job can use to
+    /// <param name="client">An <see cref="IReqlessClient"/> that the job can use to
     /// interact with the Reqless server.</param>
     /// <param name="jid">The unique identifier, or job ID, of the job.</param>
     /// <param name="priority">The priority of the job.</param>
@@ -30,7 +30,7 @@ public class JobInteractor : BaseJobInteractor, IJobInteractor
     /// scheduled when capacity is not available.</param>
     public JobInteractor(
         string className,
-        IClient client,
+        IReqlessClient client,
         string jid,
         int priority,
         string queueName,

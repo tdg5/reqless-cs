@@ -8,7 +8,7 @@ namespace Reqless.Framework;
 /// </summary>
 public class DefaultJobReserver : IJobReserver
 {
-    IClient ReqlessClient { get; }
+    IReqlessClient ReqlessClient { get; }
 
     /// <summary>
     /// Create an instance of <see cref="DefaultJobReserver"/>.

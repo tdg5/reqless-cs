@@ -71,7 +71,7 @@ public class AsyncWorker : IWorker
                 ExecutionContext.Restore(initialExecutionContext);
             }
 
-            IClient client = _reqlessClientFactory.Create();
+            IReqlessClient client = _reqlessClientFactory.Create();
             _reqlessClientAccessor.Value = client;
             try
             {

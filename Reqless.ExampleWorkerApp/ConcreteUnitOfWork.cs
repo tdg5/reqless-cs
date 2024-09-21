@@ -10,7 +10,7 @@ namespace Reqless.ExampleWorkerApp;
 /// </summary>
 public class ConcreteUnitOfWork : IUnitOfWork
 {
-    IClient _client;
+    IReqlessClient _client;
 
     IThinger _thinger;
 

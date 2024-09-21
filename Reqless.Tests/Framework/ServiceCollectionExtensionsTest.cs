@@ -171,7 +171,7 @@ public class ServiceCollectionExtensionsTest
 
     class NoopReqlessClientAccessor : IReqlessClientAccessor
     {
-        public IClient? Value
+        public IReqlessClient? Value
         {
             get => throw new NotImplementedException();
             set => throw new NotImplementedException();

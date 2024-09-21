@@ -6,6 +6,6 @@ namespace Reqless.Framework;
 /// Provides an implementation of <see cref="IReqlessClientAccessor" /> based on
 /// the current execution context.
 /// </summary>
-public class DefaultReqlessClientAccessor : ExecutionContextValueAccessor<IClient>, IReqlessClientAccessor
+public class DefaultReqlessClientAccessor : ExecutionContextValueAccessor<IReqlessClient>, IReqlessClientAccessor
 {
 }
