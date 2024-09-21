@@ -13,10 +13,10 @@ namespace Reqless.Framework.QueueIdentifierResolvers;
 public class DynamicPriorityQueueIdentifiersTransformer : IQueueIdentifiersTransformer
 {
     /// <summary>
-    /// The <see cref="IClient"/> instance used to fetch queue priority
+    /// The <see cref="IReqlessClient"/> instance used to fetch queue priority
     /// patterns.
     /// </summary>
-    protected IClient ReqlessClient { get; }
+    protected IReqlessClient ReqlessClient { get; }
 
     /// <summary>
     /// The time-to-live in milliseconds for the queue priority patterns cache.
@@ -33,12 +33,12 @@ public class DynamicPriorityQueueIdentifiersTransformer : IQueueIdentifiersTrans
     /// Create an instance of <see
     /// cref="DynamicPriorityQueueIdentifiersTransformer"/>.
     /// </summary>
-    /// <param name="reqlessClient">The <see cref="IClient"/> instance used to
+    /// <param name="reqlessClient">The <see cref="IReqlessClient"/> instance used to
     /// fetch queue priority patterns.</param>
     /// <param name="cacheTtlMilliseconds">The time-to-live in milliseconds for
     /// the queue priority patterns cache.</param>
     public DynamicPriorityQueueIdentifiersTransformer(
-        IClient reqlessClient,
+        IReqlessClient reqlessClient,
         int cacheTtlMilliseconds = 60000
     )
     {
@@ -52,7 +52,7 @@ public class DynamicPriorityQueueIdentifiersTransformer : IQueueIdentifiersTrans
     /// <summary>
     /// Transform the given queue identifiers by reordering the queue
     /// identifiers based on the queue priority patterns returned by <see
-    /// cref="IClient.GetAllQueuePriorityPatternsAsync"/>.
+    /// cref="IReqlessClient.GetAllQueuePriorityPatternsAsync"/>.
     /// </summary>
     /// <param name="queueIdentifiers">The queue identifiers that should be
     /// mapped to their respective concrete sorted queue names.</param>

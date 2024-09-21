@@ -6,7 +6,7 @@ namespace Reqless.Client;
 /// Interface for a client that can interact with a Redish-backed Reqless
 /// server.
 /// </summary>
-public interface IClient
+public interface IReqlessClient
 {
     /// <summary>
     /// Update the given job to add a dependency on the job identified by the

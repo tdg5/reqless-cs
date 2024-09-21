@@ -61,7 +61,7 @@ public class DynamicPriorityQueueIdentifiersTransformerTest
     {
         Scenario.ThrowsWhenArgumentIsNegative(
             (invalidTtl) => new DynamicPriorityQueueIdentifiersTransformer(
-                new Mock<IClient>().Object,
+                new Mock<IReqlessClient>().Object,
                 invalidTtl
             ),
             "cacheTtlMilliseconds"
@@ -75,11 +75,11 @@ public class DynamicPriorityQueueIdentifiersTransformerTest
     [Fact]
     public async Task TransformAsync_CachesQueuePriorityPatterns()
     {
-        var clientMock = new Mock<IClient>();
+        var clientMock = new Mock<IReqlessClient>();
         clientMock.Setup(mock => mock.GetAllQueuePriorityPatternsAsync())
             .Returns(Task.FromResult(new List<QueuePriorityPattern>()))
             .Verifiable(Times.Exactly(1));
-        IClient client = clientMock.Object;
+        IReqlessClient client = clientMock.Object;
         var subject = new DynamicPriorityQueueIdentifiersTransformer(client, 60000);
         var queueNames = await subject.TransformAsync([]);
         queueNames = await subject.TransformAsync([]);
@@ -93,11 +93,11 @@ public class DynamicPriorityQueueIdentifiersTransformerTest
     [Fact]
     public async Task TransformAsync_FetchesQueuePriorityPatternsWhenCacheHasExpired()
     {
-        var clientMock = new Mock<IClient>();
+        var clientMock = new Mock<IReqlessClient>();
         clientMock.Setup(mock => mock.GetAllQueuePriorityPatternsAsync())
             .Returns(Task.FromResult(new List<QueuePriorityPattern>()))
             .Verifiable(Times.Exactly(2));
-        IClient client = clientMock.Object;
+        IReqlessClient client = clientMock.Object;
         // TTL of 0 to force cache to expire immediately.
         var subject = new DynamicPriorityQueueIdentifiersTransformer(client, 0);
         var queueNames = await subject.TransformAsync([]);
@@ -113,11 +113,11 @@ public class DynamicPriorityQueueIdentifiersTransformerTest
     [Fact]
     public async Task TransformAsync_CanFetchQueuePriorityPatternsFollowingAnException()
     {
-        var clientMock = new Mock<IClient>();
+        var clientMock = new Mock<IReqlessClient>();
         clientMock.SetupSequence(mock => mock.GetAllQueuePriorityPatternsAsync())
             .Throws(new Exception())
             .Returns(Task.FromResult(new List<QueuePriorityPattern>()));
-        IClient client = clientMock.Object;
+        IReqlessClient client = clientMock.Object;
         var subject = new DynamicPriorityQueueIdentifiersTransformer(client);
         // This call fails.
         await Assert.ThrowsAsync<Exception>(() => subject.TransformAsync([]));
@@ -136,11 +136,11 @@ public class DynamicPriorityQueueIdentifiersTransformerTest
     public async Task TransformAsync_OnlyAllowsOneCacheRefreshAtATime()
     {
         TaskCompletionSource<List<QueuePriorityPattern>> completionSource = new();
-        var clientMock = new Mock<IClient>();
+        var clientMock = new Mock<IReqlessClient>();
         clientMock.Setup(mock => mock.GetAllQueuePriorityPatternsAsync())
             .Returns(completionSource.Task)
             .Verifiable(Times.Exactly(1));
-        IClient client = clientMock.Object;
+        IReqlessClient client = clientMock.Object;
         var subject = new DynamicPriorityQueueIdentifiersTransformer(client);
         var queueNamesTask = subject.TransformAsync([]);
         var otherQueueNamesTask = subject.TransformAsync([]);
@@ -553,10 +553,10 @@ public class DynamicPriorityQueueIdentifiersTransformerTest
         Func<DynamicPriorityQueueIdentifiersTransformer, Task> action
     )
     {
-        var clientMock = new Mock<IClient>();
+        var clientMock = new Mock<IReqlessClient>();
         clientMock.Setup(mock => mock.GetAllQueuePriorityPatternsAsync())
             .Returns(Task.FromResult(queuePriorityPatterns));
-        IClient client = clientMock.Object;
+        IReqlessClient client = clientMock.Object;
         await action(new DynamicPriorityQueueIdentifiersTransformer(client));
         clientMock.Verify();
     }

@@ -8,7 +8,7 @@ namespace Reqless.Client;
 /// <summary>
 /// A client for interacting with a Reqless-compatible Redish server.
 /// </summary>
-public class ReqlessClient : IClient, IDisposable
+public class ReqlessClient : IReqlessClient, IDisposable
 {
     private readonly IRedisExecutor _executor;
 

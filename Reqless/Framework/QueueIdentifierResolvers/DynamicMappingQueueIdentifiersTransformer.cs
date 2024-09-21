@@ -12,10 +12,10 @@ namespace Reqless.Framework.QueueIdentifierResolvers;
 public class DynamicMappingQueueIdentifiersTransformer : IQueueIdentifiersTransformer
 {
     /// <summary>
-    /// The <see cref="IClient"/> instance used to fetch queue identifier
+    /// The <see cref="IReqlessClient"/> instance used to fetch queue identifier
     /// patterns.
     /// </summary>
-    protected IClient ReqlessClient { get; }
+    protected IReqlessClient ReqlessClient { get; }
 
     /// <summary>
     /// The time-to-live in milliseconds for the queue identifier patterns cache.
@@ -32,12 +32,12 @@ public class DynamicMappingQueueIdentifiersTransformer : IQueueIdentifiersTransf
     /// Create an instance of <see
     /// cref="DynamicMappingQueueIdentifiersTransformer"/>.
     /// </summary>
-    /// <param name="reqlessClient">The <see cref="IClient"/> instance used to
+    /// <param name="reqlessClient">The <see cref="IReqlessClient"/> instance used to
     /// fetch queue identifer patterns.</param>
     /// <param name="cacheTtlMilliseconds">The time-to-live in milliseconds for
     /// the queue identifer patterns cache.</param>
     public DynamicMappingQueueIdentifiersTransformer(
-        IClient reqlessClient,
+        IReqlessClient reqlessClient,
         int cacheTtlMilliseconds = 60000
     )
     {
@@ -52,7 +52,7 @@ public class DynamicMappingQueueIdentifiersTransformer : IQueueIdentifiersTransf
     /// Transform the given queue identifiers by replacing dynamic queue
     /// identifier patterns with the concrete queue names matching those
     /// patterns as defined by <see
-    /// cref="IClient.GetAllQueueIdentifierPatternsAsync"/>.
+    /// cref="IReqlessClient.GetAllQueueIdentifierPatternsAsync"/>.
     /// </summary>
     /// <param name="queueIdentifiers">The queue identifiers that should be
     /// mapped to their respective concrete queue names.</param>
@@ -100,11 +100,14 @@ public class DynamicMappingQueueIdentifiersTransformer : IQueueIdentifiersTransf
     }
 
     /// <summary>
-    /// Map the given queue identifiers based on the queue identifier patterns.
+    /// Map the given queue identifiers to an expanded set of queue identifiers
+    /// based on the queue identifier patterns.
     /// </summary>
-    /// <param name="queueIdentifiers">The queue identifiers to sort.</param>
-    /// <param name="queueIdentifierPatterns">The queue identifier patterns defining
-    /// the mapping from dynamic queue identifiers to concrete queue names.</param>
+    /// <param name="queueIdentifiers">The queue identifiers to map and/or
+    /// expand.</param>
+    /// <param name="queueIdentifierPatterns">The queue identifier patterns
+    /// defining the mapping from dynamic queue identifiers to concrete queue
+    /// names.</param>
     /// <returns>The mapped queue identifiers.</returns>
     protected static List<string> MapQueueIdentifiers(
         List<string> queueIdentifiers,

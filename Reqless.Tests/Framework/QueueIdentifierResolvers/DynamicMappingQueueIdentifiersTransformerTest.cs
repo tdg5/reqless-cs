@@ -59,7 +59,7 @@ public class DynamicMappingQueueIdentifiersTransformerTest
     {
         Scenario.ThrowsWhenArgumentIsNegative(
             (invalidTtl) => new DynamicMappingQueueIdentifiersTransformer(
-                new Mock<IClient>().Object,
+                new Mock<IReqlessClient>().Object,
                 invalidTtl
             ),
             "cacheTtlMilliseconds"
@@ -73,13 +73,13 @@ public class DynamicMappingQueueIdentifiersTransformerTest
     [Fact]
     public async Task TransformAsync_CachesQueueIdentifierPatterns()
     {
-        var clientMock = new Mock<IClient>();
+        var clientMock = new Mock<IReqlessClient>();
         clientMock.Setup(mock => mock.GetAllQueueIdentifierPatternsAsync())
             .Returns(Task.FromResult(new Dictionary<string, List<string>>()))
             .Verifiable(Times.Exactly(1));
         clientMock.Setup(mock => mock.GetAllQueueNamesAsync())
             .Returns(Task.FromResult(new List<string>()));
-        IClient client = clientMock.Object;
+        IReqlessClient client = clientMock.Object;
         var subject = new DynamicMappingQueueIdentifiersTransformer(client, 60000);
         var queueNames = await subject.TransformAsync([]);
         queueNames = await subject.TransformAsync([]);
@@ -93,13 +93,13 @@ public class DynamicMappingQueueIdentifiersTransformerTest
     [Fact]
     public async Task TransformAsync_FetchesQueueIdentifierPatternsWhenCacheHasExpired()
     {
-        var clientMock = new Mock<IClient>();
+        var clientMock = new Mock<IReqlessClient>();
         clientMock.Setup(mock => mock.GetAllQueueIdentifierPatternsAsync())
             .Returns(Task.FromResult(new Dictionary<string, List<string>>()))
             .Verifiable(Times.Exactly(2));
         clientMock.Setup(mock => mock.GetAllQueueNamesAsync())
             .Returns(Task.FromResult(new List<string>()));
-        IClient client = clientMock.Object;
+        IReqlessClient client = clientMock.Object;
         // TTL of 0 to force cache to expire immediately.
         var subject = new DynamicMappingQueueIdentifiersTransformer(client, 0);
         var queueNames = await subject.TransformAsync([]);
@@ -115,13 +115,13 @@ public class DynamicMappingQueueIdentifiersTransformerTest
     [Fact]
     public async Task TransformAsync_CanFetchQueueIdentifierPatternsFollowingAnException()
     {
-        var clientMock = new Mock<IClient>();
+        var clientMock = new Mock<IReqlessClient>();
         clientMock.SetupSequence(mock => mock.GetAllQueueIdentifierPatternsAsync())
             .Throws(new Exception())
             .Returns(Task.FromResult(new Dictionary<string, List<string>>()));
         clientMock.Setup(mock => mock.GetAllQueueNamesAsync())
             .Returns(Task.FromResult(new List<string>()));
-        IClient client = clientMock.Object;
+        IReqlessClient client = clientMock.Object;
         var subject = new DynamicMappingQueueIdentifiersTransformer(client);
         // This call fails.
         await Assert.ThrowsAsync<Exception>(() => subject.TransformAsync([]));
@@ -140,13 +140,13 @@ public class DynamicMappingQueueIdentifiersTransformerTest
     public async Task TransformAsync_OnlyAllowsOneCacheRefreshAtATime()
     {
         TaskCompletionSource<Dictionary<string, List<string>>> completionSource = new();
-        var clientMock = new Mock<IClient>();
+        var clientMock = new Mock<IReqlessClient>();
         clientMock.Setup(mock => mock.GetAllQueueIdentifierPatternsAsync())
             .Returns(completionSource.Task)
             .Verifiable(Times.Exactly(1));
         clientMock.Setup(mock => mock.GetAllQueueNamesAsync())
             .Returns(Task.FromResult(new List<string>()));
-        IClient client = clientMock.Object;
+        IReqlessClient client = clientMock.Object;
         var subject = new DynamicMappingQueueIdentifiersTransformer(client);
         var queueNamesTask = subject.TransformAsync([]);
         var otherQueueNamesTask = subject.TransformAsync([]);
@@ -344,12 +344,12 @@ public class DynamicMappingQueueIdentifiersTransformerTest
         List<string> knownQueueNames
     )
     {
-        var clientMock = new Mock<IClient>();
+        var clientMock = new Mock<IReqlessClient>();
         clientMock.Setup(mock => mock.GetAllQueueIdentifierPatternsAsync())
             .Returns(Task.FromResult(queueIdentifierPatterns));
         clientMock.Setup(mock => mock.GetAllQueueNamesAsync())
             .Returns(Task.FromResult(knownQueueNames));
-        IClient client = clientMock.Object;
+        IReqlessClient client = clientMock.Object;
         await action(new DynamicMappingQueueIdentifiersTransformer(client));
         clientMock.Verify();
     }
