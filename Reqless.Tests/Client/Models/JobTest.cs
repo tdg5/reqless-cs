@@ -1,4 +1,5 @@
 using Reqless.Client.Models;
+using Reqless.Common.Utilities;
 using Reqless.Tests.TestHelpers;
 
 namespace Reqless.Tests.Client.Models;
@@ -42,7 +43,7 @@ public class JobTest
     public void Constructor_Dependencies_ThrowsWhenNull()
     {
         Scenario.ThrowsWhenArgumentIsNull(
-            () => MakeJob(dependencies: Maybe<string[]?>.Some(null)),
+            () => MakeJob(dependencies: Maybe<string[]>.Some(null!)),
             "dependencies"
         );
     }
@@ -56,7 +57,7 @@ public class JobTest
     {
         Scenario.ThrowsWhenArgumentElementIsNullOrEmptyOrWhitespace(
             (invalidDependency) => MakeJob(
-                dependencies: Maybe<string[]?>.Some([invalidDependency!])
+                dependencies: Maybe<string[]>.Some([invalidDependency!])
             ),
             "dependencies"
         );
@@ -70,7 +71,7 @@ public class JobTest
     public void Constructor_Dependents_ThrowsWhenNull()
     {
         Scenario.ThrowsWhenArgumentIsNull(
-            () => MakeJob(dependents: Maybe<string[]?>.Some(null)),
+            () => MakeJob(dependents: Maybe<string[]>.Some(null!)),
             "dependents"
         );
     }
@@ -84,7 +85,7 @@ public class JobTest
     {
         Scenario.ThrowsWhenArgumentElementIsNullOrEmptyOrWhitespace(
             (invalidDependent) => MakeJob(
-                dependents: Maybe<string[]?>.Some([invalidDependent!])
+                dependents: Maybe<string[]>.Some([invalidDependent!])
             ),
             "dependents"
         );
@@ -99,7 +100,7 @@ public class JobTest
     {
         Scenario.ThrowsWhenArgumentIsNotPositive(
             (long invalidExpires) => MakeJob(
-                expires: Maybe<long>.Some(invalidExpires)
+                expires: Maybe.Some(invalidExpires)
             ),
             "expires"
         );
@@ -113,7 +114,7 @@ public class JobTest
     public void Constructor_History_ThrowsWhenNull()
     {
         Scenario.ThrowsWhenArgumentIsNull(
-            () => MakeJob(history: Maybe<JobEvent[]?>.Some(null)),
+            () => MakeJob(history: Maybe<JobEvent[]>.Some(null!)),
             "history"
         );
     }
@@ -126,7 +127,7 @@ public class JobTest
     public void Constructor_History_ThrowsWhenAnyValueIsNull()
     {
         var exception = Assert.Throws<ArgumentException>(
-            () => MakeJob(history: Maybe<JobEvent[]?>.Some([null!]))
+            () => MakeJob(history: Maybe<JobEvent[]>.Some([null!]))
         );
         Assert.Equal("history", exception.ParamName);
         Assert.Equal("Value cannot include null. (Parameter 'history')", exception.Message);
@@ -154,7 +155,7 @@ public class JobTest
     {
         Scenario.ThrowsWhenArgumentIsNegative(
             (invalidPriority) => MakeJob(
-                priority: Maybe<int>.Some(invalidPriority)
+                priority: Maybe.Some(invalidPriority)
             ),
             "priority"
         );
@@ -193,7 +194,7 @@ public class JobTest
         foreach (var invalidValue in new int[] { -100, -2 })
         {
             var exception = Assert.Throws<ArgumentOutOfRangeException>(
-                () => MakeJob(remaining: Maybe<int>.Some(invalidValue))
+                () => MakeJob(remaining: Maybe.Some(invalidValue))
             );
             Assert.Equal("remaining", exception.ParamName);
             Assert.Equal(
@@ -217,8 +218,8 @@ public class JobTest
         var retries = 5;
         var exception = Assert.Throws<ArgumentOutOfRangeException>(
             () => MakeJob(
-                remaining: Maybe<int>.Some(remaining),
-                retries: Maybe<int>.Some(retries)
+                remaining: Maybe.Some(remaining),
+                retries: Maybe.Some(retries)
             )
         );
         Assert.Equal("remaining", exception.ParamName);
@@ -239,7 +240,7 @@ public class JobTest
     public void Constructor_Retries_ThrowsWhenNegative()
     {
         Scenario.ThrowsWhenArgumentIsNegative(
-            (invalidRetries) => MakeJob(retries: Maybe<int>.Some(invalidRetries)),
+            (invalidRetries) => MakeJob(retries: Maybe.Some(invalidRetries)),
             "retries"
         );
     }
@@ -278,7 +279,7 @@ public class JobTest
     public void Constructor_Tags_ThrowsWhenNull()
     {
         Scenario.ThrowsWhenArgumentIsNull(
-            () => MakeJob(tags: Maybe<string[]?>.Some(null)),
+            () => MakeJob(tags: Maybe<string[]>.Some(null!)),
             "tags"
         );
     }
@@ -291,7 +292,7 @@ public class JobTest
     public void Constructor_Tags_ThrowsWhenAnyValueIsNullEmptyOrOnlyWhitespace()
     {
         Scenario.ThrowsWhenArgumentElementIsNullOrEmptyOrWhitespace(
-            (invalidTag) => MakeJob(tags: Maybe<string[]?>.Some([invalidTag!])),
+            (invalidTag) => MakeJob(tags: Maybe<string[]>.Some([invalidTag!])),
             "tags"
         );
     }
@@ -304,7 +305,7 @@ public class JobTest
     public void Constructor_Throttles_ThrowsWhenNull()
     {
         Scenario.ThrowsWhenArgumentIsNull(
-            () => MakeJob(throttles: Maybe<string[]?>.Some(null)),
+            () => MakeJob(throttles: Maybe<string[]>.Some(null!)),
             "throttles"
         );
     }
@@ -318,7 +319,7 @@ public class JobTest
     {
         Scenario.ThrowsWhenArgumentElementIsNullOrEmptyOrWhitespace(
             (invalidThrottle) => MakeJob(
-                throttles: Maybe<string[]?>.Some([invalidThrottle!])
+                throttles: Maybe<string[]>.Some([invalidThrottle!])
             ),
             "throttles"
         );
@@ -378,11 +379,11 @@ public class JobTest
     public static Job MakeJob(
         string? className = "className",
         string? data = "{}",
-        Maybe<string[]?>? dependencies = null,
-        Maybe<string[]?>? dependents = null,
+        Maybe<string[]>? dependencies = null,
+        Maybe<string[]>? dependents = null,
         Maybe<long>? expires = null,
-        Maybe<JobFailure?>? failure = null,
-        Maybe<JobEvent[]?>? history = null,
+        Maybe<JobFailure>? failure = null,
+        Maybe<JobEvent[]>? history = null,
         string? jid = "jid",
         Maybe<int>? priority = null,
         string? queueName = "queueName",
@@ -390,23 +391,23 @@ public class JobTest
         Maybe<int>? retries = null,
         string? spawnedFromJid = "spawnedFromJid",
         string? state = "state",
-        Maybe<string[]?>? tags = null,
-        Maybe<string[]?>? throttles = null,
+        Maybe<string[]>? tags = null,
+        Maybe<string[]>? throttles = null,
         bool tracked = false,
         string? workerName = "workerName"
     )
     {
-        string[]? _dependencies = (dependencies ?? Maybe<string[]?>.None).GetOrDefault([]);
-        string[]? _dependents = (dependents ?? Maybe<string[]?>.None).GetOrDefault([]);
+        string[]? _dependencies = (dependencies ?? Maybe<string[]>.None).GetOrDefault([]);
+        string[]? _dependents = (dependents ?? Maybe<string[]>.None).GetOrDefault([]);
         long _expires = (expires ?? Maybe<long>.None)
             .GetOrDefault(DateTimeOffset.UtcNow.ToUnixTimeMilliseconds() + 60000);
-        JobFailure? _failure = (failure ?? Maybe<JobFailure?>.Some(null)).GetOrDefault(null);
-        JobEvent[]? _history = (history ?? Maybe<JobEvent[]?>.Some([])).GetOrDefault([]);
+        JobFailure? _failure = (failure ?? Maybe<JobFailure>.Some(null!)).GetOrDefault(null!);
+        JobEvent[]? _history = (history ?? Maybe<JobEvent[]>.Some([])).GetOrDefault([]);
         int _priority = (priority ?? Maybe<int>.None).GetOrDefault(0);
         int _remaining = (remaining ?? Maybe<int>.None).GetOrDefault(5);
         int _retries = (retries ?? Maybe<int>.None).GetOrDefault(5);
-        string[]? _tags = (tags ?? Maybe<string[]?>.None).GetOrDefault([]);
-        string[]? _throttles = (throttles ?? Maybe<string[]?>.None).GetOrDefault([]);
+        string[]? _tags = (tags ?? Maybe<string[]>.None).GetOrDefault([]);
+        string[]? _throttles = (throttles ?? Maybe<string[]>.None).GetOrDefault([]);
         return new Job(
             className: className!,
             data: data!,

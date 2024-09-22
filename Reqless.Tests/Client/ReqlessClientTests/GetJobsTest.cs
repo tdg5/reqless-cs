@@ -1,6 +1,7 @@
 using System.Text.Json;
 using Reqless.Client;
 using Reqless.Client.Models;
+using Reqless.Common.Utilities;
 using Reqless.Tests.TestHelpers;
 using Reqless.Tests.TestHelpers.Client.Models;
 
@@ -18,8 +19,8 @@ public class GetJobsTest : BaseReqlessClientTest
     [Fact]
     public async Task ReturnsTheJobReturnedByTheServer()
     {
-        var jobJson = JobFactory.JobJson(jid: Maybe<string?>.Some(ExampleJid));
-        var otherJobJson = JobFactory.JobJson(jid: Maybe<string?>.Some(ExampleJidOther));
+        var jobJson = JobFactory.JobJson(jid: Maybe.Some(ExampleJid));
+        var otherJobJson = JobFactory.JobJson(jid: Maybe.Some(ExampleJidOther));
         List<Job> jobs = await WithClientWithExecutorMockForExpectedArguments(
             subject => subject.GetJobsAsync(ExampleJid),
             expectedArguments: ["job.getMulti", 0, ExampleJid],

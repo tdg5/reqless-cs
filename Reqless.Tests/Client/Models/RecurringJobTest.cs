@@ -1,4 +1,5 @@
 using Reqless.Client.Models;
+using Reqless.Common.Utilities;
 using Reqless.Tests.TestHelpers;
 
 namespace Reqless.Tests.Client.Models;
@@ -29,7 +30,7 @@ public class RecurringJobTest
     public void Constructor_Count_ThrowsWhenNegative()
     {
         Scenario.ThrowsWhenArgumentIsNegative(
-            (invalidCount) => MakeRecurringJob(count: Maybe<int>.Some(invalidCount)),
+            (invalidCount) => MakeRecurringJob(count: Maybe.Some(invalidCount)),
             "count"
         );
     }
@@ -56,7 +57,7 @@ public class RecurringJobTest
     {
         Scenario.ThrowsWhenArgumentIsNotPositive(
             (invalidIntervalSeconds) => MakeRecurringJob(
-                intervalSeconds: Maybe<int>.Some(invalidIntervalSeconds)
+                intervalSeconds: Maybe.Some(invalidIntervalSeconds)
             ),
             "intervalSeconds"
         );
@@ -84,7 +85,7 @@ public class RecurringJobTest
     {
         Scenario.ThrowsWhenArgumentIsNegative(
             (invalidMaximumBacklog) => MakeRecurringJob(
-                maximumBacklog: Maybe<int>.Some(invalidMaximumBacklog)
+                maximumBacklog: Maybe.Some(invalidMaximumBacklog)
             ),
             "maximumBacklog"
         );
@@ -99,7 +100,7 @@ public class RecurringJobTest
     {
         Scenario.ThrowsWhenArgumentIsNegative(
             (invalidPriority) => MakeRecurringJob(
-                priority: Maybe<int>.Some(invalidPriority)
+                priority: Maybe.Some(invalidPriority)
             ),
             "priority"
         );
@@ -137,7 +138,7 @@ public class RecurringJobTest
     {
         Scenario.ThrowsWhenArgumentIsNegative(
             (invalidRetries) => MakeRecurringJob(
-                retries: Maybe<int>.Some(invalidRetries)
+                retries: Maybe.Some(invalidRetries)
             ),
             "retries"
         );

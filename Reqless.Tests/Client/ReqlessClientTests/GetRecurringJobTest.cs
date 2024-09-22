@@ -1,5 +1,6 @@
 using Reqless.Client;
 using Reqless.Client.Models;
+using Reqless.Common.Utilities;
 using Reqless.Tests.TestHelpers;
 using Reqless.Tests.TestHelpers.Client.Models;
 using System.Text.Json;
@@ -69,7 +70,7 @@ public class GetRecurringJobTest : BaseReqlessClientTest
     public async Task ReturnsTheRecurringJob()
     {
         var recurringJobJson = RecurringJobFactory.RecurringJobJson(
-            jid: Maybe<string?>.Some(ExampleJid)
+            jid: Maybe.Some(ExampleJid)
         );
         RecurringJob? result = await WithClientWithExecutorMockForExpectedArguments(
             subject => subject.GetRecurringJobAsync(ExampleJid),

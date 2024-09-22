@@ -1,4 +1,5 @@
 using Reqless.Client.Models;
+using Reqless.Common.Utilities;
 using System.Text.Json;
 using System.Text;
 
@@ -43,7 +44,7 @@ public static class JobFactory
         Maybe<string[]>? dependencies = null,
         Maybe<string[]>? dependents = null,
         Maybe<long?>? expires = null,
-        Maybe<JobFailure?>? failure = null,
+        Maybe<JobFailure>? failure = null,
         Maybe<JobEvent[]>? history = null,
         Maybe<string>? jid = null,
         Maybe<int>? priority = null,
@@ -64,7 +65,7 @@ public static class JobFactory
             dependencies: (dependencies ?? Maybe<string[]>.None).GetOrDefault([]),
             dependents: (dependents ?? Maybe<string[]>.None).GetOrDefault([]),
             expires: (expires ?? Maybe<long?>.None).GetOrDefault(GetNow()),
-            failure: (failure ?? Maybe<JobFailure?>.None).GetOrDefault(
+            failure: (failure ?? Maybe<JobFailure>.None).GetOrDefault(
                 new JobFailure(
                     group: "group",
                     message: "message",
@@ -117,46 +118,46 @@ public static class JobFactory
     /// <param name="workerName">Maybe wrapping the worker name of the job.</param>
     /// <returns>A JSON string representing a job.</returns>
     public static string JobJson(
-        Maybe<string?>? className = null,
-        Maybe<string?>? data = null,
-        Maybe<string[]?>? dependencies = null,
-        Maybe<string[]?>? dependents = null,
+        Maybe<string>? className = null,
+        Maybe<string>? data = null,
+        Maybe<string[]>? dependencies = null,
+        Maybe<string[]>? dependents = null,
         Maybe<long?>? expires = null,
-        Maybe<JobFailure?>? failure = null,
-        Maybe<JobEvent[]?>? history = null,
-        Maybe<string?>? jid = null,
+        Maybe<JobFailure>? failure = null,
+        Maybe<JobEvent[]>? history = null,
+        Maybe<string>? jid = null,
         Maybe<int?>? priority = null,
-        Maybe<string?>? queueName = null,
+        Maybe<string>? queueName = null,
         Maybe<int?>? remaining = null,
         Maybe<int?>? retries = null,
-        Maybe<string?>? spawnedFromJid = null,
-        Maybe<string?>? state = null,
-        Maybe<string[]?>? tags = null,
-        Maybe<string[]?>? throttles = null,
+        Maybe<string>? spawnedFromJid = null,
+        Maybe<string>? state = null,
+        Maybe<string[]>? tags = null,
+        Maybe<string[]>? throttles = null,
         Maybe<bool?>? tracked = null,
-        Maybe<string?>? workerName = null
+        Maybe<string>? workerName = null
     )
     {
         static string jsonSerialize<T>(T value) =>
             JsonSerializer.Serialize(value);
 
         return JobJsonRaw(
-            className: (className ?? Maybe<string?>.Some("className"))
+            className: (className ?? Maybe.Some("className"))
                 .Map(jsonSerialize),
 
-            data: (data ?? Maybe<string?>.Some("{}")).Map(jsonSerialize),
+            data: (data ?? Maybe.Some("{}")).Map(jsonSerialize),
 
-            dependencies: (dependencies ?? Maybe<string[]?>.Some([]))
+            dependencies: (dependencies ?? Maybe<string[]>.Some([]))
                 .Map(jsonSerialize),
 
-            dependents: (dependents ?? Maybe<string[]?>.Some([]))
+            dependents: (dependents ?? Maybe<string[]>.Some([]))
                 .Map(jsonSerialize),
 
             expires: (expires ?? Maybe<long?>.Some(GetNow()))
                 .Map(value => value?.ToString() ?? "null"),
 
             failure: (
-                    failure ?? Maybe<JobFailure?>.Some(
+                    failure ?? Maybe.Some(
                         new JobFailure(
                             group: "group",
                             message: "message",
@@ -167,15 +168,15 @@ public static class JobFactory
                 )
                 .Map(jsonSerialize),
 
-            history: (history ?? Maybe<JobEvent[]?>.Some([]))
+            history: (history ?? Maybe<JobEvent[]>.Some([]))
                 .Map(jsonSerialize),
 
-            jid: (jid ?? Maybe<string?>.Some("jid")).Map(jsonSerialize),
+            jid: (jid ?? Maybe.Some("jid")).Map(jsonSerialize),
 
             priority: (priority ?? Maybe<int?>.Some(25))
                 .Map(value => value?.ToString() ?? "null"),
 
-            queueName: (queueName ?? Maybe<string?>.Some("queueName"))
+            queueName: (queueName ?? Maybe.Some("queueName"))
                 .Map(jsonSerialize),
 
             remaining: (remaining ?? Maybe<int?>.Some(5))
@@ -184,20 +185,20 @@ public static class JobFactory
             retries: (retries ?? Maybe<int?>.Some(6))
                 .Map(value => value?.ToString() ?? "null"),
 
-            spawnedFromJid: (spawnedFromJid ?? Maybe<string?>.Some("spawnedFromJid"))
+            spawnedFromJid: (spawnedFromJid ?? Maybe.Some("spawnedFromJid"))
                 .Map(jsonSerialize),
 
-            state: (state ?? Maybe<string?>.Some("waiting")).Map(jsonSerialize),
+            state: (state ?? Maybe.Some("waiting")).Map(jsonSerialize),
 
-            tags: (tags ?? Maybe<string[]?>.Some([])).Map(jsonSerialize),
+            tags: (tags ?? Maybe<string[]>.Some([])).Map(jsonSerialize),
 
-            throttles: (throttles ?? Maybe<string[]?>.Some([]))
+            throttles: (throttles ?? Maybe<string[]>.Some([]))
                 .Map(jsonSerialize),
 
             tracked: (tracked ?? Maybe<bool?>.Some(false))
                 .Map(value => value is null ? "null" : value == true ? "true" : "false"),
 
-            workerName: (workerName ?? Maybe<string?>.Some("workerName"))
+            workerName: (workerName ?? Maybe.Some("workerName"))
                 .Map(jsonSerialize)
         );
     }
@@ -254,12 +255,12 @@ public static class JobFactory
     )
     {
         var now = GetNow();
-        var classNameMaybe = className ?? Maybe<string>.Some("\"className\"");
-        var dataMaybe = data ?? Maybe<string>.Some("\"{}\"");
-        var dependenciesMaybe = dependencies ?? Maybe<string>.Some("[]");
-        var dependentsMaybe = dependents ?? Maybe<string>.Some("[]");
-        var expiresMaybe = expires ?? Maybe<string>.Some((now + 60000).ToString());
-        var failureMaybe = failure ?? Maybe<string>.Some(
+        var classNameMaybe = className ?? Maybe.Some("\"className\"");
+        var dataMaybe = data ?? Maybe.Some("\"{}\"");
+        var dependenciesMaybe = dependencies ?? Maybe.Some("[]");
+        var dependentsMaybe = dependents ?? Maybe.Some("[]");
+        var expiresMaybe = expires ?? Maybe.Some((now + 60000).ToString());
+        var failureMaybe = failure ?? Maybe.Some(
             JsonSerializer.Serialize(
                 new JobFailure(
                     group: "group",
@@ -269,19 +270,19 @@ public static class JobFactory
                 )
             )
         );
-        var historyMaybe = history ?? Maybe<string>.Some("[]");
-        var jidMaybe = jid ?? Maybe<string>.Some("\"jid\"");
-        var priorityMaybe = priority ?? Maybe<string>.Some("25");
-        var queueNameMaybe = queueName ?? Maybe<string>.Some("\"queueName\"");
-        var remainingMaybe = remaining ?? Maybe<string>.Some("5");
-        var retriesMaybe = retries ?? Maybe<string>.Some("6");
-        var spawnedFromJidMaybe = spawnedFromJid ?? Maybe<string>.Some("\"spawnedFromJid\"");
-        var stateMaybe = state ?? Maybe<string>.Some("\"state\"");
-        var tagsMaybe = tags ?? Maybe<string>.Some("[]");
-        var throttlesMaybe = throttles ?? Maybe<string>.Some("[]");
-        var trackedMaybe = tracked ?? Maybe<string>.Some("false");
+        var historyMaybe = history ?? Maybe.Some("[]");
+        var jidMaybe = jid ?? Maybe.Some("\"jid\"");
+        var priorityMaybe = priority ?? Maybe.Some("25");
+        var queueNameMaybe = queueName ?? Maybe.Some("\"queueName\"");
+        var remainingMaybe = remaining ?? Maybe.Some("5");
+        var retriesMaybe = retries ?? Maybe.Some("6");
+        var spawnedFromJidMaybe = spawnedFromJid ?? Maybe.Some("\"spawnedFromJid\"");
+        var stateMaybe = state ?? Maybe.Some("\"state\"");
+        var tagsMaybe = tags ?? Maybe.Some("[]");
+        var throttlesMaybe = throttles ?? Maybe.Some("[]");
+        var trackedMaybe = tracked ?? Maybe.Some("false");
         var unknownMaybe = unknown ?? Maybe<string>.None;
-        var workerNameMaybe = workerName ?? Maybe<string>.Some("\"workerName\"");
+        var workerNameMaybe = workerName ?? Maybe.Some("\"workerName\"");
 
         var json = new StringBuilder();
         json.Append('{');

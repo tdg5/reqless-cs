@@ -1,10 +1,25 @@
-namespace Reqless.Tests.TestHelpers;
+using Reqless.Common.Utilities;
+
+namespace Reqless.Tests.Common.Utilities;
 
 /// <summary>
 /// Tests for the <see cref="Maybe{T}"/> class.
 /// </summary>
 public class MaybeTest
 {
+    /// <summary>
+    /// <see cref="Maybe.Some"/> should return a <see cref="Maybe{T}.Some"/> of
+    /// the expected type.
+    /// </summary>
+    [Fact]
+    public void NonGenericSome_ReturnsSomeOfExpectedType()
+    {
+        var value = "expected_value";
+        var some = Maybe.Some(value);
+        Assert.IsAssignableFrom<Maybe<string>>(some);
+        Assert.Equal(value, some.GetOrDefault("unreachable"));
+    }
+
     /// <summary>
     /// Any non-null value can be wrapped in a <see cref="Maybe{T}"/> instance.
     /// </summary>

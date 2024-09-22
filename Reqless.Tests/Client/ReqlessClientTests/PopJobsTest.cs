@@ -1,6 +1,7 @@
 using System.Text.Json;
 using Reqless.Client;
 using Reqless.Client.Models;
+using Reqless.Common.Utilities;
 using Reqless.Tests.TestHelpers;
 using Reqless.Tests.TestHelpers.Client.Models;
 
@@ -57,8 +58,8 @@ public class PopJobsTest : BaseReqlessClientTest
     public async Task CallsExecutorWithTheExpectedArguments()
     {
         var count = 2;
-        var jobJson = JobFactory.JobJson(jid: Maybe<string?>.Some(ExampleJid));
-        var otherJobJson = JobFactory.JobJson(jid: Maybe<string?>.Some(ExampleJid));
+        var jobJson = JobFactory.JobJson(jid: Maybe.Some(ExampleJid));
+        var otherJobJson = JobFactory.JobJson(jid: Maybe.Some(ExampleJid));
         var jobsJson = $"[{jobJson},{otherJobJson}]";
         List<Job> jobs = await WithClientWithExecutorMockForExpectedArguments(
             subject => subject.PopJobsAsync(

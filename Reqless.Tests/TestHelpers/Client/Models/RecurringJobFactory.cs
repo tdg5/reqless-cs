@@ -1,4 +1,5 @@
 using Reqless.Client.Models;
+using Reqless.Common.Utilities;
 using System.Text.Json;
 using System.Text;
 
@@ -104,36 +105,36 @@ public static class RecurringJobFactory
     /// <returns>A JSON string representing a <see
     /// cref="RecurringJob"/>.</returns>
     public static string RecurringJobJson(
-        Maybe<string?>? className = null,
+        Maybe<string>? className = null,
         Maybe<int?>? count = null,
-        Maybe<string?>? data = null,
+        Maybe<string>? data = null,
         Maybe<int?>? intervalSeconds = null,
-        Maybe<string?>? jid = null,
+        Maybe<string>? jid = null,
         Maybe<int?>? maximumBacklog = null,
         Maybe<int?>? priority = null,
-        Maybe<string?>? queueName = null,
+        Maybe<string>? queueName = null,
         Maybe<int?>? retries = null,
-        Maybe<string?>? state = null,
-        Maybe<string[]?>? tags = null,
-        Maybe<string[]?>? throttles = null
+        Maybe<string>? state = null,
+        Maybe<string[]>? tags = null,
+        Maybe<string[]>? throttles = null
     )
     {
         static string jsonSerialize<T>(T value) =>
             JsonSerializer.Serialize(value);
 
         return RecurringJobJsonRaw(
-            className: (className ?? Maybe<string?>.Some("className"))
+            className: (className ?? Maybe.Some("className"))
                 .Map(jsonSerialize),
 
             count: (count ?? Maybe<int?>.Some(0))
                 .Map(value => value?.ToString() ?? "null"),
 
-            data: (data ?? Maybe<string?>.Some("{}")).Map(jsonSerialize),
+            data: (data ?? Maybe.Some("{}")).Map(jsonSerialize),
 
             intervalSeconds: (intervalSeconds ?? Maybe<int?>.Some(60))
                 .Map(value => value?.ToString() ?? "null"),
 
-            jid: (jid ?? Maybe<string?>.Some("jid")).Map(jsonSerialize),
+            jid: (jid ?? Maybe.Some("jid")).Map(jsonSerialize),
 
             maximumBacklog: (maximumBacklog ?? Maybe<int?>.Some(10))
                 .Map(value => value?.ToString() ?? "null"),
@@ -141,17 +142,17 @@ public static class RecurringJobFactory
             priority: (priority ?? Maybe<int?>.Some(25))
                 .Map(value => value?.ToString() ?? "null"),
 
-            queueName: (queueName ?? Maybe<string?>.Some("queueName"))
+            queueName: (queueName ?? Maybe.Some("queueName"))
                 .Map(jsonSerialize),
 
             retries: (retries ?? Maybe<int?>.Some(6))
                 .Map(value => value?.ToString() ?? "null"),
 
-            state: (state ?? Maybe<string?>.Some("waiting")).Map(jsonSerialize),
+            state: (state ?? Maybe.Some("waiting")).Map(jsonSerialize),
 
-            tags: (tags ?? Maybe<string[]?>.Some([])).Map(jsonSerialize),
+            tags: (tags ?? Maybe<string[]>.Some([])).Map(jsonSerialize),
 
-            throttles: (throttles ?? Maybe<string[]?>.Some([]))
+            throttles: (throttles ?? Maybe<string[]>.Some([]))
                 .Map(jsonSerialize)
         );
     }
@@ -197,18 +198,18 @@ public static class RecurringJobFactory
         Maybe<string>? unknown = null
     )
     {
-        var classNameMaybe = className ?? Maybe<string>.Some("\"className\"");
-        var countMaybe = count ?? Maybe<string>.Some("0");
-        var dataMaybe = data ?? Maybe<string>.Some("\"{}\"");
-        var intervalSecondsMaybe = intervalSeconds ?? Maybe<string>.Some("60");
-        var jidMaybe = jid ?? Maybe<string>.Some("\"jid\"");
-        var maximumBacklogMaybe = maximumBacklog ?? Maybe<string>.Some("10");
-        var priorityMaybe = priority ?? Maybe<string>.Some("25");
-        var queueNameMaybe = queueName ?? Maybe<string>.Some("\"queueName\"");
-        var retriesMaybe = retries ?? Maybe<string>.Some("6");
-        var stateMaybe = state ?? Maybe<string>.Some("\"state\"");
-        var tagsMaybe = tags ?? Maybe<string>.Some("[]");
-        var throttlesMaybe = throttles ?? Maybe<string>.Some("[]");
+        var classNameMaybe = className ?? Maybe.Some("\"className\"");
+        var countMaybe = count ?? Maybe.Some("0");
+        var dataMaybe = data ?? Maybe.Some("\"{}\"");
+        var intervalSecondsMaybe = intervalSeconds ?? Maybe.Some("60");
+        var jidMaybe = jid ?? Maybe.Some("\"jid\"");
+        var maximumBacklogMaybe = maximumBacklog ?? Maybe.Some("10");
+        var priorityMaybe = priority ?? Maybe.Some("25");
+        var queueNameMaybe = queueName ?? Maybe.Some("\"queueName\"");
+        var retriesMaybe = retries ?? Maybe.Some("6");
+        var stateMaybe = state ?? Maybe.Some("\"state\"");
+        var tagsMaybe = tags ?? Maybe.Some("[]");
+        var throttlesMaybe = throttles ?? Maybe.Some("[]");
         var unknownMaybe = unknown ?? Maybe<string>.None;
 
         var json = new StringBuilder();

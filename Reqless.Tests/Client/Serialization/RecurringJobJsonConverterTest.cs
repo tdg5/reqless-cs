@@ -1,5 +1,6 @@
 using Reqless.Client.Models;
 using Reqless.Client.Serialization;
+using Reqless.Common.Utilities;
 using Reqless.Tests.TestHelpers;
 using Reqless.Tests.TestHelpers.Client.Models;
 using System.Text.Json;
@@ -18,7 +19,7 @@ public class RecurringRecurringJobJsonConverterTest
     [Fact]
     public void Read_Data_ThrowsWhenOmitted()
     {
-        var json = RecurringJobFactory.RecurringJobJson(data: Maybe<string?>.None);
+        var json = RecurringJobFactory.RecurringJobJson(data: Maybe<string>.None);
         var exception = Assert.Throws<JsonException>(() => JsonSerializer.Deserialize<RecurringJob>(json));
         Assert.Equal("Required property 'data' not found.", exception.Message);
     }
@@ -29,7 +30,7 @@ public class RecurringRecurringJobJsonConverterTest
     [Fact]
     public void Read_Data_ThrowsWhenNull()
     {
-        var json = RecurringJobFactory.RecurringJobJson(data: Maybe<string?>.Some(null));
+        var json = RecurringJobFactory.RecurringJobJson(data: Maybe<string>.Some(null!));
         var exception = Assert.Throws<ArgumentNullException>(() => JsonSerializer.Deserialize<RecurringJob>(json));
         Assert.Equal("Value cannot be null. (Parameter 'data')", exception.Message);
     }
@@ -41,7 +42,7 @@ public class RecurringRecurringJobJsonConverterTest
     public void Read_Data_ResultsInADataString()
     {
         var data = "{}";
-        var json = RecurringJobFactory.RecurringJobJson(data: Maybe<string?>.Some(data));
+        var json = RecurringJobFactory.RecurringJobJson(data: Maybe.Some(data));
         var job = JsonSerializer.Deserialize<RecurringJob>(json);
         Assert.NotNull(job);
         Assert.Equal(data, job.Data);
@@ -53,7 +54,7 @@ public class RecurringRecurringJobJsonConverterTest
     [Fact]
     public void Read_Jid_ThrowsWhenOmitted()
     {
-        var json = RecurringJobFactory.RecurringJobJson(jid: Maybe<string?>.None);
+        var json = RecurringJobFactory.RecurringJobJson(jid: Maybe<string>.None);
         var exception = Assert.Throws<JsonException>(() => JsonSerializer.Deserialize<RecurringJob>(json));
         Assert.Equal("Required property 'jid' not found.", exception.Message);
     }
@@ -64,7 +65,7 @@ public class RecurringRecurringJobJsonConverterTest
     [Fact]
     public void Read_Jid_ThrowsWhenNull()
     {
-        var json = RecurringJobFactory.RecurringJobJson(jid: Maybe<string?>.Some(null));
+        var json = RecurringJobFactory.RecurringJobJson(jid: Maybe<string>.Some(null!));
         var exception = Assert.Throws<ArgumentNullException>(() => JsonSerializer.Deserialize<RecurringJob>(json));
         Assert.Equal("Value cannot be null. (Parameter 'jid')", exception.Message);
     }
@@ -96,7 +97,7 @@ public class RecurringRecurringJobJsonConverterTest
     [Fact]
     public void Read_Queue_ThrowsWhenOmitted()
     {
-        var json = RecurringJobFactory.RecurringJobJson(queueName: Maybe<string?>.None);
+        var json = RecurringJobFactory.RecurringJobJson(queueName: Maybe<string>.None);
         var exception = Assert.Throws<JsonException>(() => JsonSerializer.Deserialize<RecurringJob>(json));
         Assert.Equal("Required property 'queue' not found.", exception.Message);
     }
@@ -107,7 +108,7 @@ public class RecurringRecurringJobJsonConverterTest
     [Fact]
     public void Read_Queue_CanBeNull()
     {
-        string json = RecurringJobFactory.RecurringJobJson(queueName: Maybe<string?>.Some(null));
+        string json = RecurringJobFactory.RecurringJobJson(queueName: Maybe<string>.Some(null!));
         RecurringJob? job = JsonSerializer.Deserialize<RecurringJob>(json);
         Assert.NotNull(job);
         Assert.Null(job.QueueName);
@@ -122,7 +123,7 @@ public class RecurringRecurringJobJsonConverterTest
         foreach (var emptyString in TestConstants.EmptyStrings)
         {
             string json = RecurringJobFactory.RecurringJobJson(
-                queueName: Maybe<string?>.Some(emptyString)
+                queueName: Maybe.Some(emptyString)
             );
             RecurringJob? job = JsonSerializer.Deserialize<RecurringJob>(json);
             Assert.NotNull(job);
@@ -157,7 +158,7 @@ public class RecurringRecurringJobJsonConverterTest
     [Fact]
     public void Read_State_ThrowsWhenOmitted()
     {
-        var json = RecurringJobFactory.RecurringJobJson(state: Maybe<string?>.None);
+        var json = RecurringJobFactory.RecurringJobJson(state: Maybe<string>.None);
         var exception = Assert.Throws<JsonException>(() => JsonSerializer.Deserialize<RecurringJob>(json));
         Assert.Equal("Required property 'state' not found.", exception.Message);
     }
@@ -168,7 +169,7 @@ public class RecurringRecurringJobJsonConverterTest
     [Fact]
     public void Read_State_ThrowsWhenNull()
     {
-        var json = RecurringJobFactory.RecurringJobJson(state: Maybe<string?>.Some(null));
+        var json = RecurringJobFactory.RecurringJobJson(state: Maybe<string>.Some(null!));
         var exception = Assert.Throws<ArgumentNullException>(() => JsonSerializer.Deserialize<RecurringJob>(json));
         Assert.Equal("Value cannot be null. (Parameter 'state')", exception.Message);
     }
@@ -179,7 +180,7 @@ public class RecurringRecurringJobJsonConverterTest
     [Fact]
     public void Read_Tags_ThrowsWhenOmitted()
     {
-        var json = RecurringJobFactory.RecurringJobJson(tags: Maybe<string[]?>.None);
+        var json = RecurringJobFactory.RecurringJobJson(tags: Maybe<string[]>.None);
         var exception = Assert.Throws<JsonException>(() => JsonSerializer.Deserialize<RecurringJob>(json));
         Assert.Equal("Required property 'tags' not found.", exception.Message);
     }
@@ -190,7 +191,7 @@ public class RecurringRecurringJobJsonConverterTest
     [Fact]
     public void Read_Tags_ThrowsWhenNull()
     {
-        var json = RecurringJobFactory.RecurringJobJson(tags: Maybe<string[]?>.Some(null));
+        var json = RecurringJobFactory.RecurringJobJson(tags: Maybe<string[]>.Some(null!));
         var exception = Assert.Throws<ArgumentNullException>(() => JsonSerializer.Deserialize<RecurringJob>(json));
         Assert.Equal("Value cannot be null. (Parameter 'tags')", exception.Message);
     }
@@ -203,7 +204,7 @@ public class RecurringRecurringJobJsonConverterTest
     public void Read_Tags_ThrowsIfANonEmptyObjectIsEncountered()
     {
         var json = RecurringJobFactory.RecurringJobJsonRaw(
-            tags: Maybe<string>.Some("""{"boom": "boom"}""")
+            tags: Maybe.Some("""{"boom": "boom"}""")
         );
         var exception = Assert.Throws<JsonException>(
             () => JsonSerializer.Deserialize<RecurringJob>(json)
@@ -221,7 +222,7 @@ public class RecurringRecurringJobJsonConverterTest
     [Fact]
     public void Read_Tags_TranslatesEmptyObjectToEmptyArray()
     {
-        var json = RecurringJobFactory.RecurringJobJsonRaw(tags: Maybe<string>.Some("{}"));
+        var json = RecurringJobFactory.RecurringJobJsonRaw(tags: Maybe.Some("{}"));
         var job = JsonSerializer.Deserialize<RecurringJob>(json);
         Assert.NotNull(job);
         Assert.Equivalent(Array.Empty<string>(), job.Tags);
@@ -234,7 +235,7 @@ public class RecurringRecurringJobJsonConverterTest
     [Fact]
     public void Read_Throttles_ThrowsWhenOmitted()
     {
-        var json = RecurringJobFactory.RecurringJobJson(throttles: Maybe<string[]?>.None);
+        var json = RecurringJobFactory.RecurringJobJson(throttles: Maybe<string[]>.None);
         var exception = Assert.Throws<JsonException>(() => JsonSerializer.Deserialize<RecurringJob>(json));
         Assert.Equal("Required property 'throttles' not found.", exception.Message);
     }
@@ -245,7 +246,7 @@ public class RecurringRecurringJobJsonConverterTest
     [Fact]
     public void Read_Throttles_ThrowsWhenNull()
     {
-        var json = RecurringJobFactory.RecurringJobJson(throttles: Maybe<string[]?>.Some(null));
+        var json = RecurringJobFactory.RecurringJobJson(throttles: Maybe<string[]>.Some(null!));
         var exception = Assert.Throws<ArgumentNullException>(() => JsonSerializer.Deserialize<RecurringJob>(json));
         Assert.Equal("Value cannot be null. (Parameter 'throttles')", exception.Message);
     }
@@ -258,7 +259,7 @@ public class RecurringRecurringJobJsonConverterTest
     public void Read_Throttles_ThrowsIfANonEmptyObjectIsEncountered()
     {
         var json = RecurringJobFactory.RecurringJobJsonRaw(
-            throttles: Maybe<string>.Some("""{"boom": "boom"}""")
+            throttles: Maybe.Some("""{"boom": "boom"}""")
         );
         var exception = Assert.Throws<JsonException>(
             () => JsonSerializer.Deserialize<RecurringJob>(json)
@@ -276,7 +277,7 @@ public class RecurringRecurringJobJsonConverterTest
     [Fact]
     public void Read_Throttles_TranslatesEmptyObjectToEmptyArray()
     {
-        var json = RecurringJobFactory.RecurringJobJsonRaw(throttles: Maybe<string>.Some("{}"));
+        var json = RecurringJobFactory.RecurringJobJsonRaw(throttles: Maybe.Some("{}"));
         var job = JsonSerializer.Deserialize<RecurringJob>(json);
         Assert.NotNull(job);
         Assert.Equivalent(Array.Empty<string>(), job.Throttles);
@@ -298,7 +299,7 @@ public class RecurringRecurringJobJsonConverterTest
             "{}",
         })
         {
-            var json = RecurringJobFactory.RecurringJobJsonRaw(unknown: Maybe<string>.Some(unknown));
+            var json = RecurringJobFactory.RecurringJobJsonRaw(unknown: Maybe.Some(unknown));
             var job = JsonSerializer.Deserialize<RecurringJob>(json);
             Assert.NotNull(job);
         }
@@ -320,15 +321,15 @@ public class RecurringRecurringJobJsonConverterTest
         string[] tags = ["tag"];
         string[] throttles = ["throttle"];
         var json = RecurringJobFactory.RecurringJobJson(
-            className: Maybe<string?>.Some(className),
-            data: Maybe<string?>.Some(data),
-            jid: Maybe<string?>.Some(jid),
+            className: Maybe.Some(className),
+            data: Maybe.Some(data),
+            jid: Maybe.Some(jid),
             priority: Maybe<int?>.Some(priority),
-            queueName: Maybe<string?>.Some(queueName),
+            queueName: Maybe.Some(queueName),
             retries: Maybe<int?>.Some(retries),
-            state: Maybe<string?>.Some(state),
-            tags: Maybe<string[]?>.Some(tags),
-            throttles: Maybe<string[]?>.Some(throttles)
+            state: Maybe.Some(state),
+            tags: Maybe.Some(tags),
+            throttles: Maybe.Some(throttles)
         );
 
         var job = JsonSerializer.Deserialize<RecurringJob>(json);
@@ -379,18 +380,18 @@ public class RecurringRecurringJobJsonConverterTest
         );
         var json = JsonSerializer.Serialize(job);
         var expectedRecurringJobJson = RecurringJobFactory.RecurringJobJson(
-            className: Maybe<string?>.Some(className),
+            className: Maybe.Some(className),
             count: Maybe<int?>.Some(count),
-            data: Maybe<string?>.Some(data),
+            data: Maybe.Some(data),
             intervalSeconds: Maybe<int?>.Some(intervalSeconds),
-            jid: Maybe<string?>.Some(jid),
+            jid: Maybe.Some(jid),
             maximumBacklog: Maybe<int?>.Some(maximumBacklog),
             priority: Maybe<int?>.Some(priority),
-            queueName: Maybe<string?>.Some(queueName),
+            queueName: Maybe.Some(queueName),
             retries: Maybe<int?>.Some(retries),
-            state: Maybe<string?>.Some(state),
-            tags: Maybe<string[]?>.Some(tags),
-            throttles: Maybe<string[]?>.Some(throttles)
+            state: Maybe.Some(state),
+            tags: Maybe.Some(tags),
+            throttles: Maybe.Some(throttles)
         );
         Assert.Equal(expectedRecurringJobJson, json);
     }

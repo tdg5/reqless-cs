@@ -1,6 +1,6 @@
 using Reqless.Client;
 using Reqless.Client.Models;
-using Reqless.Tests.TestHelpers;
+using Reqless.Common.Utilities;
 using StackExchange.Redis;
 
 namespace Reqless.Tests.Client;
@@ -334,9 +334,9 @@ public class ReqlessClientIntegrationTest
     {
         var jid = await PutJobAsync(
             _client,
-            data: Maybe<string>.Some(ExampleData),
-            queueName: Maybe<string>.Some(ExampleQueueName),
-            workerName: Maybe<string>.Some(ExampleWorkerName)
+            data: Maybe.Some(ExampleData),
+            queueName: Maybe.Some(ExampleQueueName),
+            workerName: Maybe.Some(ExampleWorkerName)
         );
         Job? job = await _client.PopJobAsync(ExampleQueueName, ExampleWorkerName);
         bool completedSuccessfully = await _client.CompleteJobAsync(
@@ -360,9 +360,9 @@ public class ReqlessClientIntegrationTest
         var firstQueueName = "first-queue";
         var jid = await PutJobAsync(
             _client,
-            data: Maybe<string>.Some(ExampleData),
-            queueName: Maybe<string>.Some(firstQueueName),
-            workerName: Maybe<string>.Some(ExampleWorkerName)
+            data: Maybe.Some(ExampleData),
+            queueName: Maybe.Some(firstQueueName),
+            workerName: Maybe.Some(ExampleWorkerName)
         );
         Job? job = await _client.PopJobAsync(firstQueueName, ExampleWorkerName);
         Assert.NotNull(job);
@@ -487,8 +487,8 @@ public class ReqlessClientIntegrationTest
     {
         var jid = await PutJobAsync(
             _client,
-            queueName: Maybe<string>.Some(ExampleQueueName),
-            workerName: Maybe<string>.Some(ExampleWorkerName)
+            queueName: Maybe.Some(ExampleQueueName),
+            workerName: Maybe.Some(ExampleWorkerName)
         );
         Job? job = await _client.PopJobAsync(ExampleQueueName, ExampleWorkerName);
         Assert.NotNull(job);
@@ -518,8 +518,8 @@ public class ReqlessClientIntegrationTest
     {
         var jid = await PutJobAsync(
             _client,
-            queueName: Maybe<string>.Some(ExampleQueueName),
-            workerName: Maybe<string>.Some(ExampleWorkerName)
+            queueName: Maybe.Some(ExampleQueueName),
+            workerName: Maybe.Some(ExampleWorkerName)
         );
         Job? job = await _client.PopJobAsync(ExampleQueueName, ExampleWorkerName);
         Assert.NotNull(job);
@@ -566,7 +566,7 @@ public class ReqlessClientIntegrationTest
     [Fact]
     public async Task ForgetQueueAsync_CausesTheNamedQueueToBeForgotten()
     {
-        await PutJobAsync(_client, queueName: Maybe<string>.Some(ExampleQueueName));
+        await PutJobAsync(_client, queueName: Maybe.Some(ExampleQueueName));
         List<string> allQueueNamesBefore = await _client.GetAllQueueNamesAsync();
         Assert.Single(allQueueNamesBefore);
         Assert.Equal(ExampleQueueName, allQueueNamesBefore[0]);
@@ -651,8 +651,8 @@ public class ReqlessClientIntegrationTest
     {
         var otherQueueName = "other-queue";
         string[] expectedQueueNames = [ExampleQueueName, otherQueueName];
-        await PutJobAsync(_client, queueName: Maybe<string>.Some(ExampleQueueName));
-        await PutJobAsync(_client, queueName: Maybe<string>.Some(otherQueueName));
+        await PutJobAsync(_client, queueName: Maybe.Some(ExampleQueueName));
+        await PutJobAsync(_client, queueName: Maybe.Some(otherQueueName));
         List<string> allQueueNamesBefore = await _client.GetAllQueueNamesAsync();
         Assert.Equal(2, allQueueNamesBefore.Count);
         foreach (var queueName in allQueueNamesBefore)
@@ -672,7 +672,7 @@ public class ReqlessClientIntegrationTest
     [Fact]
     public async Task ForgetWorkerAsync_CausesTheNamedWorkerToBeForgotten()
     {
-        await PutJobAsync(_client, queueName: Maybe<string>.Some(ExampleQueueName));
+        await PutJobAsync(_client, queueName: Maybe.Some(ExampleQueueName));
         await _client.PopJobAsync(ExampleQueueName, ExampleWorkerName);
         List<WorkerCounts> allWorkerCountsBefore = await _client.GetAllWorkerCountsAsync();
         Assert.Single(allWorkerCountsBefore);
@@ -691,9 +691,9 @@ public class ReqlessClientIntegrationTest
     {
         var otherWorkerName = "other-worker";
         string[] expectedWorkerNames = [ExampleWorkerName, otherWorkerName];
-        await PutJobAsync(_client, queueName: Maybe<string>.Some(ExampleQueueName));
+        await PutJobAsync(_client, queueName: Maybe.Some(ExampleQueueName));
         await _client.PopJobAsync(ExampleQueueName, ExampleWorkerName);
-        await PutJobAsync(_client, queueName: Maybe<string>.Some(ExampleQueueName));
+        await PutJobAsync(_client, queueName: Maybe.Some(ExampleQueueName));
         await _client.PopJobAsync(ExampleQueueName, otherWorkerName);
         List<WorkerCounts> allWorkerCountsBefore = await _client.GetAllWorkerCountsAsync();
         Assert.Equal(2, allWorkerCountsBefore.Count);
@@ -746,7 +746,7 @@ public class ReqlessClientIntegrationTest
     {
         await PutJobAsync(
             _client,
-            queueName: Maybe<string>.Some(ExampleQueueName)
+            queueName: Maybe.Some(ExampleQueueName)
         );
         var allQueueCounts = await _client.GetAllQueueCountsAsync();
         Assert.Single(allQueueCounts);
@@ -774,7 +774,7 @@ public class ReqlessClientIntegrationTest
     {
         await PutJobAsync(
             _client,
-            queueName: Maybe<string>.Some(ExampleQueueName)
+            queueName: Maybe.Some(ExampleQueueName)
         );
         var allQueueNames = await _client.GetAllQueueNamesAsync();
         Assert.Single(allQueueNames);
@@ -801,7 +801,7 @@ public class ReqlessClientIntegrationTest
     {
         var jid = await PutJobAsync(
             _client,
-            queueName: Maybe<string>.Some(ExampleQueueName)
+            queueName: Maybe.Some(ExampleQueueName)
         );
         var poppedJid = await _client.PopJobAsync(ExampleQueueName, ExampleWorkerName);
         var allWorkerCounts = await _client.GetAllWorkerCountsAsync();
@@ -831,9 +831,9 @@ public class ReqlessClientIntegrationTest
     {
         var jid = await PutJobAsync(
             _client,
-            data: Maybe<string>.Some(ExampleData),
-            queueName: Maybe<string>.Some(ExampleQueueName),
-            workerName: Maybe<string>.Some(ExampleWorkerName)
+            data: Maybe.Some(ExampleData),
+            queueName: Maybe.Some(ExampleQueueName),
+            workerName: Maybe.Some(ExampleWorkerName)
         );
         Job? job = await _client.PopJobAsync(ExampleQueueName, ExampleWorkerName);
         bool completedSuccessfully = await _client.CompleteJobAsync(
@@ -890,8 +890,8 @@ public class ReqlessClientIntegrationTest
         {
             var jid = await PutJobAsync(
                 _client,
-                queueName: Maybe<string>.Some(ExampleQueueName),
-                workerName: Maybe<string>.Some(ExampleWorkerName)
+                queueName: Maybe.Some(ExampleQueueName),
+                workerName: Maybe.Some(ExampleWorkerName)
             );
             Job? job = await _client.PopJobAsync(ExampleQueueName, ExampleWorkerName);
             Assert.NotNull(job);
@@ -929,8 +929,8 @@ public class ReqlessClientIntegrationTest
         Assert.Empty(initialFailedCounts);
         var jid = await PutJobAsync(
             _client,
-            queueName: Maybe<string>.Some(ExampleQueueName),
-            workerName: Maybe<string>.Some(ExampleWorkerName)
+            queueName: Maybe.Some(ExampleQueueName),
+            workerName: Maybe.Some(ExampleWorkerName)
         );
         Job? job = await _client.PopJobAsync(ExampleQueueName, ExampleWorkerName);
         Assert.NotNull(job);
@@ -1030,8 +1030,8 @@ public class ReqlessClientIntegrationTest
     {
         var jid = await PutJobAsync(
             _client,
-            data: Maybe<string>.Some(ExampleData),
-            queueName: Maybe<string>.Some(ExampleQueueName)
+            data: Maybe.Some(ExampleData),
+            queueName: Maybe.Some(ExampleQueueName)
         );
         var job = await _client.PopJobAsync(ExampleQueueName, ExampleWorkerName);
         var jobs = await _client.GetJobsByStateAsync("running", ExampleQueueName);
@@ -1066,8 +1066,8 @@ public class ReqlessClientIntegrationTest
         {
             var jid = await PutJobAsync(
                 _client,
-                queueName: Maybe<string>.Some(ExampleQueueName),
-                workerName: Maybe<string>.Some(ExampleWorkerName)
+                queueName: Maybe.Some(ExampleQueueName),
+                workerName: Maybe.Some(ExampleWorkerName)
             );
             var jobTags = await _client.AddTagToJobAsync(jid, tag);
             Assert.Equal(expectedTags, jobTags);
@@ -1253,7 +1253,7 @@ public class ReqlessClientIntegrationTest
     {
         var jid = await PutJobAsync(
             _client,
-            queueName: Maybe<string>.Some(ExampleQueueName),
+            queueName: Maybe.Some(ExampleQueueName),
             throttles: Maybe<string[]>.Some([ExampleThrottleName])
         );
         await _client.SetThrottleAsync(ExampleThrottleName, 1);
@@ -1276,7 +1276,7 @@ public class ReqlessClientIntegrationTest
     {
         var jid = await PutJobAsync(
             _client,
-            queueName: Maybe<string>.Some(ExampleQueueName),
+            queueName: Maybe.Some(ExampleQueueName),
             throttles: Maybe<string[]>.Some([ExampleThrottleName])
         );
         await _client.SetThrottleAsync(ExampleThrottleName, 1);
@@ -1285,7 +1285,7 @@ public class ReqlessClientIntegrationTest
         Assert.Equal(jid, job.Jid);
         var waitingJid = await PutJobAsync(
             _client,
-            queueName: Maybe<string>.Some(ExampleQueueName),
+            queueName: Maybe.Some(ExampleQueueName),
             throttles: Maybe<string[]>.Some([ExampleThrottleName])
         );
         List<string> lockWaiters = await _client.GetThrottleLockWaitersAsync(
@@ -1359,7 +1359,7 @@ public class ReqlessClientIntegrationTest
         for (var index = 0; index < count; index++)
         {
             var jid = await PutJobAsync(_client,
-                queueName: Maybe<string>.Some(ExampleQueueName)
+                queueName: Maybe.Some(ExampleQueueName)
             );
             await _client.TrackJobAsync(jid);
             trackedJids[index] = jid;
@@ -1406,7 +1406,7 @@ public class ReqlessClientIntegrationTest
     {
         var jid = await PutJobAsync(
             _client,
-            queueName: Maybe<string>.Some(ExampleQueueName)
+            queueName: Maybe.Some(ExampleQueueName)
         );
         var job = await _client.PopJobAsync(ExampleQueueName, ExampleWorkerName);
         Assert.Equal(jid, job?.Jid);
@@ -1425,8 +1425,8 @@ public class ReqlessClientIntegrationTest
     {
         var jid = await PutJobAsync(
             _client,
-            data: Maybe<string>.Some(ExampleData),
-            queueName: Maybe<string>.Some(ExampleQueueName)
+            data: Maybe.Some(ExampleData),
+            queueName: Maybe.Some(ExampleQueueName)
         );
         var job = await _client.PopJobAsync(ExampleQueueName, ExampleWorkerName);
         await Task.Delay(5);
@@ -1454,8 +1454,8 @@ public class ReqlessClientIntegrationTest
     {
         var jid = await PutJobAsync(
             _client,
-            data: Maybe<string>.Some(ExampleData),
-            queueName: Maybe<string>.Some(ExampleQueueName)
+            data: Maybe.Some(ExampleData),
+            queueName: Maybe.Some(ExampleQueueName)
         );
         var job = await _client.PopJobAsync(ExampleQueueName, ExampleWorkerName);
         Assert.NotNull(job);
@@ -1506,11 +1506,11 @@ public class ReqlessClientIntegrationTest
     {
         var jid = await PutJobAsync(
             _client,
-            queueName: Maybe<string>.Some(ExampleQueueName)
+            queueName: Maybe.Some(ExampleQueueName)
         );
         var otherJid = await PutJobAsync(
             _client,
-            queueName: Maybe<string>.Some(ExampleQueueName)
+            queueName: Maybe.Some(ExampleQueueName)
         );
         var jobs = await _client.PeekJobsAsync(ExampleQueueName);
         Assert.NotNull(jobs);
@@ -1546,7 +1546,7 @@ public class ReqlessClientIntegrationTest
     {
         var jid = await PutJobAsync(
             _client,
-            queueName: Maybe<string>.Some(ExampleQueueName)
+            queueName: Maybe.Some(ExampleQueueName)
         );
         var job = await _client.PopJobAsync(ExampleQueueName, ExampleWorkerName);
         Assert.NotNull(job);
@@ -1574,11 +1574,11 @@ public class ReqlessClientIntegrationTest
     {
         var jid = await PutJobAsync(
             _client,
-            queueName: Maybe<string>.Some(ExampleQueueName)
+            queueName: Maybe.Some(ExampleQueueName)
         );
         var otherJid = await PutJobAsync(
             _client,
-            queueName: Maybe<string>.Some(ExampleQueueName)
+            queueName: Maybe.Some(ExampleQueueName)
         );
         var jobs = await _client.PopJobsAsync(
             ExampleQueueName,
@@ -1712,7 +1712,7 @@ public class ReqlessClientIntegrationTest
     {
         var jid = await PutJobAsync(
             _client,
-            queueName: Maybe<string>.Some(ExampleQueueName),
+            queueName: Maybe.Some(ExampleQueueName),
             throttles: Maybe<string[]>.Some([ExampleThrottleName])
         );
         await _client.SetThrottleAsync(ExampleThrottleName, 1);
@@ -1726,7 +1726,7 @@ public class ReqlessClientIntegrationTest
         Assert.Equal(jid, lockOwners[0]);
         var waitingJid = await PutJobAsync(
             _client,
-            queueName: Maybe<string>.Some(ExampleQueueName),
+            queueName: Maybe.Some(ExampleQueueName),
             throttles: Maybe<string[]>.Some([ExampleThrottleName])
         );
         List<string> lockWaiters = await _client.GetThrottleLockWaitersAsync(
@@ -1755,7 +1755,7 @@ public class ReqlessClientIntegrationTest
     {
         var jid = await PutJobAsync(
             _client,
-            queueName: Maybe<string>.Some(ExampleQueueName),
+            queueName: Maybe.Some(ExampleQueueName),
             throttles: Maybe<string[]>.Some([ExampleThrottleName])
         );
         await _client.SetThrottleAsync(ExampleThrottleName, 1);
@@ -1769,7 +1769,7 @@ public class ReqlessClientIntegrationTest
         Assert.Equal(jid, lockOwners[0]);
         var waitingJid = await PutJobAsync(
             _client,
-            queueName: Maybe<string>.Some(ExampleQueueName),
+            queueName: Maybe.Some(ExampleQueueName),
             throttles: Maybe<string[]>.Some([ExampleThrottleName])
         );
         List<string> lockWaiters = await _client.GetThrottleLockWaitersAsync(
@@ -1943,7 +1943,7 @@ public class ReqlessClientIntegrationTest
         var jid = await PutJobAsync(
             _client,
             retries: Maybe<int>.Some(retries),
-            queueName: Maybe<string>.Some(ExampleQueueName)
+            queueName: Maybe.Some(ExampleQueueName)
         );
         var job = await _client.PopJobAsync(ExampleQueueName, ExampleWorkerName);
         Assert.NotNull(job);
@@ -1981,7 +1981,7 @@ public class ReqlessClientIntegrationTest
         var jid = await PutJobAsync(
             _client,
             retries: Maybe<int>.Some(retries),
-            queueName: Maybe<string>.Some(ExampleQueueName)
+            queueName: Maybe.Some(ExampleQueueName)
         );
         var job = await _client.PopJobAsync(ExampleQueueName, ExampleWorkerName);
         Assert.NotNull(job);
@@ -2017,7 +2017,7 @@ public class ReqlessClientIntegrationTest
         var jid = await PutJobAsync(
             _client,
             retries: Maybe<int>.Some(retries),
-            queueName: Maybe<string>.Some(ExampleQueueName)
+            queueName: Maybe.Some(ExampleQueueName)
         );
         var job = await _client.PopJobAsync(ExampleQueueName, ExampleWorkerName);
         Assert.NotNull(job);
@@ -2166,7 +2166,7 @@ public class ReqlessClientIntegrationTest
     {
         var jid = await PutJobAsync(
             _client,
-            queueName: Maybe<string>.Some(ExampleQueueName)
+            queueName: Maybe.Some(ExampleQueueName)
         );
         var job = await _client.PopJobAsync(ExampleQueueName, ExampleWorkerName);
         Assert.NotNull(job);
@@ -2187,12 +2187,12 @@ public class ReqlessClientIntegrationTest
     {
         var jid = await PutJobAsync(
             _client,
-            queueName: Maybe<string>.Some(ExampleQueueName)
+            queueName: Maybe.Some(ExampleQueueName)
         );
         var otherQueueName = "other-queue-name";
         var otherJid = await PutJobAsync(
             _client,
-            queueName: Maybe<string>.Some(otherQueueName)
+            queueName: Maybe.Some(otherQueueName)
         );
         var job = await _client.PopJobAsync(ExampleQueueName, ExampleWorkerName);
         Assert.NotNull(job);
@@ -2220,7 +2220,7 @@ public class ReqlessClientIntegrationTest
     {
         var jid = await PutJobAsync(
             _client,
-            queueName: Maybe<string>.Some(ExampleQueueName)
+            queueName: Maybe.Some(ExampleQueueName)
         );
         var jobBefore = await _client.GetJobAsync(jid);
         Assert.NotNull(jobBefore);
@@ -2241,8 +2241,8 @@ public class ReqlessClientIntegrationTest
     {
         var jid = await PutJobAsync(
             _client,
-            queueName: Maybe<string>.Some(ExampleQueueName),
-            workerName: Maybe<string>.Some(ExampleWorkerName)
+            queueName: Maybe.Some(ExampleQueueName),
+            workerName: Maybe.Some(ExampleWorkerName)
         );
         Job? job = await _client.PopJobAsync(ExampleQueueName, ExampleWorkerName);
         Assert.NotNull(job);
@@ -2295,7 +2295,7 @@ public class ReqlessClientIntegrationTest
     {
         var jid = await PutJobAsync(
             _client,
-            queueName: Maybe<string>.Some(ExampleQueueName)
+            queueName: Maybe.Some(ExampleQueueName)
         );
 
         var trackedSuccessfully = await _client.TrackJobAsync(jid);

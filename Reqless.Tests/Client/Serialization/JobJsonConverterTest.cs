@@ -1,5 +1,6 @@
 using Reqless.Client.Models;
 using Reqless.Client.Serialization;
+using Reqless.Common.Utilities;
 using Reqless.Tests.TestHelpers;
 using Reqless.Tests.TestHelpers.Client.Models;
 using System.Text.Json;
@@ -17,7 +18,7 @@ public class JobJsonConverterTest
     [Fact]
     public void Read_Data_ThrowsWhenOmitted()
     {
-        var json = JobFactory.JobJson(data: Maybe<string?>.None);
+        var json = JobFactory.JobJson(data: Maybe<string>.None);
         var exception = Assert.Throws<JsonException>(() => JsonSerializer.Deserialize<Job>(json));
         Assert.Equal("Required property 'data' not found.", exception.Message);
     }
@@ -28,7 +29,7 @@ public class JobJsonConverterTest
     [Fact]
     public void Read_Data_ThrowsWhenNull()
     {
-        var json = JobFactory.JobJson(data: Maybe<string?>.Some(null));
+        var json = JobFactory.JobJson(data: Maybe<string>.Some(null!));
         var exception = Assert.Throws<ArgumentNullException>(() => JsonSerializer.Deserialize<Job>(json));
         Assert.Equal("Value cannot be null. (Parameter 'data')", exception.Message);
     }
@@ -40,7 +41,7 @@ public class JobJsonConverterTest
     public void Read_Data_ResultsInADataString()
     {
         var data = "{}";
-        var json = JobFactory.JobJson(data: Maybe<string?>.Some(data));
+        var json = JobFactory.JobJson(data: Maybe.Some(data));
         var job = JsonSerializer.Deserialize<Job>(json);
         Assert.NotNull(job);
         Assert.Equal(data, job.Data);
@@ -53,7 +54,7 @@ public class JobJsonConverterTest
     [Fact]
     public void Read_Dependencies_ThrowsWhenOmitted()
     {
-        var json = JobFactory.JobJson(dependencies: Maybe<string[]?>.None);
+        var json = JobFactory.JobJson(dependencies: Maybe<string[]>.None);
         var exception = Assert.Throws<JsonException>(() => JsonSerializer.Deserialize<Job>(json));
         Assert.Equal("Required property 'dependencies' not found.", exception.Message);
     }
@@ -64,7 +65,7 @@ public class JobJsonConverterTest
     [Fact]
     public void Read_Dependencies_ThrowsWhenNull()
     {
-        var json = JobFactory.JobJson(dependencies: Maybe<string[]?>.Some(null));
+        var json = JobFactory.JobJson(dependencies: Maybe<string[]>.Some(null!));
         var exception = Assert.Throws<ArgumentNullException>(
             () => JsonSerializer.Deserialize<Job>(json)
         );
@@ -79,7 +80,7 @@ public class JobJsonConverterTest
     public void Read_Dependencies_ThrowsIfANonEmptyObjectIsEncountered()
     {
         var json = JobFactory.JobJsonRaw(
-            dependencies: Maybe<string>.Some("""{"boom": "boom"}""")
+            dependencies: Maybe.Some("""{"boom": "boom"}""")
         );
         var exception = Assert.Throws<JsonException>(
             () => JsonSerializer.Deserialize<Job>(json)
@@ -97,7 +98,7 @@ public class JobJsonConverterTest
     [Fact]
     public void Read_Dependencies_TranslatesEmptyObjectToEmptyArray()
     {
-        var json = JobFactory.JobJsonRaw(dependencies: Maybe<string>.Some("{}"));
+        var json = JobFactory.JobJsonRaw(dependencies: Maybe.Some("{}"));
         var job = JsonSerializer.Deserialize<Job>(json);
         Assert.NotNull(job);
         Assert.Equivalent(Array.Empty<string>(), job.Dependencies);
@@ -115,7 +116,7 @@ public class JobJsonConverterTest
             ["1", "2", "3", "4", "5"],
         })
         {
-            var json = JobFactory.JobJson(dependencies: Maybe<string[]?>.Some(validDependencies));
+            var json = JobFactory.JobJson(dependencies: Maybe.Some(validDependencies));
             var job = JsonSerializer.Deserialize<Job>(json);
             Assert.NotNull(job);
             Assert.Equivalent(validDependencies, job.Dependencies);
@@ -129,7 +130,7 @@ public class JobJsonConverterTest
     [Fact]
     public void Read_Dependents_ThrowsWhenOmitted()
     {
-        var json = JobFactory.JobJson(dependents: Maybe<string[]?>.None);
+        var json = JobFactory.JobJson(dependents: Maybe<string[]>.None);
         var exception = Assert.Throws<JsonException>(() => JsonSerializer.Deserialize<Job>(json));
         Assert.Equal("Required property 'dependents' not found.", exception.Message);
     }
@@ -140,7 +141,7 @@ public class JobJsonConverterTest
     [Fact]
     public void Read_Dependents_ThrowsWhenNull()
     {
-        var json = JobFactory.JobJson(dependents: Maybe<string[]?>.Some(null));
+        var json = JobFactory.JobJson(dependents: Maybe<string[]>.Some(null!));
         var exception = Assert.Throws<ArgumentNullException>(() => JsonSerializer.Deserialize<Job>(json));
         Assert.Equal("Value cannot be null. (Parameter 'dependents')", exception.Message);
     }
@@ -152,7 +153,7 @@ public class JobJsonConverterTest
     [Fact]
     public void Read_Dependents_TranslatesEmptyObjectToEmptyArray()
     {
-        var json = JobFactory.JobJsonRaw(dependents: Maybe<string>.Some("{}"));
+        var json = JobFactory.JobJsonRaw(dependents: Maybe.Some("{}"));
         var job = JsonSerializer.Deserialize<Job>(json);
         Assert.NotNull(job);
         Assert.Equivalent(Array.Empty<string>(), job.Dependents);
@@ -166,7 +167,7 @@ public class JobJsonConverterTest
     public void Read_Dependents_ThrowsIfANonEmptyObjectIsEncountered()
     {
         var json = JobFactory.JobJsonRaw(
-            dependents: Maybe<string>.Some("""{"boom": "boom"}""")
+            dependents: Maybe.Some("""{"boom": "boom"}""")
         );
         var exception = Assert.Throws<JsonException>(
             () => JsonSerializer.Deserialize<Job>(json)
@@ -189,7 +190,7 @@ public class JobJsonConverterTest
             ["1", "2", "3", "4", "5"],
         })
         {
-            var json = JobFactory.JobJson(dependents: Maybe<string[]?>.Some(validDependents));
+            var json = JobFactory.JobJson(dependents: Maybe.Some(validDependents));
             var job = JsonSerializer.Deserialize<Job>(json);
             Assert.NotNull(job);
             Assert.Equivalent(validDependents, job.Dependents);
@@ -254,7 +255,7 @@ public class JobJsonConverterTest
     [Fact]
     public void Read_Failure_TranslatesEmptyObjectToNull()
     {
-        var json = JobFactory.JobJsonRaw(failure: Maybe<string>.Some("{}"));
+        var json = JobFactory.JobJsonRaw(failure: Maybe.Some("{}"));
         var job = JsonSerializer.Deserialize<Job>(json);
         Assert.NotNull(job);
         Assert.Null(job.Failure);
@@ -266,7 +267,7 @@ public class JobJsonConverterTest
     [Fact]
     public void Read_Failure_CanBeNull()
     {
-        var json = JobFactory.JobJson(failure: Maybe<JobFailure?>.Some(null));
+        var json = JobFactory.JobJson(failure: Maybe<JobFailure>.Some(null!));
         var job = JsonSerializer.Deserialize<Job>(json);
         Assert.NotNull(job);
         Assert.Null(job.Failure);
@@ -279,7 +280,7 @@ public class JobJsonConverterTest
     [Fact]
     public void Read_History_TranslatesEmptyObjectToEmptyArray()
     {
-        var json = JobFactory.JobJsonRaw(history: Maybe<string>.Some("{}"));
+        var json = JobFactory.JobJsonRaw(history: Maybe.Some("{}"));
         var job = JsonSerializer.Deserialize<Job>(json);
         Assert.NotNull(job);
         Assert.Equivalent(Array.Empty<string>(), job.History);
@@ -293,7 +294,7 @@ public class JobJsonConverterTest
     public void Read_History_ThrowsIfANonEmptyObjectIsEncountered()
     {
         var json = JobFactory.JobJsonRaw(
-            history: Maybe<string>.Some("""{"boom": "boom"}""")
+            history: Maybe.Some("""{"boom": "boom"}""")
         );
         var exception = Assert.Throws<JsonException>(
             () => JsonSerializer.Deserialize<Job>(json)
@@ -310,7 +311,7 @@ public class JobJsonConverterTest
     [Fact]
     public void Read_Jid_ThrowsWhenOmitted()
     {
-        var json = JobFactory.JobJson(jid: Maybe<string?>.None);
+        var json = JobFactory.JobJson(jid: Maybe<string>.None);
         var exception = Assert.Throws<JsonException>(() => JsonSerializer.Deserialize<Job>(json));
         Assert.Equal("Required property 'jid' not found.", exception.Message);
     }
@@ -321,7 +322,7 @@ public class JobJsonConverterTest
     [Fact]
     public void Read_Jid_ThrowsWhenNull()
     {
-        var json = JobFactory.JobJson(jid: Maybe<string?>.Some(null));
+        var json = JobFactory.JobJson(jid: Maybe<string>.Some(null!));
         var exception = Assert.Throws<ArgumentNullException>(() => JsonSerializer.Deserialize<Job>(json));
         Assert.Equal("Value cannot be null. (Parameter 'jid')", exception.Message);
     }
@@ -353,7 +354,7 @@ public class JobJsonConverterTest
     [Fact]
     public void Read_Queue_ThrowsWhenOmitted()
     {
-        var json = JobFactory.JobJson(queueName: Maybe<string?>.None);
+        var json = JobFactory.JobJson(queueName: Maybe<string>.None);
         var exception = Assert.Throws<JsonException>(() => JsonSerializer.Deserialize<Job>(json));
         Assert.Equal("Required property 'queue' not found.", exception.Message);
     }
@@ -364,7 +365,7 @@ public class JobJsonConverterTest
     [Fact]
     public void Read_Queue_CanBeNull()
     {
-        string json = JobFactory.JobJson(queueName: Maybe<string?>.Some(null));
+        string json = JobFactory.JobJson(queueName: Maybe<string>.Some(null!));
         Job? job = JsonSerializer.Deserialize<Job>(json);
         Assert.NotNull(job);
         Assert.Null(job.QueueName);
@@ -379,7 +380,7 @@ public class JobJsonConverterTest
         foreach (var emptyString in TestConstants.EmptyStrings)
         {
             string json = JobFactory.JobJson(
-                queueName: Maybe<string?>.Some(emptyString)
+                queueName: Maybe.Some(emptyString)
             );
             Job? job = JsonSerializer.Deserialize<Job>(json);
             Assert.NotNull(job);
@@ -437,7 +438,7 @@ public class JobJsonConverterTest
     [Fact]
     public void Read_SpawnedFromJid_ThrowsWhenOmitted()
     {
-        var json = JobFactory.JobJson(spawnedFromJid: Maybe<string?>.None);
+        var json = JobFactory.JobJson(spawnedFromJid: Maybe<string>.None);
         var exception = Assert.Throws<JsonException>(
             () => JsonSerializer.Deserialize<Job>(json)
         );
@@ -453,7 +454,7 @@ public class JobJsonConverterTest
     [Fact]
     public void Read_SpawnedFromJid_TreatsFalseAsNull()
     {
-        var json = JobFactory.JobJsonRaw(spawnedFromJid: Maybe<string>.Some("false"));
+        var json = JobFactory.JobJsonRaw(spawnedFromJid: Maybe.Some("false"));
         var job = JsonSerializer.Deserialize<Job>(json);
         Assert.NotNull(job);
         Assert.Null(job.SpawnedFromJid);
@@ -465,7 +466,7 @@ public class JobJsonConverterTest
     [Fact]
     public void Read_SpawnedFromJid_TreatsNullAsNull()
     {
-        var json = JobFactory.JobJson(spawnedFromJid: Maybe<string?>.Some(null));
+        var json = JobFactory.JobJson(spawnedFromJid: Maybe<string>.Some(null!));
         var job = JsonSerializer.Deserialize<Job>(json);
         Assert.NotNull(job);
         Assert.Null(job.SpawnedFromJid);
@@ -477,7 +478,7 @@ public class JobJsonConverterTest
     [Fact]
     public void Read_State_ThrowsWhenOmitted()
     {
-        var json = JobFactory.JobJson(state: Maybe<string?>.None);
+        var json = JobFactory.JobJson(state: Maybe<string>.None);
         var exception = Assert.Throws<JsonException>(() => JsonSerializer.Deserialize<Job>(json));
         Assert.Equal("Required property 'state' not found.", exception.Message);
     }
@@ -488,7 +489,7 @@ public class JobJsonConverterTest
     [Fact]
     public void Read_State_ThrowsWhenNull()
     {
-        var json = JobFactory.JobJson(state: Maybe<string?>.Some(null));
+        var json = JobFactory.JobJson(state: Maybe<string>.Some(null!));
         var exception = Assert.Throws<ArgumentNullException>(() => JsonSerializer.Deserialize<Job>(json));
         Assert.Equal("Value cannot be null. (Parameter 'state')", exception.Message);
     }
@@ -499,7 +500,7 @@ public class JobJsonConverterTest
     [Fact]
     public void Read_Tags_ThrowsWhenOmitted()
     {
-        var json = JobFactory.JobJson(tags: Maybe<string[]?>.None);
+        var json = JobFactory.JobJson(tags: Maybe<string[]>.None);
         var exception = Assert.Throws<JsonException>(() => JsonSerializer.Deserialize<Job>(json));
         Assert.Equal("Required property 'tags' not found.", exception.Message);
     }
@@ -510,7 +511,7 @@ public class JobJsonConverterTest
     [Fact]
     public void Read_Tags_ThrowsWhenNull()
     {
-        var json = JobFactory.JobJson(tags: Maybe<string[]?>.Some(null));
+        var json = JobFactory.JobJson(tags: Maybe<string[]>.Some(null!));
         var exception = Assert.Throws<ArgumentNullException>(() => JsonSerializer.Deserialize<Job>(json));
         Assert.Equal("Value cannot be null. (Parameter 'tags')", exception.Message);
     }
@@ -523,7 +524,7 @@ public class JobJsonConverterTest
     public void Read_Tags_ThrowsIfANonEmptyObjectIsEncountered()
     {
         var json = JobFactory.JobJsonRaw(
-            tags: Maybe<string>.Some("""{"boom": "boom"}""")
+            tags: Maybe.Some("""{"boom": "boom"}""")
         );
         var exception = Assert.Throws<JsonException>(
             () => JsonSerializer.Deserialize<Job>(json)
@@ -541,7 +542,7 @@ public class JobJsonConverterTest
     [Fact]
     public void Read_Tags_TranslatesEmptyObjectToEmptyArray()
     {
-        var json = JobFactory.JobJsonRaw(tags: Maybe<string>.Some("{}"));
+        var json = JobFactory.JobJsonRaw(tags: Maybe.Some("{}"));
         var job = JsonSerializer.Deserialize<Job>(json);
         Assert.NotNull(job);
         Assert.Equivalent(Array.Empty<string>(), job.Tags);
@@ -554,7 +555,7 @@ public class JobJsonConverterTest
     [Fact]
     public void Read_Throttles_ThrowsWhenOmitted()
     {
-        var json = JobFactory.JobJson(throttles: Maybe<string[]?>.None);
+        var json = JobFactory.JobJson(throttles: Maybe<string[]>.None);
         var exception = Assert.Throws<JsonException>(() => JsonSerializer.Deserialize<Job>(json));
         Assert.Equal("Required property 'throttles' not found.", exception.Message);
     }
@@ -565,7 +566,7 @@ public class JobJsonConverterTest
     [Fact]
     public void Read_Throttles_ThrowsWhenNull()
     {
-        var json = JobFactory.JobJson(throttles: Maybe<string[]?>.Some(null));
+        var json = JobFactory.JobJson(throttles: Maybe<string[]>.Some(null!));
         var exception = Assert.Throws<ArgumentNullException>(() => JsonSerializer.Deserialize<Job>(json));
         Assert.Equal("Value cannot be null. (Parameter 'throttles')", exception.Message);
     }
@@ -578,7 +579,7 @@ public class JobJsonConverterTest
     public void Read_Throttles_ThrowsIfANonEmptyObjectIsEncountered()
     {
         var json = JobFactory.JobJsonRaw(
-            throttles: Maybe<string>.Some("""{"boom": "boom"}""")
+            throttles: Maybe.Some("""{"boom": "boom"}""")
         );
         var exception = Assert.Throws<JsonException>(
             () => JsonSerializer.Deserialize<Job>(json)
@@ -596,7 +597,7 @@ public class JobJsonConverterTest
     [Fact]
     public void Read_Throttles_TranslatesEmptyObjectToEmptyArray()
     {
-        var json = JobFactory.JobJsonRaw(throttles: Maybe<string>.Some("{}"));
+        var json = JobFactory.JobJsonRaw(throttles: Maybe.Some("{}"));
         var job = JsonSerializer.Deserialize<Job>(json);
         Assert.NotNull(job);
         Assert.Equivalent(Array.Empty<string>(), job.Throttles);
@@ -633,7 +634,7 @@ public class JobJsonConverterTest
     [Fact]
     public void Read_Worker_ThrowsWhenOmitted()
     {
-        var json = JobFactory.JobJson(workerName: Maybe<string?>.None);
+        var json = JobFactory.JobJson(workerName: Maybe<string>.None);
         var exception = Assert.Throws<JsonException>(() => JsonSerializer.Deserialize<Job>(json));
         Assert.Equal("Required property 'worker' not found.", exception.Message);
     }
@@ -644,7 +645,7 @@ public class JobJsonConverterTest
     [Fact]
     public void Read_Worker_ToleratesNull()
     {
-        var json = JobFactory.JobJson(workerName: Maybe<string?>.Some(null));
+        var json = JobFactory.JobJson(workerName: Maybe<string>.Some(null!));
         var job = JsonSerializer.Deserialize<Job>(json);
         Assert.NotNull(job);
         Assert.Null(job.WorkerName);
@@ -666,7 +667,7 @@ public class JobJsonConverterTest
             "{}",
         })
         {
-            var json = JobFactory.JobJsonRaw(unknown: Maybe<string>.Some(unknown));
+            var json = JobFactory.JobJsonRaw(unknown: Maybe.Some(unknown));
             var job = JsonSerializer.Deserialize<Job>(json);
             Assert.NotNull(job);
         }
@@ -703,22 +704,22 @@ public class JobJsonConverterTest
         string[] throttles = ["throttle"];
         string workerName = "workerName";
         var json = JobFactory.JobJson(
-            className: Maybe<string?>.Some(className),
-            data: Maybe<string?>.Some(data),
-            dependencies: Maybe<string[]?>.Some(dependencies),
-            dependents: Maybe<string[]?>.Some(dependents),
+            className: Maybe.Some(className),
+            data: Maybe.Some(data),
+            dependencies: Maybe.Some(dependencies),
+            dependents: Maybe.Some(dependents),
             expires: Maybe<long?>.Some(expires),
-            failure: Maybe<JobFailure?>.Some(failure),
-            history: Maybe<JobEvent[]?>.Some(history),
-            jid: Maybe<string?>.Some(jid),
+            failure: Maybe.Some(failure),
+            history: Maybe.Some(history),
+            jid: Maybe.Some(jid),
             priority: Maybe<int?>.Some(priority),
-            queueName: Maybe<string?>.Some(queueName),
+            queueName: Maybe.Some(queueName),
             remaining: Maybe<int?>.Some(remaining),
             retries: Maybe<int?>.Some(retries),
-            state: Maybe<string?>.Some(state),
-            tags: Maybe<string[]?>.Some(tags),
-            throttles: Maybe<string[]?>.Some(throttles),
-            workerName: Maybe<string?>.Some(workerName)
+            state: Maybe.Some(state),
+            tags: Maybe.Some(tags),
+            throttles: Maybe.Some(throttles),
+            workerName: Maybe.Some(workerName)
         );
 
         var job = JsonSerializer.Deserialize<Job>(json);
@@ -795,24 +796,24 @@ public class JobJsonConverterTest
         );
         var json = JsonSerializer.Serialize(job);
         var expectedJobJson = JobFactory.JobJson(
-            className: Maybe<string?>.Some(className),
-            data: Maybe<string?>.Some(data),
-            dependencies: Maybe<string[]?>.Some(dependencies),
-            dependents: Maybe<string[]?>.Some(dependents),
+            className: Maybe.Some(className),
+            data: Maybe.Some(data),
+            dependencies: Maybe.Some(dependencies),
+            dependents: Maybe.Some(dependents),
             expires: Maybe<long?>.Some(expires),
-            failure: Maybe<JobFailure?>.Some(failure),
-            history: Maybe<JobEvent[]?>.Some(history),
-            jid: Maybe<string?>.Some(jid),
+            failure: Maybe.Some(failure),
+            history: Maybe.Some(history),
+            jid: Maybe.Some(jid),
             priority: Maybe<int?>.Some(priority),
-            queueName: Maybe<string?>.Some(queueName),
+            queueName: Maybe.Some(queueName),
             remaining: Maybe<int?>.Some(remaining),
             retries: Maybe<int?>.Some(retries),
-            spawnedFromJid: Maybe<string?>.Some(spawnedFromJid),
-            state: Maybe<string?>.Some(state),
-            tags: Maybe<string[]?>.Some(tags),
-            throttles: Maybe<string[]?>.Some(throttles),
+            spawnedFromJid: Maybe.Some(spawnedFromJid),
+            state: Maybe.Some(state),
+            tags: Maybe.Some(tags),
+            throttles: Maybe.Some(throttles),
             tracked: Maybe<bool?>.Some(tracked),
-            workerName: Maybe<string?>.Some(workerName)
+            workerName: Maybe.Some(workerName)
         );
         Assert.Equal(expectedJobJson, json);
     }
@@ -834,7 +835,7 @@ public class JobJsonConverterTest
     [Fact]
     public void Write_Failure_SerializesNullCorrectly()
     {
-        var job = JobFactory.NewJob(failure: Maybe<JobFailure?>.Some(null));
+        var job = JobFactory.NewJob(failure: Maybe<JobFailure>.Some(null!));
         var json = JsonSerializer.Serialize(job);
         Assert.Contains("\"failure\":null", json);
     }
