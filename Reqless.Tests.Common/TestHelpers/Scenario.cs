@@ -51,6 +51,36 @@ public static class Scenario
     }
 
     /// <summary>
+    /// Asserts that the given action throws an <see
+    /// cref="ArgumentNullException"/> if the parameter is null and an <see
+    /// cref="ArgumentException"/> if the parameter contains no items.
+    /// </summary>
+    /// <param name="action">An action taking a list that should be used to
+    /// cause an exception to be thrown.</param>
+    /// <param name="parameterName">The name of the parameter under test.</param>
+    public static void ThrowsWhenArgumentIsNullOrEmpty<T>(
+        Action<List<T>> action,
+        string parameterName
+    )
+    {
+        var argumentNullException = Assert.Throws<ArgumentNullException>(
+            () => action(null!)
+        );
+        Assert.Equal(
+            $"Value cannot be null. (Parameter '{parameterName}')",
+            argumentNullException.Message
+        );
+        Assert.Equal(parameterName, argumentNullException.ParamName);
+
+        var argumentException = Assert.Throws<ArgumentException>(() => action([]));
+        Assert.Equal(
+            $"Value cannot be empty. (Parameter '{parameterName}')",
+            argumentException.Message
+        );
+        Assert.Equal(parameterName, argumentException.ParamName);
+    }
+
+    /// <summary>
     /// Asserts that the given action throws an <see cref="ArgumentException"/>
     /// if the parameter is an empty string or composed entirely of whitespace.
     /// </summary>
