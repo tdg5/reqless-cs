@@ -1,9 +1,10 @@
 using Moq;
 using Reqless.Client;
+using Reqless.Common.Utilities;
 using Reqless.Framework;
 using Reqless.Framework.Interactors;
 
-namespace Reqless.Tests.TestHelpers.Factories.Framework.Interactors;
+namespace Reqless.Tests.TestHelpers.Framework.Interactors;
 
 /// <summary>
 /// Factory for creating instances of <see cref="JobInteractor"/> for testing.
@@ -41,17 +42,15 @@ public static class JobInteractorFactory
         Maybe<string[]>? throttles = null
     )
     {
-        Maybe<string> _className = className
-            ?? Maybe<string>.Some("default-class-name");
-        Maybe<IReqlessClient> _client = client
-            ?? Maybe<IReqlessClient>.Some(new Mock<IReqlessClient>().Object);
-        Maybe<string> _jid = jid ?? Maybe<string>.Some("default-jid");
-        Maybe<int> _priority = priority ?? Maybe<int>.Some(0);
-        Maybe<string> _queueName = queueName ?? Maybe<string>.Some("default-queue-name");
-        Maybe<int> _retries = retries ?? Maybe<int>.Some(0);
-        Maybe<string> _state = state ?? Maybe<string>.Some("default-state");
-        Maybe<string[]> _tags = tags ?? Maybe<string[]>.Some([]);
-        Maybe<string[]> _throttles = throttles ?? Maybe<string[]>.Some([]);
+        var _className = className ?? Maybe.Some("default-class-name");
+        var _client = client ?? Maybe.Some(new Mock<IReqlessClient>().Object);
+        var _jid = jid ?? Maybe.Some("default-jid");
+        var _priority = priority ?? Maybe<int>.Some(0);
+        var _queueName = queueName ?? Maybe.Some("default-queue-name");
+        var _retries = retries ?? Maybe<int>.Some(0);
+        var _state = state ?? Maybe.Some("default-state");
+        var _tags = tags ?? Maybe<string[]>.Some([]);
+        var _throttles = throttles ?? Maybe<string[]>.Some([]);
 
         return new JobInteractor(
             className: _className.GetOrDefault(null!),

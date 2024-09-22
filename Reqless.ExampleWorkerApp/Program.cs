@@ -1,7 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Reqless.Client;
-using Reqless.Framework;
 using Reqless.Worker;
 
 namespace Reqless.ExampleWorkerApp;

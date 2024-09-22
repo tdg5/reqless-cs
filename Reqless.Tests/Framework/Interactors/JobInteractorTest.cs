@@ -1,7 +1,8 @@
 using Reqless.Client;
+using Reqless.Common.Utilities;
 using Reqless.Framework.Interactors;
-using Reqless.Tests.TestHelpers;
-using Reqless.Tests.TestHelpers.Factories.Framework.Interactors;
+using Reqless.Tests.Common.TestHelpers;
+using Reqless.Tests.TestHelpers.Framework.Interactors;
 
 namespace Reqless.Tests.Framework.Interactors;
 
@@ -19,7 +20,7 @@ public class JobInteractorTest
     {
         Scenario.ThrowsWhenArgumentIsNullOrEmptyOrWhitespace(
             (invalidClassName) =>
-                MakeSubject(className: Maybe<string>.Some(invalidClassName!)),
+                MakeSubject(className: Maybe.Some(invalidClassName!)),
             "className"
         );
     }
@@ -45,7 +46,7 @@ public class JobInteractorTest
     public void Constructor_Jid_ThrowsWhenNullEmptyOrWhitespace()
     {
         Scenario.ThrowsWhenArgumentIsNullOrEmptyOrWhitespace(
-            (invalidJid) => MakeSubject(jid: Maybe<string>.Some(invalidJid!)),
+            (invalidJid) => MakeSubject(jid: Maybe.Some(invalidJid!)),
             "jid"
         );
     }
@@ -59,7 +60,7 @@ public class JobInteractorTest
     {
         Scenario.ThrowsWhenArgumentIsNegative(
             (invalidPriority) => MakeSubject(
-                priority: Maybe<int>.Some(invalidPriority)
+                priority: Maybe.Some(invalidPriority)
             ),
             "priority"
         );
@@ -74,7 +75,7 @@ public class JobInteractorTest
     {
         Scenario.ThrowsWhenArgumentIsNullOrEmptyOrWhitespace(
             (invalidQueueName) =>
-                MakeSubject(queueName: Maybe<string>.Some(invalidQueueName!)),
+                MakeSubject(queueName: Maybe.Some(invalidQueueName!)),
             "queueName"
         );
     }
@@ -88,7 +89,7 @@ public class JobInteractorTest
     {
         Scenario.ThrowsWhenArgumentIsNegative(
             (invalidRetries) => MakeSubject(
-                retries: Maybe<int>.Some(invalidRetries)
+                retries: Maybe.Some(invalidRetries)
             ),
             "retries"
         );
@@ -102,7 +103,7 @@ public class JobInteractorTest
     public void Constructor_State_ThrowsWhenNullEmptyOrWhitespace()
     {
         Scenario.ThrowsWhenArgumentIsNullOrEmptyOrWhitespace(
-            (invalidState) => MakeSubject(state: Maybe<string>.Some(invalidState!)),
+            (invalidState) => MakeSubject(state: Maybe.Some(invalidState!)),
             "state"
         );
     }
