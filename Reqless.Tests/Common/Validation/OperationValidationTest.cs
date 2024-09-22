@@ -1,5 +1,5 @@
 using Reqless.Common.Validation;
-using Reqless.Tests.TestHelpers;
+using Reqless.Tests.Common.TestHelpers;
 
 namespace Reqless.Tests.Common.Validation;
 

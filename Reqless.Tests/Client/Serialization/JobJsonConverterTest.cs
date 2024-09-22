@@ -1,7 +1,7 @@
 using Reqless.Client.Models;
 using Reqless.Client.Serialization;
 using Reqless.Common.Utilities;
-using Reqless.Tests.TestHelpers;
+using Reqless.Tests.Common.TestHelpers;
 using Reqless.Tests.TestHelpers.Client.Models;
 using System.Text.Json;
 

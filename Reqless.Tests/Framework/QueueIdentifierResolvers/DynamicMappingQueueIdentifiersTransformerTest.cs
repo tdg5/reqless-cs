@@ -1,7 +1,7 @@
 using Moq;
 using Reqless.Client;
 using Reqless.Framework.QueueIdentifierResolvers;
-using Reqless.Tests.TestHelpers;
+using Reqless.Tests.Common.TestHelpers;
 
 namespace Reqless.Tests.Framework.QueueIdentifierResolvers;
 

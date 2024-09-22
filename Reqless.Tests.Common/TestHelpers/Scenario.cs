@@ -1,4 +1,4 @@
-namespace Reqless.Tests.TestHelpers;
+namespace Reqless.Tests.Common.TestHelpers;
 
 /// <summary>
 /// A collection of common test scenario assertions.
