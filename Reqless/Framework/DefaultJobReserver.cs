@@ -8,7 +8,7 @@ namespace Reqless.Framework;
 /// </summary>
 public class DefaultJobReserver : IJobReserver
 {
-    IReqlessClient ReqlessClient { get; }
+    IReqlessClientAccessor ReqlessClientAccessor { get; }
 
     /// <summary>
     /// Create an instance of <see cref="DefaultJobReserver"/>.
@@ -19,14 +19,18 @@ public class DefaultJobReserver : IJobReserver
         IReqlessClientAccessor reqlessClientAccessor
     )
     {
-        ReqlessClient = reqlessClientAccessor.Value ??
-            throw new ArgumentNullException(nameof(reqlessClientAccessor));
-
+        ArgumentNullException.ThrowIfNull(reqlessClientAccessor, nameof(reqlessClientAccessor));
+        ReqlessClientAccessor = reqlessClientAccessor;
     }
 
     /// <inheritdoc />
     public Task<Job?> TryReserveJobAsync()
     {
+        IReqlessClient reqlessClient = ReqlessClientAccessor.Value ??
+            throw new InvalidOperationException(
+                "The ReqlessClientAccessor returned null."
+            );
+
         Job? job = null;
         return Task.FromResult(job);
     }
