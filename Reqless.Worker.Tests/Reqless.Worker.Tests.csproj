@@ -24,6 +24,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Reqless.Worker\Reqless.Worker.csproj" />
+    <ProjectReference Include="..\Reqless.Tests.Common\Reqless.Tests.Common.csproj" />
   </ItemGroup>
 
 </Project>

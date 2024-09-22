@@ -17,18 +17,13 @@ public class Program
     {
         HostApplicationBuilder builder = Host.CreateApplicationBuilder(args);
 
-        builder.Services.AddSingleton<IReqlessClientFactory>(
-            new ReqlessClientFactory(() => new ReqlessClient())
+        var services = builder.Services;
+        var reqlessWorkerSettings = new ReqlessWorkerSettings(
+            queueIdentifiers: new List<string> { "example-queue" }.AsReadOnly(),
+            workerCount: 2
         );
-        builder.Services.AddSingleton<IWorkerFactory, GenericWorkerFactory<AsyncWorker>>();
-        builder.Services.AddSingleton<IThinger, Thinger>();
-        builder.Services.AddReqlessServices();
-
-        var workerCount = 2;
-        foreach (var index in Enumerable.Range(0, workerCount))
-        {
-            builder.Services.AddSingleton<IHostedService, WorkerService>();
-        }
+        services.AddSingleton<IThinger, Thinger>();
+        services.AddReqlessWorkerServices(reqlessWorkerSettings);
 
         using IHost host = builder.Build();
         host.Run();
