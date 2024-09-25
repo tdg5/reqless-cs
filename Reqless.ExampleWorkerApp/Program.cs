@@ -16,14 +16,11 @@ public class Program
     public static void Main(string[] args)
     {
         HostApplicationBuilder builder = Host.CreateApplicationBuilder(args);
-
-        var services = builder.Services;
-        var reqlessWorkerSettings = new ReqlessWorkerSettings(
+        builder.Services.AddSingleton<IThinger, Thinger>();
+        builder.Services.AddReqlessWorkerServices(new(
             queueIdentifiers: new List<string> { "example-queue" }.AsReadOnly(),
             workerCount: 2
-        );
-        services.AddSingleton<IThinger, Thinger>();
-        services.AddReqlessWorkerServices(reqlessWorkerSettings);
+        ));
 
         using IHost host = builder.Build();
         host.Run();

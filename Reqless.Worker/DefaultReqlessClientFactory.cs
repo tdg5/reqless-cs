@@ -26,6 +26,6 @@ public class DefaultReqlessClientFactory : IReqlessClientFactory
     /// <inheritdoc />
     public IReqlessClient Create()
     {
-        return new ReqlessClient();
+        return new ReqlessClient(_settings.ConnectionString);
     }
 }
