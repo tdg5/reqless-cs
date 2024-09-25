@@ -6,9 +6,6 @@ namespace Reqless.Framework.QueueIdentifierResolvers;
 /// </summary>
 public class TransformingQueueIdentifierResolver : IQueueIdentifierResolver
 {
-    /// <inheritdoc />
-    public IEnumerable<string> QueueIdentifiers { get; }
-
     /// <summary>
     /// The <see cref="IQueueIdentifiersTransformer"/> instances to chain
     /// together when resolving queue identifiers.
@@ -18,29 +15,25 @@ public class TransformingQueueIdentifierResolver : IQueueIdentifierResolver
     /// <summary>
     /// Create an instance of <see cref="TransformingQueueIdentifierResolver"/>.
     /// </summary>
-    /// <param name="queueIdentifiers">The queue identifiers that should be
-    /// mapped to their respective concrete queue names.</param>
     /// <param name="queueIdentifiersTransformers">The <see
     /// cref="IQueueIdentifierResolver"/> instances to chain together when
     /// resolving queue identifiers.</param>
     public TransformingQueueIdentifierResolver(
-        IEnumerable<string> queueIdentifiers,
         IEnumerable<IQueueIdentifiersTransformer> queueIdentifiersTransformers
     )
     {
-        ArgumentNullException.ThrowIfNull(queueIdentifiers, nameof(queueIdentifiers));
         ArgumentNullException.ThrowIfNull(
             queueIdentifiersTransformers,
             nameof(queueIdentifiersTransformers)
         );
-        QueueIdentifiers = queueIdentifiers;
         QueueIdentifiersTransformers = queueIdentifiersTransformers;
     }
 
     /// <inheritdoc />
-    public async Task<List<string>> ResolveQueueNamesAsync()
+    public async Task<List<string>> ResolveQueueNamesAsync(params string[] queueIdentifiers)
     {
-        List<string> resolvedQueueNames = [.. QueueIdentifiers];
+        ArgumentNullException.ThrowIfNull(queueIdentifiers, nameof(queueIdentifiers));
+        List<string> resolvedQueueNames = [.. queueIdentifiers];
         foreach (var queueIdentifiersTransformer in QueueIdentifiersTransformers)
         {
             resolvedQueueNames =

@@ -10,32 +10,13 @@ public class TransformingQueueIdentifierResolverTest
 {
     /// <summary>
     /// <see cref="TransformingQueueIdentifierResolver"/> constructor should
-    /// throw when the queue identifiers argument is null.
-    /// </summary>
-    [Fact]
-    public void Constructor_ThrowsWhenQueueIdentifiersIsNull()
-    {
-        Scenario.ThrowsWhenArgumentIsNull(
-            () => new TransformingQueueIdentifierResolver(
-                null!,
-                []
-            ),
-            "queueIdentifiers"
-        );
-    }
-
-    /// <summary>
-    /// <see cref="TransformingQueueIdentifierResolver"/> constructor should
     /// throw when the queue identifiers transformers argument is null.
     /// </summary>
     [Fact]
     public void Constructor_ThrowsWhenQueueIdentifiersTransformersIsNull()
     {
         Scenario.ThrowsWhenArgumentIsNull(
-            () => new TransformingQueueIdentifierResolver(
-                [],
-                null!
-            ),
+            () => new TransformingQueueIdentifierResolver(null!),
             "queueIdentifiersTransformers"
         );
     }
@@ -48,16 +29,33 @@ public class TransformingQueueIdentifierResolverTest
     public async Task Constructor_SetsExpectedProperties()
     {
         List<string> queueIdentifiers = ["queue-1", "@bloop"];
-        List<IQueueIdentifiersTransformer> queueIdentifiersTransformers = [];
-        TransformingQueueIdentifierResolver subject = new(
-            queueIdentifiers,
-            queueIdentifiersTransformers
-        );
+        List<string> expectedResolvedQueueNames = [.. queueIdentifiers];
+        expectedResolvedQueueNames.Reverse();
+        List<IQueueIdentifiersTransformer> queueIdentifiersTransformers = [
+            new OrderReversingQueueIdentifiersTransformer(),
+        ];
+        TransformingQueueIdentifierResolver subject = new(queueIdentifiersTransformers);
 
-        Assert.Equal(queueIdentifiers, subject.QueueIdentifiers);
         // Roundabout way to check that queueIdentifiersTransformers is set correctly.
-        var queueNames = await subject.ResolveQueueNamesAsync();
-        Assert.Equal(queueIdentifiers, queueNames);
+        var queueNames = await subject.ResolveQueueNamesAsync(queueIdentifiers.ToArray());
+        Assert.Equal(expectedResolvedQueueNames, queueNames);
+    }
+
+    /// <summary>
+    /// <see cref="TransformingQueueIdentifierResolver.ResolveQueueNamesAsync"/>
+    /// should throw if queue identifiers is null.
+    /// </summary>
+    [Fact]
+    public async Task ResolveQueueNamesAsync_ThrowsWhenQueueIdentifiersIsNull()
+    {
+        string[] queueIdentifiers = null!;
+        TransformingQueueIdentifierResolver subject = new([]);
+
+        var exception = await Assert.ThrowsAsync<ArgumentNullException>(
+            () => subject.ResolveQueueNamesAsync(queueIdentifiers)
+        );
+        Assert.Equal("Value cannot be null. (Parameter 'queueIdentifiers')", exception.Message);
+        Assert.Equal("queueIdentifiers", exception.ParamName);
     }
 
     /// <summary>
@@ -73,12 +71,9 @@ public class TransformingQueueIdentifierResolverTest
         List<IQueueIdentifiersTransformer> queueIdentifiersTransformers = [
             new OrderReversingQueueIdentifiersTransformer(),
         ];
-        TransformingQueueIdentifierResolver subject = new(
-            queueIdentifiers,
-            queueIdentifiersTransformers
-        );
+        TransformingQueueIdentifierResolver subject = new(queueIdentifiersTransformers);
 
-        List<string> queueNames = await subject.ResolveQueueNamesAsync();
+        var queueNames = await subject.ResolveQueueNamesAsync([.. queueIdentifiers]);
         Assert.Equal(expectedResolvedQueueNames, queueNames);
     }
 

@@ -7,15 +7,10 @@ namespace Reqless.Framework.QueueIdentifierResolvers;
 public interface IQueueIdentifierResolver
 {
     /// <summary>
-    /// The queue identifiers that should be mapped to their respective concrete
-    /// queue names.
-    /// </summary>
-    public IEnumerable<string> QueueIdentifiers { get; }
-
-    /// <summary>
     /// Resolve the queue identifiers list to their respective concrete queue
     /// names.
     /// </summary>
+    /// <param name="queueIdentifiers">The list of queue identifiers to resolve.</param>
     /// <returns>A list of zero or more concrete queue names.</returns>
-    public Task<List<string>> ResolveQueueNamesAsync();
+    public Task<List<string>> ResolveQueueNamesAsync(params string[] queueIdentifiers);
 }
