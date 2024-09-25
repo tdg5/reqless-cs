@@ -1,4 +1,5 @@
 using Microsoft.Extensions.DependencyInjection;
+using Moq;
 using Reqless.Client;
 using Reqless.Client.Models;
 using Reqless.Framework;
@@ -32,11 +33,12 @@ public class ServiceCollectionExtensionsTest
     public void AddReqlessServices_DoesNotOverrideRegisteredIUnitOfWorkActivator()
     {
         ServiceCollection services = new();
-        services.AddSingleton<IUnitOfWorkActivator, NoopUnitOfWorkActivator>();
+        var mock = Mock.Of<IUnitOfWorkActivator>();
+        services.AddSingleton<IUnitOfWorkActivator>(mock);
         services.AddReqlessServices();
         var provider = services.BuildServiceProvider();
         IUnitOfWorkActivator subject = provider.GetRequiredService<IUnitOfWorkActivator>();
-        Assert.IsType<NoopUnitOfWorkActivator>(subject);
+        Assert.Same(mock, subject);
     }
 
     /// <summary>
@@ -61,11 +63,12 @@ public class ServiceCollectionExtensionsTest
     public void AddReqlessServices_DoesNotOverrideRegisteredIUnitOfWorkResolver()
     {
         ServiceCollection services = new();
-        services.AddSingleton<IUnitOfWorkResolver, NoopUnitOfWorkResolver>();
+        var mock = Mock.Of<IUnitOfWorkResolver>();
+        services.AddSingleton<IUnitOfWorkResolver>(mock);
         services.AddReqlessServices();
         var provider = services.BuildServiceProvider();
         IUnitOfWorkResolver subject = provider.GetRequiredService<IUnitOfWorkResolver>();
-        Assert.IsType<NoopUnitOfWorkResolver>(subject);
+        Assert.Same(mock, subject);
     }
 
     /// <summary>
@@ -90,11 +93,12 @@ public class ServiceCollectionExtensionsTest
     public void AddReqlessServices_DoesNotOverrideRegisteredIJobContextFactory()
     {
         ServiceCollection services = new();
-        services.AddSingleton<IJobContextFactory, NoopJobContextFactory>();
+        var mock = Mock.Of<IJobContextFactory>();
+        services.AddSingleton<IJobContextFactory>(mock);
         services.AddReqlessServices();
         var provider = services.BuildServiceProvider();
         IJobContextFactory subject = provider.GetRequiredService<IJobContextFactory>();
-        Assert.IsType<NoopJobContextFactory>(subject);
+        Assert.Same(mock, subject);
     }
 
     /// <summary>
@@ -119,11 +123,12 @@ public class ServiceCollectionExtensionsTest
     public void AddReqlessServices_DoesNotOverrideRegisteredIJobContextAccessor()
     {
         ServiceCollection services = new();
-        services.AddSingleton<IJobContextAccessor, NoopJobContextAccessor>();
+        var mock = Mock.Of<IJobContextAccessor>();
+        services.AddSingleton<IJobContextAccessor>(mock);
         services.AddReqlessServices();
         var provider = services.BuildServiceProvider();
         IJobContextAccessor subject = provider.GetRequiredService<IJobContextAccessor>();
-        Assert.IsType<NoopJobContextAccessor>(subject);
+        Assert.Same(mock, subject);
     }
 
     /// <summary>
@@ -148,46 +153,11 @@ public class ServiceCollectionExtensionsTest
     public void AddReqlessServices_DoesNotOverrideRegisteredIReqlessClientAccessor()
     {
         ServiceCollection services = new();
-        services.AddSingleton<IReqlessClientAccessor, NoopReqlessClientAccessor>();
+        var mock = Mock.Of<IReqlessClientAccessor>();
+        services.AddSingleton<IReqlessClientAccessor>(mock);
         services.AddReqlessServices();
         var provider = services.BuildServiceProvider();
         IReqlessClientAccessor subject = provider.GetRequiredService<IReqlessClientAccessor>();
-        Assert.IsType<NoopReqlessClientAccessor>(subject);
-    }
-
-    class NoopJobContextAccessor : IJobContextAccessor
-    {
-        public IJobContext? Value
-        {
-            get => throw new NotImplementedException();
-            set => throw new NotImplementedException();
-        }
-    }
-
-    class NoopJobContextFactory : IJobContextFactory
-    {
-        public IJobContext Create(Job _) => throw new NotImplementedException();
-    }
-
-    class NoopReqlessClientAccessor : IReqlessClientAccessor
-    {
-        public IReqlessClient? Value
-        {
-            get => throw new NotImplementedException();
-            set => throw new NotImplementedException();
-        }
-    }
-
-    class NoopUnitOfWorkActivator : IUnitOfWorkActivator
-    {
-        public IUnitOfWork CreateInstance(Type instanceType)
-        {
-            throw new NotImplementedException();
-        }
-    }
-
-    class NoopUnitOfWorkResolver : IUnitOfWorkResolver
-    {
-        public Type Resolve(string _) => throw new NotImplementedException();
+        Assert.Same(mock, subject);
     }
 }
