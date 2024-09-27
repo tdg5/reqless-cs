@@ -27,8 +27,15 @@ public class AsyncWorker : IWorker
     protected readonly IUnitOfWorkResolver _unitOfWorkResolver;
 
     /// <summary>
+    /// An <see cref="IJobReserver"/> instance to use for reserving jobs.
+    /// </summary>
+    protected readonly IJobReserver _jobReserver;
+
+    /// <summary>
     /// Create an instance of <see cref="AsyncWorker"/>.
     /// </summary>
+    /// <param name="jobReserver">An <see cref="IJobReserver"/> instance to use
+    /// for reserving jobs.</param>
     /// <param name="reqlessClient">An <see cref="IReqlessClient"/> instance to
     /// use for accessing Reqless.</param>
     /// <param name="unitOfWorkActivator">An <see cref="IUnitOfWorkActivator"/>
@@ -36,11 +43,13 @@ public class AsyncWorker : IWorker
     /// <param name="unitOfWorkResolver">An <see cref="IUnitOfWorkResolver"/>
     /// instance to use for resolving unit of work types.</param>
     public AsyncWorker(
+        IJobReserver jobReserver,
         IReqlessClient reqlessClient,
         IUnitOfWorkActivator unitOfWorkActivator,
         IUnitOfWorkResolver unitOfWorkResolver
     )
     {
+        _jobReserver = jobReserver;
         _reqlessClient = reqlessClient;
         _unitOfWorkActivator = unitOfWorkActivator;
         _unitOfWorkResolver = unitOfWorkResolver;
@@ -61,11 +70,16 @@ public class AsyncWorker : IWorker
 
             try
             {
-                Job? job = null;
-                await ExecuteJobAsync(
-                    null!,
-                    cancellationToken
-                );
+                // How are queue identifiers supposed to reach this point?
+                // Should they be encapsulated somewhere else already?
+                Job? job = await _jobReserver.TryReserveJobAsync();
+                if (true || job is not null)
+                {
+                    await ExecuteJobAsync(
+                        job!,
+                        cancellationToken
+                    );
+                }
             }
             finally
             {
