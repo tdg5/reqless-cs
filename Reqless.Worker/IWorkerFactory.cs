@@ -8,6 +8,8 @@ public interface IWorkerFactory
     /// <summary>
     /// Create an <see cref="IWorker"/> instance.
     /// </summary>
+    /// <param name="serviceProvider">An <see cref="IServiceProvider"/> instance
+    /// that can be utilized when creating worker instances.</param>
     /// <returns>An <see cref="IWorker"/> instance.</returns>
-    IWorker Create();
+    IWorker Create(IServiceProvider serviceProvider);
 }
