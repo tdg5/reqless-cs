@@ -10,15 +10,9 @@ namespace Reqless.Worker;
 public class AsyncWorker : IWorker
 {
     /// <summary>
-    /// An <see cref="IReqlessClientAccessor"/> instance to use for accessing
-    /// the Reqless client.
+    /// An <see cref="IReqlessClient"/> instance to use for accessing Reqless.
     /// </summary>
-    protected readonly IReqlessClientAccessor _reqlessClientAccessor;
-
-    /// <summary>
-    /// An <see cref="IReqlessClientFactory"/> instance to use for creating Reqless clients.
-    /// </summary>
-    protected readonly IReqlessClientFactory _reqlessClientFactory;
+    protected readonly IReqlessClient _reqlessClient;
 
     /// <summary>
     /// An <see cref="IUnitOfWorkActivator"/> instance to use for unit of work
@@ -35,25 +29,19 @@ public class AsyncWorker : IWorker
     /// <summary>
     /// Create an instance of <see cref="AsyncWorker"/>.
     /// </summary>
-    /// <param name="reqlessClientAccessor">An <see
-    /// cref="IReqlessClientAccessor"/> instance to use for accessing the
-    /// Reqless client.</param>
-    /// <param name="reqlessClientFactory">An <see cref="IReqlessClientFactory"/> instance
-    /// to use for creating Reqless clients.</param>
-    /// <param name="unitOfWorkActivator">An <see
-    /// cref="IUnitOfWorkActivator"/> instance to use for creating unit of work
-    /// instances.</param>
+    /// <param name="reqlessClient">An <see cref="IReqlessClient"/> instance to
+    /// use for accessing Reqless.</param>
+    /// <param name="unitOfWorkActivator">An <see cref="IUnitOfWorkActivator"/>
+    /// instance to use for creating unit of work instances.</param>
     /// <param name="unitOfWorkResolver">An <see cref="IUnitOfWorkResolver"/>
     /// instance to use for resolving unit of work types.</param>
     public AsyncWorker(
-        IReqlessClientAccessor reqlessClientAccessor,
-        IReqlessClientFactory reqlessClientFactory,
+        IReqlessClient reqlessClient,
         IUnitOfWorkActivator unitOfWorkActivator,
         IUnitOfWorkResolver unitOfWorkResolver
     )
     {
-        _reqlessClientAccessor = reqlessClientAccessor;
-        _reqlessClientFactory = reqlessClientFactory;
+        _reqlessClient = reqlessClient;
         _unitOfWorkActivator = unitOfWorkActivator;
         _unitOfWorkResolver = unitOfWorkResolver;
     }
@@ -71,8 +59,6 @@ public class AsyncWorker : IWorker
                 ExecutionContext.Restore(initialExecutionContext);
             }
 
-            IReqlessClient client = _reqlessClientFactory.Create();
-            _reqlessClientAccessor.Value = client;
             try
             {
                 Job? job = null;
@@ -91,7 +77,6 @@ public class AsyncWorker : IWorker
 
     private void Reset()
     {
-        _reqlessClientAccessor.Value = null;
     }
 
     /// <summary>

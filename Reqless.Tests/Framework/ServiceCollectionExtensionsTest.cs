@@ -1,7 +1,6 @@
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using Reqless.Client;
-using Reqless.Client.Models;
 using Reqless.Framework;
 
 namespace Reqless.Tests.Framework;
@@ -12,8 +11,8 @@ namespace Reqless.Tests.Framework;
 public class ServiceCollectionExtensionsTest
 {
     /// <summary>
-    /// cref="ServiceCollectionExtensions.AddReqlessServices"/> should add an
-    /// <see cref="IUnitOfWorkActivator"/> service if none is registered.
+    /// <see cref="ServiceCollectionExtensions.AddReqlessServices"/> should add
+    /// an <see cref="IUnitOfWorkActivator"/> service if none is registered.
     /// </summary>
     [Fact]
     public void AddReqlessServices_AddsIUnitOfWorkActivatorIfNoneRegistered()
@@ -26,8 +25,8 @@ public class ServiceCollectionExtensionsTest
     }
 
     /// <summary>
-    /// cref="ServiceCollectionExtensions.AddReqlessServices"/> doesn't override
-    /// <see cref="IUnitOfWorkActivator"/> service if one is registered.
+    /// <see cref="ServiceCollectionExtensions.AddReqlessServices"/> doesn't
+    /// override <see cref="IUnitOfWorkActivator"/> service if one is registered.
     /// </summary>
     [Fact]
     public void AddReqlessServices_DoesNotOverrideRegisteredIUnitOfWorkActivator()
@@ -42,8 +41,8 @@ public class ServiceCollectionExtensionsTest
     }
 
     /// <summary>
-    /// cref="ServiceCollectionExtensions.AddReqlessServices"/> should add an
-    /// <see cref="IUnitOfWorkResolver"/> service if none is registered.
+    /// <see cref="ServiceCollectionExtensions.AddReqlessServices"/> should add
+    /// an <see cref="IUnitOfWorkResolver"/> service if none is registered.
     /// </summary>
     [Fact]
     public void AddReqlessServices_AddsIUnitOfWorkResolverIfNoneRegistered()
@@ -56,8 +55,8 @@ public class ServiceCollectionExtensionsTest
     }
 
     /// <summary>
-    /// cref="ServiceCollectionExtensions.AddReqlessServices"/> doesn't override
-    /// <see cref="IUnitOfWorkResolver"/> service if one is registered.
+    /// <see cref="ServiceCollectionExtensions.AddReqlessServices"/> doesn't
+    /// override <see cref="IUnitOfWorkResolver"/> service if one is registered.
     /// </summary>
     [Fact]
     public void AddReqlessServices_DoesNotOverrideRegisteredIUnitOfWorkResolver()
@@ -72,8 +71,8 @@ public class ServiceCollectionExtensionsTest
     }
 
     /// <summary>
-    /// cref="ServiceCollectionExtensions.AddReqlessServices"/> should add an
-    /// <see cref="IJobContextFactory"/> service if none is registered.
+    /// <see cref="ServiceCollectionExtensions.AddReqlessServices"/> should add
+    /// an <see cref="IJobContextFactory"/> service if none is registered.
     /// </summary>
     [Fact]
     public void AddReqlessServices_AddsIJobContextFactoryIfNoneRegistered()
@@ -86,8 +85,8 @@ public class ServiceCollectionExtensionsTest
     }
 
     /// <summary>
-    /// cref="ServiceCollectionExtensions.AddReqlessServices"/> doesn't override
-    /// <see cref="IJobContextFactory"/> service if one is registered.
+    /// <see cref="ServiceCollectionExtensions.AddReqlessServices"/> doesn't
+    /// override <see cref="IJobContextFactory"/> service if one is registered.
     /// </summary>
     [Fact]
     public void AddReqlessServices_DoesNotOverrideRegisteredIJobContextFactory()
@@ -102,8 +101,8 @@ public class ServiceCollectionExtensionsTest
     }
 
     /// <summary>
-    /// cref="ServiceCollectionExtensions.AddReqlessServices"/> should add an
-    /// <see cref="IJobContextAccessor"/> service if none is registered.
+    /// <see cref="ServiceCollectionExtensions.AddReqlessServices"/> should add
+    /// an <see cref="IJobContextAccessor"/> service if none is registered.
     /// </summary>
     [Fact]
     public void AddReqlessServices_AddsIJobContextAccessorIfNoneRegistered()
@@ -116,8 +115,8 @@ public class ServiceCollectionExtensionsTest
     }
 
     /// <summary>
-    /// cref="ServiceCollectionExtensions.AddReqlessServices"/> doesn't override
-    /// <see cref="IJobContextAccessor"/> service if one is registered.
+    /// <see cref="ServiceCollectionExtensions.AddReqlessServices"/> doesn't
+    /// override <see cref="IJobContextAccessor"/> service if one is registered.
     /// </summary>
     [Fact]
     public void AddReqlessServices_DoesNotOverrideRegisteredIJobContextAccessor()
@@ -132,32 +131,36 @@ public class ServiceCollectionExtensionsTest
     }
 
     /// <summary>
-    /// cref="ServiceCollectionExtensions.AddReqlessServices"/> should add an
-    /// <see cref="IReqlessClientAccessor"/> service if none is registered.
+    /// <see cref="ServiceCollectionExtensions.AddReqlessServices"/> should add
+    /// an <see cref="IReqlessClient"/> service if none is registered.
     /// </summary>
     [Fact]
-    public void AddReqlessServices_AddsIReqlessClientAccessorIfNoneRegistered()
+    public void AddReqlessServices_AddsIReqlessClientIfNoneRegistered()
     {
         ServiceCollection services = new();
+        var expectedClient = Mock.Of<IReqlessClient>();
+        var mockFactory = new Mock<IReqlessClientFactory>();
+        mockFactory.Setup(_ => _.Create()).Returns(expectedClient);
+        services.AddSingleton<IReqlessClientFactory>(mockFactory.Object);
         services.AddReqlessServices();
         var provider = services.BuildServiceProvider();
-        IReqlessClientAccessor subject = provider.GetRequiredService<IReqlessClientAccessor>();
-        Assert.IsType<DefaultReqlessClientAccessor>(subject);
+        IReqlessClient subject = provider.GetRequiredService<IReqlessClient>();
+        Assert.Same(expectedClient, subject);
     }
 
     /// <summary>
-    /// cref="ServiceCollectionExtensions.AddReqlessServices"/> doesn't override
-    /// <see cref="IReqlessClientAccessor"/> service if one is registered.
+    /// <see cref="ServiceCollectionExtensions.AddReqlessServices"/> doesn't
+    /// override <see cref="IReqlessClient"/> service if one is registered.
     /// </summary>
     [Fact]
-    public void AddReqlessServices_DoesNotOverrideRegisteredIReqlessClientAccessor()
+    public void AddReqlessServices_DoesNotOverrideRegisteredIReqlessClient()
     {
         ServiceCollection services = new();
-        var mock = Mock.Of<IReqlessClientAccessor>();
-        services.AddSingleton<IReqlessClientAccessor>(mock);
+        var mock = Mock.Of<IReqlessClient>();
+        services.AddSingleton<IReqlessClient>(mock);
         services.AddReqlessServices();
         var provider = services.BuildServiceProvider();
-        IReqlessClientAccessor subject = provider.GetRequiredService<IReqlessClientAccessor>();
+        IReqlessClient subject = provider.GetRequiredService<IReqlessClient>();
         Assert.Same(mock, subject);
     }
 }

@@ -21,12 +21,11 @@ public class ConcreteUnitOfWork : IUnitOfWork
     /// </summary>
     public ConcreteUnitOfWork(
         IThinger thinger,
-        IReqlessClientAccessor reqlessClientAccessor,
+        IReqlessClient reqlessClient,
         Job? job = null
     )
     {
-        _client = reqlessClientAccessor.Value
-            ?? throw new InvalidOperationException("No client available.");
+        _client = reqlessClient;
         _job = job;
         _thinger = thinger;
     }

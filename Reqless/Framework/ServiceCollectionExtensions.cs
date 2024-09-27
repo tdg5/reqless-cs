@@ -1,5 +1,6 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Reqless.Client;
 
 namespace Reqless.Framework;
 
@@ -20,7 +21,9 @@ public static class ServiceCollectionExtensions
         this IServiceCollection services
     )
     {
-        services.TryAddSingleton<IReqlessClientAccessor, DefaultReqlessClientAccessor>();
+        services.TryAddSingleton<IReqlessClient>(
+            provider => provider.GetRequiredService<IReqlessClientFactory>().Create()
+        );
         services.TryAddSingleton<IUnitOfWorkActivator, DefaultUnitOfWorkActivator>();
         services.TryAddSingleton<IUnitOfWorkResolver, DefaultUnitOfWorkResolver>();
         services.TryAddSingleton<IJobContextAccessor, DefaultJobContextAccessor>();
