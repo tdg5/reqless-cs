@@ -9,14 +9,14 @@ namespace Reqless.Worker;
 /// </summary>
 public class DefaultReqlessClientFactory : IReqlessClientFactory
 {
-    private ReqlessWorkerSettings _settings;
+    private IReqlessWorkerSettings _settings;
 
     /// <summary>
     /// Create an instance of <see cref="DefaultReqlessClientFactory"/>.
     /// </summary>
     /// <param name="settings">The <see cref="ReqlessWorkerSettings"/> instance
     /// that should be used to configure the clients.</param>
-    public DefaultReqlessClientFactory(ReqlessWorkerSettings settings)
+    public DefaultReqlessClientFactory(IReqlessWorkerSettings settings)
     {
         ArgumentNullException.ThrowIfNull(settings, nameof(settings));
 

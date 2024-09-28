@@ -4,24 +4,18 @@ using Reqless.Common.Validation;
 namespace Reqless.Worker;
 
 /// <summary>
-/// Base class containing common settings for the Reqless worker.
+/// Base <see cref="IReqlessWorkerSettings"/> implementation containing common
+/// settings for the Reqless worker.
 /// </summary>
-public class ReqlessWorkerSettings
+public class ReqlessWorkerSettings : IReqlessWorkerSettings
 {
-    /// <summary>
-    /// The connection string to the Redis server.
-    /// </summary>
+    /// <inheritdoc/>
     public string ConnectionString { get; }
 
-    /// <summary>
-    /// The queue identifiers controlling what queues the worker(s) should take
-    /// work from.
-    /// </summary>
+    /// <inheritdoc/>
     public ReadOnlyCollection<string> QueueIdentifiers { get; }
 
-    /// <summary>
-    /// The number of workers to spawn.
-    /// </summary>
+    /// <inheritdoc/>
     public int WorkerCount { get; }
 
     /// <summary>

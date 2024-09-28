@@ -25,7 +25,7 @@ public static class ServiceCollectionExtensions
         ReqlessWorkerSettings settings
     )
     {
-        services.AddSingleton(settings);
+        services.AddSingleton<IReqlessWorkerSettings>(settings);
         services.AddReqlessServices();
         services.TryAddSingleton<IReqlessClientFactory, DefaultReqlessClientFactory>();
         services.TryAddSingleton<IWorkerFactory, GenericWorkerFactory<AsyncWorker>>();
