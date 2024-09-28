@@ -6,6 +6,11 @@ namespace Reqless.Worker;
 public interface IWorker
 {
     /// <summary>
+    /// The name that the worker should use when communicating with Reqless.
+    /// </summary>
+    public string Name { get; }
+
+    /// <summary>
     /// Execute the worker.
     /// </summary>
     /// <param name="cancellationToken">A <see cref="CancellationToken"/>

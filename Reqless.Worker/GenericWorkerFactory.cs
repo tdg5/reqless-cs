@@ -12,7 +12,11 @@ public class GenericWorkerFactory<T> : IWorkerFactory where T : IWorker
     /// <summary>
     /// Create an <see cref="IWorker"/> instance of <typeparamref name="T"/>.
     /// </summary>
+    /// <param name="serviceProvider">An <see cref="IServiceProvider"/> instance
+    /// that can be utilized when creating worker instances.</param>
     /// <returns>The <see cref="IWorker"/> instance.</returns>
-    public IWorker Create(IServiceProvider serviceProvider) =>
-        ActivatorUtilities.CreateInstance<T>(serviceProvider);
+    /// <param name="name">The name that should be given to the worker for use when communicating
+    /// with Reqless.</param>
+    public IWorker Create(IServiceProvider serviceProvider, string name) =>
+        ActivatorUtilities.CreateInstance<T>(serviceProvider, name);
 }

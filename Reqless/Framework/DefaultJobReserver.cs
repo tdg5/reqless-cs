@@ -37,7 +37,10 @@ public class DefaultJobReserver : IJobReserver
     }
 
     /// <inheritdoc />
-    public Task<Job?> TryReserveJobAsync()
+    public async Task<Job?> TryReserveJobAsync(
+        string workerName,
+        CancellationToken? cancellationToken = null
+    )
     {
         // Should this method take queue identifiers as an argument?
         Job? job = null;

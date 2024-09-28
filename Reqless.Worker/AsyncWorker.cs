@@ -9,6 +9,9 @@ namespace Reqless.Worker;
 /// </summary>
 public class AsyncWorker : IWorker
 {
+    /// <inheritdoc/>
+    public string Name { get; }
+
     /// <summary>
     /// An <see cref="IReqlessClient"/> instance to use for accessing Reqless.
     /// </summary>
@@ -36,6 +39,8 @@ public class AsyncWorker : IWorker
     /// </summary>
     /// <param name="jobReserver">An <see cref="IJobReserver"/> instance to use
     /// for reserving jobs.</param>
+    /// <param name="name">The name the worker should use when communicating
+    /// with Reqless.</param>
     /// <param name="reqlessClient">An <see cref="IReqlessClient"/> instance to
     /// use for accessing Reqless.</param>
     /// <param name="unitOfWorkActivator">An <see cref="IUnitOfWorkActivator"/>
@@ -44,6 +49,7 @@ public class AsyncWorker : IWorker
     /// instance to use for resolving unit of work types.</param>
     public AsyncWorker(
         IJobReserver jobReserver,
+        string name,
         IReqlessClient reqlessClient,
         IUnitOfWorkActivator unitOfWorkActivator,
         IUnitOfWorkResolver unitOfWorkResolver
@@ -53,6 +59,7 @@ public class AsyncWorker : IWorker
         _reqlessClient = reqlessClient;
         _unitOfWorkActivator = unitOfWorkActivator;
         _unitOfWorkResolver = unitOfWorkResolver;
+        Name = name;
     }
 
     /// <inheritdoc/>
@@ -72,7 +79,7 @@ public class AsyncWorker : IWorker
             {
                 // How are queue identifiers supposed to reach this point?
                 // Should they be encapsulated somewhere else already?
-                Job? job = await _jobReserver.TryReserveJobAsync();
+                Job? job = await _jobReserver.TryReserveJobAsync(Name);
                 if (true || job is not null)
                 {
                     await ExecuteJobAsync(

@@ -32,7 +32,12 @@ public static class ServiceCollectionExtensions
 
         foreach (var index in Enumerable.Range(0, settings.WorkerCount))
         {
-            services.AddSingleton<IHostedService, WorkerService>();
+            services.AddSingleton<IHostedService>(
+                provider => ActivatorUtilities.CreateInstance<WorkerService>(
+                    provider,
+                    $"ReqlessWorker-{index}"
+                )
+            );
         }
 
         return services;
