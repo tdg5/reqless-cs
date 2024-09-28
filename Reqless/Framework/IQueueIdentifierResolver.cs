@@ -1,4 +1,4 @@
-namespace Reqless.Framework.QueueIdentifierResolvers;
+namespace Reqless.Framework;
 
 /// <summary>
 /// Abstraction encapsulating the logic to resolve queue identifiers to queue
