@@ -14,32 +14,19 @@ public class DefaultUnitOfWorkActivator : IUnitOfWorkActivator
     //   - Parameter name of data could be a hint too.
     // Use reflection to find an optional parameter of some kind of abstract job class?
 
-    private readonly IServiceProvider _provider;
-
-    /// <summary>
-    /// Create an instance of <see cref="DefaultUnitOfWorkActivator"/>.
-    /// </summary>
-    /// <param name="provider">The <see cref="IUnitOfWorkActivator"/> instance
-    /// to use when resolving dependencies.</param>
-    public DefaultUnitOfWorkActivator(IServiceProvider provider)
-    {
-        _provider = provider;
-    }
-
     /// <inheritdoc />
-    public IUnitOfWork CreateInstance(Type instanceType)
+    public IUnitOfWork CreateInstance(IServiceProvider serviceProvider, Type instanceType)
     {
-        // var attribute = instanceType.GetCustomAttribute<JobDataTypeAttribute>();
-        // if (attribute == null)
-        // {
-        //     throw new InvalidOperationException("CollaboratorAttribute not found on class.");
-        // }
-        if (ActivatorUtilities.CreateInstance(_provider, instanceType) is not IUnitOfWork unitOfWork)
+        if (
+            ActivatorUtilities.CreateInstance(serviceProvider, instanceType)
+            is IUnitOfWork unitOfWork
+        )
         {
-            throw new InvalidOperationException(
-                $"Could not create an instance of the unit of work class '{instanceType.FullName}'."
-            );
+            return unitOfWork;
         }
-        return unitOfWork!;
+
+        throw new InvalidOperationException(
+            $"Could not create an instance of the unit of work class '{instanceType.FullName}'."
+        );
     }
 }

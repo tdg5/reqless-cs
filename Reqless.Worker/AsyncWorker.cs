@@ -1,6 +1,7 @@
-﻿using Reqless.Framework;
-using Reqless.Client;
+﻿using Microsoft.Extensions.DependencyInjection;
 using Reqless.Client.Models;
+using Reqless.Client;
+using Reqless.Framework;
 
 namespace Reqless.Worker;
 
@@ -16,6 +17,12 @@ public class AsyncWorker : IWorker
     /// An <see cref="IReqlessClient"/> instance to use for accessing Reqless.
     /// </summary>
     protected readonly IReqlessClient _reqlessClient;
+
+    /// <summary>
+    /// A <see cref="IServiceProvider"/> instance that is used to create a new
+    /// scope when creating unit of work instances.
+    /// </summary>
+    protected readonly IServiceProvider _serviceProvider;
 
     /// <summary>
     /// An <see cref="IUnitOfWorkActivator"/> instance to use for unit of work
@@ -43,6 +50,9 @@ public class AsyncWorker : IWorker
     /// with Reqless.</param>
     /// <param name="reqlessClient">An <see cref="IReqlessClient"/> instance to
     /// use for accessing Reqless.</param>
+    /// <param name="serviceProvider">A <see cref="IServiceProvider"/> instance
+    /// that is used to create a new scope when creating unit of work
+    /// instances.</param>
     /// <param name="unitOfWorkActivator">An <see cref="IUnitOfWorkActivator"/>
     /// instance to use for creating unit of work instances.</param>
     /// <param name="unitOfWorkResolver">An <see cref="IUnitOfWorkResolver"/>
@@ -51,12 +61,14 @@ public class AsyncWorker : IWorker
         IJobReserver jobReserver,
         string name,
         IReqlessClient reqlessClient,
+        IServiceProvider serviceProvider,
         IUnitOfWorkActivator unitOfWorkActivator,
         IUnitOfWorkResolver unitOfWorkResolver
     )
     {
         _jobReserver = jobReserver;
         _reqlessClient = reqlessClient;
+        _serviceProvider = serviceProvider;
         _unitOfWorkActivator = unitOfWorkActivator;
         _unitOfWorkResolver = unitOfWorkResolver;
         Name = name;
@@ -122,7 +134,11 @@ public class AsyncWorker : IWorker
                 $"Could not resolve {nameof(IUnitOfWork)} type '{unitOfWorkClassName}'."
             );
 
-        IUnitOfWork unitOfWork = _unitOfWorkActivator.CreateInstance(unitOfWorkClass);
+        using var scope = _serviceProvider.CreateAsyncScope();
+        IUnitOfWork unitOfWork = _unitOfWorkActivator.CreateInstance(
+            scope.ServiceProvider,
+            unitOfWorkClass
+        );
         return unitOfWork.PerformAsync(cancellationToken);
     }
 }

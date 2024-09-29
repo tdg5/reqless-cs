@@ -47,8 +47,7 @@ public class WorkerService : BackgroundService
     /// <inheritdoc/>
     protected override async Task ExecuteAsync(CancellationToken cancellationToken)
     {
-        using var scope = _serviceProvider.CreateAsyncScope();
-        IWorker worker = _workerFactory.Create(scope.ServiceProvider, _name);
+        IWorker worker = _workerFactory.Create(_serviceProvider, _name);
         await worker.ExecuteAsync(cancellationToken);
     }
 }
