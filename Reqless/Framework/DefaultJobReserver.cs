@@ -11,28 +11,28 @@ public class DefaultJobReserver : IJobReserver
 {
     private readonly IReqlessClient _reqlessClient;
 
-    private readonly IQueueIdentifierResolver _queueIdentifierResolver;
+    private readonly IQueueNameProvider _queueNameProvider;
 
     /// <summary>
     /// Create an instance of <see cref="DefaultJobReserver"/>.
     /// </summary>
-    /// <param name="queueIdentifierResolver">The <see cref="IQueueIdentifierResolver"/>
-    /// to use for resolving queue identifiers.</param>
+    /// <param name="queueNameProvider">The <see cref="IQueueNameProvider"/>
+    /// that will provide queue names for the job reserver to use.</param>
     /// <param name="reqlessClient">The <see cref="IReqlessClient"/> to use for
     /// reserving jobs.</param>
     /// <exception cref="ArgumentNullException"></exception>
     public DefaultJobReserver(
-        IQueueIdentifierResolver queueIdentifierResolver,
+        IQueueNameProvider queueNameProvider,
         IReqlessClient reqlessClient
     )
     {
         ArgumentNullException.ThrowIfNull(
-            queueIdentifierResolver,
-            nameof(queueIdentifierResolver)
+            queueNameProvider,
+            nameof(queueNameProvider)
         );
         ArgumentNullException.ThrowIfNull(reqlessClient, nameof(reqlessClient));
 
-        _queueIdentifierResolver = queueIdentifierResolver;
+        _queueNameProvider = queueNameProvider;
         _reqlessClient = reqlessClient;
     }
 
@@ -42,8 +42,21 @@ public class DefaultJobReserver : IJobReserver
         CancellationToken? cancellationToken = null
     )
     {
-        // Should this method take queue identifiers as an argument?
-        Job? job = null;
-        return Task.FromResult(job);
+        var _cancellationToken = cancellationToken ?? CancellationToken.None;
+        var queueNames = await _queueNameProvider.GetQueueNamesAsync();
+        foreach (var queueName in queueNames)
+        {
+            if (_cancellationToken.IsCancellationRequested)
+            {
+                return null;
+            }
+
+            var job = await _reqlessClient.PopJobAsync(queueName, workerName);
+            if (job is not null)
+            {
+                return job;
+            }
+        }
+        return null;
     }
 }

@@ -28,6 +28,9 @@ public static class ServiceCollectionExtensions
         services.AddSingleton<IReqlessWorkerSettings>(settings);
         services.AddReqlessServices();
         services.TryAddSingleton<IReqlessClientFactory, DefaultReqlessClientFactory>();
+        services.TryAddSingleton<IQueueIdentifierResolver, DefaultQueueIdentifierResolver>();
+        services.TryAddSingleton<IJobReserver, DefaultJobReserver>();
+        services.TryAddSingleton<IQueueNameProvider, DefaultQueueNameProvider>();
         services.TryAddSingleton<IWorkerFactory, GenericWorkerFactory<AsyncWorker>>();
 
         foreach (var index in Enumerable.Range(0, settings.WorkerCount))
