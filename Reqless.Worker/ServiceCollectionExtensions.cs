@@ -32,6 +32,7 @@ public static class ServiceCollectionExtensions
         services.TryAddSingleton<IQueueNameProvider, DefaultQueueNameProvider>();
         services.TryAddSingleton<IReqlessClientFactory, DefaultReqlessClientFactory>();
         services.TryAddSingleton<IWorkerFactory, GenericWorkerFactory<AsyncWorker>>();
+        services.TryAddSingleton<IWorkerNameProvider, DefaultWorkerNameProvider>();
         settings.WorkerServiceRegistrar.RegisterWorkers(services, settings.WorkerCount);
 
         return services;
