@@ -1,4 +1,3 @@
-using System.Diagnostics.CodeAnalysis;
 using Reqless.Client.Models;
 
 namespace Reqless.Framework;
