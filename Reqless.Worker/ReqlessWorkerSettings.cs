@@ -18,6 +18,9 @@ public class ReqlessWorkerSettings : IReqlessWorkerSettings
     /// <inheritdoc/>
     public int WorkerCount { get; }
 
+    /// <inheritdoc/>
+    public IWorkerServiceRegistrar WorkerServiceRegistrar { get; }
+
     /// <summary>
     /// Create an instance of <see cref="ReqlessWorkerSettings"/> using a
     /// default redis connection string.
@@ -41,10 +44,14 @@ public class ReqlessWorkerSettings : IReqlessWorkerSettings
     /// <param name="queueIdentifiers">The queue identifiers controlling what
     /// queues the worker should take work from.</param>
     /// <param name="workerCount">The number of workers to spawn.</param>
+    /// <param name="workerServiceRegistrar">The <see
+    /// cref="IWorkerServiceRegistrar"/> to use when registering worker services
+    /// with the application servicvice collection</param>
     public ReqlessWorkerSettings(
         string connectionString,
         ReadOnlyCollection<string> queueIdentifiers,
-        int workerCount
+        int workerCount,
+        IWorkerServiceRegistrar? workerServiceRegistrar = null
     )
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(connectionString, nameof(connectionString));
@@ -54,5 +61,7 @@ public class ReqlessWorkerSettings : IReqlessWorkerSettings
         ConnectionString = connectionString;
         QueueIdentifiers = queueIdentifiers;
         WorkerCount = workerCount;
+        WorkerServiceRegistrar = workerServiceRegistrar
+            ?? new DefaultWorkerServiceRegistrar();
     }
 }

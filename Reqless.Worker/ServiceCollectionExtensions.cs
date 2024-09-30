@@ -25,23 +25,14 @@ public static class ServiceCollectionExtensions
         ReqlessWorkerSettings settings
     )
     {
-        services.AddSingleton<IReqlessWorkerSettings>(settings);
         services.AddReqlessServices();
-        services.TryAddSingleton<IReqlessClientFactory, DefaultReqlessClientFactory>();
-        services.TryAddSingleton<IQueueIdentifierResolver, DefaultQueueIdentifierResolver>();
+        services.AddSingleton<IReqlessWorkerSettings>(settings);
         services.TryAddSingleton<IJobReserver, DefaultJobReserver>();
+        services.TryAddSingleton<IQueueIdentifierResolver, DefaultQueueIdentifierResolver>();
         services.TryAddSingleton<IQueueNameProvider, DefaultQueueNameProvider>();
+        services.TryAddSingleton<IReqlessClientFactory, DefaultReqlessClientFactory>();
         services.TryAddSingleton<IWorkerFactory, GenericWorkerFactory<AsyncWorker>>();
-
-        foreach (var index in Enumerable.Range(0, settings.WorkerCount))
-        {
-            services.AddSingleton<IHostedService>(
-                provider => ActivatorUtilities.CreateInstance<WorkerService>(
-                    provider,
-                    $"ReqlessWorker-{index}"
-                )
-            );
-        }
+        settings.WorkerServiceRegistrar.RegisterWorkers(services, settings.WorkerCount);
 
         return services;
     }

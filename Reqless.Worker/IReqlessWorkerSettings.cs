@@ -22,4 +22,10 @@ public interface IReqlessWorkerSettings
     /// The number of workers to spawn.
     /// </summary>
     public int WorkerCount { get; }
+
+    /// <summary>
+    /// The <see cref="IWorkerServiceRegistrar"/> instance to use when
+    /// registering worker services with the application service collection.
+    /// </summary>
+    IWorkerServiceRegistrar WorkerServiceRegistrar { get; }
 }

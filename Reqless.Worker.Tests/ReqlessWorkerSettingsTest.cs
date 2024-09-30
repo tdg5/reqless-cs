@@ -1,3 +1,4 @@
+using Moq;
 using System.Collections.ObjectModel;
 using Reqless.Common.Utilities;
 using Reqless.Tests.Common.TestHelpers;
@@ -111,16 +112,47 @@ public class ReqlessWorkerSettingsTest
     }
 
     /// <summary>
+    /// <see cref="ReqlessWorkerSettings"/> constructor should set the <see
+    /// cref="ReqlessWorkerSettings.WorkerServiceRegistrar"/> property to the
+    /// default value if the workerServiceRegistrar argument is null.
+    /// </summary>
+    [Fact]
+    public void Constructor_WorkerServiceRegistrarDefaultsToExpectedType()
+    {
+        var subject = MakeSubject();
+        Assert.IsType<DefaultWorkerServiceRegistrar>(subject.WorkerServiceRegistrar);
+    }
+
+    /// <summary>
+    /// <see cref="ReqlessWorkerSettings"/> constructor should set the <see
+    /// cref="ReqlessWorkerSettings.WorkerServiceRegistrar"/> property to the
+    /// provided value if the workerServiceRegistrar argument is not null.
+    /// </summary>
+    [Fact]
+    public void Constructor_WorkerServiceRegistrarCanBeProvided()
+    {
+        var workerServiceRegistrar = new Mock<IWorkerServiceRegistrar>().Object;
+        var subject = MakeSubject(
+            workerServiceRegistrar: Maybe<IWorkerServiceRegistrar?>.Some(
+                workerServiceRegistrar
+            )
+        );
+        Assert.Same(workerServiceRegistrar, subject.WorkerServiceRegistrar);
+    }
+
+    /// <summary>
     /// Create a new instance of <see cref="ReqlessWorkerSettings"/> with the
     /// specified parameters or default values.
     /// </summary>
     /// <param name="connectionString">The connection string.</param>
     /// <param name="queueIdentifiers">The queue identifiers.</param>
     /// <param name="workerCount">The number of workers.</param>
+    /// <param name="workerServiceRegistrar">The worker service registrar.</param>
     public static ReqlessWorkerSettings MakeSubject(
         Maybe<string>? connectionString = null,
         Maybe<ReadOnlyCollection<string>>? queueIdentifiers = null,
-        Maybe<int>? workerCount = null
+        Maybe<int>? workerCount = null,
+        Maybe<IWorkerServiceRegistrar?>? workerServiceRegistrar = null
     )
     {
         Maybe<string> _connectionString = connectionString
@@ -130,10 +162,13 @@ public class ReqlessWorkerSettingsTest
                 new List<string> { "queue1", "queue2" }.AsReadOnly()
             );
         Maybe<int> _workerCount = workerCount ?? Maybe<int>.Some(1);
+        Maybe<IWorkerServiceRegistrar?> _workerServiceRegistrar = workerServiceRegistrar
+            ?? Maybe<IWorkerServiceRegistrar?>.None;
         return new ReqlessWorkerSettings(
             connectionString: _connectionString.GetOrDefault(null!),
             queueIdentifiers: _queueIdentifiers.GetOrDefault(null!),
-            workerCount: _workerCount.GetOrDefault(1)
+            workerCount: _workerCount.GetOrDefault(1),
+            workerServiceRegistrar: _workerServiceRegistrar.GetOrDefault(null)
         );
     }
 }
