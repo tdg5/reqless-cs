@@ -24,10 +24,6 @@ public static class ServiceCollectionExtensions
         services.TryAddSingleton<IReqlessClient>(
             provider => provider.GetRequiredService<IReqlessClientFactory>().Create()
         );
-        services.TryAddSingleton<IUnitOfWorkActivator, DefaultUnitOfWorkActivator>();
-        services.TryAddSingleton<IUnitOfWorkResolver, DefaultUnitOfWorkResolver>();
-        services.TryAddSingleton<IJobContextAccessor, DefaultJobContextAccessor>();
-        services.TryAddSingleton<IJobContextFactory, DefaultJobContextFactory>();
 
         return services;
     }
