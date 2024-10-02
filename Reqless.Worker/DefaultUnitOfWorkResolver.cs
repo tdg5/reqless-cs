@@ -1,7 +1,8 @@
-using System.Reflection;
 using Microsoft.Extensions.DependencyModel;
+using Reqless.Framework;
+using System.Reflection;
 
-namespace Reqless.Framework;
+namespace Reqless.Worker;
 
 /// <summary>
 /// Concrete implmentation of <see cref="IUnitOfWorkResolver"/> that uses

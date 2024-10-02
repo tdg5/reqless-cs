@@ -1,4 +1,4 @@
-namespace Reqless.Framework;
+namespace Reqless.Worker;
 
 /// <summary>
 /// Interface for a cla a list of queue names that a worker should listen to.

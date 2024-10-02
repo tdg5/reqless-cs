@@ -1,4 +1,4 @@
-namespace Reqless.Framework;
+namespace Reqless.Worker;
 
 /// <summary>
 /// Provides an implementation of <see cref="IJobContextAccessor" /> based on

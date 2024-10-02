@@ -1,6 +1,6 @@
-using Reqless.Framework;
 using Reqless.Client;
-using Reqless.Client.Models;
+using Reqless.Framework;
+using Reqless.Worker;
 using System.Text.Json;
 
 namespace Reqless.ExampleWorkerApp;

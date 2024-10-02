@@ -1,6 +1,6 @@
 using Reqless.Client.Models;
 
-namespace Reqless.Framework;
+namespace Reqless.Worker;
 
 /// <summary>
 /// Abstraction encapsulating the logic to pop a job for execution.

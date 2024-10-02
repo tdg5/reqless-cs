@@ -1,4 +1,6 @@
-namespace Reqless.Framework;
+using Reqless.Framework;
+
+namespace Reqless.Worker;
 
 /// <summary>
 /// Contract for classes that support resolving classes that implement the <see

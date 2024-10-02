@@ -1,8 +1,7 @@
 using Reqless.Client;
 using Reqless.Client.Models;
-using Reqless.Framework.QueueIdentifierResolvers;
 
-namespace Reqless.Framework;
+namespace Reqless.Worker;
 
 /// <summary>
 /// Default implementation of <see cref="IJobReserver"/>.

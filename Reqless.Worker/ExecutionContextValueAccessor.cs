@@ -1,4 +1,4 @@
-namespace Reqless.Framework;
+namespace Reqless.Worker;
 
 /// <summary>
 /// A generic value accessor that can hold a reference value for the duration of

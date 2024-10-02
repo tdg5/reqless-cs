@@ -1,6 +1,6 @@
 using Reqless.Client.Models;
 
-namespace Reqless.Framework;
+namespace Reqless.Worker;
 
 /// <summary>
 /// Default concrete implementation of the <see cref="IJobContext"/> interface.

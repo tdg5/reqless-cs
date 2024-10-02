@@ -1,6 +1,6 @@
 using Reqless.Client.Models;
 
-namespace Reqless.Framework;
+namespace Reqless.Worker;
 
 /// <summary>
 /// Represents the context of a job that is actively being processed.

@@ -1,7 +1,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using Reqless.Client.Models;
 
-namespace Reqless.Framework;
+namespace Reqless.Worker;
 
 /// <summary>
 /// Default concrete implementation of <see cref="IJobContextFactory"/>.
