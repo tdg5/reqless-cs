@@ -19,10 +19,7 @@ public class Program
     {
         HostApplicationBuilder builder = Host.CreateApplicationBuilder(args);
         builder.Services.AddSingleton<IReqlessClientFactory>(
-            new ReqlessClientFactory(() =>
-            {
-                return new ReqlessClient();
-            })
+            new ReqlessClientFactory(() => new ReqlessClient())
         );
         builder.Services.AddReqlessServices();
         builder.Services.AddSingleton<IHostedService, Application>();
