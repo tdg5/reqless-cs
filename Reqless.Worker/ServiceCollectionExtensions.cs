@@ -29,6 +29,7 @@ public static class ServiceCollectionExtensions
         services.AddSingleton<IReqlessWorkerSettings>(settings);
         services.TryAddSingleton<IJobContextAccessor, DefaultJobContextAccessor>();
         services.TryAddSingleton<IJobContextFactory, DefaultJobContextFactory>();
+        services.TryAddSingleton<IJobExecutor, DefaultJobExecutor>();
         services.TryAddSingleton<IJobReserver, DefaultJobReserver>();
         services.TryAddSingleton<IQueueIdentifierResolver, DefaultQueueIdentifierResolver>();
         services.TryAddSingleton<IQueueNameProvider, DefaultQueueNameProvider>();
