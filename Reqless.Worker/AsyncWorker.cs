@@ -89,13 +89,11 @@ public class AsyncWorker : IWorker
 
             try
             {
-                // How are queue identifiers supposed to reach this point?
-                // Should they be encapsulated somewhere else already?
                 Job? job = await _jobReserver.TryReserveJobAsync(Name);
-                if (true || job is not null)
+                if (job is not null)
                 {
                     await ExecuteJobAsync(
-                        job!,
+                        job,
                         cancellationToken
                     );
                 }
@@ -128,10 +126,9 @@ public class AsyncWorker : IWorker
         CancellationToken cancellationToken
     )
     {
-        var unitOfWorkClassName = "Reqless.ExampleWorkerApp.ConcreteUnitOfWork";
-        Type unitOfWorkClass = _unitOfWorkResolver.Resolve(unitOfWorkClassName) ??
+        Type unitOfWorkClass = _unitOfWorkResolver.Resolve(job.ClassName) ??
             throw new InvalidOperationException(
-                $"Could not resolve {nameof(IUnitOfWork)} type '{unitOfWorkClassName}'."
+                $"Could not resolve {nameof(IUnitOfWork)} type '{job.ClassName}'."
             );
 
         using var scope = _serviceProvider.CreateAsyncScope();
