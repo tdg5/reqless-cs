@@ -13,4 +13,11 @@ public interface IJobContextFactory
     /// <param name="job">The job that is actively being processed.</param>
     /// <returns></returns>
     IJobContext Create(Job job);
+
+    /// <summary>
+    /// Disposes the given <see cref="IJobContext"/>  instance.
+    /// </summary>
+    /// <param name="context">The <see cref="IJobContext"/> instance to
+    /// dispose.</param>
+    public void DisposeContext(IJobContext context);
 }

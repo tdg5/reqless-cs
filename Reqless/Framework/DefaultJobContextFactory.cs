@@ -21,7 +21,7 @@ public class DefaultJobContextFactory : IJobContextFactory
         _jobContextAccessor = serviceProvider.GetService<IJobContextAccessor>();
     }
 
-    /// <inheritdoc />
+    /// <inheritdoc/>
     public IJobContext Create(Job job)
     {
         DefaultJobContext jobContext = new(job);
@@ -30,5 +30,14 @@ public class DefaultJobContextFactory : IJobContextFactory
             _jobContextAccessor.Value = jobContext;
         }
         return jobContext;
+    }
+
+    /// <inheritdoc/>
+    public void DisposeContext(IJobContext context)
+    {
+        if (_jobContextAccessor != null)
+        {
+            _jobContextAccessor.Value = null;
+        }
     }
 }

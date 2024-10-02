@@ -14,7 +14,7 @@ public class ConcreteUnitOfWork : IUnitOfWork
 
     IThinger _thinger;
 
-    Job? _job = null;
+    IJobContextAccessor _jobContextAccessor;
 
     /// <summary>
     /// Create an instance of <see cref="ConcreteUnitOfWork"/>.
@@ -22,11 +22,11 @@ public class ConcreteUnitOfWork : IUnitOfWork
     public ConcreteUnitOfWork(
         IThinger thinger,
         IReqlessClient reqlessClient,
-        Job? job = null
+        IJobContextAccessor jobContextAccessor
     )
     {
         _client = reqlessClient;
-        _job = job;
+        _jobContextAccessor = jobContextAccessor;
         _thinger = thinger;
     }
 
@@ -34,6 +34,14 @@ public class ConcreteUnitOfWork : IUnitOfWork
     public async Task PerformAsync(CancellationToken cancellationToken)
     {
         _thinger.DoThing();
+        var jobContext = _jobContextAccessor.Value ??
+            throw new InvalidOperationException("Job context is null.");
+        Console.WriteLine(
+            JsonSerializer.Serialize(
+                jobContext.Job,
+                new JsonSerializerOptions { WriteIndented = true }
+            )
+        );
         Console.WriteLine(
             JsonSerializer.Serialize(
                 await _client.GetAllWorkerCountsAsync(),

@@ -14,6 +14,12 @@ public class AsyncWorker : IWorker
     public string Name { get; }
 
     /// <summary>
+    /// An <see cref="IJobContextFactory"/> instance to use for making <see
+    /// cref="IJobContext"/> instances.
+    /// </summary>
+    protected readonly IJobContextFactory _jobContextFactory;
+
+    /// <summary>
     /// An <see cref="IReqlessClient"/> instance to use for accessing Reqless.
     /// </summary>
     protected readonly IReqlessClient _reqlessClient;
@@ -44,6 +50,8 @@ public class AsyncWorker : IWorker
     /// <summary>
     /// Create an instance of <see cref="AsyncWorker"/>.
     /// </summary>
+    /// <param name="jobContextFactory">An <see cref="IJobContextFactory"/>
+    /// instance to use for making <see cref="IJobContext"/> instances.</param>
     /// <param name="jobReserver">An <see cref="IJobReserver"/> instance to use
     /// for reserving jobs.</param>
     /// <param name="name">The name the worker should use when communicating
@@ -58,6 +66,7 @@ public class AsyncWorker : IWorker
     /// <param name="unitOfWorkResolver">An <see cref="IUnitOfWorkResolver"/>
     /// instance to use for resolving unit of work types.</param>
     public AsyncWorker(
+        IJobContextFactory jobContextFactory,
         IJobReserver jobReserver,
         string name,
         IReqlessClient reqlessClient,
@@ -66,6 +75,7 @@ public class AsyncWorker : IWorker
         IUnitOfWorkResolver unitOfWorkResolver
     )
     {
+        _jobContextFactory = jobContextFactory;
         _jobReserver = jobReserver;
         _reqlessClient = reqlessClient;
         _serviceProvider = serviceProvider;
@@ -78,6 +88,7 @@ public class AsyncWorker : IWorker
     public async Task ExecuteAsync(CancellationToken cancellationToken)
     {
         ExecutionContext? initialExecutionContext = ExecutionContext.Capture();
+        IJobContext? jobContext = null;
         while (!cancellationToken.IsCancellationRequested)
         {
             if (initialExecutionContext is not null)
@@ -92,6 +103,7 @@ public class AsyncWorker : IWorker
                 Job? job = await _jobReserver.TryReserveJobAsync(Name);
                 if (job is not null)
                 {
+                    jobContext = _jobContextFactory.Create(job);
                     await ExecuteJobAsync(
                         job,
                         cancellationToken
@@ -100,6 +112,10 @@ public class AsyncWorker : IWorker
             }
             finally
             {
+                if (jobContext is not null)
+                {
+                    _jobContextFactory.DisposeContext(jobContext);
+                }
                 Reset();
             }
             await Task.Delay(1_000, cancellationToken);
