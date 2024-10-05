@@ -10,14 +10,10 @@ public interface IJobContextFactory
     /// <summary>
     /// Creates a new instance of <see cref="IJobContext"/>.
     /// </summary>
-    /// <param name="job">The job that is actively being processed.</param>
-    /// <returns></returns>
-    IJobContext Create(Job job);
-
-    /// <summary>
-    /// Disposes the given <see cref="IJobContext"/>  instance.
-    /// </summary>
-    /// <param name="context">The <see cref="IJobContext"/> instance to
-    /// dispose.</param>
-    public void DisposeContext(IJobContext context);
+    /// <param name="serviceProvider">The <see cref="IServiceProvider"/>
+    /// instance that should be used to create the <see cref="IJobContext"/>
+    /// instance.</param>
+    /// <param name="job">The <see cref="Job"/> that is actively being
+    /// processed.</param>
+    IJobContext Create(IServiceProvider serviceProvider, Job job);
 }

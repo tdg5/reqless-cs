@@ -1,6 +1,5 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
-using Microsoft.Extensions.Hosting;
 using Reqless.Framework;
 
 namespace Reqless.Worker;
@@ -27,7 +26,6 @@ public static class ServiceCollectionExtensions
     {
         services.AddReqlessServices();
         services.AddSingleton<IReqlessWorkerSettings>(settings);
-        services.TryAddSingleton<IJobContextAccessor, DefaultJobContextAccessor>();
         services.TryAddSingleton<IJobContextFactory, DefaultJobContextFactory>();
         services.TryAddSingleton<IJobExecutor, DefaultJobExecutor>();
         services.TryAddSingleton<IJobReserver, DefaultJobReserver>();
@@ -38,6 +36,7 @@ public static class ServiceCollectionExtensions
         services.TryAddSingleton<IUnitOfWorkResolver, DefaultUnitOfWorkResolver>();
         services.TryAddSingleton<IWorkerFactory, GenericWorkerFactory<AsyncWorker>>();
         services.TryAddSingleton<IWorkerNameProvider, DefaultWorkerNameProvider>();
+        services.TryAddScoped<IJobContextAccessor, DefaultJobContextAccessor>();
         settings.WorkerServiceRegistrar.RegisterWorkers(services, settings.WorkerCount);
 
         return services;

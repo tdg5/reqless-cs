@@ -1,7 +1,4 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-using Reqless.Client.Models;
-using Reqless.Client;
-using Reqless.Framework;
+﻿using Reqless.Client.Models;
 
 namespace Reqless.Worker;
 

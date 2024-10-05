@@ -1,4 +1,3 @@
-using Microsoft.Extensions.DependencyInjection;
 using Reqless.Client.Models;
 
 namespace Reqless.Worker;
@@ -8,36 +7,9 @@ namespace Reqless.Worker;
 /// </summary>
 public class DefaultJobContextFactory : IJobContextFactory
 {
-    private readonly IJobContextAccessor? _jobContextAccessor;
-
-    /// <summary>
-    /// Initializes a new instance of the <see cref="DefaultJobContextFactory"/>
-    /// class.
-    /// </summary>
-    /// <param name="serviceProvider">The <see cref="IServiceProvider"/>
-    /// instance that should be used to resolve services.</param>
-    public DefaultJobContextFactory(IServiceProvider serviceProvider)
-    {
-        _jobContextAccessor = serviceProvider.GetService<IJobContextAccessor>();
-    }
-
     /// <inheritdoc/>
-    public IJobContext Create(Job job)
+    public IJobContext Create(IServiceProvider serviceProvider, Job job)
     {
-        DefaultJobContext jobContext = new(job);
-        if (_jobContextAccessor != null)
-        {
-            _jobContextAccessor.Value = jobContext;
-        }
-        return jobContext;
-    }
-
-    /// <inheritdoc/>
-    public void DisposeContext(IJobContext context)
-    {
-        if (_jobContextAccessor != null)
-        {
-            _jobContextAccessor.Value = null;
-        }
+        return new DefaultJobContext(job);
     }
 }

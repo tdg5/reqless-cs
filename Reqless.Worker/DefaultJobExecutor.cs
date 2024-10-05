@@ -58,23 +58,30 @@ public class DefaultJobExecutor : IJobExecutor
             );
 
         ExecutionContext? initialExecutionContext = ExecutionContext.Capture();
-        IJobContext? jobContext = _jobContextFactory.Create(job);
         try
         {
             using var scope = _serviceProvider.CreateAsyncScope();
+
+            IJobContext? jobContext =
+                _jobContextFactory.Create(scope.ServiceProvider, job);
+
+            if (
+                scope.ServiceProvider.GetService<IJobContextAccessor>()
+                    is IJobContextAccessor jobContextAccessor
+            )
+            {
+                jobContextAccessor.Value = jobContext;
+            }
+
             IUnitOfWork unitOfWork = _unitOfWorkActivator.CreateInstance(
                 scope.ServiceProvider,
                 unitOfWorkClass
             );
+
             await unitOfWork.PerformAsync(cancellationToken);
         }
         finally
         {
-            if (jobContext is not null)
-            {
-                _jobContextFactory.DisposeContext(jobContext);
-            }
-
             if (initialExecutionContext is not null)
             {
                 // Clear any AsyncLocals set during job execution back to a
