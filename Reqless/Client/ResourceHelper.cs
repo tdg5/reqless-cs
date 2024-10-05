@@ -33,14 +33,12 @@ public static class ResourceHelper
             throw new FileNotFoundException($"Resource {fullResourceName} not found.");
         }
 
-        // stream can be null "if no resources were specified during
-        // compilation or if the resource is not visible to the
-        // caller", but I have no idea how to test that :(
-        using Stream? stream = assembly.GetManifestResourceStream(fullResourceName)
-            ?? throw new FileNotFoundException(
-                $"Resource {fullResourceName} not found."
-            );
-
+        // GetManifestResourceStream returns null "if a private resource in
+        // another assembly is accessed and the caller does not have
+        // [permissions]...".  However, since the code above ensures that the
+        // requested resource is part of the Reqless assembly, null should not
+        // be returned and thus can be forgiven.
+        using Stream stream = assembly.GetManifestResourceStream(fullResourceName)!;
         using StreamReader reader = new(stream);
         return reader.ReadToEnd();
     }
