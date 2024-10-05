@@ -57,37 +57,23 @@ public class DefaultJobExecutor : IJobExecutor
                 $"Could not resolve {nameof(IUnitOfWork)} type '{job.ClassName}'."
             );
 
-        ExecutionContext? initialExecutionContext = ExecutionContext.Capture();
-        try
+        using var scope = _serviceProvider.CreateAsyncScope();
+
+        IJobContext? jobContext = _jobContextFactory.Create(scope.ServiceProvider, job);
+
+        if (
+            scope.ServiceProvider.GetService<IJobContextAccessor>()
+                is IJobContextAccessor jobContextAccessor
+        )
         {
-            using var scope = _serviceProvider.CreateAsyncScope();
-
-            IJobContext? jobContext =
-                _jobContextFactory.Create(scope.ServiceProvider, job);
-
-            if (
-                scope.ServiceProvider.GetService<IJobContextAccessor>()
-                    is IJobContextAccessor jobContextAccessor
-            )
-            {
-                jobContextAccessor.Value = jobContext;
-            }
-
-            IUnitOfWork unitOfWork = _unitOfWorkActivator.CreateInstance(
-                scope.ServiceProvider,
-                unitOfWorkClass
-            );
-
-            await unitOfWork.PerformAsync(cancellationToken);
+            jobContextAccessor.Value = jobContext;
         }
-        finally
-        {
-            if (initialExecutionContext is not null)
-            {
-                // Clear any AsyncLocals set during job execution back to a
-                // clean state ready for next job.
-                ExecutionContext.Restore(initialExecutionContext);
-            }
-        }
+
+        IUnitOfWork unitOfWork = _unitOfWorkActivator.CreateInstance(
+            scope.ServiceProvider,
+            unitOfWorkClass
+        );
+
+        await unitOfWork.PerformAsync(cancellationToken);
     }
 }
