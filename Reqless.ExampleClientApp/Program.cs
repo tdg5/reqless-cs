@@ -1,10 +1,9 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Reqless.Client;
-using Reqless.ExampleClientApp;
 using Reqless.Framework;
 
-namespace Reqless.ExampleWorkerApp;
+namespace Reqless.ExampleClientApp;
 
 /// <summary>
 /// Main program entry point.
@@ -19,7 +18,7 @@ public class Program
     {
         HostApplicationBuilder builder = Host.CreateApplicationBuilder(args);
         builder.Services.AddSingleton<IReqlessClientFactory>(
-            new ReqlessClientFactory(() => new ReqlessClient())
+            new DelegatingReqlessClientFactory(() => new ReqlessClient())
         );
         builder.Services.AddReqlessServices();
         builder.Services.AddSingleton<IHostedService, Application>();
