@@ -45,6 +45,16 @@ public class ArgumentValidationTest
     }
 
     /// <summary>
+    /// <see cref="ArgumentValidation.ThrowIfNullOrEmpty"/> should not throw if
+    /// collection is not empty.
+    /// </summary>
+    [Fact]
+    public void ThrowIfNullOrEmpty_DoesNotThrowIfCollectionIsNotEmpty()
+    {
+        ArgumentValidation.ThrowIfNullOrEmpty([""], "param");
+    }
+
+    /// <summary>
     /// <see cref="ArgumentValidation.ThrowIfAnyNull"/> should throw if the
     /// collection is null.
     /// </summary>
