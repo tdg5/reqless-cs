@@ -1,5 +1,6 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Reqless.Client;
 using Reqless.Framework;
 
 namespace Reqless.Worker;
@@ -24,7 +25,9 @@ public static class ServiceCollectionExtensions
         ReqlessWorkerSettings settings
     )
     {
-        services.AddReqlessServices();
+        services.TryAddSingleton<IReqlessClient>(
+            provider => provider.GetRequiredService<IReqlessClientFactory>().Create()
+        );
         services.AddSingleton<IReqlessWorkerSettings>(settings);
         services.TryAddSingleton<IJobContextFactory, DefaultJobContextFactory>();
         services.TryAddSingleton<IJobExecutor, DefaultJobExecutor>();

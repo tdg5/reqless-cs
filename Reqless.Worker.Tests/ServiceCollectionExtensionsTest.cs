@@ -137,8 +137,9 @@ public class ServiceCollectionExtensionsTest
     }
 
     /// <summary>
-    /// <see cref="ServiceCollectionExtensions.AddReqlessWorkerServices"/> should add
-    /// an <see cref="IReqlessClient"/> service if none is registered.
+    /// <see cref="ServiceCollectionExtensions.AddReqlessWorkerServices"/>
+    /// should add an <see cref="IReqlessClient"/> service if none is
+    /// registered.
     /// </summary>
     [Fact]
     public void AddReqlessWorkerServices_AddsIReqlessClientIfNoneRegistered()

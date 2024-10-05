@@ -17,11 +17,15 @@ public class Program
     public static void Main(string[] args)
     {
         HostApplicationBuilder builder = Host.CreateApplicationBuilder(args);
-        builder.Services.AddSingleton<IReqlessClientFactory>(
+        IServiceCollection services = builder.Services;
+
+        services.AddSingleton<IReqlessClientFactory>(
             new DelegatingReqlessClientFactory(() => new ReqlessClient())
         );
-        builder.Services.AddReqlessServices();
-        builder.Services.AddSingleton<IHostedService, Application>();
+        services.AddSingleton<IReqlessClient>(
+            provider => provider.GetRequiredService<IReqlessClientFactory>().Create()
+        );
+        services.AddSingleton<IHostedService, Application>();
 
         using IHost host = builder.Build();
         host.Run();

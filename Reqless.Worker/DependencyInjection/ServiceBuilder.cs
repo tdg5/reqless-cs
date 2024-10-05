@@ -1,6 +1,6 @@
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Reqless.Common.DependencyInjection;
+namespace Reqless.Worker.DependencyInjection;
 
 /// <summary>
 /// Helper class for building services from factories taking an <see

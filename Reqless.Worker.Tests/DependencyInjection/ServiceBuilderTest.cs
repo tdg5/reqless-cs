@@ -1,7 +1,7 @@
 using Microsoft.Extensions.DependencyInjection;
-using Reqless.Common.DependencyInjection;
+using Reqless.Worker.DependencyInjection;
 
-namespace Reqless.Tests.Common.DependencyInjection;
+namespace Reqless.Worker.Tests.DependencyInjection;
 
 /// <summary>
 /// Tests for the <see cref="ServiceBuilder"/> class.
