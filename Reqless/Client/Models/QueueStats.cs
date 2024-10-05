@@ -49,11 +49,4 @@ public class QueueStats
     /// </summary>
     [JsonPropertyName("wait")]
     public required QueueStateStats Wait { get; set; }
-
-    /// <summary>
-    /// Initializes a new instance of the <see cref="QueueStats"/> class.
-    /// </summary>
-    public QueueStats()
-    {
-    }
 }

@@ -38,11 +38,4 @@ public class WorkerCounts
             _WorkerName = value;
         }
     }
-
-    /// <summary>
-    /// Initializes a new instance of the <see cref="WorkerCounts"/> class.
-    /// </summary>
-    public WorkerCounts()
-    {
-    }
 }

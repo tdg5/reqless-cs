@@ -1,7 +1,7 @@
-using System.Text.RegularExpressions;
 using Moq;
 using Reqless.Client;
 using StackExchange.Redis;
+using System.Text.RegularExpressions;
 
 namespace Reqless.Tests.Client.ReqlessClientTests;
 

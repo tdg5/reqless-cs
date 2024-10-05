@@ -1,8 +1,8 @@
-using System.Text.Json;
 using Moq;
 using Reqless.Client;
 using Reqless.Tests.Common.TestHelpers;
 using StackExchange.Redis;
+using System.Text.Json;
 
 namespace Reqless.Tests.Client.ReqlessClientTests;
 

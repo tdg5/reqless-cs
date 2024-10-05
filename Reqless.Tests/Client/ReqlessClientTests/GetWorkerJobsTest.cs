@@ -1,5 +1,5 @@
-using System.Text.Json;
 using Reqless.Client;
+using System.Text.Json;
 
 namespace Reqless.Tests.Client.ReqlessClientTests;
 

@@ -38,11 +38,4 @@ public class Throttle
     /// </summary>
     [JsonPropertyName("ttl")]
     public required int Ttl { get; init; }
-
-    /// <summary>
-    /// Create a new <see cref="Throttle"/> instance.
-    /// </summary>
-    public Throttle()
-    {
-    }
 }

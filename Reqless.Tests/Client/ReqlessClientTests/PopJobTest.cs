@@ -1,9 +1,9 @@
-using System.Text.Json;
-using Reqless.Client;
 using Reqless.Client.Models;
+using Reqless.Client;
 using Reqless.Common.Utilities;
 using Reqless.Tests.Common.TestHelpers;
 using Reqless.Tests.TestHelpers.Client.Models;
+using System.Text.Json;
 
 namespace Reqless.Tests.Client.ReqlessClientTests;
 

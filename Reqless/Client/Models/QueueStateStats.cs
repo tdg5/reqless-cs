@@ -38,11 +38,4 @@ public class QueueStateStats
     /// </summary>
     [JsonPropertyName("std")]
     public required int StandardDeviation { get; init; }
-
-    /// <summary>
-    /// Initializes a new instance of the <see cref="QueueStateStats"/> class.
-    /// </summary>
-    public QueueStateStats()
-    {
-    }
 }

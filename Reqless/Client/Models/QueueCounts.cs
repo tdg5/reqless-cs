@@ -76,11 +76,4 @@ public class QueueCounts
     /// </summary>
     [JsonPropertyName("waiting")]
     public required int Waiting { get; init; }
-
-    /// <summary>
-    /// Initializes a new instance of the <see cref="QueueCounts"/> class.
-    /// </summary>
-    public QueueCounts()
-    {
-    }
 }
