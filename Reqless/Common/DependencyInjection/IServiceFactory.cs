@@ -1,4 +1,4 @@
-namespace Reqless.Framework;
+namespace Reqless.Common.DependencyInjection;
 
 /// <summary>
 /// A factory for creating services of type <typeparamref name="T"/>.
@@ -11,5 +11,5 @@ public interface IServiceFactory<T>
     /// Build a service of type <typeparamref name="T"/>.
     /// </summary>
     /// <returns>An instance of type <typeparamref name="T"/>.</returns>
-    public T? Build();
+    public T Build();
 }
