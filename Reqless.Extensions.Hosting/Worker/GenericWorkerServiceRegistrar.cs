@@ -1,7 +1,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
-namespace Reqless.Worker;
+namespace Reqless.Extensions.Hosting.Worker;
 
 /// <summary>
 /// Generic implementation of <see cref="IWorkerServiceRegistrar"/> that registers

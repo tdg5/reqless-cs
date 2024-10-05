@@ -1,17 +1,17 @@
 using Moq;
-using System.Collections.ObjectModel;
 using Reqless.Common.Utilities;
+using Reqless.Extensions.Hosting.Worker;
 using Reqless.Tests.Common.TestHelpers;
 
-namespace Reqless.Worker.Tests;
+namespace Reqless.Extensions.Hosting.Tests.Worker;
 
 /// <summary>
-/// Unit tests for the <see cref="ReqlessWorkerSettings"/> class.
+/// Unit tests for the <see cref="WorkerSettings"/> class.
 /// </summary>
-public class ReqlessWorkerSettingsTest
+public class WorkerSettingsTest
 {
     /// <summary>
-    /// <see cref="ReqlessWorkerSettings"/> constructor should throw if the
+    /// <see cref="WorkerSettings"/> constructor should throw if the
     /// connectionString argument is null, empty, or only whitespace.
     /// </summary>
     [Fact]
@@ -26,8 +26,8 @@ public class ReqlessWorkerSettingsTest
     }
 
     /// <summary>
-    /// <see cref="ReqlessWorkerSettings"/> constructor should set the
-    /// <see cref="ReqlessWorkerSettings.ConnectionString"/> property.
+    /// <see cref="WorkerSettings"/> constructor should set the
+    /// <see cref="WorkerSettings.ConnectionString"/> property.
     /// </summary>
     [Fact]
     public void Constructor_SetsConnectionStringProperty()
@@ -38,7 +38,7 @@ public class ReqlessWorkerSettingsTest
     }
 
     /// <summary>
-    /// <see cref="ReqlessWorkerSettings"/> constructor should throw if the
+    /// <see cref="WorkerSettings"/> constructor should throw if the
     /// queueIdentifiers argument is null.
     /// </summary>
     [Fact]
@@ -46,7 +46,7 @@ public class ReqlessWorkerSettingsTest
     {
         var exception = Assert.Throws<ArgumentNullException>(
             () => MakeSubject(
-                queueIdentifiers: Maybe<ReadOnlyCollection<string>>.Some(null!)
+                queueIdentifiers: Maybe<List<string>>.Some(null!)
             )
         );
         Assert.Equal(
@@ -56,7 +56,7 @@ public class ReqlessWorkerSettingsTest
     }
 
     /// <summary>
-    /// <see cref="ReqlessWorkerSettings"/> constructor should throw if the
+    /// <see cref="WorkerSettings"/> constructor should throw if the
     /// queueIdentifiers argument is empty.
     /// </summary>
     [Fact]
@@ -64,8 +64,8 @@ public class ReqlessWorkerSettingsTest
     {
         Scenario.ThrowsWhenArgumentIsNullOrEmpty<string>(
             (invalidQueueIdentifiers) => MakeSubject(
-                queueIdentifiers: Maybe<ReadOnlyCollection<string>>.Some(
-                    invalidQueueIdentifiers?.AsReadOnly()!
+                queueIdentifiers: Maybe<List<string>>.Some(
+                    invalidQueueIdentifiers
                 )
             ),
             "queueIdentifiers"
@@ -73,19 +73,19 @@ public class ReqlessWorkerSettingsTest
     }
 
     /// <summary>
-    /// <see cref="ReqlessWorkerSettings"/> constructor should set the
-    /// <see cref="ReqlessWorkerSettings.QueueIdentifiers"/> property.
+    /// <see cref="WorkerSettings"/> constructor should set the
+    /// <see cref="WorkerSettings.QueueIdentifiers"/> property.
     /// </summary>
     [Fact]
     public void Constructor_SetsQueueIdentifiersProperty()
     {
-        var queueIdentifiers = new List<string> { "queue1", "queue2" }.AsReadOnly();
+        var queueIdentifiers = new List<string> { "queue1", "queue2" };
         var subject = MakeSubject(queueIdentifiers: Maybe.Some(queueIdentifiers));
         Assert.Equal(queueIdentifiers, subject.QueueIdentifiers);
     }
 
     /// <summary>
-    /// <see cref="ReqlessWorkerSettings"/> constructor should throw if the
+    /// <see cref="WorkerSettings"/> constructor should throw if the
     /// workerCount argument is not positive.
     /// </summary>
     [Fact]
@@ -100,8 +100,8 @@ public class ReqlessWorkerSettingsTest
     }
 
     /// <summary>
-    /// <see cref="ReqlessWorkerSettings"/> constructor should set the
-    /// <see cref="ReqlessWorkerSettings.WorkerCount"/> property.
+    /// <see cref="WorkerSettings"/> constructor should set the
+    /// <see cref="WorkerSettings.WorkerCount"/> property.
     /// </summary>
     [Fact]
     public void Constructor_SetsWorkerCountProperty()
@@ -112,8 +112,8 @@ public class ReqlessWorkerSettingsTest
     }
 
     /// <summary>
-    /// <see cref="ReqlessWorkerSettings"/> constructor should set the <see
-    /// cref="ReqlessWorkerSettings.WorkerServiceRegistrar"/> property to the
+    /// <see cref="WorkerSettings"/> constructor should set the <see
+    /// cref="WorkerSettings.WorkerServiceRegistrar"/> property to the
     /// default value if the workerServiceRegistrar argument is null.
     /// </summary>
     [Fact]
@@ -124,8 +124,8 @@ public class ReqlessWorkerSettingsTest
     }
 
     /// <summary>
-    /// <see cref="ReqlessWorkerSettings"/> constructor should set the <see
-    /// cref="ReqlessWorkerSettings.WorkerServiceRegistrar"/> property to the
+    /// <see cref="WorkerSettings"/> constructor should set the <see
+    /// cref="WorkerSettings.WorkerServiceRegistrar"/> property to the
     /// provided value if the workerServiceRegistrar argument is not null.
     /// </summary>
     [Fact]
@@ -141,30 +141,28 @@ public class ReqlessWorkerSettingsTest
     }
 
     /// <summary>
-    /// Create a new instance of <see cref="ReqlessWorkerSettings"/> with the
+    /// Create a new instance of <see cref="WorkerSettings"/> with the
     /// specified parameters or default values.
     /// </summary>
     /// <param name="connectionString">The connection string.</param>
     /// <param name="queueIdentifiers">The queue identifiers.</param>
     /// <param name="workerCount">The number of workers.</param>
     /// <param name="workerServiceRegistrar">The worker service registrar.</param>
-    public static ReqlessWorkerSettings MakeSubject(
+    public static WorkerSettings MakeSubject(
         Maybe<string>? connectionString = null,
-        Maybe<ReadOnlyCollection<string>>? queueIdentifiers = null,
+        Maybe<List<string>>? queueIdentifiers = null,
         Maybe<int>? workerCount = null,
         Maybe<IWorkerServiceRegistrar?>? workerServiceRegistrar = null
     )
     {
         Maybe<string> _connectionString = connectionString
             ?? Maybe<string>.Some("localhost:6379");
-        Maybe<ReadOnlyCollection<string>> _queueIdentifiers = queueIdentifiers
-            ?? Maybe<ReadOnlyCollection<string>>.Some(
-                new List<string> { "queue1", "queue2" }.AsReadOnly()
-            );
+        Maybe<List<string>> _queueIdentifiers = queueIdentifiers
+            ?? Maybe<List<string>>.Some(["queue1", "queue2"]);
         Maybe<int> _workerCount = workerCount ?? Maybe<int>.Some(1);
         Maybe<IWorkerServiceRegistrar?> _workerServiceRegistrar = workerServiceRegistrar
             ?? Maybe<IWorkerServiceRegistrar?>.None;
-        return new ReqlessWorkerSettings(
+        return new WorkerSettings(
             connectionString: _connectionString.GetOrDefault(null!),
             queueIdentifiers: _queueIdentifiers.GetOrDefault(null!),
             workerCount: _workerCount.GetOrDefault(1),

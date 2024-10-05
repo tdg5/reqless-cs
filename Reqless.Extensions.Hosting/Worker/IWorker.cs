@@ -1,4 +1,4 @@
-namespace Reqless.Worker;
+namespace Reqless.Extensions.Hosting.Worker;
 
 /// <summary>
 /// Abstraction encapsulating the logic to repeatedly retrieve and execute jobs.

@@ -1,6 +1,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using Reqless.Client;
+using Reqless.Extensions.Hosting.Worker;
 using Reqless.Framework;
 
 namespace Reqless.Worker.Tests;
@@ -10,9 +11,9 @@ namespace Reqless.Worker.Tests;
 /// </summary>
 public class ServiceCollectionExtensionsTest
 {
-    ReqlessWorkerSettings ExampleSettings = new(
+    WorkerSettings ExampleSettings = new(
         connectionString: "Server=localhost;",
-        queueIdentifiers: new List<string>() { "queue" }.AsReadOnly(),
+        queueIdentifiers: ["queue"],
         workerCount: 1
     );
 

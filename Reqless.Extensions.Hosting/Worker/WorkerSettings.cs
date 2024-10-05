@@ -1,19 +1,18 @@
-using System.Collections.ObjectModel;
 using Reqless.Common.Validation;
 
-namespace Reqless.Worker;
+namespace Reqless.Extensions.Hosting.Worker;
 
 /// <summary>
-/// Base <see cref="IReqlessWorkerSettings"/> implementation containing common
+/// Base <see cref="IWorkerSettings"/> implementation containing common
 /// settings for the Reqless worker.
 /// </summary>
-public class ReqlessWorkerSettings : IReqlessWorkerSettings
+public class WorkerSettings : IWorkerSettings
 {
     /// <inheritdoc/>
     public string ConnectionString { get; }
 
     /// <inheritdoc/>
-    public ReadOnlyCollection<string> QueueIdentifiers { get; }
+    public IEnumerable<string> QueueIdentifiers { get; }
 
     /// <inheritdoc/>
     public int WorkerCount { get; }
@@ -22,21 +21,21 @@ public class ReqlessWorkerSettings : IReqlessWorkerSettings
     public IWorkerServiceRegistrar WorkerServiceRegistrar { get; }
 
     /// <summary>
-    /// Create an instance of <see cref="ReqlessWorkerSettings"/> using a
+    /// Create an instance of <see cref="WorkerSettings"/> using a
     /// default redis connection string.
     /// </summary>
     /// <param name="queueIdentifiers">The queue identifiers controlling what
     /// queues the worker should take work from.</param>
     /// <param name="workerCount">The number of workers to spawn.</param>
-    public ReqlessWorkerSettings(
-        ReadOnlyCollection<string> queueIdentifiers,
+    public WorkerSettings(
+        IEnumerable<string> queueIdentifiers,
         int workerCount
     ) : this("localhost:6379", queueIdentifiers, workerCount)
     {
     }
 
     /// <summary>
-    /// Create an instance of <see cref="ReqlessWorkerSettings"/>.
+    /// Create an instance of <see cref="WorkerSettings"/>.
     /// </summary>
     /// <param name="connectionString">The connection string to the Reqless
     /// server. The semantics of the connection string depend on the client
@@ -47,9 +46,9 @@ public class ReqlessWorkerSettings : IReqlessWorkerSettings
     /// <param name="workerServiceRegistrar">The <see
     /// cref="IWorkerServiceRegistrar"/> to use when registering worker services
     /// with the application servicvice collection</param>
-    public ReqlessWorkerSettings(
+    public WorkerSettings(
         string connectionString,
-        ReadOnlyCollection<string> queueIdentifiers,
+        IEnumerable<string> queueIdentifiers,
         int workerCount,
         IWorkerServiceRegistrar? workerServiceRegistrar = null
     )

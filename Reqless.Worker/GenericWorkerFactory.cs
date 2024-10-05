@@ -1,4 +1,5 @@
 using Microsoft.Extensions.DependencyInjection;
+using Reqless.Extensions.Hosting.Worker;
 
 namespace Reqless.Worker;
 

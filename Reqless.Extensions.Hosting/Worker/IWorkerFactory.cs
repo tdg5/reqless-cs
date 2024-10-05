@@ -1,4 +1,4 @@
-namespace Reqless.Worker;
+namespace Reqless.Extensions.Hosting.Worker;
 
 /// <summary>
 /// Factory for creating instances of <see cref="IWorker"/>.

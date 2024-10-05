@@ -1,6 +1,6 @@
 using Microsoft.Extensions.Hosting;
 
-namespace Reqless.Worker;
+namespace Reqless.Extensions.Hosting.Worker;
 
 /// <summary>
 /// Background service for running a worker.

@@ -18,7 +18,7 @@ public class Program
         HostApplicationBuilder builder = Host.CreateApplicationBuilder(args);
         builder.Services.AddSingleton<IThinger, Thinger>();
         builder.Services.AddReqlessWorkerServices(new(
-            queueIdentifiers: new List<string> { "example-queue" }.AsReadOnly(),
+            queueIdentifiers: ["example-queue"],
             workerCount: 2
         ));
 

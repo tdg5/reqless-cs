@@ -1,11 +1,9 @@
-using System.Collections.ObjectModel;
-
-namespace Reqless.Worker;
+namespace Reqless.Extensions.Hosting.Worker;
 
 /// <summary>
 /// Interface for common settings for the Reqless worker.
 /// </summary>
-public interface IReqlessWorkerSettings
+public interface IWorkerSettings
 {
     /// <summary>
     /// The connection string to the Redis server.
@@ -16,7 +14,7 @@ public interface IReqlessWorkerSettings
     /// The queue identifiers controlling what queues the worker(s) should take
     /// work from.
     /// </summary>
-    public ReadOnlyCollection<string> QueueIdentifiers { get; }
+    public IEnumerable<string> QueueIdentifiers { get; }
 
     /// <summary>
     /// The number of workers to spawn.

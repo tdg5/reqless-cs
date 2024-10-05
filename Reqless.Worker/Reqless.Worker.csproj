@@ -18,5 +18,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Reqless\Reqless.csproj" />
+    <ProjectReference Include="..\Reqless.Extensions.Hosting\Reqless.Extensions.Hosting.csproj" />
   </ItemGroup>
 </Project>
