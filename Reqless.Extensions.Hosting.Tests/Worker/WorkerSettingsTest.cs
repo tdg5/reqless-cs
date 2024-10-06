@@ -141,6 +141,18 @@ public class WorkerSettingsTest
     }
 
     /// <summary>
+    /// <see cref="WorkerSettings"/> constructor should set the <see
+    /// cref="WorkerSettings.ConnectionString"/> property to the default value
+    /// if the connectionString argument is not provided.
+    /// </summary>
+    [Fact]
+    public void Constructor_DefaultsConnectionStringToExpectedValue()
+    {
+        WorkerSettings subject = new(["queue"], 5);
+        Assert.Equal("localhost:6379", subject.ConnectionString);
+    }
+
+    /// <summary>
     /// Create a new instance of <see cref="WorkerSettings"/> with the
     /// specified parameters or default values.
     /// </summary>

@@ -1,5 +1,6 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Reqless.Common.Validation;
 
 namespace Reqless.Extensions.Hosting.Worker;
 
@@ -15,6 +16,9 @@ public class GenericWorkerServiceRegistrar<T>
     /// <inheritdoc/>
     public IServiceCollection RegisterWorkers(IServiceCollection services, int count)
     {
+        ArgumentNullException.ThrowIfNull(services, nameof(services));
+        ArgumentValidation.ThrowIfNegative(count, nameof(count));
+
         foreach (var index in Enumerable.Range(0, count))
         {
             services.AddSingleton<IHostedService, T>();

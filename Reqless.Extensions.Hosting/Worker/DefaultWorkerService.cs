@@ -30,6 +30,9 @@ public class DefaultWorkerService : BackgroundService
         IWorkerFactory workerFactory
     )
     {
+        ArgumentNullException.ThrowIfNull(serviceProvider, nameof(serviceProvider));
+        ArgumentNullException.ThrowIfNull(workerFactory, nameof(workerFactory));
+
         _serviceProvider = serviceProvider;
         _workerFactory = workerFactory;
     }
