@@ -100,11 +100,7 @@ public class ReqlessClient : IReqlessClient, IDisposable
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(jid, nameof(jid));
         ArgumentException.ThrowIfNullOrWhiteSpace(what, nameof(what));
-
-        if (data is not null)
-        {
-            ArgumentException.ThrowIfNullOrWhiteSpace(data, nameof(data));
-        }
+        ArgumentValidation.ThrowIfNotNullAndEmptyOrWhitespace(data, nameof(data));
 
         var arguments = new RedisValue[4 + (data is null ? 0 : 1)];
         arguments[0] = "job.log";
@@ -1037,6 +1033,7 @@ public class ReqlessClient : IReqlessClient, IDisposable
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(jid, nameof(jid));
         ArgumentException.ThrowIfNullOrWhiteSpace(throttleName, nameof(throttleName));
+
         return ReleaseThrottleForJobsAsync(throttleName, jid);
     }
 
@@ -1205,6 +1202,7 @@ public class ReqlessClient : IReqlessClient, IDisposable
     )
     {
         ArgumentNullException.ThrowIfNull(identifierPatterns, nameof(identifierPatterns));
+
         int argumentCount = 2;
         foreach (var (key, value) in identifierPatterns)
         {
@@ -1239,6 +1237,7 @@ public class ReqlessClient : IReqlessClient, IDisposable
      )
     {
         ArgumentValidation.ThrowIfAnyNull(priorityPatterns, nameof(priorityPatterns));
+
         int argumentCount = 2;
         foreach (var priorityPattern in priorityPatterns)
         {
@@ -1335,6 +1334,7 @@ public class ReqlessClient : IReqlessClient, IDisposable
     public async Task TimeoutJobAsync(string jid)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(jid, nameof(jid));
+
         await TimeoutJobsAsync(jid);
     }
 
@@ -1774,7 +1774,7 @@ public class ReqlessClient : IReqlessClient, IDisposable
     /// Synthesizes a new job ID.
     /// </summary>
     /// <returns>A job ID.</returns>
-    protected string MakeJid()
+    protected virtual string MakeJid()
     {
         return Guid.NewGuid().ToString("N");
     }
