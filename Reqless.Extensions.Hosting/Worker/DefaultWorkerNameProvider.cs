@@ -1,3 +1,5 @@
+using Reqless.Common.Validation;
+
 namespace Reqless.Extensions.Hosting.Worker;
 
 /// <summary>
@@ -18,6 +20,11 @@ public class DefaultWorkerNameProvider : IWorkerNameProvider
     /// names.</param>
     public DefaultWorkerNameProvider(string? prefix = null)
     {
+        ArgumentValidation.ThrowIfNotNullAndEmptyOrWhitespace(
+            prefix,
+            nameof(prefix)
+        );
+
         _prefix = prefix ?? "ReqlessWorker";
     }
 
