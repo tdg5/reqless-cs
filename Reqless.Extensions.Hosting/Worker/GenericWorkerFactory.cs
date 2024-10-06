@@ -18,6 +18,11 @@ public class GenericWorkerFactory<T> : IWorkerFactory where T : IWorker
     /// instance that should be used to get a name of the worker.</param>
     public GenericWorkerFactory(IWorkerNameProvider workerNameProvider)
     {
+        ArgumentNullException.ThrowIfNull(
+            workerNameProvider,
+            nameof(workerNameProvider)
+        );
+
         _workerNameProvider = workerNameProvider;
     }
 
@@ -27,9 +32,11 @@ public class GenericWorkerFactory<T> : IWorkerFactory where T : IWorker
     /// <param name="serviceProvider">An <see cref="IServiceProvider"/> instance
     /// that can be utilized when creating worker instances.</param>
     /// <returns>The <see cref="IWorker"/> instance.</returns>
-    public IWorker Create(IServiceProvider serviceProvider) =>
-        ActivatorUtilities.CreateInstance<T>(
-            serviceProvider,
-            _workerNameProvider.GetWorkerName()
-        );
+    public IWorker Create(IServiceProvider serviceProvider)
+    {
+        ArgumentNullException.ThrowIfNull(serviceProvider, nameof(serviceProvider));
+
+        var workerName = _workerNameProvider.GetWorkerName();
+        return ActivatorUtilities.CreateInstance<T>(serviceProvider, workerName);
+    }
 }
