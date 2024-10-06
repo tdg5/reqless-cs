@@ -1,7 +1,6 @@
 using Microsoft.Extensions.DependencyInjection;
-using Reqless.Extensions.Hosting.Worker;
 
-namespace Reqless.Worker;
+namespace Reqless.Extensions.Hosting.Worker;
 
 /// <summary>
 /// Implementation of <see cref="IWorkerFactory"/> that creates <see

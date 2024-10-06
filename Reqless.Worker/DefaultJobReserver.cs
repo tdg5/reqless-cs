@@ -1,5 +1,6 @@
 using Reqless.Client;
 using Reqless.Client.Models;
+using Reqless.Extensions.Hosting.Worker;
 
 namespace Reqless.Worker;
 

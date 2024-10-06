@@ -1,8 +1,7 @@
 using Reqless.Client;
-using Reqless.Extensions.Hosting.Worker;
 using Reqless.Framework;
 
-namespace Reqless.Worker;
+namespace Reqless.Extensions.Hosting.Worker;
 
 /// <summary>
 /// Default implementation of <see cref="IReqlessClientFactory"/> that uses

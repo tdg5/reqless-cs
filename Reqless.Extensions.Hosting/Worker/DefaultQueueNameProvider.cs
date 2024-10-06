@@ -1,7 +1,6 @@
-using Reqless.Extensions.Hosting.Worker;
 using Reqless.Framework;
 
-namespace Reqless.Worker;
+namespace Reqless.Extensions.Hosting.Worker;
 
 /// <summary>
 /// Implementation of <see cref="IQueueNameProvider"/> that uses an instance of
