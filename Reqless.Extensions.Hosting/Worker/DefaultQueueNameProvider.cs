@@ -10,13 +10,9 @@ namespace Reqless.Extensions.Hosting.Worker;
 /// </summary>
 public class DefaultQueueNameProvider : IQueueNameProvider
 {
-    private readonly IWorkerSettings _settings;
+    private readonly string[] _queueIdentifiers;
 
     private readonly IQueueIdentifierResolver _queueIdentifierResolver;
-
-    private string[]? _cachedQueueIdentifiers = null;
-
-    private WeakReference<IEnumerable<string>> _cachedQueueIdentifiersSource;
 
     /// <summary>
     /// Create an instance of <see cref="DefaultQueueNameProvider"/>.
@@ -32,23 +28,17 @@ public class DefaultQueueNameProvider : IQueueNameProvider
         IWorkerSettings settings
     )
     {
+        ArgumentNullException.ThrowIfNull(
+            queueIdentifierResolver,
+            nameof(queueIdentifierResolver)
+        );
+        ArgumentNullException.ThrowIfNull(settings, nameof(settings));
+
         _queueIdentifierResolver = queueIdentifierResolver;
-        _settings = settings;
-        _cachedQueueIdentifiersSource = new(settings.QueueIdentifiers);
+        _queueIdentifiers = [.. settings.QueueIdentifiers];
     }
 
     /// <inheritdoc/>
-    public Task<List<string>> GetQueueNamesAsync()
-    {
-        _cachedQueueIdentifiersSource.TryGetTarget(out var cachedQueueIdentifiersSource);
-        if (
-            _cachedQueueIdentifiers is null
-            || cachedQueueIdentifiersSource != _settings.QueueIdentifiers
-        )
-        {
-            _cachedQueueIdentifiersSource = new(_settings.QueueIdentifiers);
-            _cachedQueueIdentifiers = [.. _settings.QueueIdentifiers];
-        }
-        return _queueIdentifierResolver.ResolveQueueNamesAsync(_cachedQueueIdentifiers);
-    }
+    public Task<List<string>> GetQueueNamesAsync() =>
+        _queueIdentifierResolver.ResolveQueueNamesAsync(_queueIdentifiers);
 }

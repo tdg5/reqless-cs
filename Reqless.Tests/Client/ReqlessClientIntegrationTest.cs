@@ -8,6 +8,7 @@ namespace Reqless.Tests.Client;
 /// <summary>
 /// Integration tests for <see cref="ReqlessClient"/>.
 /// </summary>
+[Trait("Category", "Integration")]
 public class ReqlessClientIntegrationTest
 {
     private static readonly ConnectionMultiplexer _connection =

@@ -8,6 +8,7 @@
     <Nullable>enable</Nullable>
     <RepositoryUrl>https://github.com/tdg5/reqless-cs</RepositoryUrl>
     <RootNamespace>Reqless.Extensions.Hosting.Tests</RootNamespace>
+    <RunSettingsFilePath>$(MSBuildProjectDirectory)\..\.runsettings\default.xml</RunSettingsFilePath>
     <TargetFramework>net8.0</TargetFramework>
   </PropertyGroup>
 

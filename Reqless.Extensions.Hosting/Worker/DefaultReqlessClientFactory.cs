@@ -4,12 +4,12 @@ using Reqless.Framework;
 namespace Reqless.Extensions.Hosting.Worker;
 
 /// <summary>
-/// Default implementation of <see cref="IReqlessClientFactory"/> that uses
-/// an instance of <see cref="WorkerSettings"/> for client configuration.
+/// Default implementation of <see cref="IReqlessClientFactory"/> that uses an
+/// instance of <see cref="WorkerSettings"/> for client configuration.
 /// </summary>
 public class DefaultReqlessClientFactory : IReqlessClientFactory
 {
-    private IWorkerSettings _settings;
+    private readonly IWorkerSettings _settings;
 
     /// <summary>
     /// Create an instance of <see cref="DefaultReqlessClientFactory"/>.
