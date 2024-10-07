@@ -1,4 +1,4 @@
-namespace Reqless.Worker;
+namespace Reqless.Extensions.Hosting.Worker;
 
 /// <summary>
 /// Provides access to the current <see cref="IJobContext"/>, if one is

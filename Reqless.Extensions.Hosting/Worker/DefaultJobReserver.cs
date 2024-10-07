@@ -1,8 +1,7 @@
 using Reqless.Client;
 using Reqless.Client.Models;
-using Reqless.Extensions.Hosting.Worker;
 
-namespace Reqless.Worker;
+namespace Reqless.Extensions.Hosting.Worker;
 
 /// <summary>
 /// Default implementation of <see cref="IJobReserver"/>.

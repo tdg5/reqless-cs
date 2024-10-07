@@ -1,6 +1,6 @@
 using Reqless.Client.Models;
 
-namespace Reqless.Worker;
+namespace Reqless.Extensions.Hosting.Worker;
 
 /// <summary>
 /// Represents a factory that creates instances of <see cref="IJobContext"/>.

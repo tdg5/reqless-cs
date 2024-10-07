@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Reqless.Worker;
+using Reqless.Extensions.Hosting;
 
 namespace Reqless.ExampleWorkerApp;
 

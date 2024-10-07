@@ -1,7 +1,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using Reqless.Framework;
 
-namespace Reqless.Worker;
+namespace Reqless.Extensions.Hosting.Worker;
 
 /// <summary>
 /// Default <see cref="IUnitOfWorkActivator"/> for creating instances of classes

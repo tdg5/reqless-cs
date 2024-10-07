@@ -1,4 +1,4 @@
-namespace Reqless.Worker;
+namespace Reqless.Extensions.Hosting.Worker;
 
 /// <summary>
 /// Provides an implementation of <see cref="IJobContextAccessor" />.

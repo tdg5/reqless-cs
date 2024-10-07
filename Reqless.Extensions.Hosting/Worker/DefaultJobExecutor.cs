@@ -2,7 +2,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Reqless.Client.Models;
 using Reqless.Framework;
 
-namespace Reqless.Worker;
+namespace Reqless.Extensions.Hosting.Worker;
 
 /// <summary>
 /// Default implementation of <see cref="IJobExecutor"/>.

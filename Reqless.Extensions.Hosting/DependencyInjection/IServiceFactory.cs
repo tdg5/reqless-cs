@@ -1,4 +1,4 @@
-namespace Reqless.Worker.DependencyInjection;
+namespace Reqless.Extensions.Hosting.DependencyInjection;
 
 /// <summary>
 /// A factory for creating services of type <typeparamref name="T"/>.

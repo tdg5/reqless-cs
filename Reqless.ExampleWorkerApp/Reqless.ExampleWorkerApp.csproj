@@ -2,7 +2,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Reqless\Reqless.csproj" />
-    <ProjectReference Include="..\Reqless.Worker\Reqless.Worker.csproj" />
+    <ProjectReference Include="..\Reqless.Extensions.Hosting\Reqless.Extensions.Hosting.csproj" />
   </ItemGroup>
 
   <PropertyGroup>

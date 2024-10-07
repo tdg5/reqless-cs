@@ -2,7 +2,7 @@ using Reqless.Client;
 using Reqless.Framework;
 using Reqless.Framework.QueueIdentifierResolvers;
 
-namespace Reqless.Worker;
+namespace Reqless.Extensions.Hosting.Worker;
 
 /// <summary>
 /// Default implementation of <see cref="IQueueIdentifierResolver"/> that

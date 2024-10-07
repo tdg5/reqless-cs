@@ -1,6 +1,6 @@
 using Reqless.Client.Models;
 
-namespace Reqless.Worker;
+namespace Reqless.Extensions.Hosting.Worker;
 
 /// <summary>
 /// Abstraction for adding logic around the execution of a job.

@@ -1,10 +1,10 @@
 #!/bin/bash
 
-rm -rf Reqless.Tests/TestResults/ Reqless.Extensions.Hosting.Tests/TestResults/ Reqless.Worker.Tests/TestResults/
+rm -rf Reqless.Tests/TestResults/ Reqless.Extensions.Hosting.Tests/TestResults/
 
 dotnet test --collect:"XPlat Code Coverage"
 
 reportgenerator \
-  -reports:'Reqless.Tests/TestResults/**/coverage.cobertura.xml;Reqless.Extensions.Hosting.Tests/TestResults/**/coverage.cobertura.xml;Reqless.Worker.Tests/TestResults/**/coverage.cobertura.xml' \
+  -reports:'Reqless.Tests/TestResults/**/coverage.cobertura.xml;Reqless.Extensions.Hosting.Tests/TestResults/**/coverage.cobertura.xml' \
   -reporttypes:Html \
   -targetdir:"coveragereport"

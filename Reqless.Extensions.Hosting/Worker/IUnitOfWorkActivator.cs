@@ -1,6 +1,6 @@
 using Reqless.Framework;
 
-namespace Reqless.Worker;
+namespace Reqless.Extensions.Hosting.Worker;
 
 /// <summary>
 /// Contract for classes that support activating classes that implement the <see

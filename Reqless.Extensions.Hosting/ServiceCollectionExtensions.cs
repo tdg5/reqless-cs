@@ -1,10 +1,10 @@
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
-using Reqless.Extensions.Hosting.Worker;
+using Microsoft.Extensions.DependencyInjection;
 using Reqless.Client;
+using Reqless.Extensions.Hosting.Worker;
 using Reqless.Framework;
 
-namespace Reqless.Worker;
+namespace Reqless.Extensions.Hosting;
 
 /// <summary>
 /// Extension methods for <see cref="IServiceCollection"/>.
@@ -12,7 +12,7 @@ namespace Reqless.Worker;
 public static class ServiceCollectionExtensions
 {
     /// <summary>
-    /// Adds essential Reqless.Worker services to the specified <see
+    /// Adds essential Reqless worker services to the specified <see
     /// cref="IServiceCollection"/>.
     /// </summary>
     /// <param name="services">The <see cref="IServiceCollection"/> to add

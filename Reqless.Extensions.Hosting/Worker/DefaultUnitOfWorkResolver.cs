@@ -2,7 +2,7 @@ using Microsoft.Extensions.DependencyModel;
 using Reqless.Framework;
 using System.Reflection;
 
-namespace Reqless.Worker;
+namespace Reqless.Extensions.Hosting.Worker;
 
 /// <summary>
 /// Concrete implmentation of <see cref="IUnitOfWorkResolver"/> that uses

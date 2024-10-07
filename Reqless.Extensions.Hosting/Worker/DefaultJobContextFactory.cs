@@ -1,6 +1,6 @@
 using Reqless.Client.Models;
 
-namespace Reqless.Worker;
+namespace Reqless.Extensions.Hosting.Worker;
 
 /// <summary>
 /// Default concrete implementation of <see cref="IJobContextFactory"/>.

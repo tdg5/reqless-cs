@@ -4,7 +4,7 @@ using Reqless.Client;
 using Reqless.Extensions.Hosting.Worker;
 using Reqless.Framework;
 
-namespace Reqless.Worker.Tests;
+namespace Reqless.Extensions.Hosting.Tests;
 
 /// <summary>
 /// Unit tests for the <see cref="ServiceCollectionExtensions"/> class.

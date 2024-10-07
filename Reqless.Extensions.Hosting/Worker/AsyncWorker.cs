@@ -1,7 +1,6 @@
 ﻿using Reqless.Client.Models;
-using Reqless.Extensions.Hosting.Worker;
 
-namespace Reqless.Worker;
+namespace Reqless.Extensions.Hosting.Worker;
 
 /// <summary>
 /// <see cref="IWorker"/> that performs jobs serially in an async context.
