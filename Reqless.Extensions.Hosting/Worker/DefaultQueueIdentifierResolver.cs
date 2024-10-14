@@ -1,4 +1,5 @@
 using Reqless.Client;
+using Reqless.Common.Validation;
 using Reqless.Framework;
 using Reqless.Framework.QueueIdentifierResolvers;
 
@@ -30,9 +31,14 @@ public class DefaultQueueIdentifierResolver : IQueueIdentifierResolver
         ]);
     }
 
-    /// <inheritdoc />
+    /// <inheritdoc/>
     public Task<List<string>> ResolveQueueNamesAsync(params string[] queueIdentifiers)
     {
+        ArgumentValidation.ThrowIfAnyNullOrWhitespace(
+            queueIdentifiers,
+            nameof(queueIdentifiers)
+        );
+
         return _innerResolver.ResolveQueueNamesAsync(queueIdentifiers);
     }
 }

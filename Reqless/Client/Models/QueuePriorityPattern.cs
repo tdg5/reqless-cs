@@ -1,5 +1,5 @@
-using System.Text.Json.Serialization;
 using Reqless.Common.Validation;
+using System.Text.Json.Serialization;
 
 namespace Reqless.Client.Models;
 
