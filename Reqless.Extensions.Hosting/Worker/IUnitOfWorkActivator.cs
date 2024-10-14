@@ -13,10 +13,13 @@ public interface IUnitOfWorkActivator
     /// cref="IUnitOfWork"/>.
     /// </summary>
     /// <param name="serviceProvider">An <see cref="IServiceProvider"/> instance
-    /// that can be utilized when creating unit of work instances.</param>
-    /// <param name="instanceType">The type of instance that should be
+    /// that can be utilized when creating unit of work instances. It is
+    /// expected that this service provider is a scoped provider with access to
+    /// scoped services.</param>
+    /// <param name="instanceType">The type, implementing <see
+    /// cref="IUnitOfWork"/>,  of which an instance that should be
     /// created.</param>
-    /// <returns>An <see cref="IUnitOfWork"/> instance.</returns>
+    /// <returns>An instance of <paramref name="instanceType"/>.</returns>
     IUnitOfWork CreateInstance(
         IServiceProvider serviceProvider,
         Type instanceType

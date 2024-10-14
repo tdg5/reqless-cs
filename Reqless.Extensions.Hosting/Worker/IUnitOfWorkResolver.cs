@@ -9,10 +9,11 @@ namespace Reqless.Extensions.Hosting.Worker;
 public interface IUnitOfWorkResolver
 {
     /// <summary>
-    /// Resolve a class that implements <see cref="IUnitOfWork"/> from a string
-    /// containing the class's full name.
+    /// Resolve a type that implements <see cref="IUnitOfWork"/> from a string
+    /// containing the type's full name.
     /// </summary>
-    /// <param name="fullName">The full name of the class.</param>
-    /// <returns>The class if it could be resolved, otherwise null.</returns>
-    Type? Resolve(string fullName);
+    /// <param name="typeName">The full name of the type.</param>
+    /// <returns>The type if it could be resolved and implements <see
+    /// cref="IUnitOfWork"/>, otherwise null.</returns>
+    Type? Resolve(string typeName);
 }

@@ -19,5 +19,10 @@
   <ItemGroup>
     <ProjectReference Include="..\Reqless\Reqless.csproj" />
   </ItemGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="Reqless.Extensions.Hosting.Tests" />
+  </ItemGroup>
+
 </Project>
 

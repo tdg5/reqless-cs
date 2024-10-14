@@ -27,6 +27,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Reqless.Extensions.Hosting\Reqless.Extensions.Hosting.csproj" />
     <ProjectReference Include="..\Reqless.Tests.Common\Reqless.Tests.Common.csproj" />
+    <ProjectReference Include="..\Reqless.Tests.Fixtures\Reqless.Tests.Fixtures.csproj" />
   </ItemGroup>
 
 </Project>
