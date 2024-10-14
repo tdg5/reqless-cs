@@ -20,4 +20,8 @@
     <AssemblyAttribute Include="System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverageAttribute" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Reqless\Reqless.csproj" />
+  </ItemGroup>
+
 </Project>

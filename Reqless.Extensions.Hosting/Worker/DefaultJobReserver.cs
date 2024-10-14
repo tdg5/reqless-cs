@@ -8,9 +8,9 @@ namespace Reqless.Extensions.Hosting.Worker;
 /// </summary>
 public class DefaultJobReserver : IJobReserver
 {
-    private readonly IReqlessClient _reqlessClient;
-
     private readonly IQueueNameProvider _queueNameProvider;
+
+    private readonly IReqlessClient _reqlessClient;
 
     /// <summary>
     /// Create an instance of <see cref="DefaultJobReserver"/>.
@@ -41,6 +41,8 @@ public class DefaultJobReserver : IJobReserver
         CancellationToken? cancellationToken = null
     )
     {
+        ArgumentException.ThrowIfNullOrWhiteSpace(workerName, nameof(workerName));
+
         var _cancellationToken = cancellationToken ?? CancellationToken.None;
         var queueNames = await _queueNameProvider.GetQueueNamesAsync();
         foreach (var queueName in queueNames)
