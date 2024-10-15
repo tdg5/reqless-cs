@@ -43,6 +43,11 @@ public class DefaultJobExecutor : IJobExecutor
         IUnitOfWorkResolver unitOfWorkResolver
     )
     {
+        ArgumentNullException.ThrowIfNull(jobContextFactory, nameof(jobContextFactory));
+        ArgumentNullException.ThrowIfNull(serviceProvider, nameof(serviceProvider));
+        ArgumentNullException.ThrowIfNull(unitOfWorkActivator, nameof(unitOfWorkActivator));
+        ArgumentNullException.ThrowIfNull(unitOfWorkResolver, nameof(unitOfWorkResolver));
+
         _jobContextFactory = jobContextFactory;
         _serviceProvider = serviceProvider;
         _unitOfWorkActivator = unitOfWorkActivator;
@@ -52,6 +57,8 @@ public class DefaultJobExecutor : IJobExecutor
     /// <inheritdoc/>
     public async Task ExecuteAsync(Job job, CancellationToken cancellationToken)
     {
+        ArgumentNullException.ThrowIfNull(job, nameof(job));
+
         Type unitOfWorkClass = _unitOfWorkResolver.Resolve(job.ClassName) ??
             throw new InvalidOperationException(
                 $"Could not resolve {nameof(IUnitOfWork)} type '{job.ClassName}'."
@@ -59,7 +66,7 @@ public class DefaultJobExecutor : IJobExecutor
 
         using var scope = _serviceProvider.CreateAsyncScope();
 
-        IJobContext? jobContext = _jobContextFactory.Create(scope.ServiceProvider, job);
+        IJobContext jobContext = _jobContextFactory.Create(scope.ServiceProvider, job);
 
         if (
             scope.ServiceProvider.GetService<IJobContextAccessor>()

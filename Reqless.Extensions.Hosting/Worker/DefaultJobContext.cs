@@ -16,6 +16,8 @@ public class DefaultJobContext : IJobContext
     /// <param name="job">The job that is actively being processed.</param>
     public DefaultJobContext(Job job)
     {
+        ArgumentNullException.ThrowIfNull(job, nameof(job));
+
         Job = job;
     }
 }
