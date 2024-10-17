@@ -1,4 +1,5 @@
-﻿using Reqless.Client.Models;
+﻿using Microsoft.Extensions.Logging;
+using Reqless.Client.Models;
 
 namespace Reqless.Extensions.Hosting.Worker;
 
@@ -18,6 +19,11 @@ public class AsyncWorker : IWorker
     /// </summary>
     protected readonly IJobReserver _jobReserver;
 
+    /// <summary>
+    /// An <see cref="ILogger{TCategoryName}"/> instance to use for logging.
+    /// </summary>
+    protected readonly ILogger<AsyncWorker> _logger;
+
     /// <inheritdoc/>
     public string Name { get; }
 
@@ -28,12 +34,25 @@ public class AsyncWorker : IWorker
     /// for wrapping the execution of jobs.</param>
     /// <param name="jobReserver">An <see cref="IJobReserver"/> instance to use
     /// for reserving jobs.</param>
+    /// <param name="logger">An <see cref="ILogger{TCategoryName}"/> instance to
+    /// use for logging.</param>
     /// <param name="name">The name the worker should use when communicating
     /// with Reqless.</param>
-    public AsyncWorker(IJobExecutor jobExecutor, IJobReserver jobReserver, string name)
+    public AsyncWorker(
+        IJobExecutor jobExecutor,
+        IJobReserver jobReserver,
+        ILogger<AsyncWorker> logger,
+        string name
+    )
     {
+        ArgumentNullException.ThrowIfNull(jobExecutor, nameof(jobExecutor));
+        ArgumentNullException.ThrowIfNull(jobReserver, nameof(jobReserver));
+        ArgumentNullException.ThrowIfNull(logger, nameof(logger));
+        ArgumentException.ThrowIfNullOrWhiteSpace(name, nameof(name));
+
         _jobExecutor = jobExecutor;
         _jobReserver = jobReserver;
+        _logger = logger;
         Name = name;
     }
 
@@ -44,8 +63,10 @@ public class AsyncWorker : IWorker
         {
             try
             {
-                Job? job = await _jobReserver.TryReserveJobAsync(Name);
-                if (job is not null)
+                if (
+                    await _jobReserver.TryReserveJobAsync(Name, cancellationToken)
+                    is Job job
+                )
                 {
                     await _jobExecutor.ExecuteAsync(
                         job,
@@ -53,10 +74,10 @@ public class AsyncWorker : IWorker
                     );
                 }
             }
-            finally
+            catch (Exception exception)
             {
+                _logger.LogError(exception, "An error occurred while processing a job.");
             }
-            await Task.Delay(1_000, cancellationToken);
         }
     }
 }
