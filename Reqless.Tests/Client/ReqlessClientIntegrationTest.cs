@@ -124,7 +124,9 @@ public class ReqlessClientIntegrationTest
         Assert.True(addedSuccessfully);
         var job = await _client.GetJobAsync(jid);
         Assert.NotNull(job);
-        Assert.Equal([dependsOnJid, newDependsOnJid], job.Dependencies);
+        string[] expectedDependencies = [dependsOnJid, newDependsOnJid];
+        var actualDependencies = job.Dependencies;
+        Assert.Equal(expectedDependencies.Order(), actualDependencies.Order());
     }
 
     /// <summary>

@@ -1,0 +1,90 @@
+jobs:
+  release-package:
+    env:
+      NUGET_PACKAGES: ${{ github.workspace }}/.nuget/packages
+      OUTPUT_DIR: './packages'
+      PACKAGE_NAME: Reqless
+      PACKAGE_RELEASE_NAME: reqless
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Project
+        uses: actions/checkout@v3
+
+      - name: Setup .NET Core
+        uses: actions/setup-dotnet@v4
+        with:
+          cache: true
+          cache-dependency-path: '**/packages.lock.json'
+          dotnet-version: '9.0'
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update && sudo apt-get install -y redis-server
+
+      - name: Release the package
+        run: |
+          dotnet restore --locked-mode
+
+          dotnet format --verify-no-changes
+
+          dotnet test
+
+          dotnet pack \
+            --configuration Release \
+            --no-restore \
+            --output $OUTPUT_DIR \
+            -p:PackageVersion='${{ github.event.inputs.version }}'
+
+          # Explicitly push package to avoid pushing test packages.
+          dotnet nuget push \
+            --api-key '${{ secrets.NUGET_PUSH_API_KEY }}' \
+            --source '${{ vars.NUGET_PUSH_SOURCE }}' \
+            "$OUTPUT_DIR/$PACKAGE_NAME.${{ github.event.inputs.version }}.nupkg"
+
+      - name: Configure git actor
+        run: |
+          RELEASE_ACTOR_NAME_FROM_REPO="${{ vars.RELEASE_ACTOR_NAME }}"
+          RELEASE_ACTOR_EMAIL_FROM_REPO="${{ vars.RELEASE_ACTOR_EMAIL }}"
+          RELEASE_ACTOR_NAME="${RELEASE_ACTOR_NAME_FROM_REPO:-$GITHUB_ACTOR}"
+          RELEASE_ACTOR_EMAIL="${RELEASE_ACTOR_EMAIL_FROM_REPO:-$GITHUB_ACTOR@users.noreply.github.com}"
+
+          git config user.name "$RELEASE_ACTOR_NAME"
+          git config user.email "$RELEASE_ACTOR_EMAIL"
+
+      - name: Create tag and release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PREVIOUS_RELEASE_NAME: "${{ env.PACKAGE_RELEASE_NAME}}-${{ github.event.inputs.previousVersion }}"
+          RELEASE_NAME: "${{ env.PACKAGE_RELEASE_NAME}}-${{ github.event.inputs.version }}"
+        run: |
+          git tag -m "$RELEASE_NAME" "$RELEASE_NAME"
+          git push origin "$RELEASE_NAME"
+
+          gh release create \
+            --generate-notes \
+            --notes-start-tag "$PREVIOUS_RELEASE_NAME" \
+            --target "$GITHUB_REF" \
+            --title "$RELEASE_NAME" \
+            --verify-tag \
+            "$RELEASE_NAME" \
+            "$OUTPUT_DIR/$PACKAGE_NAME.${{ github.event.inputs.version }}.nupkg"
+
+name: Release Reqless package
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        default: '0.0.1'
+        description: 'Release version'
+        required: true
+      previousVersion:
+        default: '0.0.0'
+        description: 'Previous release version (used for generating release notes)'
+        required: true
+
+permissions:
+  contents: write
+  id-token: write
+
+run-name: Release Reqless v${{ github.event.inputs.version }}
