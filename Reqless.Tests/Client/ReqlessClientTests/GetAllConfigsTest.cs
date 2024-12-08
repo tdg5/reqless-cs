@@ -13,14 +13,14 @@ public class GetAllConfigsTest : BaseReqlessClientTest
     /// <see cref="ReqlessClient.GetAllConfigsAsync"/> should call Executor
     /// with the expected arguments.
     /// </summary>
+    /// <returns>A task denoting the completion of the test.</returns>
     [Fact]
     public async Task CallsExecutorWithTheExpectedArguments()
     {
         Dictionary<string, string> configs = await WithClientWithExecutorMockForExpectedArguments(
             subject => subject.GetAllConfigsAsync(),
             expectedArguments: ["config.getAll", 0],
-            returnValue: "{}"
-        );
+            returnValue: "{}");
         Assert.Empty(configs);
         Assert.IsType<Dictionary<string, string>>(configs);
     }
@@ -29,6 +29,7 @@ public class GetAllConfigsTest : BaseReqlessClientTest
     /// <see cref="ReqlessClient.GetAllConfigsAsync"/> should throw if the
     /// server returns null.
     /// </summary>
+    /// <returns>A task denoting the completion of the test.</returns>
     [Fact]
     public async Task ThrowsIfServerReturnsNull()
     {
@@ -36,15 +37,14 @@ public class GetAllConfigsTest : BaseReqlessClientTest
             () => WithClientWithExecutorMockForExpectedArguments(
                 subject => subject.GetAllConfigsAsync(),
                 expectedArguments: ["config.getAll", 0],
-                returnValue: null
-            )
-        );
+                returnValue: null));
     }
 
     /// <summary>
     /// <see cref="ReqlessClient.GetAllConfigsAsync"/> throws if the JSON can't
     /// be deserialized.
     /// </summary>
+    /// <returns>A task denoting the completion of the test.</returns>
     [Fact]
     public async Task ThrowsIfJsonCannotBeDeserialized()
     {
@@ -52,12 +52,8 @@ public class GetAllConfigsTest : BaseReqlessClientTest
             () => WithClientWithExecutorMockForExpectedArguments(
                 subject => subject.GetAllConfigsAsync(),
                 expectedArguments: ["config.getAll", 0],
-                returnValue: "null"
-            )
-        );
+                returnValue: "null"));
         Assert.Equal(
-            "Failed to deserialize config JSON: null",
-            exception.Message
-        );
+            "Failed to deserialize config JSON: null", exception.Message);
     }
 }

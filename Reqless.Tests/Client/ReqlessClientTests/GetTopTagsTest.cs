@@ -13,21 +13,21 @@ public class GetTopTagsTest : BaseReqlessClientTest
     /// <see cref="ReqlessClient.GetTopTagsAsync"/> should throw if the given
     /// limit is not positive.
     /// </summary>
+    /// <returns>A task denoting the completion of the test.</returns>
     [Fact]
     public async Task ThrowsIfLimitIsNotPositive()
     {
         await Scenario.ThrowsWhenArgumentIsNotPositiveAsync(
             (invalidLimit) => WithClientWithExecutorMockForExpectedArguments(
-                subject => subject.GetTopTagsAsync(limit: invalidLimit)
-            ),
-            "limit"
-        );
+                subject => subject.GetTopTagsAsync(limit: invalidLimit)),
+            "limit");
     }
 
     /// <summary>
     /// <see cref="ReqlessClient.GetTopTagsAsync"/> should throw if server
     /// returns null.
     /// </summary>
+    /// <returns>A task denoting the completion of the test.</returns>
     [Fact]
     public async Task ThrowsIfServerReturnsNull()
     {
@@ -37,15 +37,14 @@ public class GetTopTagsTest : BaseReqlessClientTest
             () => WithClientWithExecutorMockForExpectedArguments(
                 subject => subject.GetTopTagsAsync(limit: limit, offset: offset),
                 expectedArguments: ["tags.top", 0, offset, limit],
-                returnValue: null
-            )
-        );
+                returnValue: null));
     }
 
     /// <summary>
     /// <see cref="ReqlessClient.GetTopTagsAsync"/> should throw if server
     /// returns JSON that can't be deserialized.
     /// </summary>
+    /// <returns>A task denoting the completion of the test.</returns>
     [Fact]
     public async Task ThrowsIfServerReturnsJsonThatCannotBeDeserialized()
     {
@@ -55,9 +54,7 @@ public class GetTopTagsTest : BaseReqlessClientTest
             () => WithClientWithExecutorMockForExpectedArguments(
                 subject => subject.GetTopTagsAsync(limit: limit, offset: offset),
                 expectedArguments: ["tags.top", 0, offset, limit],
-                returnValue: "null"
-            )
-        );
+                returnValue: "null"));
         Assert.Equal("Failed to deserialize JSON: null", exception.Message);
     }
 
@@ -65,6 +62,7 @@ public class GetTopTagsTest : BaseReqlessClientTest
     /// <see cref="ReqlessClient.GetTopTagsAsync"/> should return a valid
     /// empty list if the server returns an empty object.
     /// </summary>
+    /// <returns>A task denoting the completion of the test.</returns>
     [Fact]
     public async Task ReturnsEmptyListWhenServerReturnsEmptyObject()
     {
@@ -73,8 +71,7 @@ public class GetTopTagsTest : BaseReqlessClientTest
         List<string> tags = await WithClientWithExecutorMockForExpectedArguments(
             subject => subject.GetTopTagsAsync(limit: limit, offset: offset),
             expectedArguments: ["tags.top", 0, offset, limit],
-            returnValue: "{}"
-        );
+            returnValue: "{}");
         Assert.Empty(tags);
         Assert.IsType<List<string>>(tags);
     }
@@ -83,6 +80,7 @@ public class GetTopTagsTest : BaseReqlessClientTest
     /// <see cref="ReqlessClient.GetTopTagsAsync"/> should return a valid
     /// result returned by the server.
     /// </summary>
+    /// <returns>A task denoting the completion of the test.</returns>
     [Fact]
     public async Task ReturnsValidResultFromTheServer()
     {
@@ -93,8 +91,7 @@ public class GetTopTagsTest : BaseReqlessClientTest
         List<string> tags = await WithClientWithExecutorMockForExpectedArguments(
             subject => subject.GetTopTagsAsync(limit: limit, offset: offset),
             expectedArguments: ["tags.top", 0, offset, limit],
-            returnValue: tagsJson
-        );
+            returnValue: tagsJson);
         Assert.Equivalent(expectedTags, tags);
     }
 }

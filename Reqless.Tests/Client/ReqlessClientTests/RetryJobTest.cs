@@ -12,6 +12,7 @@ public class RetryJobTest : BaseReqlessClientTest
     /// <see cref="ReqlessClient.RetryJobAsync"/> should throw if the
     /// given group name is null, empty, or only whitespace.
     /// </summary>
+    /// <returns>A task denoting the completion of the test.</returns>
     [Fact]
     public async Task ThrowsIfGroupNameIsNullOrEmptyOrWhitespace()
     {
@@ -22,17 +23,15 @@ public class RetryJobTest : BaseReqlessClientTest
                     jid: ExampleJid,
                     message: ExampleMessage,
                     queueName: ExampleQueueName!,
-                    workerName: ExampleWorkerName
-                )
-            ),
-            "groupName"
-        );
+                    workerName: ExampleWorkerName)),
+            "groupName");
     }
 
     /// <summary>
     /// <see cref="ReqlessClient.RetryJobAsync"/> should throw if the
     /// given job ID is null, empty, or only whitespace.
     /// </summary>
+    /// <returns>A task denoting the completion of the test.</returns>
     [Fact]
     public async Task ThrowsIfJidIsNullOrEmptyOrWhitespace()
     {
@@ -43,17 +42,15 @@ public class RetryJobTest : BaseReqlessClientTest
                     jid: invalidJid!,
                     message: ExampleMessage,
                     queueName: ExampleQueueName,
-                    workerName: ExampleWorkerName
-                )
-            ),
-            "jid"
-        );
+                    workerName: ExampleWorkerName)),
+            "jid");
     }
 
     /// <summary>
     /// <see cref="ReqlessClient.RetryJobAsync"/> should throw if the
     /// given message is null, empty, or only whitespace.
     /// </summary>
+    /// <returns>A task denoting the completion of the test.</returns>
     [Fact]
     public async Task ThrowsIfMessageIsNullOrEmptyOrWhitespace()
     {
@@ -64,17 +61,15 @@ public class RetryJobTest : BaseReqlessClientTest
                     jid: ExampleJid,
                     message: invalidMessage!,
                     queueName: ExampleQueueName,
-                    workerName: ExampleWorkerName
-                )
-            ),
-            "message"
-        );
+                    workerName: ExampleWorkerName)),
+            "message");
     }
 
     /// <summary>
     /// <see cref="ReqlessClient.RetryJobAsync"/> should throw if the
     /// given queue name is null, empty, or only whitespace.
     /// </summary>
+    /// <returns>A task denoting the completion of the test.</returns>
     [Fact]
     public async Task ThrowsIfQueueNameIsNullOrEmptyOrWhitespace()
     {
@@ -85,17 +80,15 @@ public class RetryJobTest : BaseReqlessClientTest
                     jid: ExampleJid,
                     message: ExampleMessage,
                     queueName: invalidQueueName!,
-                    workerName: ExampleWorkerName
-                )
-            ),
-            "queueName"
-        );
+                    workerName: ExampleWorkerName)),
+            "queueName");
     }
 
     /// <summary>
     /// <see cref="ReqlessClient.RetryJobAsync"/> should throw if the
     /// given worker name is null, empty, or only whitespace.
     /// </summary>
+    /// <returns>A task denoting the completion of the test.</returns>
     [Fact]
     public async Task ThrowsIfWorkerNameIsNullOrEmptyOrWhitespace()
     {
@@ -106,17 +99,15 @@ public class RetryJobTest : BaseReqlessClientTest
                     jid: ExampleJid,
                     message: ExampleMessage,
                     queueName: ExampleQueueName,
-                    workerName: invalidWorkerName!
-                )
-            ),
-            "workerName"
-        );
+                    workerName: invalidWorkerName!)),
+            "workerName");
     }
 
     /// <summary>
     /// <see cref="ReqlessClient.RetryJobAsync"/> should throw if the
     /// given delay is negative.
     /// </summary>
+    /// <returns>A task denoting the completion of the test.</returns>
     [Fact]
     public async Task ThrowsIfDelayIsNegative()
     {
@@ -128,17 +119,15 @@ public class RetryJobTest : BaseReqlessClientTest
                     jid: ExampleJid,
                     message: ExampleMessage,
                     queueName: ExampleQueueName,
-                    workerName: ExampleWorkerName
-                )
-            ),
-            "delay"
-        );
+                    workerName: ExampleWorkerName)),
+            "delay");
     }
 
     /// <summary>
     /// <see cref="ReqlessClient.RetryJobAsync"/> should call Executor with
     /// the expected arguments.
     /// </summary>
+    /// <returns>A task denoting the completion of the test.</returns>
     [Fact]
     public async Task CallsExecutorWithTheExpectedArguments()
     {
@@ -151,8 +140,7 @@ public class RetryJobTest : BaseReqlessClientTest
                 ExampleWorkerName,
                 ExampleGroupName,
                 ExampleMessage,
-                delay
-            ),
+                delay),
             expectedArguments: [
                 "job.retry",
                 0,
@@ -163,8 +151,7 @@ public class RetryJobTest : BaseReqlessClientTest
                 ExampleGroupName,
                 ExampleMessage,
             ],
-            returnValue: 1
-        );
+            returnValue: 1);
         Assert.True(retriedSuccessfully);
     }
 
@@ -172,6 +159,7 @@ public class RetryJobTest : BaseReqlessClientTest
     /// <see cref="ReqlessClient.RetryJobAsync"/> should throw if server returns
     /// null.
     /// </summary>
+    /// <returns>A task denoting the completion of the test.</returns>
     [Fact]
     public async Task ThrowsIfServerReturnsNull()
     {
@@ -185,8 +173,7 @@ public class RetryJobTest : BaseReqlessClientTest
                     ExampleWorkerName,
                     ExampleGroupName,
                     ExampleMessage,
-                    delay
-                ),
+                    delay),
                 expectedArguments: [
                     "job.retry",
                     0,
@@ -197,8 +184,6 @@ public class RetryJobTest : BaseReqlessClientTest
                     ExampleGroupName,
                     ExampleMessage,
                 ],
-                returnValue: null
-            )
-        );
+                returnValue: null));
     }
 }

@@ -22,8 +22,7 @@ public class WorkerCountsTest
                 Stalled = 0,
                 WorkerName = invalidName!,
             },
-            "WorkerName"
-        );
+            "WorkerName");
     }
 
     /// <summary>

@@ -9,12 +9,6 @@ namespace Reqless.Client.Models;
 public class FailedRetriesEvent : JobEvent
 {
     /// <summary>
-    /// The kind of failure that occurred.
-    /// </summary>
-    [JsonPropertyName("group")]
-    public string Group { get; }
-
-    /// <summary>
     /// Initializes a new instance of the <see cref="FailedRetriesEvent"/> class.
     /// </summary>
     /// <param name="when">The time at which the failure occurred.</param>
@@ -27,11 +21,17 @@ public class FailedRetriesEvent : JobEvent
     /// is empty or whitespace.</exception>
     public FailedRetriesEvent(
         long when,
-        string group
-    ) : base("failed-retries", when)
+        string group)
+        : base("failed-retries", when)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(group, nameof(group));
 
         Group = group;
     }
+
+    /// <summary>
+    /// Gets the kind of failure that occurred.
+    /// </summary>
+    [JsonPropertyName("group")]
+    public string Group { get; }
 }

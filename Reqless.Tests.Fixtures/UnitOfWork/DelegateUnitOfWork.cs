@@ -20,8 +20,7 @@ public class DelegateUnitOfWork : IUnitOfWork
     /// performing the action.</param>
     public DelegateUnitOfWork(
         DelegateUnitOfWorkAction action,
-        IServiceProvider serviceProvider
-    )
+        IServiceProvider serviceProvider)
     {
         _action = action;
         _serviceProvider = serviceProvider;

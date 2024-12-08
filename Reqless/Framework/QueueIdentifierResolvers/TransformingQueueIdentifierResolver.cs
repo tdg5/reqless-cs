@@ -7,27 +7,25 @@ namespace Reqless.Framework.QueueIdentifierResolvers;
 public class TransformingQueueIdentifierResolver : IQueueIdentifierResolver
 {
     /// <summary>
-    /// The <see cref="IQueueIdentifiersTransformer"/> instances to chain
-    /// together when resolving queue identifiers.
-    /// </summary>
-    protected IEnumerable<IQueueIdentifiersTransformer> QueueIdentifiersTransformers { get; }
-
-    /// <summary>
-    /// Create an instance of <see cref="TransformingQueueIdentifierResolver"/>.
+    /// Initializes a new instance of the <see
+    /// cref="TransformingQueueIdentifierResolver"/> class.
     /// </summary>
     /// <param name="queueIdentifiersTransformers">The <see
     /// cref="IQueueIdentifierResolver"/> instances to chain together when
     /// resolving queue identifiers.</param>
     public TransformingQueueIdentifierResolver(
-        IEnumerable<IQueueIdentifiersTransformer> queueIdentifiersTransformers
-    )
+        IEnumerable<IQueueIdentifiersTransformer> queueIdentifiersTransformers)
     {
         ArgumentNullException.ThrowIfNull(
-            queueIdentifiersTransformers,
-            nameof(queueIdentifiersTransformers)
-        );
+            queueIdentifiersTransformers, nameof(queueIdentifiersTransformers));
         QueueIdentifiersTransformers = queueIdentifiersTransformers;
     }
+
+    /// <summary>
+    /// Gets the <see cref="IQueueIdentifiersTransformer"/> instances to chain
+    /// together when resolving queue identifiers.
+    /// </summary>
+    protected IEnumerable<IQueueIdentifiersTransformer> QueueIdentifiersTransformers { get; }
 
     /// <inheritdoc />
     public async Task<List<string>> ResolveQueueNamesAsync(params string[] queueIdentifiers)
@@ -39,6 +37,7 @@ public class TransformingQueueIdentifierResolver : IQueueIdentifierResolver
             resolvedQueueNames =
                 await queueIdentifiersTransformer.TransformAsync(resolvedQueueNames);
         }
+
         return resolvedQueueNames;
     }
 }

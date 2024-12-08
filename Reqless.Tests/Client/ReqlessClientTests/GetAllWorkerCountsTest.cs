@@ -1,5 +1,5 @@
-using Reqless.Client.Models;
 using Reqless.Client;
+using Reqless.Client.Models;
 using Reqless.Tests.Common.TestHelpers;
 using System.Text.Json;
 
@@ -14,6 +14,7 @@ public class GetAllWorkerCountsTest : BaseReqlessClientTest
     /// <see cref="ReqlessClient.GetAllWorkerCountsAsync"/> should throw if
     /// server returns null.
     /// </summary>
+    /// <returns>A task denoting the completion of the test.</returns>
     [Fact]
     public async Task ThrowsIfServerReturnsNull()
     {
@@ -21,15 +22,14 @@ public class GetAllWorkerCountsTest : BaseReqlessClientTest
             () => WithClientWithExecutorMockForExpectedArguments(
                 subject => subject.GetAllWorkerCountsAsync(),
                 expectedArguments: ["workers.counts", 0],
-                returnValue: null
-            )
-        );
+                returnValue: null));
     }
 
     /// <summary>
     /// <see cref="ReqlessClient.GetAllWorkerCountsAsync"/> should throw if
     /// server retruns JSON that can't be deserialized.
     /// </summary>
+    /// <returns>A task denoting the completion of the test.</returns>
     [Fact]
     public async Task ThrowsIfServerReturnsJsonThatCannotBeDeserialized()
     {
@@ -37,27 +37,23 @@ public class GetAllWorkerCountsTest : BaseReqlessClientTest
             () => WithClientWithExecutorMockForExpectedArguments(
                 subject => subject.GetAllWorkerCountsAsync(),
                 expectedArguments: ["workers.counts", 0],
-                returnValue: "null"
-            )
-        );
+                returnValue: "null"));
         Assert.Equal(
-            "Failed to deserialize all worker counts JSON: null",
-            exception.Message
-        );
+            "Failed to deserialize all worker counts JSON: null", exception.Message);
     }
 
     /// <summary>
     /// <see cref="ReqlessClient.GetAllWorkerCountsAsync"/> should return an
     /// empty array when the server returns an empty JSON object.
     /// </summary>
+    /// <returns>A task denoting the completion of the test.</returns>
     [Fact]
     public async Task ReturnsEmptyArrayWhenServerReturnsJsonObject()
     {
         var allWorkerCounts = await WithClientWithExecutorMockForExpectedArguments(
             subject => subject.GetAllWorkerCountsAsync(),
             expectedArguments: ["workers.counts", 0],
-            returnValue: "{}"
-        );
+            returnValue: "{}");
         Assert.Empty(allWorkerCounts);
     }
 
@@ -65,6 +61,7 @@ public class GetAllWorkerCountsTest : BaseReqlessClientTest
     /// <see cref="ReqlessClient.GetAllWorkerCountsAsync"/> should return a
     /// valid result returned by the server.
     /// </summary>
+    /// <returns>A task denoting the completion of the test.</returns>
     [Fact]
     public async Task ReturnsValidResultFromTheServer()
     {
@@ -78,8 +75,7 @@ public class GetAllWorkerCountsTest : BaseReqlessClientTest
         var allWorkerCounts = await WithClientWithExecutorMockForExpectedArguments(
             subject => subject.GetAllWorkerCountsAsync(),
             expectedArguments: ["workers.counts", 0],
-            returnValue: countsJson
-        );
+            returnValue: countsJson);
         Assert.Single(allWorkerCounts);
         Assert.Equivalent(expectedCounts, allWorkerCounts[0]);
     }

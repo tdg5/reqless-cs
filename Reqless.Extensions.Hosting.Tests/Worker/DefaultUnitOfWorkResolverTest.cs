@@ -21,8 +21,7 @@ public class DefaultUnitOfWorkResolverTest
     {
         Scenario.ThrowsWhenArgumentIsNull(
             () => new DefaultUnitOfWorkResolver().Resolve(null!),
-            "typeName"
-        );
+            "typeName");
     }
 
     /// <summary>
@@ -58,14 +57,10 @@ public class DefaultUnitOfWorkResolverTest
         string typeName = $"{nameof(DefaultUnitOfWorkResolverTest)}DynamicUnitOfWork";
         string expectedDynamicUnitOfWorkTypeName = $"{namespaceName}.{typeName}";
         Assert.Throws<TypeLoadException>(
-            () => subject.Resolve(expectedDynamicUnitOfWorkTypeName)
-        );
+            () => subject.Resolve(expectedDynamicUnitOfWorkTypeName));
 
         Type dynamicUnitOfWork = NoopUnitOfWorkTypeFactory.Create(
-            assemblyName,
-            namespaceName,
-            typeName
-        );
+            assemblyName, namespaceName, typeName);
         Assert.Equal(expectedDynamicUnitOfWorkTypeName, dynamicUnitOfWork.FullName);
 
         var typeAgain = Type.GetType($"{expectedDynamicUnitOfWorkTypeName}, {assemblyName}");
@@ -85,13 +80,11 @@ public class DefaultUnitOfWorkResolverTest
         ]);
         DefaultUnitOfWorkResolver subject = new(typeImplementationResolver);
         var exception = Assert.Throws<InvalidOperationException>(
-            () => subject.Resolve("Ignored")
-        );
+            () => subject.Resolve("Ignored"));
         Assert.Equal(
             $"Multiple types implementing {typeof(IUnitOfWork).FullName} with the"
             + $" full name '{typeof(NoopUnitOfWorkImplementer).FullName}' were found.",
-            exception.Message
-        );
+            exception.Message);
     }
 
     /// <summary>
@@ -109,13 +102,11 @@ public class DefaultUnitOfWorkResolverTest
         var typeName = "NoSuchType";
         DefaultUnitOfWorkResolver subject = new(typeImplementationResolver);
         var exception = Assert.Throws<TypeLoadException>(
-            () => subject.Resolve(typeName)
-        );
+            () => subject.Resolve(typeName));
         Assert.Equal(
             $"No type implementing {typeof(IUnitOfWork).FullName} with the"
             + $" full name '{typeName}' was found.",
-            exception.Message
-        );
+            exception.Message);
     }
 
     /// <summary>
@@ -128,13 +119,11 @@ public class DefaultUnitOfWorkResolverTest
         var typeName = "NoSuchType";
         DefaultUnitOfWorkResolver subject = new();
         var exception = Assert.Throws<TypeLoadException>(
-            () => subject.Resolve(typeName)
-        );
+            () => subject.Resolve(typeName));
         Assert.Equal(
             $"No type implementing {typeof(IUnitOfWork).FullName} with the"
             + $" full name '{typeName}' was found.",
-            exception.Message
-        );
+            exception.Message);
     }
 
     private class StaticTypesTypeImplementationResolver : ITypeImplementationResolver

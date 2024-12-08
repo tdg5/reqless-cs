@@ -12,27 +12,26 @@ public class ForgetQueueTest : BaseReqlessClientTest
     /// <see cref="ReqlessClient.ForgetQueueAsync"/> throws if the given queue
     /// name is null, empty, or only whitespace.
     /// </summary>
+    /// <returns>A task denoting the completion of the test.</returns>
     [Fact]
     public async Task ThrowsIfQueueNameIsNullOrEmptyOrOnlyWhitespace()
     {
         await Scenario.ThrowsWhenArgumentIsNullOrEmptyOrWhitespaceAsync(
             (invalidQueueName) => WithClientWithExecutorMockForExpectedArguments(
-                subject => subject.ForgetQueueAsync(invalidQueueName!)
-            ),
-            "queueName"
-        );
+                subject => subject.ForgetQueueAsync(invalidQueueName!)),
+            "queueName");
     }
 
     /// <summary>
     /// <see cref="ReqlessClient.ForgetQueueAsync"/> calls the executor with the
     /// expected arguments.
     /// </summary>
+    /// <returns>A task denoting the completion of the test.</returns>
     [Fact]
     public async Task CallsExecutorWithTheExpectedArguments()
     {
         await WithClientWithExecutorMockForExpectedArguments(
             subject => subject.ForgetQueueAsync(ExampleQueueName),
-            expectedArguments: ["queue.forget", 0, ExampleQueueName]
-        );
+            expectedArguments: ["queue.forget", 0, ExampleQueueName]);
     }
 }

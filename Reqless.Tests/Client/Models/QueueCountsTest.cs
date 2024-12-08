@@ -26,10 +26,9 @@ public class QueueCountsTest
                 Scheduled = 0,
                 Stalled = 0,
                 Throttled = 0,
-                Waiting = 0
+                Waiting = 0,
             },
-            "QueueName"
-        );
+            "QueueName");
     }
 
     /// <summary>
@@ -49,7 +48,7 @@ public class QueueCountsTest
             Scheduled = 0,
             Stalled = 0,
             Throttled = 0,
-            Waiting = 0
+            Waiting = 0,
         };
         Assert.Equal(queueName, queueCounts.QueueName);
     }

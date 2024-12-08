@@ -18,8 +18,7 @@ public class RecurringJobTest
     {
         Scenario.ThrowsWhenArgumentIsNullOrEmptyOrWhitespace(
             (invalidClassName) => MakeRecurringJob(className: invalidClassName),
-            "className"
-        );
+            "className");
     }
 
     /// <summary>
@@ -31,8 +30,7 @@ public class RecurringJobTest
     {
         Scenario.ThrowsWhenArgumentIsNegative(
             (invalidCount) => MakeRecurringJob(count: Maybe.Some(invalidCount)),
-            "count"
-        );
+            "count");
     }
 
     /// <summary>
@@ -44,8 +42,7 @@ public class RecurringJobTest
     {
         Scenario.ThrowsWhenArgumentIsNullOrEmptyOrWhitespace(
             (invalidData) => MakeRecurringJob(data: invalidData),
-            "data"
-        );
+            "data");
     }
 
     /// <summary>
@@ -57,10 +54,8 @@ public class RecurringJobTest
     {
         Scenario.ThrowsWhenArgumentIsNotPositive(
             (invalidIntervalSeconds) => MakeRecurringJob(
-                intervalSeconds: Maybe.Some(invalidIntervalSeconds)
-            ),
-            "intervalSeconds"
-        );
+                intervalSeconds: Maybe.Some(invalidIntervalSeconds)),
+            "intervalSeconds");
     }
 
     /// <summary>
@@ -72,8 +67,7 @@ public class RecurringJobTest
     {
         Scenario.ThrowsWhenArgumentIsNullOrEmptyOrWhitespace(
             (invalidJid) => MakeRecurringJob(jid: invalidJid),
-            "jid"
-        );
+            "jid");
     }
 
     /// <summary>
@@ -85,10 +79,8 @@ public class RecurringJobTest
     {
         Scenario.ThrowsWhenArgumentIsNegative(
             (invalidMaximumBacklog) => MakeRecurringJob(
-                maximumBacklog: Maybe.Some(invalidMaximumBacklog)
-            ),
-            "maximumBacklog"
-        );
+                maximumBacklog: Maybe.Some(invalidMaximumBacklog)),
+            "maximumBacklog");
     }
 
     /// <summary>
@@ -100,10 +92,8 @@ public class RecurringJobTest
     {
         Scenario.ThrowsWhenArgumentIsNegative(
             (invalidPriority) => MakeRecurringJob(
-                priority: Maybe.Some(invalidPriority)
-            ),
-            "priority"
-        );
+                priority: Maybe.Some(invalidPriority)),
+            "priority");
     }
 
     /// <summary>
@@ -125,8 +115,7 @@ public class RecurringJobTest
     {
         Scenario.ThrowsWhenArgumentIsEmptyOrWhitespace(
             (invalidQueueName) => MakeRecurringJob(queueName: invalidQueueName),
-            "queueName"
-        );
+            "queueName");
     }
 
     /// <summary>
@@ -138,10 +127,8 @@ public class RecurringJobTest
     {
         Scenario.ThrowsWhenArgumentIsNegative(
             (invalidRetries) => MakeRecurringJob(
-                retries: Maybe.Some(invalidRetries)
-            ),
-            "retries"
-        );
+                retries: Maybe.Some(invalidRetries)),
+            "retries");
     }
 
     /// <summary>
@@ -153,8 +140,7 @@ public class RecurringJobTest
     {
         Scenario.ThrowsWhenArgumentIsNullOrEmptyOrWhitespace(
             (invalidState) => MakeRecurringJob(state: invalidState),
-            "state"
-        );
+            "state");
     }
 
     /// <summary>
@@ -166,8 +152,7 @@ public class RecurringJobTest
     {
         Scenario.ThrowsWhenArgumentIsNull(
             () => MakeRecurringJob(tags: Maybe<string[]?>.Some(null)),
-            "tags"
-        );
+            "tags");
     }
 
     /// <summary>
@@ -179,10 +164,8 @@ public class RecurringJobTest
     {
         Scenario.ThrowsWhenArgumentElementIsNullOrEmptyOrWhitespace(
             (invalidTag) => MakeRecurringJob(
-                tags: Maybe<string[]?>.Some([invalidTag!])
-            ),
-            "tags"
-        );
+                tags: Maybe<string[]?>.Some([invalidTag!])),
+            "tags");
     }
 
     /// <summary>
@@ -194,8 +177,7 @@ public class RecurringJobTest
     {
         Scenario.ThrowsWhenArgumentIsNull(
             () => MakeRecurringJob(throttles: Maybe<string[]?>.Some(null)),
-            "throttles"
-        );
+            "throttles");
     }
 
     /// <summary>
@@ -207,10 +189,8 @@ public class RecurringJobTest
     {
         Scenario.ThrowsWhenArgumentElementIsNullOrEmptyOrWhitespace(
             (invalidThrottle) => MakeRecurringJob(
-                throttles: Maybe<string[]?>.Some([invalidThrottle!])
-            ),
-            "throttles"
-        );
+                throttles: Maybe<string[]?>.Some([invalidThrottle!])),
+            "throttles");
     }
 
     /// <summary>
@@ -236,7 +216,8 @@ public class RecurringJobTest
     /// <param name="state">The state of the job.</param>
     /// <param name="tags">The tags applied to the job.</param>
     /// <param name="throttles">The throttles applied to the job.</param>
-    public static RecurringJob MakeRecurringJob(
+    /// <returns>A new instance of <see cref="RecurringJob"/>.</returns>
+    private static RecurringJob MakeRecurringJob(
         string? className = "className",
         Maybe<int>? count = null,
         string? data = "{}",
@@ -248,29 +229,30 @@ public class RecurringJobTest
         Maybe<int>? retries = null,
         string? state = "state",
         Maybe<string[]?>? tags = null,
-        Maybe<string[]?>? throttles = null
-    )
+        Maybe<string[]?>? throttles = null)
     {
-        int _count = (count ?? Maybe<int>.None).GetOrDefault(0);
-        int _intervalSeconds = (intervalSeconds ?? Maybe<int>.None).GetOrDefault(60);
-        int _maximumBacklog = (maximumBacklog ?? Maybe<int>.None).GetOrDefault(10);
-        int _priority = (priority ?? Maybe<int>.None).GetOrDefault(0);
-        int _retries = (retries ?? Maybe<int>.None).GetOrDefault(5);
-        string[]? _tags = (tags ?? Maybe<string[]?>.None).GetOrDefault([]);
-        string[]? _throttles = (throttles ?? Maybe<string[]?>.None).GetOrDefault([]);
+        int countOrDefault = (count ?? Maybe<int>.None).GetOrDefault(0);
+        int intervalSecondsOrDefault =
+            (intervalSeconds ?? Maybe<int>.None).GetOrDefault(60);
+        int maximumBacklogOrDefault =
+            (maximumBacklog ?? Maybe<int>.None).GetOrDefault(10);
+        int priorityOrDefault = (priority ?? Maybe<int>.None).GetOrDefault(0);
+        int retriesOrDefault = (retries ?? Maybe<int>.None).GetOrDefault(5);
+        string[]? tagsOrDefault = (tags ?? Maybe<string[]?>.None).GetOrDefault([]);
+        string[]? throttlesOrDefault =
+            (throttles ?? Maybe<string[]?>.None).GetOrDefault([]);
         return new RecurringJob(
             className: className!,
-            count: _count,
+            count: countOrDefault,
             data: data!,
-            intervalSeconds: _intervalSeconds,
+            intervalSeconds: intervalSecondsOrDefault,
             jid: jid!,
-            maximumBacklog: _maximumBacklog,
-            priority: _priority,
+            maximumBacklog: maximumBacklogOrDefault,
+            priority: priorityOrDefault,
             queueName: queueName!,
-            retries: _retries,
+            retries: retriesOrDefault,
             state: state!,
-            tags: _tags!,
-            throttles: _throttles!
-        );
+            tags: tagsOrDefault!,
+            throttles: throttlesOrDefault!);
     }
 }

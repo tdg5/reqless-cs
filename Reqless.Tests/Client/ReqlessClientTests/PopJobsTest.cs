@@ -1,5 +1,5 @@
-using Reqless.Client.Models;
 using Reqless.Client;
+using Reqless.Client.Models;
 using Reqless.Common.Utilities;
 using Reqless.Tests.Common.Client.Models;
 using Reqless.Tests.Common.TestHelpers;
@@ -16,6 +16,7 @@ public class PopJobsTest : BaseReqlessClientTest
     /// <see cref="ReqlessClient.PopJobsAsync"/> should throw if the
     /// given queue name is null, empty, or only whitespace.
     /// </summary>
+    /// <returns>A task denoting the completion of the test.</returns>
     [Fact]
     public async Task ThrowsIfQueueNameIsNullOrEmptyOrWhitespace()
     {
@@ -24,17 +25,15 @@ public class PopJobsTest : BaseReqlessClientTest
                 subject => subject.PopJobsAsync(
                     limit: 10,
                     queueName: invalidQueueName!,
-                    workerName: ExampleWorkerName
-                )
-            ),
-            "queueName"
-        );
+                    workerName: ExampleWorkerName)),
+            "queueName");
     }
 
     /// <summary>
     /// <see cref="ReqlessClient.PopJobsAsync"/> should throw if the
     /// given worker name is null, empty, or only whitespace.
     /// </summary>
+    /// <returns>A task denoting the completion of the test.</returns>
     [Fact]
     public async Task ThrowsIfWorkerNameIsNullOrEmptyOrWhitespace()
     {
@@ -43,17 +42,15 @@ public class PopJobsTest : BaseReqlessClientTest
                 subject => subject.PopJobsAsync(
                     limit: 10,
                     queueName: ExampleQueueName,
-                    workerName: invalidWorkerName!
-                )
-            ),
-            "workerName"
-        );
+                    workerName: invalidWorkerName!)),
+            "workerName");
     }
 
     /// <summary>
     /// <see cref="ReqlessClient.PopJobsAsync"/> should call Executor with
     /// the expected arguments.
     /// </summary>
+    /// <returns>A task denoting the completion of the test.</returns>
     [Fact]
     public async Task CallsExecutorWithTheExpectedArguments()
     {
@@ -65,8 +62,7 @@ public class PopJobsTest : BaseReqlessClientTest
             subject => subject.PopJobsAsync(
                 limit: count,
                 queueName: ExampleQueueName,
-                workerName: ExampleWorkerName
-            ),
+                workerName: ExampleWorkerName),
             expectedArguments: [
                 "queue.pop",
                 0,
@@ -74,8 +70,7 @@ public class PopJobsTest : BaseReqlessClientTest
                 ExampleWorkerName,
                 count,
             ],
-            returnValue: jobsJson
-        );
+            returnValue: jobsJson);
         Assert.Equal(count, jobs.Count);
         var job = jobs[0];
         Assert.NotNull(job);
@@ -87,6 +82,7 @@ public class PopJobsTest : BaseReqlessClientTest
     /// <see cref="ReqlessClient.PopJobsAsync"/> should return empty list if the
     /// server returns no jobs.
     /// </summary>
+    /// <returns>A task denoting the completion of the test.</returns>
     [Fact]
     public async Task ReturnsEmptyListIfTheServerReturnsNoJobs()
     {
@@ -97,8 +93,7 @@ public class PopJobsTest : BaseReqlessClientTest
                 subject => subject.PopJobsAsync(
                     limit: count,
                     queueName: ExampleQueueName,
-                    workerName: ExampleWorkerName
-                ),
+                    workerName: ExampleWorkerName),
                 expectedArguments: [
                     "queue.pop",
                     0,
@@ -106,8 +101,7 @@ public class PopJobsTest : BaseReqlessClientTest
                     ExampleWorkerName,
                     count,
                 ],
-                returnValue: emptyResult
-            );
+                returnValue: emptyResult);
             Assert.Empty(jobs);
         }
     }
@@ -116,6 +110,7 @@ public class PopJobsTest : BaseReqlessClientTest
     /// <see cref="ReqlessClient.PopJobsAsync"/> throws if the server returns
     /// null.
     /// </summary>
+    /// <returns>A task denoting the completion of the test.</returns>
     [Fact]
     public async Task ThrowsIfTheServerReturnsNull()
     {
@@ -125,8 +120,7 @@ public class PopJobsTest : BaseReqlessClientTest
                 subject => subject.PopJobsAsync(
                     limit: count,
                     queueName: ExampleQueueName,
-                    workerName: ExampleWorkerName
-                ),
+                    workerName: ExampleWorkerName),
                 expectedArguments: [
                     "queue.pop",
                     0,
@@ -134,15 +128,14 @@ public class PopJobsTest : BaseReqlessClientTest
                     ExampleWorkerName,
                     count,
                 ],
-                returnValue: null
-            )
-        );
+                returnValue: null));
     }
 
     /// <summary>
     /// <see cref="ReqlessClient.PopJobsAsync"/> throws if the job JSON can't be
     /// deserialized.
     /// </summary>
+    /// <returns>A task denoting the completion of the test.</returns>
     [Fact]
     public async Task ThrowsIfJobJSONCannotBeDeserialized()
     {
@@ -152,8 +145,7 @@ public class PopJobsTest : BaseReqlessClientTest
                 subject => subject.PopJobsAsync(
                     limit: count,
                     queueName: ExampleQueueName,
-                    workerName: ExampleWorkerName
-                ),
+                    workerName: ExampleWorkerName),
                 expectedArguments: [
                     "queue.pop",
                     0,
@@ -161,9 +153,7 @@ public class PopJobsTest : BaseReqlessClientTest
                     ExampleWorkerName,
                     count,
                 ],
-                returnValue: "null"
-            )
-        );
+                returnValue: "null"));
         Assert.Equal("Failed to deserialize jobs JSON: null", exception.Message);
     }
 }

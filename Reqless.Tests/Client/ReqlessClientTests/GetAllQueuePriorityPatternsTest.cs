@@ -1,5 +1,5 @@
-using Reqless.Client.Models;
 using Reqless.Client;
+using Reqless.Client.Models;
 using Reqless.Tests.Common.TestHelpers;
 using System.Text.Json;
 
@@ -14,6 +14,7 @@ public class GetAllQueuePriorityPatternsTest : BaseReqlessClientTest
     /// <see cref="ReqlessClient.GetAllQueuePriorityPatternsAsync"/> should
     /// throw if server returns null.
     /// </summary>
+    /// <returns>A task denoting the completion of the test.</returns>
     [Fact]
     public async Task ThrowsIfServerReturnsNull()
     {
@@ -21,15 +22,14 @@ public class GetAllQueuePriorityPatternsTest : BaseReqlessClientTest
             () => WithClientWithExecutorMockForExpectedArguments(
                 subject => subject.GetAllQueuePriorityPatternsAsync(),
                 expectedArguments: ["queuePriorityPatterns.getAll", 0],
-                returnValue: null
-            )
-        );
+                returnValue: null));
     }
 
     /// <summary>
     /// <see cref="ReqlessClient.GetAllQueuePriorityPatternsAsync"/> should
     /// throw if server returns JSON that can't be deserialized.
     /// </summary>
+    /// <returns>A task denoting the completion of the test.</returns>
     [Fact]
     public async Task ThrowsIfServerReturnsInvalidJson()
     {
@@ -37,19 +37,17 @@ public class GetAllQueuePriorityPatternsTest : BaseReqlessClientTest
             () => WithClientWithExecutorMockForExpectedArguments(
                 subject => subject.GetAllQueuePriorityPatternsAsync(),
                 expectedArguments: ["queuePriorityPatterns.getAll", 0],
-                returnValue: "null"
-            )
-        );
+                returnValue: "null"));
         Assert.Equal(
             "Failed to deserialize all queue priority patterns JSON: null",
-            exception.Message
-        );
+            exception.Message);
     }
 
     /// <summary>
     /// <see cref="ReqlessClient.GetAllQueuePriorityPatternsAsync"/> should
     /// throw if any of the priority patterns is null.
     /// </summary>
+    /// <returns>A task denoting the completion of the test.</returns>
     [Fact]
     public async Task ThrowsIfAnyPriorityPatternIsNull()
     {
@@ -57,23 +55,22 @@ public class GetAllQueuePriorityPatternsTest : BaseReqlessClientTest
             () => WithClientWithExecutorMockForExpectedArguments(
                 subject => subject.GetAllQueuePriorityPatternsAsync(),
                 expectedArguments: ["queuePriorityPatterns.getAll", 0],
-                returnValue: """["null"]"""
-            )
-        );
+                returnValue: """["null"]"""));
         Assert.Equal(
             "Failed to deserialize queue priority pattern JSON: null",
-            exception.Message
-        );
+            exception.Message);
     }
 
     /// <summary>
     /// <see cref="ReqlessClient.GetAllQueuePriorityPatternsAsync"/> should
     /// call the executor with the expected arguments.
     /// </summary>
+    /// <returns>A task denoting the completion of the test.</returns>
     [Fact]
     public async Task CallsExecutorWithTheExpectedArguments()
     {
-        var expectedResult = new List<QueuePriorityPattern>() {
+        var expectedResult = new List<QueuePriorityPattern>()
+        {
             new(pattern: ["other"], fairly: true),
             new(pattern: ["pattern"], fairly: false),
         };
@@ -83,13 +80,11 @@ public class GetAllQueuePriorityPatternsTest : BaseReqlessClientTest
             serializedPriorities.Add(JsonSerializer.Serialize(priority));
         }
         var returnValue = JsonSerializer.Serialize(serializedPriorities);
-        List<QueuePriorityPattern> queuePriorityPatterns = (
+        List<QueuePriorityPattern> queuePriorityPatterns =
             await WithClientWithExecutorMockForExpectedArguments(
                 subject => subject.GetAllQueuePriorityPatternsAsync(),
                 expectedArguments: ["queuePriorityPatterns.getAll", 0],
-                returnValue: returnValue
-            )
-        );
+                returnValue: returnValue);
         Assert.Equivalent(expectedResult, queuePriorityPatterns);
     }
 }

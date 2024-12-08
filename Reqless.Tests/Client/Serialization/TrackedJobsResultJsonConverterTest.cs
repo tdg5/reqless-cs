@@ -10,9 +10,9 @@ namespace Reqless.Tests.Client.Serialization;
 /// </summary>
 public class TrackedJobsResultJsonConverterTest
 {
-    JsonSerializerOptions _jsonSerializerOptions = new JsonSerializerOptions
+    private static readonly JsonSerializerOptions _jsonSerializerOptions = new()
     {
-        Converters = { new JobEventJsonConverter() }
+        Converters = { new JobEventJsonConverter() },
     };
 
     /// <summary>
@@ -69,9 +69,7 @@ public class TrackedJobsResultJsonConverterTest
     {
         var json = """{"expired": [], "jobs": {}}""";
         var trackedJobs = JsonSerializer.Deserialize<TrackedJobsResult>(
-            json,
-            _jsonSerializerOptions
-        );
+            json, _jsonSerializerOptions);
         Assert.NotNull(trackedJobs);
         Assert.Empty(trackedJobs.Jobs);
     }
@@ -90,8 +88,7 @@ public class TrackedJobsResultJsonConverterTest
         });
         Assert.Equal(
             "Expected 'expired' property in JSON object, but none was found.",
-            exception.Message
-        );
+            exception.Message);
     }
 
     /// <summary>
@@ -108,8 +105,7 @@ public class TrackedJobsResultJsonConverterTest
         });
         Assert.Equal(
             "Failed to deserialize 'expired' property into a string[].",
-            exception.Message
-        );
+            exception.Message);
     }
 
     /// <summary>
@@ -121,9 +117,7 @@ public class TrackedJobsResultJsonConverterTest
     {
         var json = """{"expired": {}, "jobs": []}""";
         var trackedJobs = JsonSerializer.Deserialize<TrackedJobsResult>(
-            json,
-            _jsonSerializerOptions
-        );
+            json, _jsonSerializerOptions);
         Assert.NotNull(trackedJobs);
         Assert.Empty(trackedJobs.ExpiredJids);
     }
@@ -136,9 +130,8 @@ public class TrackedJobsResultJsonConverterTest
     public void Write_ProducesJsonThatCanBeRoundTripped()
     {
         var trackedJobsResult = new TrackedJobsResult(
-            expiredJids: new string[] { "j1", "j2" },
-            jobs: [JobFactory.NewJob()]
-        );
+            expiredJids: ["j1", "j2"],
+            jobs: [JobFactory.NewJob()]);
         var json = JsonSerializer.Serialize(trackedJobsResult, _jsonSerializerOptions);
         var deserialized = JsonSerializer.Deserialize<TrackedJobsResult>(json, _jsonSerializerOptions);
         Assert.NotNull(deserialized);

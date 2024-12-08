@@ -1,4 +1,4 @@
-﻿using Reqless.Client.Models;
+using Reqless.Client.Models;
 using Reqless.Tests.Common.TestHelpers;
 
 namespace Reqless.Tests.Client.Models;
@@ -17,8 +17,7 @@ public class TimedOutEventTest
     {
         Scenario.ThrowsWhenArgumentIsNegative(
             (long invalidWhen) => new TimedOutEvent(invalidWhen),
-            "when"
-        );
+            "when");
     }
 
     /// <summary>

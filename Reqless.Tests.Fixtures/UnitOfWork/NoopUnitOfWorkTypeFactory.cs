@@ -27,25 +27,21 @@ public static class NoopUnitOfWorkTypeFactory
         string assemblyName,
         string namespaceName,
         string typeName,
-        string? moduleName = null
-    )
+        string? moduleName = null)
     {
-        string _moduleName = moduleName ?? assemblyName;
+        string moduleNameOrDefault = moduleName ?? assemblyName;
         AssemblyBuilder assemblyBuilder = AssemblyBuilder.DefineDynamicAssembly(
-            new AssemblyName(assemblyName),
-            AssemblyBuilderAccess.Run
-        );
+            new AssemblyName(assemblyName), AssemblyBuilderAccess.Run);
 
-        ModuleBuilder moduleBuilder = assemblyBuilder.DefineDynamicModule(_moduleName);
+        ModuleBuilder moduleBuilder = assemblyBuilder.DefineDynamicModule(moduleNameOrDefault);
 
-        string _typeName = $"{namespaceName}.{typeName}";
+        string namespacedTypeName = $"{namespaceName}.{typeName}";
         Type iUnitOfWorkType = typeof(IUnitOfWork);
         TypeBuilder typeBuilder = moduleBuilder.DefineType(
             attr: TypeAttributes.Public | TypeAttributes.Class,
             interfaces: [iUnitOfWorkType],
-            name: _typeName,
-            parent: null
-        );
+            name: namespacedTypeName,
+            parent: null);
 
         Type cancellationTokenType = typeof(CancellationToken);
         string completedTaskName = nameof(Task.CompletedTask);
@@ -55,19 +51,15 @@ public static class NoopUnitOfWorkTypeFactory
             callingConvention: CallingConventions.HasThis,
             name: performAsyncName,
             parameterTypes: [cancellationTokenType],
-            returnType: typeof(Task)
-        );
+            returnType: typeof(Task));
 
         var completedTaskPropertyInfo = typeof(Task).GetProperty(
-            completedTaskName,
-            BindingFlags.Public | BindingFlags.Static
-        ) ?? throw new InvalidOperationException(
-            $"Could not find the {completedTaskName} property."
-        );
+            completedTaskName, BindingFlags.Public | BindingFlags.Static)
+                ?? throw new InvalidOperationException(
+                    $"Could not find the {completedTaskName} property.");
         var completedTaskPropertyGetMethod = completedTaskPropertyInfo.GetGetMethod()
             ?? throw new InvalidOperationException(
-                $"Could not find the get method of the {completedTaskName} property."
-            );
+                $"Could not find the get method of the {completedTaskName} property.");
 
         var performAsyncBody = performAsyncBuilder.GetILGenerator();
         performAsyncBody.Emit(OpCodes.Call, completedTaskPropertyGetMethod);
@@ -75,13 +67,10 @@ public static class NoopUnitOfWorkTypeFactory
 
         var unitOfWorkPerformAsyncMethod =
             iUnitOfWorkType.GetMethod(performAsyncName, [cancellationTokenType])
-            ?? throw new InvalidOperationException(
-                $"Could not find the {performAsyncName} method."
-            );
+                ?? throw new InvalidOperationException(
+                    $"Could not find the {performAsyncName} method.");
         typeBuilder.DefineMethodOverride(
-            performAsyncBuilder,
-            unitOfWorkPerformAsyncMethod
-        );
+            performAsyncBuilder, unitOfWorkPerformAsyncMethod);
 
         Type type = typeBuilder.CreateType();
         SanityCheckType(type);
@@ -93,37 +82,33 @@ public static class NoopUnitOfWorkTypeFactory
         string typeFullName = type.FullName
             ?? throw new InvalidOperationException("The type does not have a full name.");
         Type iUnitOfWorkType = typeof(IUnitOfWork);
+
         // Make sure the runtime acknowledges the type as IUnitOfWork.
         if (!iUnitOfWorkType.IsAssignableFrom(type))
         {
             throw new InvalidOperationException(
-                $"{typeFullName} does not implement {iUnitOfWorkType.FullName}."
-            );
+                $"{typeFullName} does not implement {iUnitOfWorkType.FullName}.");
         }
 
         // Make sure it's possible to create an instance.
         var instance = Activator.CreateInstance(type)
             ?? throw new InvalidOperationException(
-                $"Could not create an instance of {typeFullName}."
-            );
+                $"Could not create an instance of {typeFullName}.");
 
         // Make sure the PerformAsync method works when invoked on the instance
         // as the exact type.
         string performAsyncName = nameof(IUnitOfWork.PerformAsync);
         string completedTaskName = nameof(Task.CompletedTask);
         var typePerformAsync = type.GetMethod(
-            performAsyncName,
-            [typeof(CancellationToken)]
-        ) ?? throw new InvalidOperationException(
-            $"Could not find the {typeFullName}.{performAsyncName} method."
-        );
+            performAsyncName, [typeof(CancellationToken)])
+                ?? throw new InvalidOperationException(
+                    $"Could not find the {typeFullName}.{performAsyncName} method.");
         var directResult = typePerformAsync.Invoke(instance, [CancellationToken.None]);
         if (directResult != Task.CompletedTask)
         {
             throw new InvalidOperationException(
                 $"The {typeFullName}.{performAsyncName} method did not return"
-                    + $" {completedTaskName}."
-            );
+                    + $" {completedTaskName}.");
         }
 
         // Make sure the PerformAsync method works when invoked on the instance
@@ -133,8 +118,7 @@ public static class NoopUnitOfWorkTypeFactory
         {
             throw new InvalidOperationException(
                 $"The {nameof(IUnitOfWork)}.{performAsyncName} method did not"
-                    + $" return {completedTaskName}."
-            );
+                    + $" return {completedTaskName}.");
         }
     }
 }

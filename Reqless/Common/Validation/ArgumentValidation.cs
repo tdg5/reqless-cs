@@ -13,10 +13,9 @@ public static class ArgumentValidation
     /// <param name="collection">The collection to validate.</param>
     /// <param name="paramName">The name of the parameter that is being
     /// validated.</param>
+    /// <typeparam name="T">The type of the elements in the collection.</typeparam>
     public static void ThrowIfNullOrEmpty<T>(
-        IEnumerable<T> collection,
-        string paramName
-    )
+        IEnumerable<T> collection, string paramName)
     {
         ArgumentNullException.ThrowIfNull(collection, paramName);
 
@@ -33,11 +32,13 @@ public static class ArgumentValidation
     /// <param name="values">The array to validate.</param>
     /// <param name="paramName">The name of the parameter that is being
     /// validated.</param>
+    /// <typeparam name="T">The type of the elements in the collection.</typeparam>
     /// <exception cref="ArgumentNullException">If the values array itself is
     /// null.</exception>
     /// <exception cref="ArgumentException">If any of the values in the array
     /// are null.</exception>
-    public static void ThrowIfAnyNull<T>(IEnumerable<T> values, string paramName) where T : class?
+    public static void ThrowIfAnyNull<T>(IEnumerable<T> values, string paramName)
+        where T : class?
     {
         ArgumentNullException.ThrowIfNull(values, paramName);
 
@@ -71,8 +72,7 @@ public static class ArgumentValidation
             {
                 throw new ArgumentException(
                     "Value cannot include null, empty string, or strings composed entirely of whitespace.",
-                    paramName
-                );
+                    paramName);
             }
         }
     }
@@ -93,6 +93,7 @@ public static class ArgumentValidation
         {
             return;
         }
+
         ArgumentException.ThrowIfNullOrWhiteSpace(value, paramName);
     }
 
@@ -144,9 +145,7 @@ public static class ArgumentValidation
         if (value < 1)
         {
             throw new ArgumentOutOfRangeException(
-                paramName,
-                "Value must be greater than zero."
-            );
+                paramName, "Value must be greater than zero.");
         }
     }
 
@@ -164,9 +163,7 @@ public static class ArgumentValidation
         if (value < 1)
         {
             throw new ArgumentOutOfRangeException(
-                paramName,
-                "Value must be greater than zero."
-            );
+                paramName, "Value must be greater than zero.");
         }
     }
 }

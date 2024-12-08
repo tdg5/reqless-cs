@@ -13,6 +13,7 @@ public class GetAllQueueIdentifierPatternsTest : BaseReqlessClientTest
     /// <see cref="ReqlessClient.GetAllQueueIdentifierPatternsAsync"/> should
     /// throw if server returns null.
     /// </summary>
+    /// <returns>A task denoting the completion of the test.</returns>
     [Fact]
     public async Task ThrowsIfServerReturnsNull()
     {
@@ -20,15 +21,14 @@ public class GetAllQueueIdentifierPatternsTest : BaseReqlessClientTest
             () => WithClientWithExecutorMockForExpectedArguments(
                 subject => subject.GetAllQueueIdentifierPatternsAsync(),
                 expectedArguments: ["queueIdentifierPatterns.getAll", 0],
-                returnValue: null
-            )
-        );
+                returnValue: null));
     }
 
     /// <summary>
     /// <see cref="ReqlessClient.GetAllQueueIdentifierPatternsAsync"/> should
     /// throw if server returns JSON that can't be deserialized.
     /// </summary>
+    /// <returns>A task denoting the completion of the test.</returns>
     [Fact]
     public async Task ThrowsIfServerReturnsInvalidJson()
     {
@@ -36,19 +36,17 @@ public class GetAllQueueIdentifierPatternsTest : BaseReqlessClientTest
             () => WithClientWithExecutorMockForExpectedArguments(
                 subject => subject.GetAllQueueIdentifierPatternsAsync(),
                 expectedArguments: ["queueIdentifierPatterns.getAll", 0],
-                returnValue: "null"
-            )
-        );
+                returnValue: "null"));
         Assert.Equal(
             "Failed to deserialize all queue identifiers JSON: null",
-            exception.Message
-        );
+            exception.Message);
     }
 
     /// <summary>
     /// <see cref="ReqlessClient.GetAllQueueIdentifierPatternsAsync"/> should
     /// throw if any identifier list can't be deserialized from JSON.
     /// </summary>
+    /// <returns>A task denoting the completion of the test.</returns>
     [Fact]
     public async Task ThrowsIfAnyIdentifiersListIsNotValidJson()
     {
@@ -56,19 +54,17 @@ public class GetAllQueueIdentifierPatternsTest : BaseReqlessClientTest
             () => WithClientWithExecutorMockForExpectedArguments(
                 subject => subject.GetAllQueueIdentifierPatternsAsync(),
                 expectedArguments: ["queueIdentifierPatterns.getAll", 0],
-                returnValue: """{"default": "null"}"""
-            )
-        );
+                returnValue: """{"default": "null"}"""));
         Assert.Equal(
             "Failed to deserialize queue identifier patterns JSON: null",
-            exception.Message
-        );
+            exception.Message);
     }
 
     /// <summary>
     /// <see cref="ReqlessClient.GetAllQueueIdentifierPatternsAsync"/> should
     /// throw if any identifier list contains null, empty, or only whitespace.
     /// </summary>
+    /// <returns>A task denoting the completion of the test.</returns>
     [Fact]
     public async Task ThrowsIfAnyIdentifiersListContainsValueThatIsNullEmptyOrOnlyWhitespace()
     {
@@ -86,17 +82,16 @@ public class GetAllQueueIdentifierPatternsTest : BaseReqlessClientTest
                 await WithClientWithExecutorMockForExpectedArguments(
                     subject => subject.GetAllQueueIdentifierPatternsAsync(),
                     expectedArguments: ["queueIdentifierPatterns.getAll", 0],
-                    returnValue: returnValue
-                );
+                    returnValue: returnValue);
             },
-            "identifierValues"
-        );
+            "identifierValues");
     }
 
     /// <summary>
     /// <see cref="ReqlessClient.GetAllQueueIdentifierPatternsAsync"/> should
     /// call the executor with the expected arguments.
     /// </summary>
+    /// <returns>A task denoting the completion of the test.</returns>
     [Fact]
     public async Task CallsExecutorWithExpectedArguments()
     {
@@ -113,8 +108,7 @@ public class GetAllQueueIdentifierPatternsTest : BaseReqlessClientTest
         var result = await WithClientWithExecutorMockForExpectedArguments(
             subject => subject.GetAllQueueIdentifierPatternsAsync(),
             expectedArguments: ["queueIdentifierPatterns.getAll", 0],
-            returnValue: JsonSerializer.Serialize(returnValue)
-        );
+            returnValue: JsonSerializer.Serialize(returnValue));
         Assert.Equal(expectedIdentifierPatterns, result);
     }
 
@@ -122,6 +116,7 @@ public class GetAllQueueIdentifierPatternsTest : BaseReqlessClientTest
     /// <see cref="ReqlessClient.GetAllQueueIdentifierPatternsAsync"/> should
     /// ignore identifiers that have no values.
     /// </summary>
+    /// <returns>A task denoting the completion of the test.</returns>
     [Fact]
     public async Task IgnoresIdentifiersThatHaveNoValues()
     {
@@ -138,8 +133,7 @@ public class GetAllQueueIdentifierPatternsTest : BaseReqlessClientTest
         var result = await WithClientWithExecutorMockForExpectedArguments(
             subject => subject.GetAllQueueIdentifierPatternsAsync(),
             expectedArguments: ["queueIdentifierPatterns.getAll", 0],
-            returnValue: JsonSerializer.Serialize(returnValue)
-        );
+            returnValue: JsonSerializer.Serialize(returnValue));
         Assert.Equal(expectedIdentifierPatterns, result);
     }
 }

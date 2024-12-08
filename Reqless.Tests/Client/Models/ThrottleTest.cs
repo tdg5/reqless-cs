@@ -1,6 +1,6 @@
-using System.Text.Json;
 using Reqless.Client.Models;
 using Reqless.Tests.Common.TestHelpers;
+using System.Text.Json;
 
 namespace Reqless.Tests.Client.Models;
 
@@ -21,10 +21,9 @@ public class ThrottleTest
             {
                 Id = invalidId!,
                 Maximum = 42,
-                Ttl = 60
+                Ttl = 60,
             },
-            "Id"
-        );
+            "Id");
     }
 
     /// <summary>
@@ -58,9 +57,8 @@ public class ThrottleTest
             Ttl = 60,
         };
         var throttleJson = JsonSerializer.Serialize(expectedThrottle);
-        var throttle = (
-            JsonSerializer.Deserialize<Throttle>(throttleJson)
-        );
+        var throttle =
+            JsonSerializer.Deserialize<Throttle>(throttleJson);
         Assert.Equivalent(expectedThrottle, throttle);
     }
 }

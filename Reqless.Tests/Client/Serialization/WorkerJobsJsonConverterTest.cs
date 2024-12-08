@@ -9,9 +9,9 @@ namespace Reqless.Tests.Client.Serialization;
 /// </summary>
 public class WorkerJobsJsonConverterTest
 {
-    JsonSerializerOptions _jsonSerializerOptions = new JsonSerializerOptions
+    private static readonly JsonSerializerOptions _jsonSerializerOptions = new()
     {
-        Converters = { new JobEventJsonConverter() }
+        Converters = { new JobEventJsonConverter() },
     };
 
     /// <summary>
@@ -68,9 +68,7 @@ public class WorkerJobsJsonConverterTest
     {
         var json = """{"stalled": [], "jobs": {}}""";
         var job = JsonSerializer.Deserialize<WorkerJobs>(
-            json,
-            _jsonSerializerOptions
-        );
+            json, _jsonSerializerOptions);
         Assert.NotNull(job);
         Assert.Empty(job.Jobs);
     }
@@ -89,8 +87,7 @@ public class WorkerJobsJsonConverterTest
         });
         Assert.Equal(
             "Expected 'stalled' property in JSON object, but none was found.",
-            exception.Message
-        );
+            exception.Message);
     }
 
     /// <summary>
@@ -107,8 +104,7 @@ public class WorkerJobsJsonConverterTest
         });
         Assert.Equal(
             "Failed to deserialize 'stalled' property into a string[].",
-            exception.Message
-        );
+            exception.Message);
     }
 
     /// <summary>
@@ -120,9 +116,7 @@ public class WorkerJobsJsonConverterTest
     {
         var json = """{"stalled": {}, "jobs": []}""";
         var job = JsonSerializer.Deserialize<WorkerJobs>(
-            json,
-            _jsonSerializerOptions
-        );
+            json, _jsonSerializerOptions);
         Assert.NotNull(job);
         Assert.Empty(job.Stalled);
     }
@@ -135,9 +129,8 @@ public class WorkerJobsJsonConverterTest
     public void Write_ProducesJsonThatCanBeRoundTripped()
     {
         var trackedJobsResult = new WorkerJobs(
-            stalled: ["jid-1", "jid-2"],
-            jobs: ["jid-3"]
-        );
+            jobs: ["jid-3"],
+            stalled: ["jid-1", "jid-2"]);
         var json = JsonSerializer.Serialize(trackedJobsResult, _jsonSerializerOptions);
         var deserialized = JsonSerializer.Deserialize<WorkerJobs>(json, _jsonSerializerOptions);
         Assert.NotNull(deserialized);

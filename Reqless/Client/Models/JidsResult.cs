@@ -12,17 +12,7 @@ namespace Reqless.Client.Models;
 public class JidsResult
 {
     /// <summary>
-    /// A  list of job IDs that are in the collection, possibly incomplete.
-    /// </summary>
-    public string[] Jids;
-
-    /// <summary>
-    /// The total number of jobs in the collection.
-    /// </summary>
-    public int Total;
-
-    /// <summary>
-    /// Initializes a new instance of the <see cref="JidsResult"/>.
+    /// Initializes a new instance of the <see cref="JidsResult"/> class.
     /// </summary>
     /// <param name="total">The total number of jobs in the collection.</param>
     /// <param name="jids">A list of job IDs that are in the collection,
@@ -34,4 +24,14 @@ public class JidsResult
         Jids = jids;
         Total = total;
     }
+
+    /// <summary>
+    /// Gets the list of job IDs that are in the collection, possibly incomplete.
+    /// </summary>
+    public string[] Jids { get; }
+
+    /// <summary>
+    /// Gets the total number of jobs in the collection.
+    /// </summary>
+    public int Total { get; }
 }

@@ -19,6 +19,7 @@ public class RecurJobAtIntervalTest : BaseReqlessClientTest
     /// <see cref="ReqlessClient.RecurJobAtIntervalAsync"/> should return the new
     /// expiration time.
     /// </summary>
+    /// <returns>A task denoting the completion of the test.</returns>
     [Fact]
     public async Task CallsExecutorWithExpectedDefaultValuesForOptionalArguments()
     {
@@ -26,36 +27,32 @@ public class RecurJobAtIntervalTest : BaseReqlessClientTest
         var executorMock = new Mock<RedisExecutor>();
         executorMock.Setup(
             mock => mock.ExecuteAsync(It.Is<RedisValue[]>(
-                args => "queue.recurAtInterval" == args[0] &&
-                    0 == args[1] &&
-                    ExampleQueueName == args[2] &&
+                args => args[0] == "queue.recurAtInterval" &&
+                    args[1] == 0 &&
+                    args[2] == ExampleQueueName &&
                     JidRegex().IsMatch(((string?)args[3])!) &&
-                    ExampleClassName == args[4] &&
-                    ExampleData == args[5] &&
-                    ExampleIntervalSeconds == args[6] &&
-                    0 == args[7] &&
-                    "backlog" == args[8] &&
-                    0 == args[9] &&
-                    "priority" == args[10] &&
-                    0 == args[11] &&
-                    "retries" == args[12] &&
-                    5 == args[13] &&
-                    "tags" == args[14] &&
-                    "[]" == args[15] &&
-                    "throttles" == args[16] &&
-                    "[]" == args[17]
-            ))
-        ).Returns(
-            Task.FromResult(RedisResult.Create((RedisValue)ExampleJid))
-        );
+                    args[4] == ExampleClassName &&
+                    args[5] == ExampleData &&
+                    args[6] == ExampleIntervalSeconds &&
+                    args[7] == 0 &&
+                    args[8] == "backlog" &&
+                    args[9] == 0 &&
+                    args[10] == "priority" &&
+                    args[11] == 0 &&
+                    args[12] == "retries" &&
+                    args[13] == 5 &&
+                    args[14] == "tags" &&
+                    args[15] == "[]" &&
+                    args[16] == "throttles" &&
+                    args[17] == "[]")))
+            .Returns(Task.FromResult(RedisResult.Create((RedisValue)ExampleJid)));
         using (var subject = new PredictableNowReqlessClient(executorMock.Object))
         {
             string resultJid = await subject.RecurJobAtIntervalAsync(
                 className: ExampleClassName,
                 data: ExampleData,
                 intervalSeconds: ExampleIntervalSeconds,
-                queueName: ExampleQueueName
-            );
+                queueName: ExampleQueueName);
             Assert.Equal(ExampleJid, resultJid);
         }
         executorMock.VerifyAll();
@@ -66,6 +63,7 @@ public class RecurJobAtIntervalTest : BaseReqlessClientTest
     /// <see cref="ReqlessClient.RecurJobAtIntervalAsync"/> should throw if the
     /// server returns null.
     /// </summary>
+    /// <returns>A task denoting the completion of the test.</returns>
     [Fact]
     public async Task ThrowsIfTheServerReturnsNull()
     {
@@ -76,8 +74,7 @@ public class RecurJobAtIntervalTest : BaseReqlessClientTest
                     data: ExampleData,
                     intervalSeconds: ExampleIntervalSeconds,
                     jid: ExampleJid,
-                    queueName: ExampleQueueName
-                ),
+                    queueName: ExampleQueueName),
                 expectedArguments: [
                     "queue.recurAtInterval",
                     0,
@@ -98,15 +95,14 @@ public class RecurJobAtIntervalTest : BaseReqlessClientTest
                     "throttles",
                     "[]"
                 ],
-                returnValue: null
-            )
-        );
+                returnValue: null));
     }
 
     /// <summary>
     /// <see cref="ReqlessClient.RecurJobAtIntervalAsync"/> returns a jid when
     /// successful.
     /// </summary>
+    /// <returns>A task denoting the completion of the test.</returns>
     [Fact]
     public async Task ReturnsJidWhenSuccessful()
     {
@@ -128,8 +124,7 @@ public class RecurJobAtIntervalTest : BaseReqlessClientTest
                 queueName: ExampleQueueName,
                 retries: retries,
                 tags: tags,
-                throttles: throttles
-            ),
+                throttles: throttles),
             expectedArguments: [
                 "queue.recurAtInterval",
                 0,
@@ -150,8 +145,7 @@ public class RecurJobAtIntervalTest : BaseReqlessClientTest
                 "throttles",
                 JsonSerializer.Serialize(throttles)
             ],
-            returnValue: ExampleJid
-        );
+            returnValue: ExampleJid);
         Assert.Equal(ExampleJid, resultJid);
     }
 
@@ -159,6 +153,7 @@ public class RecurJobAtIntervalTest : BaseReqlessClientTest
     /// <see cref="ReqlessClient.RecurJobAtIntervalAsync"/> should throw if queueName is
     /// null, empty, or only whitespace.
     /// </summary>
+    /// <returns>A task denoting the completion of the test.</returns>
     [Fact]
     public async Task ThrowsIfQueueNameIsNullOrEmptyOrOnlyWhitespace()
     {
@@ -168,17 +163,15 @@ public class RecurJobAtIntervalTest : BaseReqlessClientTest
                     className: ExampleClassName,
                     data: ExampleData,
                     intervalSeconds: ExampleIntervalSeconds,
-                    queueName: invalidQueueName!
-                )
-            ),
-            "queueName"
-        );
+                    queueName: invalidQueueName!)),
+            "queueName");
     }
 
     /// <summary>
     /// <see cref="ReqlessClient.RecurJobAtIntervalAsync"/> should throw if className is
     /// null, empty, or only whitespace.
     /// </summary>
+    /// <returns>A task denoting the completion of the test.</returns>
     [Fact]
     public async Task ThrowsIfClassNameIsNullOrEmptyOrOnlyWhitespace()
     {
@@ -188,17 +181,15 @@ public class RecurJobAtIntervalTest : BaseReqlessClientTest
                     className: invalidClassName!,
                     data: ExampleData,
                     intervalSeconds: ExampleIntervalSeconds,
-                    queueName: ExampleQueueName
-                )
-            ),
-            "className"
-        );
+                    queueName: ExampleQueueName)),
+            "className");
     }
 
     /// <summary>
     /// <see cref="ReqlessClient.RecurJobAtIntervalAsync"/> should throw if data is null,
     /// empty, or only whitespace.
     /// </summary>
+    /// <returns>A task denoting the completion of the test.</returns>
     [Fact]
     public async Task ThrowsIfDataIsNullOrEmptyOrOnlyWhitespace()
     {
@@ -208,17 +199,15 @@ public class RecurJobAtIntervalTest : BaseReqlessClientTest
                     className: ExampleClassName,
                     data: invalidData!,
                     intervalSeconds: ExampleIntervalSeconds,
-                    queueName: ExampleQueueName
-                )
-            ),
-            "data"
-        );
+                    queueName: ExampleQueueName)),
+            "data");
     }
 
     /// <summary>
     /// <see cref="ReqlessClient.RecurJobAtIntervalAsync"/> should throw if jid is empty or
     /// only whitespace.
     /// </summary>
+    /// <returns>A task denoting the completion of the test.</returns>
     [Fact]
     public async Task ThrowsIfJidIsEmptyOrOnlyWhitespace()
     {
@@ -229,10 +218,7 @@ public class RecurJobAtIntervalTest : BaseReqlessClientTest
                     data: ExampleData,
                     intervalSeconds: ExampleIntervalSeconds,
                     jid: invalidJid,
-                    queueName: ExampleQueueName
-                )
-            ),
-            "jid"
-        );
+                    queueName: ExampleQueueName)),
+            "jid");
     }
 }

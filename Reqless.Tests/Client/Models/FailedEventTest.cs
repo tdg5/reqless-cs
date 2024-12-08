@@ -17,8 +17,7 @@ public class FailedEventTest
     {
         Scenario.ThrowsWhenArgumentIsNegative(
             (long invalidWhen) => new FailedEvent(invalidWhen, "Group", "WorkerName"),
-            "when"
-        );
+            "when");
     }
 
     /// <summary>
@@ -30,8 +29,7 @@ public class FailedEventTest
     {
         Scenario.ThrowsWhenArgumentIsNullOrEmptyOrWhitespace(
             (invalidGroup) => new FailedEvent(1, invalidGroup!, "WorkerName"),
-            "group"
-        );
+            "group");
     }
 
     /// <summary>
@@ -43,8 +41,7 @@ public class FailedEventTest
     {
         Scenario.ThrowsWhenArgumentIsNullOrEmptyOrWhitespace(
             (invalidWorkerName) => new FailedEvent(1, "Group", invalidWorkerName!),
-            "workerName"
-        );
+            "workerName");
     }
 
     /// <summary>

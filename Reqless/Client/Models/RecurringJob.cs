@@ -11,25 +11,7 @@ namespace Reqless.Client.Models;
 public class RecurringJob : BaseJob
 {
     /// <summary>
-    /// A counter tracking the number of times the job has been previously
-    /// executed, used to generate unique job IDs.
-    /// </summary>
-    public int Count { get; }
-
-    /// <summary>
-    /// The interval in seconds with which the job should recur.
-    /// </summary>
-    public int IntervalSeconds { get; }
-
-    /// <summary>
-    /// The maximum number of backlogged jobs that can be scheduled at once to
-    /// make up for skipped jobs that occurred as a result of a flood of jobs or
-    /// due to resource contention.
-    /// </summary>
-    public int MaximumBacklog { get; }
-
-    /// <summary>
-    /// Construct an instance of <see cref="RecurringJob"/>.
+    /// Initializes a new instance of the <see cref="RecurringJob"/> class.
     /// </summary>
     /// <param name="className">The name of the class that will be used to
     /// perform the job.</param>
@@ -68,8 +50,8 @@ public class RecurringJob : BaseJob
         int retries,
         string state,
         string[] tags,
-        string[] throttles
-    ) : base(className, data, jid, priority, queueName, retries, state, tags, throttles)
+        string[] throttles)
+        : base(className, data, jid, priority, queueName, retries, state, tags, throttles)
     {
         ArgumentValidation.ThrowIfNegative(count, nameof(count));
         ArgumentValidation.ThrowIfNotPositive(intervalSeconds, nameof(intervalSeconds));
@@ -79,4 +61,22 @@ public class RecurringJob : BaseJob
         IntervalSeconds = intervalSeconds;
         MaximumBacklog = maximumBacklog;
     }
+
+    /// <summary>
+    /// Gets the counter tracking the number of times the job has been previously
+    /// executed, used to generate unique job IDs.
+    /// </summary>
+    public int Count { get; }
+
+    /// <summary>
+    /// Gets the interval in seconds with which the job should recur.
+    /// </summary>
+    public int IntervalSeconds { get; }
+
+    /// <summary>
+    /// Gets the maximum number of backlogged jobs that can be scheduled at once
+    /// to make up for skipped jobs that occurred as a result of a flood of jobs
+    /// or due to resource contention.
+    /// </summary>
+    public int MaximumBacklog { get; }
 }

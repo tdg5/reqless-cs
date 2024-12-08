@@ -10,5 +10,6 @@ public interface IWorkerNameProvider
     /// Retrieve or generate a name that a worker can use when communicating
     /// with Reqless.
     /// </summary>
+    /// <returns>A name that a worker can use when communicating with Reqless.</returns>
     public string GetWorkerName();
 }

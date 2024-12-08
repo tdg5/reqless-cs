@@ -1,5 +1,5 @@
-using Reqless.Client.Models;
 using Reqless.Client;
+using Reqless.Client.Models;
 using Reqless.Tests.Common.TestHelpers;
 using System.Text.Json;
 
@@ -14,23 +14,22 @@ public class GetFailedJobsByGroupTest : BaseReqlessClientTest
     /// <see cref="ReqlessClient.GetFailedJobsByGroupAsync"/> should throw if group
     /// name is null, empty, or only whitespace.
     /// </summary>
+    /// <returns>A task denoting the completion of the test.</returns>
     [Fact]
     public async Task ShouldThrowIfGroupNameIsNullOrEmptyOrOnlyWhitespace()
     {
         await Scenario.ThrowsWhenArgumentIsNullOrEmptyOrWhitespaceAsync(
             (invalidGroupName) => WithClientWithExecutorMockForExpectedArguments(
                 subject => subject.GetFailedJobsByGroupAsync(
-                    groupName: invalidGroupName!
-                )
-            ),
-            "groupName"
-        );
+                    groupName: invalidGroupName!)),
+            "groupName");
     }
 
     /// <summary>
     /// <see cref="ReqlessClient.GetFailedJobsByGroupAsync"/> should throw if
     /// server returns null.
     /// </summary>
+    /// <returns>A task denoting the completion of the test.</returns>
     [Fact]
     public async Task ShouldThrowIfServerReturnsNull()
     {
@@ -41,8 +40,7 @@ public class GetFailedJobsByGroupTest : BaseReqlessClientTest
                 subject => subject.GetFailedJobsByGroupAsync(
                     groupName: ExampleGroupName,
                     limit: limit,
-                    offset: offset
-                ),
+                    offset: offset),
                 expectedArguments: [
                     "jobs.failedByGroup",
                     0,
@@ -50,15 +48,14 @@ public class GetFailedJobsByGroupTest : BaseReqlessClientTest
                     offset,
                     limit
                 ],
-                returnValue: null
-            )
-        );
+                returnValue: null));
     }
 
     /// <summary>
     /// <see cref="ReqlessClient.GetFailedJobsByGroupAsync"/> should throw if
     /// JSON can't be deserialized.
     /// </summary>
+    /// <returns>A task denoting the completion of the test.</returns>
     [Fact]
     public async Task ShouldThrowIfJsonCannotBeDeserialized()
     {
@@ -69,8 +66,7 @@ public class GetFailedJobsByGroupTest : BaseReqlessClientTest
                 subject => subject.GetFailedJobsByGroupAsync(
                     groupName: ExampleGroupName,
                     limit: limit,
-                    offset: offset
-                ),
+                    offset: offset),
                 expectedArguments: [
                     "jobs.failedByGroup",
                     0,
@@ -78,19 +74,17 @@ public class GetFailedJobsByGroupTest : BaseReqlessClientTest
                     offset,
                     limit
                 ],
-                returnValue: "null"
-            )
-        );
+                returnValue: "null"));
         Assert.Equal(
             "Failed to deserialize failed jobs query result JSON: null",
-            exception.Message
-        );
+            exception.Message);
     }
 
     /// <summary>
     /// <see cref="ReqlessClient.GetFailedJobsByGroupAsync"/> should return
     /// JidsResult.
     /// </summary>
+    /// <returns>A task denoting the completion of the test.</returns>
     [Fact]
     public async Task ShouldReturnJidsResult()
     {
@@ -103,8 +97,7 @@ public class GetFailedJobsByGroupTest : BaseReqlessClientTest
             subject => subject.GetFailedJobsByGroupAsync(
                 groupName: ExampleGroupName,
                 limit: limit,
-                offset: offset
-            ),
+                offset: offset),
             expectedArguments: [
                 "jobs.failedByGroup",
                 0,
@@ -112,8 +105,7 @@ public class GetFailedJobsByGroupTest : BaseReqlessClientTest
                 offset,
                 limit
             ],
-            returnValue: $$"""{"total":{{total}},"jobs":{{jobsJson}}}"""
-        );
+            returnValue: $$"""{"total":{{total}},"jobs":{{jobsJson}}}""");
         Assert.IsType<JidsResult>(result);
         Assert.Equal(total, result.Total);
         Assert.Equal(jids, result.Jids);

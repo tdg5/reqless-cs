@@ -2,6 +2,9 @@ using System.Text.Json;
 
 namespace Reqless.Client.Serialization;
 
+/// <summary>
+/// Helper methods for converting reqless server JSON to C# objects.
+/// </summary>
 internal static class JsonConverterHelper
 {
     /// <summary>
@@ -17,8 +20,7 @@ internal static class JsonConverterHelper
     internal static bool TryConsumeDegenerateObject(
         string propertyName,
         string expectedType,
-        ref Utf8JsonReader reader
-    )
+        ref Utf8JsonReader reader)
     {
         if (reader.TokenType != JsonTokenType.StartObject)
         {
@@ -34,11 +36,12 @@ internal static class JsonConverterHelper
         }
 
         var unexpectedObject = JsonSerializer.Deserialize<Dictionary<string, object>>(ref reader);
+
         // We can forgive null here because the reader will throw if the object
         // isn't a dictionary.
         var propertyCount = unexpectedObject!.Count;
         throw new JsonException(
-            $"Expected '{propertyName}' to be {expectedType} or empty object but encountered object with {propertyCount} properties."
-        );
+            $"Expected '{propertyName}' to be {expectedType} or empty object but"
+            + $" encountered object with {propertyCount} properties.");
     }
 }

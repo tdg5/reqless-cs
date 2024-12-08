@@ -11,7 +11,8 @@ namespace Reqless.Extensions.Hosting.Worker;
 /// <typeparam name="T">The type of the <see cref="IHostedService"/> that should
 /// be registered.</typeparam>
 public class GenericWorkerServiceRegistrar<T>
-    : IWorkerServiceRegistrar where T : class, IHostedService
+    : IWorkerServiceRegistrar
+    where T : class, IHostedService
 {
     /// <inheritdoc/>
     public IServiceCollection RegisterWorkers(IServiceCollection services, int count)
@@ -19,10 +20,11 @@ public class GenericWorkerServiceRegistrar<T>
         ArgumentNullException.ThrowIfNull(services, nameof(services));
         ArgumentValidation.ThrowIfNegative(count, nameof(count));
 
-        foreach (var index in Enumerable.Range(0, count))
+        for (var index = 0; index < count; index++)
         {
             services.AddSingleton<IHostedService, T>();
         }
+
         return services;
     }
 }

@@ -11,7 +11,8 @@ public class TypeImplementationResolver : ITypeImplementationResolver
     private readonly IReflectionGlobals _reflectionGlobals;
 
     /// <summary>
-    /// Create a new instance of <see cref="TypeImplementationResolver"/>.
+    /// Initializes a new instance of the <see cref="TypeImplementationResolver"/>
+    /// class.
     /// </summary>
     /// <param name="reflectionGlobals">An <see cref="IReflectionGlobals"/>
     /// instance that should be used to access global/static reflection
@@ -25,19 +26,19 @@ public class TypeImplementationResolver : ITypeImplementationResolver
     /// Get all types that implement the given <paramref name="type"/>.
     /// </summary>
     /// <param name="type">The contract to find implementing types for.</param>
+    /// <returns>An array of <see cref="Type"/> instances that implement the
+    /// given <paramref name="type"/>.</returns>
     public Type[] GetAllImplementingTypes(Type type)
     {
         ArgumentNullException.ThrowIfNull(type, nameof(type));
 
         return GetAssemblies()
             .SelectMany(
-                assembly => TryGetTypes(assembly, out var types) ? types : []
-            )
+                assembly => TryGetTypes(assembly, out var types) ? types : [])
             .Where(candidateType =>
                 !candidateType.IsInterface && !candidateType.IsAbstract
                 && !candidateType.IsGenericTypeDefinition
-                && AllBaseAndImplementingTypes(candidateType).Contains(type)
-            )
+                && AllBaseAndImplementingTypes(candidateType).Contains(type))
             .Distinct()
             .ToArray();
     }
@@ -55,10 +56,16 @@ public class TypeImplementationResolver : ITypeImplementationResolver
         return EnumerateBaseTypes(type);
     }
 
+    /// <summary>
+    /// Enumerate all base types of the given <paramref name="type"/>.
+    /// </summary>
+    /// <param name="type">The type to discover the base types of.</param>
     /// <remarks>
     /// This is separate from <see cref="GetBaseTypes"/> so that <see
     /// cref="GetBaseTypes"/> can validate arguments.
     /// </remarks>
+    /// <returns>An <see cref="IEnumerable{T}"/> of <see cref="Type"/> instances
+    /// that are the base types of the given <paramref name="type"/>.</returns>
     internal static IEnumerable<Type> EnumerateBaseTypes(Type type)
     {
         var currentType = type;
@@ -87,6 +94,15 @@ public class TypeImplementationResolver : ITypeImplementationResolver
             .Where(t => t != type && t != typeof(object));
     }
 
+    /// <summary>
+    /// Get the given <paramref name="type"/> and its open type if it is a
+    /// generic type.
+    /// </summary>
+    /// <param name="type">The <see cref="Type"/> to get and its open type if it
+    /// is a generic type.</param>
+    /// <returns>An <see cref="IEnumerable{T}"/> of <see cref="Type"/> instances
+    /// that are the given <paramref name="type"/> and its open type if it is a
+    /// generic type.</returns>
     internal static IEnumerable<Type> TypeAndOpenTypeIfGeneric(Type type)
     {
         yield return type;
@@ -98,13 +114,72 @@ public class TypeImplementationResolver : ITypeImplementationResolver
     }
 
     /// <summary>
+    /// Wrapper around <see cref="Assembly.GetTypes"/> that handles exceptions
+    /// that sometimes come up and can be ignored for the purposes of this
+    /// class.
+    /// </summary>
+    /// <param name="assembly">The <see cref="Assembly"/> to get types from.</param>
+    /// <param name="types">The types that were retrieved from the assembly, or
+    /// null if loading types failed.</param>
+    /// <returns>True when the types were successfully retrieved, false
+    /// otherwise.</returns>
+    internal static bool TryGetTypes(
+        Assembly assembly,
+        [MaybeNullWhen(false)] out Type[] types)
+    {
+        ArgumentNullException.ThrowIfNull(assembly, nameof(assembly));
+
+        try
+        {
+            types = assembly.GetTypes();
+            return true;
+        }
+        catch (Exception ex) when (ex is ReflectionTypeLoadException)
+        {
+            types = null;
+            return false;
+        }
+    }
+
+    /// <summary>
+    /// Try to load an assembly by name, ignorning common exceptions that can be
+    /// ignored for the purposes of this class.
+    /// </summary>
+    /// <param name="assemblyName">The name of the assembly to load.</param>
+    /// <param name="assembly">The assembly that was loaded, or null if loading
+    /// the assembly failed.</param>
+    /// <returns>True when the assembly was successfully loaded, false
+    /// otherwise.</returns>
+    internal bool TryLoadAssemblyByName(
+        string assemblyName,
+        [MaybeNullWhen(false)] out Assembly assembly)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(assemblyName, nameof(assemblyName));
+
+        try
+        {
+            assembly = _reflectionGlobals.LoadAssemblyByName(assemblyName);
+            return true;
+        }
+        catch (Exception ex) when (
+            ex is BadImageFormatException
+            || ex is FileNotFoundException
+            || ex is FileLoadException
+            || ex is ReflectionTypeLoadException)
+        {
+            assembly = null;
+            return false;
+        }
+    }
+
+    /// <summary>
     /// Get all assemblies that are referenced by the entry assembly in one way
     /// or another.
     /// </summary>
     /// <remarks>Protected and virtual to facilitate testing.</remarks>
     /// <returns>An <see cref="IEnumerable{T}"/> of <see cref="Assembly"/>
     /// instances that are referenced by the entry assembly.</returns>
-    internal protected virtual IEnumerable<Assembly> GetAssemblies()
+    protected internal virtual IEnumerable<Assembly> GetAssemblies()
     {
         List<Assembly> baseAssemblies = [];
         var entryAssembly = _reflectionGlobals.GetEntryAssembly()
@@ -114,27 +189,24 @@ public class TypeImplementationResolver : ITypeImplementationResolver
 
         var dependencyModel = _reflectionGlobals.LoadDependencyContext(entryAssembly)
             ?? throw new InvalidOperationException(
-                "Could not load the dependency context for the entry assembly."
-            );
+                "Could not load the dependency context for the entry assembly.");
 
         foreach (var runtimeLibrary in dependencyModel.RuntimeLibraries)
         {
             if (
                 (
                     runtimeLibrary.Type.Equals("project")
-                    || runtimeLibrary.RuntimeAssemblyGroups.Count > 0
-                )
+                    || runtimeLibrary.RuntimeAssemblyGroups.Count > 0)
                 && TryLoadAssemblyByName(
                     runtimeLibrary.Name,
-                    out var runtimeLibraryAssembly
-                )
-            )
+                    out var runtimeLibraryAssembly))
             {
                 baseAssemblies.Add(runtimeLibraryAssembly);
             }
         }
 
-        baseAssemblies.AddRange(_reflectionGlobals.CurrentAppDomain.GetAssemblies());
+        baseAssemblies.AddRange(
+            _reflectionGlobals.CurrentAppDomain.GetAssemblies());
         return GetAssembliesCore(baseAssemblies);
     }
 
@@ -157,7 +229,10 @@ public class TypeImplementationResolver : ITypeImplementationResolver
             {
                 string fullName = referencedAssemblyName.FullName;
 
-                if (visited.Contains(fullName)) { continue; }
+                if (visited.Contains(fullName))
+                {
+                    continue;
+                }
 
                 visited.Add(fullName);
 
@@ -168,69 +243,5 @@ public class TypeImplementationResolver : ITypeImplementationResolver
             }
         }
         while (stack.Count > 0);
-    }
-
-    /// <summary>
-    /// Try to load an assembly by name, ignorning common exceptions that can be
-    /// ignored for the purposes of this class.
-    /// </summary>
-    /// <param name="assemblyName">The name of the assembly to load.</param>
-    /// <param name="assembly">The assembly that was loaded, or null if loading
-    /// the assembly failed.</param>
-    /// <returns>True when the assembly was successfully loaded, false
-    /// otherwise.</returns>
-    internal bool TryLoadAssemblyByName(
-        string assemblyName,
-        [MaybeNullWhen(false)] out Assembly assembly
-    )
-    {
-        ArgumentException.ThrowIfNullOrWhiteSpace(assemblyName, nameof(assemblyName));
-
-        try
-        {
-            assembly = _reflectionGlobals.LoadAssemblyByName(assemblyName);
-            return true;
-        }
-        catch (Exception ex) when (
-            ex is BadImageFormatException
-            || ex is FileNotFoundException
-            || ex is FileLoadException
-            || ex is ReflectionTypeLoadException
-        )
-        {
-            assembly = null;
-            return false;
-        }
-    }
-
-    /// <summary>
-    /// Wrapper around <see cref="Assembly.GetTypes"/> that handles exceptions
-    /// that sometimes come up and can be ignored for the purposes of this
-    /// class.
-    /// </summary>
-    /// <param name="assembly">The <see cref="Assembly"/> to get types from.</param>
-    /// <param name="types">The types that were retrieved from the assembly, or
-    /// null if loading types failed.</param>
-    /// <returns>True when the types were successfully retrieved, false
-    /// otherwise.</returns>
-    internal static bool TryGetTypes(
-        Assembly assembly,
-        [MaybeNullWhen(false)] out Type[] types
-    )
-    {
-        ArgumentNullException.ThrowIfNull(assembly, nameof(assembly));
-
-        try
-        {
-            types = assembly.GetTypes();
-            return true;
-        }
-        catch (Exception ex) when (
-            ex is ReflectionTypeLoadException
-        )
-        {
-            types = null;
-            return false;
-        }
     }
 }

@@ -12,30 +12,14 @@ public class ReqlessClient : IReqlessClient, IDisposable
 {
     private readonly IRedisExecutor _executor;
 
-    private readonly bool _responsibleForExecutor;
-
-    /// <summary>
-    /// Flag tracking whether the instance has been disposed or not. True if the
-    /// object has been disposed, false otherwise.
-    /// </summary>
-    protected bool _disposed = false;
-
-    /// <summary>
-    /// Initializes a new instance of the <see cref="ReqlessClient"/> class. This
-    /// constructor is for testing purposes only.
-    /// </summary>
-    protected ReqlessClient(bool _)
-    {
-        // Forgive null here to silence warning about uninitialized field.
-        _executor = null!;
-        _responsibleForExecutor = false;
-    }
+    private readonly bool _isResponsibleForExecutor;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="ReqlessClient"/> class with
     /// default connection string "localhost:6379".
     /// </summary>
-    public ReqlessClient() : this("localhost:6379")
+    public ReqlessClient()
+        : this("localhost:6379")
     {
     }
 
@@ -43,7 +27,9 @@ public class ReqlessClient : IReqlessClient, IDisposable
     /// Initializes a new instance of the <see cref="ReqlessClient"/> class from
     /// an existing <see cref="IConnectionMultiplexer"/> instance.
     /// </summary>
-    public ReqlessClient(IConnectionMultiplexer connection) : this(new RedisExecutor(connection))
+    /// <param name="connection">The connection to the Redis server.</param>
+    public ReqlessClient(IConnectionMultiplexer connection)
+        : this(new RedisExecutor(connection))
     {
     }
 
@@ -57,7 +43,7 @@ public class ReqlessClient : IReqlessClient, IDisposable
     public ReqlessClient(IRedisExecutor executor)
     {
         _executor = executor;
-        _responsibleForExecutor = false;
+        _isResponsibleForExecutor = false;
     }
 
     /// <summary>
@@ -68,12 +54,29 @@ public class ReqlessClient : IReqlessClient, IDisposable
     /// </summary>
     /// <param name="connectionString">The connection string to the Redis
     /// server.</param>
-    public ReqlessClient(
-        string connectionString
-    ) : this(new RedisExecutor(connectionString))
+    public ReqlessClient(string connectionString)
+        : this(new RedisExecutor(connectionString))
     {
-        _responsibleForExecutor = true;
+        _isResponsibleForExecutor = true;
     }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ReqlessClient"/> class. This
+    /// constructor is for testing purposes only.
+    /// </summary>
+    /// <param name="ignored">A boolean value that is ignored.</param>
+    protected ReqlessClient(bool ignored)
+    {
+        // Forgive null here to silence warning about uninitialized field.
+        _executor = null!;
+        _isResponsibleForExecutor = false;
+    }
+
+    /// <summary>
+    /// Gets a value indicating whether the instance has been disposed or not.
+    /// True if the object has been disposed, false otherwise.
+    /// </summary>
+    protected bool IsDisposed { get; private set; } = false;
 
     /// <inheritdoc />
     public async Task<bool> AddDependencyToJobAsync(string jid, string dependsOnJid)
@@ -93,10 +96,7 @@ public class ReqlessClient : IReqlessClient, IDisposable
 
     /// <inheritdoc />
     public async Task<bool> AddEventToJobHistoryAsync(
-        string jid,
-        string what,
-        string? data = null
-    )
+        string jid, string what, string? data = null)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(jid, nameof(jid));
         ArgumentException.ThrowIfNullOrWhiteSpace(what, nameof(what));
@@ -175,6 +175,7 @@ public class ReqlessClient : IReqlessClient, IDisposable
         arguments[1] = Now();
         CopyStringArguments(jids, ref arguments, 2);
         await _executor.ExecuteAsync(arguments);
+
         // If no error occurred, the jobs were either cancelled or didn't exist.
         return true;
     }
@@ -193,18 +194,15 @@ public class ReqlessClient : IReqlessClient, IDisposable
 
     /// <inheritdoc />
     public async Task<bool> CompleteJobAsync(
-        string jid,
-        string workerName,
-        string queueName,
-        string data
-    )
+        string jid, string workerName, string queueName, string data)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(jid, nameof(jid));
         ArgumentException.ThrowIfNullOrWhiteSpace(workerName, nameof(workerName));
         ArgumentException.ThrowIfNullOrWhiteSpace(queueName, nameof(queueName));
         ArgumentException.ThrowIfNullOrWhiteSpace(data, nameof(data));
 
-        var arguments = new RedisValue[] {
+        var arguments = new RedisValue[]
+        {
             "job.complete",
             Now(),
             jid,
@@ -224,16 +222,16 @@ public class ReqlessClient : IReqlessClient, IDisposable
         string data,
         string nextQueueName,
         int delay = 0,
-        string[]? dependencies = null
-    )
+        string[]? dependencies = null)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(jid, nameof(jid));
         ArgumentException.ThrowIfNullOrWhiteSpace(workerName, nameof(workerName));
         ArgumentException.ThrowIfNullOrWhiteSpace(queueName, nameof(queueName));
         ArgumentException.ThrowIfNullOrWhiteSpace(data, nameof(data));
 
-        var _dependencies = dependencies ?? [];
-        var arguments = new RedisValue[] {
+        var dependenciesOrDefault = dependencies ?? [];
+        var arguments = new RedisValue[]
+        {
             "job.completeAndRequeue",
             Now(),
             jid,
@@ -244,7 +242,7 @@ public class ReqlessClient : IReqlessClient, IDisposable
             "delay",
             delay,
             "depends",
-            JsonSerializer.Serialize(_dependencies),
+            JsonSerializer.Serialize(dependenciesOrDefault),
         };
 
         await _executor.ExecuteAsync(arguments);
@@ -263,14 +261,22 @@ public class ReqlessClient : IReqlessClient, IDisposable
         ]);
     }
 
+    /// <summary>
+    /// Releases all resources used by the <see cref="ReqlessClient"/>.
+    /// </summary>
+    public virtual void Dispose()
+    {
+        Dispose(disposing: true);
+        GC.SuppressFinalize(this);
+    }
+
     /// <inheritdoc />
     public async Task<bool> FailJobAsync(
         string jid,
         string workerName,
         string groupName,
         string message,
-        string? data = null
-    )
+        string? data = null)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(jid, nameof(jid));
         ArgumentException.ThrowIfNullOrWhiteSpace(workerName, nameof(workerName));
@@ -289,6 +295,7 @@ public class ReqlessClient : IReqlessClient, IDisposable
         {
             arguments[6] = data;
         }
+
         await _executor.ExecuteAsync(arguments);
 
         // If no error occurred, the job was failed successfully.
@@ -358,13 +365,12 @@ public class ReqlessClient : IReqlessClient, IDisposable
     {
         var result = await _executor.ExecuteAsync(["config.getAll", Now()]);
 
-        var configsJson = OperationValidation.ThrowIfServerResponseIsNull(
-            (string?)result
-        );
+        var configsJson =
+            OperationValidation.ThrowIfServerResponseIsNull((string?)result);
 
-        var configs = JsonSerializer.Deserialize<Dictionary<string, string>>(
-            configsJson
-        ) ?? throw new JsonException($"Failed to deserialize config JSON: {result}");
+        var configs =
+            JsonSerializer.Deserialize<Dictionary<string, string>>(configsJson)
+            ?? throw new JsonException($"Failed to deserialize config JSON: {result}");
 
         return configs;
     }
@@ -374,9 +380,8 @@ public class ReqlessClient : IReqlessClient, IDisposable
     {
         var result = await _executor.ExecuteAsync(["queues.counts", Now()]);
 
-        var countsJson = OperationValidation.ThrowIfServerResponseIsNull(
-            (string?)result
-        );
+        var countsJson =
+            OperationValidation.ThrowIfServerResponseIsNull((string?)result);
 
         // Redis cjson can't distinguish between an empty array and an empty
         // object, so an empty object here actually represents an empty array,
@@ -388,8 +393,7 @@ public class ReqlessClient : IReqlessClient, IDisposable
 
         var counts = JsonSerializer.Deserialize<List<QueueCounts>>(countsJson)
             ?? throw new JsonException(
-                $"Failed to deserialize all queue counts JSON: {countsJson}"
-            );
+                $"Failed to deserialize all queue counts JSON: {countsJson}");
 
         return counts;
     }
@@ -398,36 +402,27 @@ public class ReqlessClient : IReqlessClient, IDisposable
     public async Task<Dictionary<string, List<string>>> GetAllQueueIdentifierPatternsAsync()
     {
         var result = await _executor.ExecuteAsync(
-            "queueIdentifierPatterns.getAll",
-            Now()
-        );
+            "queueIdentifierPatterns.getAll", Now());
 
-        var identifiersJson = OperationValidation.ThrowIfServerResponseIsNull(
-            (string?)result
-        );
+        var identifiersJson =
+            OperationValidation.ThrowIfServerResponseIsNull((string?)result);
 
-        var identifiersWithSerializedValues = (
-            JsonSerializer.Deserialize<Dictionary<string, string>>(
-                identifiersJson
-            ) ?? throw new JsonException(
-                $"Failed to deserialize all queue identifiers JSON: {identifiersJson}"
-            )
-        );
+        var identifiersWithSerializedValues =
+            JsonSerializer.Deserialize<Dictionary<string, string>>(identifiersJson)
+            ?? throw new JsonException(
+                $"Failed to deserialize all queue identifiers JSON: {identifiersJson}");
 
         var identifierMapping = new Dictionary<string, List<string>>();
         foreach (var (key, value) in identifiersWithSerializedValues)
         {
             var identifierValues = JsonSerializer.Deserialize<List<string>>(value)
                 ?? throw new JsonException(
-                    $"Failed to deserialize queue identifier patterns JSON: {value}"
-                );
+                    $"Failed to deserialize queue identifier patterns JSON: {value}");
 
             if (identifierValues.Count > 0)
             {
                 OperationValidation.ThrowIfAnyNullOrWhitespace(
-                    identifierValues,
-                    nameof(identifierValues)
-                );
+                    identifierValues, nameof(identifierValues));
                 identifierMapping[key] = identifierValues;
             }
         }
@@ -440,14 +435,12 @@ public class ReqlessClient : IReqlessClient, IDisposable
     {
         var result = await _executor.ExecuteAsync(["queues.names", Now()]);
 
-        var namesJson = OperationValidation.ThrowIfServerResponseIsNull(
-            (string?)result
-        );
+        var namesJson =
+            OperationValidation.ThrowIfServerResponseIsNull((string?)result);
 
         var names = JsonSerializer.Deserialize<List<string>>(namesJson)
             ?? throw new JsonException(
-                $"Failed to deserialize all queue names JSON: {namesJson}"
-            );
+                $"Failed to deserialize all queue names JSON: {namesJson}");
 
         return names;
     }
@@ -455,33 +448,32 @@ public class ReqlessClient : IReqlessClient, IDisposable
     /// <summary>
     /// Gets all queue priority patterns.
     /// </summary>
+    /// <returns>A list of <see cref="QueuePriorityPattern"/> instances.</returns>
     public async Task<List<QueuePriorityPattern>> GetAllQueuePriorityPatternsAsync()
     {
         var result = await _executor.ExecuteAsync(
             "queuePriorityPatterns.getAll",
-            Now()
-        );
+            Now());
 
-        string listJson = OperationValidation.ThrowIfServerResponseIsNull(
-            (string?)result
-        );
+        string listJson =
+            OperationValidation.ThrowIfServerResponseIsNull((string?)result);
 
-        var listOfSerializedPriorities = JsonSerializer.Deserialize<List<string>>(listJson)
-            ?? throw new JsonException(
-                $"Failed to deserialize all queue priority patterns JSON: {listJson}"
-            );
+        var listOfSerializedPriorities =
+            JsonSerializer.Deserialize<List<string>>(listJson)
+                ?? throw new JsonException(
+                    "Failed to deserialize all queue priority patterns JSON: "
+                        + listJson);
 
         var priorities = new List<QueuePriorityPattern>();
         foreach (var serializedPriority in listOfSerializedPriorities)
         {
-            var priority = (
+            var priority =
                 JsonSerializer.Deserialize<QueuePriorityPattern>(serializedPriority)
                     ?? throw new JsonException(
-                        $"Failed to deserialize queue priority pattern JSON: {serializedPriority}"
-                    )
-            );
+                        "Failed to deserialize queue priority pattern JSON: "
+                            + serializedPriority);
             priorities.Add(priority);
-        };
+        }
 
         return priorities;
     }
@@ -491,9 +483,8 @@ public class ReqlessClient : IReqlessClient, IDisposable
     {
         var result = await _executor.ExecuteAsync(["workers.counts", Now()]);
 
-        var countsJson = OperationValidation.ThrowIfServerResponseIsNull(
-            (string?)result
-        );
+        var countsJson =
+            OperationValidation.ThrowIfServerResponseIsNull((string?)result);
 
         // Redis cjson can't distinguish between an empty array and an empty
         // object, so an empty object here actually represents an empty array,
@@ -505,17 +496,14 @@ public class ReqlessClient : IReqlessClient, IDisposable
 
         var counts = JsonSerializer.Deserialize<List<WorkerCounts>>(countsJson)
             ?? throw new JsonException(
-                $"Failed to deserialize all worker counts JSON: {countsJson}"
-            );
+                $"Failed to deserialize all worker counts JSON: {countsJson}");
 
         return counts;
     }
 
     /// <inheritdoc/>
     public async Task<List<string>> GetCompletedJobsAsync(
-        int limit = 25,
-        int offset = 0
-    )
+        int limit = 25, int offset = 0)
     {
         var result = await _executor.ExecuteAsync([
             "jobs.completed",
@@ -543,10 +531,7 @@ public class ReqlessClient : IReqlessClient, IDisposable
 
     /// <inheritdoc/>
     public Task<JidsResult> GetFailedJobsByGroupAsync(
-        string groupName,
-        int limit = 25,
-        int offset = 0
-    )
+        string groupName, int limit = 25, int offset = 0)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(groupName, nameof(groupName));
 
@@ -557,18 +542,15 @@ public class ReqlessClient : IReqlessClient, IDisposable
     public async Task<Dictionary<string, int>> GetFailureGroupsCountsAsync()
     {
         RedisResult result = await _executor.ExecuteAsync(
-            ["failureGroups.counts", Now()]
-        );
+            ["failureGroups.counts", Now()]);
 
-        var failedCountsJson = OperationValidation.ThrowIfServerResponseIsNull(
-            (string?)result
-        );
+        var failedCountsJson =
+            OperationValidation.ThrowIfServerResponseIsNull((string?)result);
 
-        var keyValues = JsonSerializer.Deserialize<Dictionary<string, int>>(
-            failedCountsJson
-        ) ?? throw new JsonException(
-            $"Failed to deserialize failed counts JSON: {failedCountsJson}"
-        );
+        var keyValues =
+            JsonSerializer.Deserialize<Dictionary<string, int>>(failedCountsJson)
+                ?? throw new JsonException(
+                    $"Failed to deserialize failed counts JSON: {failedCountsJson}");
 
         return keyValues;
     }
@@ -613,8 +595,7 @@ public class ReqlessClient : IReqlessClient, IDisposable
         string state,
         string queueName,
         int limit = 25,
-        int offset = 0
-    )
+        int offset = 0)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(state, nameof(state));
         ArgumentException.ThrowIfNullOrWhiteSpace(queueName, nameof(queueName));
@@ -633,10 +614,7 @@ public class ReqlessClient : IReqlessClient, IDisposable
 
     /// <inheritdoc/>
     public Task<JidsResult> GetJobsByTagAsync(
-        string tag,
-        int limit = 25,
-        int offset = 0
-    )
+        string tag, int limit = 25, int offset = 0)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(tag, nameof(tag));
 
@@ -648,16 +626,15 @@ public class ReqlessClient : IReqlessClient, IDisposable
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(queueName, nameof(queueName));
 
-        var result = await _executor.ExecuteAsync(["queue.counts", Now(), queueName]);
+        var result =
+            await _executor.ExecuteAsync(["queue.counts", Now(), queueName]);
 
-        var countsJson = OperationValidation.ThrowIfServerResponseIsNull(
-            (string?)result
-        );
+        var countsJson =
+            OperationValidation.ThrowIfServerResponseIsNull((string?)result);
 
         var counts = JsonSerializer.Deserialize<QueueCounts>(countsJson)
             ?? throw new JsonException(
-                $"Failed to deserialize queue counts JSON: {countsJson}"
-            );
+                $"Failed to deserialize queue counts JSON: {countsJson}");
 
         return counts;
     }
@@ -666,7 +643,8 @@ public class ReqlessClient : IReqlessClient, IDisposable
     public async Task<int> GetQueueLengthAsync(string queueName)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(queueName, nameof(queueName));
-        var result = await _executor.ExecuteAsync(["queue.length", Now(), queueName]);
+        var result =
+            await _executor.ExecuteAsync(["queue.length", Now(), queueName]);
 
         var length = OperationValidation.ThrowIfServerResponseIsNull((int?)result);
 
@@ -675,29 +653,25 @@ public class ReqlessClient : IReqlessClient, IDisposable
 
     /// <inheritdoc/>
     public async Task<QueueStats> GetQueueStatsAsync(
-        string queueName,
-        DateTimeOffset? date = null
-    )
+        string queueName, DateTimeOffset? date = null)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(queueName, nameof(queueName));
 
-        var _date = date ?? DateTimeOffset.UtcNow;
+        var dateOrDefault = date ?? DateTimeOffset.UtcNow;
 
         var result = await _executor.ExecuteAsync([
             "queue.stats",
             Now(),
             queueName,
-            _date.ToUnixTimeMilliseconds()
+            dateOrDefault.ToUnixTimeMilliseconds()
         ]);
 
-        var queueStatsJson = OperationValidation.ThrowIfServerResponseIsNull(
-            (string?)result
-        );
+        var queueStatsJson =
+            OperationValidation.ThrowIfServerResponseIsNull((string?)result);
 
         var queueStats = JsonSerializer.Deserialize<QueueStats>(queueStatsJson)
             ?? throw new JsonException(
-                $"Failed to deserialize queue stats JSON: {queueStatsJson}"
-            );
+                $"Failed to deserialize queue stats JSON: {queueStatsJson}");
 
         return queueStats;
     }
@@ -726,8 +700,7 @@ public class ReqlessClient : IReqlessClient, IDisposable
 
         var recurringJob = JsonSerializer.Deserialize<RecurringJob>(recurringJobJson)
             ?? throw new JsonException(
-                $"Failed to deserialize recurring job JSON: {recurringJobJson}"
-            );
+                $"Failed to deserialize recurring job JSON: {recurringJobJson}");
 
         return recurringJob;
     }
@@ -753,7 +726,7 @@ public class ReqlessClient : IReqlessClient, IDisposable
         return GetThrottleMembersAsyncCore("throttle.pending", throttleName);
     }
 
-    /// <inheritdocs/>
+    /// <inheritdoc/>
     public async Task<List<string>> GetTopTagsAsync(int limit = 25, int offset = 0)
     {
         ArgumentValidation.ThrowIfNotPositive(limit, nameof(limit));
@@ -765,9 +738,8 @@ public class ReqlessClient : IReqlessClient, IDisposable
             limit,
         ]);
 
-        var tagsJson = OperationValidation.ThrowIfServerResponseIsNull(
-            (string?)result
-        );
+        var tagsJson =
+            OperationValidation.ThrowIfServerResponseIsNull((string?)result);
 
         // Redis cjson can't distinguish between an empty array and an empty
         // object, so an empty object here actually represents an empty array,
@@ -779,8 +751,7 @@ public class ReqlessClient : IReqlessClient, IDisposable
 
         var tags = JsonSerializer.Deserialize<List<string>>(tagsJson)
             ?? throw new JsonException(
-                $"Failed to deserialize JSON: {tagsJson}"
-            );
+                $"Failed to deserialize JSON: {tagsJson}");
 
         return tags;
     }
@@ -790,15 +761,13 @@ public class ReqlessClient : IReqlessClient, IDisposable
     {
         var result = await _executor.ExecuteAsync(["jobs.tracked", Now()]);
 
-        var trackedJobsJson = OperationValidation.ThrowIfServerResponseIsNull(
-            (string?)result
-        );
+        var trackedJobsJson =
+            OperationValidation.ThrowIfServerResponseIsNull((string?)result);
 
-        var trackedJobsResult = JsonSerializer.Deserialize<TrackedJobsResult>(
-            trackedJobsJson
-        ) ?? throw new JsonException(
-            $"Failed to deserialize tracked jobs JSON: {trackedJobsJson}"
-        );
+        var trackedJobsResult =
+            JsonSerializer.Deserialize<TrackedJobsResult>(trackedJobsJson)
+                ?? throw new JsonException(
+                    $"Failed to deserialize tracked jobs JSON: {trackedJobsJson}");
 
         return trackedJobsResult;
     }
@@ -808,24 +777,22 @@ public class ReqlessClient : IReqlessClient, IDisposable
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(workerName, nameof(workerName));
 
-        var result = await _executor.ExecuteAsync(["worker.jobs", Now(), workerName]);
+        var result =
+            await _executor.ExecuteAsync(["worker.jobs", Now(), workerName]);
 
-        var jobsJson = OperationValidation.ThrowIfServerResponseIsNull((string?)result);
+        var jobsJson =
+            OperationValidation.ThrowIfServerResponseIsNull((string?)result);
 
         var workerJobs = JsonSerializer.Deserialize<WorkerJobs>(jobsJson)
             ?? throw new JsonException(
-                $"Failed to deserialize worker jobs JSON: {jobsJson}"
-            );
+                $"Failed to deserialize worker jobs JSON: {jobsJson}");
 
         return workerJobs;
     }
 
     /// <inheritdoc/>
     public async Task<long> HeartbeatJobAsync(
-        string jid,
-        string workerName,
-        string? data = null
-    )
+        string jid, string workerName, string? data = null)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(jid, nameof(jid));
         ArgumentException.ThrowIfNullOrWhiteSpace(workerName, nameof(workerName));
@@ -843,9 +810,8 @@ public class ReqlessClient : IReqlessClient, IDisposable
 
         var result = await _executor.ExecuteAsync(arguments);
 
-        long newExpires = OperationValidation.ThrowIfServerResponseIsNull(
-            (long?)result
-        );
+        long newExpires =
+            OperationValidation.ThrowIfServerResponseIsNull((long?)result);
 
         return newExpires;
     }
@@ -864,10 +830,7 @@ public class ReqlessClient : IReqlessClient, IDisposable
 
     /// <inheritdoc/>
     public async Task<List<Job>> PeekJobsAsync(
-        string queueName,
-        int limit = 25,
-        int offset = 0
-    )
+        string queueName, int limit = 25, int offset = 0)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(queueName, nameof(queueName));
 
@@ -890,10 +853,7 @@ public class ReqlessClient : IReqlessClient, IDisposable
 
     /// <inheritdoc/>
     public async Task<List<Job>> PopJobsAsync(
-        string queueName,
-        string workerName,
-        int limit
-    )
+        string queueName, string workerName, int limit)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(queueName, nameof(queueName));
         ArgumentException.ThrowIfNullOrWhiteSpace(workerName, nameof(workerName));
@@ -905,7 +865,8 @@ public class ReqlessClient : IReqlessClient, IDisposable
             workerName,
             limit
         ]);
-        var jobsJson = OperationValidation.ThrowIfServerResponseIsNull((string?)result);
+        var jobsJson =
+            OperationValidation.ThrowIfServerResponseIsNull((string?)result);
 
         // Redis cjson can't distinguish between an empty array and an empty
         // object, so an empty object here actually represents an empty
@@ -917,8 +878,7 @@ public class ReqlessClient : IReqlessClient, IDisposable
 
         var jobs = JsonSerializer.Deserialize<List<Job>>(jobsJson)
             ?? throw new JsonException(
-                $"Failed to deserialize jobs JSON: {jobsJson}"
-            );
+                $"Failed to deserialize jobs JSON: {jobsJson}");
 
         return jobs;
     }
@@ -935,8 +895,7 @@ public class ReqlessClient : IReqlessClient, IDisposable
         int retries = 5,
         string[]? dependencies = null,
         string[]? tags = null,
-        string[]? throttles = null
-    )
+        string[]? throttles = null)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(workerName, nameof(workerName));
         ArgumentException.ThrowIfNullOrWhiteSpace(queueName, nameof(queueName));
@@ -944,34 +903,33 @@ public class ReqlessClient : IReqlessClient, IDisposable
         ArgumentException.ThrowIfNullOrWhiteSpace(data, nameof(data));
         ArgumentValidation.ThrowIfNotNullAndEmptyOrWhitespace(jid, nameof(jid));
 
-        var _jid = jid ?? MakeJid();
-        var _dependencies = dependencies ?? [];
-        var _tags = tags ?? [];
-        var _throttles = throttles ?? [];
+        var jidOrDefault = jid ?? MakeJid();
+        var dependenciesOrDefault = dependencies ?? [];
+        var tagsOrDefault = tags ?? [];
+        var throttlesOrDefault = throttles ?? [];
         RedisResult result = await _executor.ExecuteAsync([
             "queue.put",
             Now(),
             workerName,
             queueName,
-            _jid,
+            jidOrDefault,
             className,
             data,
             delay,
             "depends",
-            JsonSerializer.Serialize(_dependencies),
+            JsonSerializer.Serialize(dependenciesOrDefault),
             "priority",
             priority,
             "retries",
             retries,
             "tags",
-            JsonSerializer.Serialize(_tags),
+            JsonSerializer.Serialize(tagsOrDefault),
             "throttles",
-            JsonSerializer.Serialize(_throttles),
+            JsonSerializer.Serialize(throttlesOrDefault),
         ]);
 
-        var resultJid = OperationValidation.ThrowIfServerResponseIsNull(
-            (string?)result
-        );
+        var resultJid =
+            OperationValidation.ThrowIfServerResponseIsNull((string?)result);
 
         return resultJid;
     }
@@ -988,23 +946,22 @@ public class ReqlessClient : IReqlessClient, IDisposable
         int priority = 0,
         int retries = 5,
         string[]? tags = null,
-        string[]? throttles = null
-    )
+        string[]? throttles = null)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(queueName, nameof(queueName));
         ArgumentException.ThrowIfNullOrWhiteSpace(className, nameof(className));
         ArgumentException.ThrowIfNullOrWhiteSpace(data, nameof(data));
         ArgumentValidation.ThrowIfNotNullAndEmptyOrWhitespace(jid, nameof(jid));
 
-        var _jid = jid ?? MakeJid();
-        var _tags = tags ?? [];
-        var _throttles = throttles ?? [];
+        var jidOrDefault = jid ?? MakeJid();
+        var tagsOrDefault = tags ?? [];
+        var throttlesOrDefault = throttles ?? [];
 
         var result = await _executor.ExecuteAsync([
             "queue.recurAtInterval",
             Now(),
             queueName,
-            _jid,
+            jidOrDefault,
             className,
             data,
             intervalSeconds,
@@ -1016,14 +973,13 @@ public class ReqlessClient : IReqlessClient, IDisposable
             "retries",
             retries,
             "tags",
-            JsonSerializer.Serialize(_tags),
+            JsonSerializer.Serialize(tagsOrDefault),
             "throttles",
-            JsonSerializer.Serialize(_throttles),
+            JsonSerializer.Serialize(throttlesOrDefault),
         ]);
 
-        var resultJid = OperationValidation.ThrowIfServerResponseIsNull(
-            (string?)result
-        );
+        var resultJid =
+            OperationValidation.ThrowIfServerResponseIsNull((string?)result);
 
         return resultJid;
     }
@@ -1118,8 +1074,7 @@ public class ReqlessClient : IReqlessClient, IDisposable
         int? retries = null,
         string[]? dependencies = null,
         string[]? tags = null,
-        string[]? throttles = null
-    )
+        string[]? throttles = null)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(workerName, nameof(workerName));
         ArgumentException.ThrowIfNullOrWhiteSpace(queueName, nameof(queueName));
@@ -1127,13 +1082,13 @@ public class ReqlessClient : IReqlessClient, IDisposable
         ArgumentException.ThrowIfNullOrWhiteSpace(className, nameof(className));
         ArgumentException.ThrowIfNullOrWhiteSpace(data, nameof(data));
 
-        RedisValue _dependencies = dependencies is not null
+        RedisValue dependenciesOrDefault = dependencies is not null
             ? JsonSerializer.Serialize(dependencies)
             : RedisValue.Null;
-        RedisValue _tags = tags is not null
+        RedisValue tagsOrDefault = tags is not null
             ? JsonSerializer.Serialize(tags)
             : RedisValue.Null;
-        RedisValue _throttles = throttles is not null
+        RedisValue throttlesOrDefault = throttles is not null
             ? JsonSerializer.Serialize(throttles)
             : RedisValue.Null;
 
@@ -1151,11 +1106,11 @@ public class ReqlessClient : IReqlessClient, IDisposable
             "retries",
             retries ?? RedisValue.Null,
             "depends",
-            _dependencies,
+            dependenciesOrDefault,
             "tags",
-            _tags,
+            tagsOrDefault,
             "throttles",
-            _throttles,
+            throttlesOrDefault,
         ]);
 
         return jid;
@@ -1168,8 +1123,7 @@ public class ReqlessClient : IReqlessClient, IDisposable
         string workerName,
         string groupName,
         string message,
-        int delay = 0
-    )
+        int delay = 0)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(jid, nameof(jid));
         ArgumentException.ThrowIfNullOrWhiteSpace(queueName, nameof(queueName));
@@ -1189,17 +1143,15 @@ public class ReqlessClient : IReqlessClient, IDisposable
             message,
         ]);
 
-        var remainingRetries = OperationValidation.ThrowIfServerResponseIsNull(
-            (int?)result
-        );
+        var remainingRetries =
+            OperationValidation.ThrowIfServerResponseIsNull((int?)result);
 
         return remainingRetries > 0;
     }
 
     /// <inheritdoc/>
     public async Task SetAllQueueIdentifierPatternsAsync(
-        Dictionary<string, IEnumerable<string>> identifierPatterns
-    )
+        Dictionary<string, IEnumerable<string>> identifierPatterns)
     {
         ArgumentNullException.ThrowIfNull(identifierPatterns, nameof(identifierPatterns));
 
@@ -1213,6 +1165,7 @@ public class ReqlessClient : IReqlessClient, IDisposable
                 argumentCount += 2;
             }
         }
+
         var arguments = new RedisValue[argumentCount];
         arguments[0] = "queueIdentifierPatterns.setAll";
         arguments[1] = Now();
@@ -1223,6 +1176,7 @@ public class ReqlessClient : IReqlessClient, IDisposable
             {
                 continue;
             }
+
             arguments[index] = key;
             arguments[index + 1] = JsonSerializer.Serialize(value);
             index += 2;
@@ -1233,8 +1187,7 @@ public class ReqlessClient : IReqlessClient, IDisposable
 
     /// <inheritdoc/>
     public async Task SetAllQueuePriorityPatternsAsync(
-         IEnumerable<QueuePriorityPattern> priorityPatterns
-     )
+         IEnumerable<QueuePriorityPattern> priorityPatterns)
     {
         ArgumentValidation.ThrowIfAnyNull(priorityPatterns, nameof(priorityPatterns));
 
@@ -1245,11 +1198,11 @@ public class ReqlessClient : IReqlessClient, IDisposable
             {
                 ArgumentValidation.ThrowIfAnyNullOrWhitespace(
                     priorityPattern.Pattern,
-                    $"{nameof(priorityPatterns)}[].Pattern"
-                );
+                    $"{nameof(priorityPatterns)}[].Pattern");
                 argumentCount++;
             }
         }
+
         var arguments = new RedisValue[argumentCount];
         arguments[0] = "queuePriorityPatterns.setAll";
         arguments[1] = Now();
@@ -1296,9 +1249,7 @@ public class ReqlessClient : IReqlessClient, IDisposable
 
     /// <inheritdoc/>
     public async Task SetQueueThrottleAsync(
-        string queueName,
-        int maximum
-    )
+        string queueName, int maximum)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(queueName, nameof(queueName));
         ArgumentValidation.ThrowIfNegative(maximum, nameof(maximum));
@@ -1313,10 +1264,7 @@ public class ReqlessClient : IReqlessClient, IDisposable
 
     /// <inheritdoc/>
     public async Task SetThrottleAsync(
-        string throttleName,
-        int maximum,
-        int ttl = 0
-    )
+        string throttleName, int maximum, int ttl = 0)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(throttleName, nameof(throttleName));
         ArgumentValidation.ThrowIfNegative(maximum, nameof(maximum));
@@ -1361,17 +1309,15 @@ public class ReqlessClient : IReqlessClient, IDisposable
             jid,
         ]);
 
-        var addedCount = OperationValidation.ThrowIfServerResponseIsNull((int?)result);
+        var addedCount =
+            OperationValidation.ThrowIfServerResponseIsNull((int?)result);
 
         return addedCount == 1;
     }
 
     /// <inheritdoc/>
     public async Task<int> UnfailJobsFromFailureGroupIntoQueueAsync(
-        string queueName,
-        string groupName,
-        int count = 25
-    )
+        string queueName, string groupName, int count = 25)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(queueName, nameof(queueName));
         ArgumentException.ThrowIfNullOrWhiteSpace(groupName, nameof(groupName));
@@ -1385,9 +1331,8 @@ public class ReqlessClient : IReqlessClient, IDisposable
             count,
         ]);
 
-        var unfailedCount = OperationValidation.ThrowIfServerResponseIsNull(
-            (int?)result
-        );
+        var unfailedCount =
+            OperationValidation.ThrowIfServerResponseIsNull((int?)result);
 
         return unfailedCount;
     }
@@ -1415,9 +1360,8 @@ public class ReqlessClient : IReqlessClient, IDisposable
             jid,
         ]);
 
-        var removedCount = OperationValidation.ThrowIfServerResponseIsNull(
-            (int?)result
-        );
+        var removedCount =
+            OperationValidation.ThrowIfServerResponseIsNull((int?)result);
 
         return removedCount == 1;
     }
@@ -1432,8 +1376,7 @@ public class ReqlessClient : IReqlessClient, IDisposable
         int? priority = null,
         string? queueName = null,
         int? retries = null,
-        string[]? throttles = null
-    )
+        string[]? throttles = null)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(jid, nameof(jid));
 
@@ -1443,33 +1386,40 @@ public class ReqlessClient : IReqlessClient, IDisposable
             ArgumentException.ThrowIfNullOrWhiteSpace(className, nameof(className));
             argumentCount += 2;
         }
+
         if (data is not null)
         {
             ArgumentException.ThrowIfNullOrWhiteSpace(data, nameof(data));
             argumentCount += 2;
         }
+
         if (intervalSeconds is not null)
         {
             ArgumentValidation.ThrowIfNotPositive(intervalSeconds.Value, nameof(intervalSeconds));
             argumentCount += 2;
         }
+
         if (maximumBacklog is not null)
         {
             argumentCount += 2;
         }
+
         if (priority is not null)
         {
             argumentCount += 2;
         }
+
         if (queueName is not null)
         {
             ArgumentException.ThrowIfNullOrWhiteSpace(queueName, nameof(queueName));
             argumentCount += 2;
         }
+
         if (retries is not null)
         {
             argumentCount += 2;
         }
+
         if (throttles is not null)
         {
             ArgumentValidation.ThrowIfAnyNullOrWhitespace(throttles, nameof(throttles));
@@ -1493,200 +1443,56 @@ public class ReqlessClient : IReqlessClient, IDisposable
             arguments[index + 1] = className;
             index += 2;
         }
+
         if (data is not null)
         {
             arguments[index] = "data";
             arguments[index + 1] = data;
             index += 2;
         }
+
         if (intervalSeconds is not null)
         {
             arguments[index] = "interval";
             arguments[index + 1] = intervalSeconds.Value;
             index += 2;
         }
+
         if (maximumBacklog is not null)
         {
             arguments[index] = "backlog";
             arguments[index + 1] = maximumBacklog.Value;
             index += 2;
         }
+
         if (priority is not null)
         {
             arguments[index] = "priority";
             arguments[index + 1] = priority.Value;
             index += 2;
         }
+
         if (queueName is not null)
         {
             arguments[index] = "queue";
             arguments[index + 1] = queueName;
             index += 2;
         }
+
         if (retries is not null)
         {
             arguments[index] = "retries";
             arguments[index + 1] = retries.Value;
             index += 2;
         }
+
         if (throttles is not null)
         {
             arguments[index] = "throttles";
             arguments[index + 1] = JsonSerializer.Serialize(throttles);
         }
+
         await _executor.ExecuteAsync(arguments);
-    }
-
-    /// <summary>
-    /// Handle the common logic of adding or removing tags to/from a job or
-    /// recurring job.
-    /// </summary>
-    /// <param name="tagCommand">The Reqless command to invoke to update the job
-    /// tags.</param>
-    /// <param name="jid">The ID of the job or recurring job to update tags for.</param>
-    /// <param name="tags">The tags to add/remove to/from the job or recurring
-    /// job.</param>
-    /// <returns>The updated list of job tags.</returns>
-    /// <exception cref="InvalidOperationException">Thrown if server returns
-    /// unexpected null result.</exception>
-    /// <exception cref="JsonException">Thrown if the JSON returned by the
-    /// server can't be deserialized.</exception>
-    protected async Task<List<string>> UpdateJobTagsAsyncCore(
-        string tagCommand,
-        string jid,
-        params string[] tags
-    )
-    {
-        ArgumentException.ThrowIfNullOrWhiteSpace(jid, nameof(jid));
-        ArgumentNullException.ThrowIfNull(tags, nameof(tags));
-        ArgumentValidation.ThrowIfAnyNullOrWhitespace(tags, nameof(tags));
-
-        var arguments = new RedisValue[tags.Length + 3];
-        arguments[0] = tagCommand;
-        arguments[1] = Now();
-        arguments[2] = jid;
-        CopyStringArguments(tags, ref arguments, 3);
-
-        var result = await _executor.ExecuteAsync(arguments);
-
-        var tagsJson = OperationValidation.ThrowIfServerResponseIsNull((string?)result);
-
-        var resultTags = JsonSerializer.Deserialize<List<string>>(tagsJson)
-            ?? throw new JsonException($"Failed to deserialize tags JSON: {tagsJson}");
-
-        return resultTags;
-    }
-
-    /// <summary>
-    /// Get a throttle and return the result.
-    /// </summary>
-    /// <param name="getThrottleCommand">The specific throttle query to
-    /// execute.</param>
-    /// <param name="identifier">An identifier for the throttle to
-    /// retrieve.</param>
-    /// <exception cref="InvalidOperationException">Thrown if the server returns
-    /// a null result.</exception>
-    /// <exception cref="JsonException">Thrown if the JSON returned by the
-    /// server can't be deserialized.</exception>
-    protected async Task<Throttle> GetThrottleAsyncCore(
-        string getThrottleCommand,
-        string identifier
-    )
-    {
-        var result = await _executor.ExecuteAsync([
-            getThrottleCommand,
-            Now(),
-            identifier,
-        ]);
-
-        var throttleJson = OperationValidation.ThrowIfServerResponseIsNull(
-            (string?)result
-        );
-
-        var throttle = JsonSerializer.Deserialize<Throttle>(throttleJson)
-            ?? throw new JsonException(
-                $"Failed to deserialize throttle JSON: {throttleJson}"
-            );
-
-        return throttle;
-    }
-
-    /// <summary>
-    /// Query the members of a given throttle and return the result.
-    /// </summary>
-    /// <param name="getMembersCommand">The specific throttle query to
-    /// execute.</param>
-    /// <param name="throttleName">The name of the throttle to query members
-    /// for.</param>
-    /// <exception cref="InvalidOperationException">Thrown if the server returns
-    /// a null result.</exception>
-    /// <exception cref="JsonException">Thrown if the JSON returned by the
-    /// server can't be deserialized.</exception>
-    protected async Task<List<string>> GetThrottleMembersAsyncCore(
-        string getMembersCommand,
-        string throttleName
-    )
-    {
-        var result = await _executor.ExecuteAsync([
-            getMembersCommand,
-            Now(),
-            throttleName,
-        ]);
-
-        var throttleMembersJson = OperationValidation.ThrowIfServerResponseIsNull(
-            (string?)result
-        );
-
-        var throttleMembers = JsonSerializer.Deserialize<List<string>>(
-            throttleMembersJson
-        ) ?? throw new JsonException(
-            $"Failed to deserialize throttle members JSON: {throttleMembersJson}"
-        );
-
-        return throttleMembers;
-    }
-
-    /// <inheritdoc/>
-    protected async Task<JidsResult> ExecuteJobsQuery(
-        string queryCommand,
-        string query,
-        int limit = 25,
-        int offset = 0
-    )
-    {
-        ArgumentException.ThrowIfNullOrWhiteSpace(query, nameof(query));
-
-        var result = await _executor.ExecuteAsync([
-            queryCommand,
-            Now(),
-            query,
-            offset,
-            limit
-        ]);
-
-        var queryResultsJson = OperationValidation.ThrowIfServerResponseIsNull(
-            (string?)result
-        );
-
-        var queryResults = JsonSerializer.Deserialize<JidsResult>(
-            queryResultsJson
-        ) ?? throw new JsonException(
-            $"Failed to deserialize failed jobs query result JSON: {queryResultsJson}"
-        );
-
-        return queryResults;
-    }
-
-    /// <summary>
-    /// Gets the current time in milliseconds since the Unix epoch for use as
-    /// the now argument when invoking qless commands.
-    /// </summary>
-    /// <remarks>
-    /// This method is virtual to allow for easy mocking in tests.
-    /// </remarks>
-    protected virtual long Now()
-    {
-        return DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
     }
 
     /// <summary>
@@ -1702,10 +1508,7 @@ public class ReqlessClient : IReqlessClient, IDisposable
     /// <param name="destinationIndex">The index in the destination array at
     /// which to start copying.</param>
     protected static void CopyStringArguments(
-        string[] source,
-        ref RedisValue[] destination,
-        int destinationIndex
-    )
+        string[] source, ref RedisValue[] destination, int destinationIndex)
     {
         for (var index = 0; index < source.Length; index++)
         {
@@ -1725,9 +1528,8 @@ public class ReqlessClient : IReqlessClient, IDisposable
     /// deserialized.</exception>
     protected static List<Job> ValidateJobsResult(RedisResult result)
     {
-        var jobsJson = OperationValidation.ThrowIfServerResponseIsNull(
-            (string?)result
-        );
+        var jobsJson =
+            OperationValidation.ThrowIfServerResponseIsNull((string?)result);
 
         // Redis cjson can't distinguish between an empty array and an empty
         // object, so an empty object here actually represents an empty array,
@@ -1756,18 +1558,164 @@ public class ReqlessClient : IReqlessClient, IDisposable
         // For whatever reason, if result is null, this cast results in
         // string?[] { null }, so we check for null directly above and forgive
         // null here.
-        var jidsResultJson = OperationValidation.ThrowIfServerResponseIsNull(
-            (string?)result
-        );
+        var jidsResultJson =
+            OperationValidation.ThrowIfServerResponseIsNull((string?)result);
 
         var jidsResult = JsonSerializer.Deserialize<List<string>>(jidsResultJson)
-            ?? throw new JsonException(
-                $"Failed to deserialize JSON: {jidsResultJson}"
-            );
+            ?? throw new JsonException($"Failed to deserialize JSON: {jidsResultJson}");
 
         OperationValidation.ThrowIfAnyNullOrWhitespace(jidsResult, "jidsResult");
 
         return jidsResult;
+    }
+
+    /// <summary>
+    /// Handle the common logic of adding or removing tags to/from a job or
+    /// recurring job.
+    /// </summary>
+    /// <param name="tagCommand">The Reqless command to invoke to update the job
+    /// tags.</param>
+    /// <param name="jid">The ID of the job or recurring job to update tags for.</param>
+    /// <param name="tags">The tags to add/remove to/from the job or recurring
+    /// job.</param>
+    /// <returns>The updated list of job tags.</returns>
+    /// <exception cref="InvalidOperationException">Thrown if server returns
+    /// unexpected null result.</exception>
+    /// <exception cref="JsonException">Thrown if the JSON returned by the
+    /// server can't be deserialized.</exception>
+    protected async Task<List<string>> UpdateJobTagsAsyncCore(
+        string tagCommand, string jid, params string[] tags)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(jid, nameof(jid));
+        ArgumentNullException.ThrowIfNull(tags, nameof(tags));
+        ArgumentValidation.ThrowIfAnyNullOrWhitespace(tags, nameof(tags));
+
+        var arguments = new RedisValue[tags.Length + 3];
+        arguments[0] = tagCommand;
+        arguments[1] = Now();
+        arguments[2] = jid;
+        CopyStringArguments(tags, ref arguments, 3);
+
+        var result = await _executor.ExecuteAsync(arguments);
+
+        var tagsJson =
+            OperationValidation.ThrowIfServerResponseIsNull((string?)result);
+
+        var resultTags = JsonSerializer.Deserialize<List<string>>(tagsJson)
+            ?? throw new JsonException($"Failed to deserialize tags JSON: {tagsJson}");
+
+        return resultTags;
+    }
+
+    /// <summary>
+    /// Get a throttle and return the result.
+    /// </summary>
+    /// <param name="getThrottleCommand">The specific throttle query to
+    /// execute.</param>
+    /// <param name="identifier">An identifier for the throttle to
+    /// retrieve.</param>
+    /// <exception cref="InvalidOperationException">Thrown if the server returns
+    /// a null result.</exception>
+    /// <exception cref="JsonException">Thrown if the JSON returned by the
+    /// server can't be deserialized.</exception>
+    /// <returns>The throttle object for the identified throttle.</returns>
+    protected async Task<Throttle> GetThrottleAsyncCore(
+        string getThrottleCommand, string identifier)
+    {
+        var result = await _executor.ExecuteAsync([
+            getThrottleCommand,
+            Now(),
+            identifier,
+        ]);
+
+        var throttleJson =
+            OperationValidation.ThrowIfServerResponseIsNull((string?)result);
+
+        var throttle = JsonSerializer.Deserialize<Throttle>(throttleJson)
+            ?? throw new JsonException(
+                $"Failed to deserialize throttle JSON: {throttleJson}");
+
+        return throttle;
+    }
+
+    /// <summary>
+    /// Query the members of a given throttle and return the result.
+    /// </summary>
+    /// <param name="getMembersCommand">The specific throttle query to
+    /// execute.</param>
+    /// <param name="throttleName">The name of the throttle to query members
+    /// for.</param>
+    /// <returns>The list of members of the throttle.</returns>
+    /// <exception cref="InvalidOperationException">Thrown if the server returns
+    /// a null result.</exception>
+    /// <exception cref="JsonException">Thrown if the JSON returned by the
+    /// server can't be deserialized.</exception>
+    protected async Task<List<string>> GetThrottleMembersAsyncCore(
+        string getMembersCommand, string throttleName)
+    {
+        var result = await _executor.ExecuteAsync([
+            getMembersCommand,
+            Now(),
+            throttleName,
+        ]);
+
+        var throttleMembersJson =
+            OperationValidation.ThrowIfServerResponseIsNull((string?)result);
+
+        var throttleMembers =
+            JsonSerializer.Deserialize<List<string>>(throttleMembersJson)
+                ?? throw new JsonException(
+                    "Failed to deserialize throttle members JSON: "
+                        + throttleMembersJson);
+
+        return throttleMembers;
+    }
+
+    /// <summary>
+    /// Execute a query for jobs and return the result.
+    /// </summary>
+    /// <param name="queryCommand">The specific query command to execute.</param>
+    /// <param name="query">The query to execute.</param>
+    /// <param name="limit">The maximum number of results to return.</param>
+    /// <param name="offset">The number of results to skip before returning
+    /// results.</param>
+    /// <returns>The jids that matched the query.</returns>
+    protected async Task<JidsResult> ExecuteJobsQuery(
+        string queryCommand, string query, int limit = 25, int offset = 0)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(query, nameof(query));
+
+        var result = await _executor.ExecuteAsync([
+            queryCommand,
+            Now(),
+            query,
+            offset,
+            limit
+        ]);
+
+        var queryResultsJson =
+            OperationValidation.ThrowIfServerResponseIsNull((string?)result);
+
+        var queryResults =
+            JsonSerializer.Deserialize<JidsResult>(queryResultsJson)
+                ?? throw new JsonException(
+                    "Failed to deserialize failed jobs query result JSON: "
+                        + queryResultsJson);
+
+        return queryResults;
+    }
+
+    /// <summary>
+    /// Gets the current time in milliseconds since the Unix epoch for use as
+    /// the now argument when invoking qless commands.
+    /// </summary>
+    /// <remarks>
+    /// This method is virtual to allow for easy mocking in tests.
+    /// </remarks>
+    /// <returns>The current time in milliseconds since the Unix epoch.</returns>
+    protected virtual long Now()
+    {
+        return DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
     }
 
     /// <summary>
@@ -1782,26 +1730,17 @@ public class ReqlessClient : IReqlessClient, IDisposable
     /// <summary>
     /// Releases all resources used by the <see cref="ReqlessClient"/>.
     /// </summary>
-    public virtual void Dispose()
-    {
-        Dispose(disposing: true);
-        GC.SuppressFinalize(this);
-    }
-
-    /// <summary>
-    /// Releases all resources used by the <see cref="ReqlessClient"/>.
-    /// </summary>
     /// <param name="disposing">True if disposing, false otherwise.</param>
     protected virtual void Dispose(bool disposing)
     {
         lock (this)
         {
-            if (!_disposed && disposing)
+            if (!IsDisposed && disposing)
             {
-                _disposed = true;
-                if (_responsibleForExecutor && _executor is IDisposable executor)
+                IsDisposed = true;
+                if (_isResponsibleForExecutor && _executor is IDisposable disposable)
                 {
-                    executor.Dispose();
+                    disposable.Dispose();
                 }
             }
         }

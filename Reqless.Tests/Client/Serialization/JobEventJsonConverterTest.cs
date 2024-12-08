@@ -9,9 +9,9 @@ namespace Reqless.Tests.Client.Serialization;
 /// </summary>
 public class JobEventJsonConverterTest
 {
-    private readonly JsonSerializerOptions _jsonSerializerOptions = new JsonSerializerOptions
+    private readonly JsonSerializerOptions _jsonSerializerOptions = new()
     {
-        Converters = { new JobEventJsonConverter() }
+        Converters = { new JobEventJsonConverter() },
     };
 
     /// <summary>
@@ -23,14 +23,9 @@ public class JobEventJsonConverterTest
     {
         var exception = Assert.Throws<JsonException>(
             () => JsonSerializer.Deserialize<JobEvent>(
-                "[]",
-                _jsonSerializerOptions
-            )
-        );
+                "[]", _jsonSerializerOptions));
         Assert.Equal(
-            "Expected reader to begin with start of object.",
-            exception.Message
-        );
+            "Expected reader to begin with start of object.", exception.Message);
     }
 
     /// <summary>
@@ -43,13 +38,10 @@ public class JobEventJsonConverterTest
         var exception = Assert.Throws<JsonException>(
             () => JsonSerializer.Deserialize<JobEvent>(
                 """{"when": 123, "what": null}""",
-                _jsonSerializerOptions
-            )
-        );
+                _jsonSerializerOptions));
         Assert.Equal(
             "Expected a string value for the 'what' property, got null.",
-            exception.Message
-        );
+            exception.Message);
     }
 
     /// <summary>
@@ -61,14 +53,10 @@ public class JobEventJsonConverterTest
     {
         var exception = Assert.Throws<JsonException>(
             () => JsonSerializer.Deserialize<JobEvent>(
-                """{"when": 123}""",
-                _jsonSerializerOptions
-            )
-        );
+                """{"when": 123}""", _jsonSerializerOptions));
         Assert.Equal(
             "Expected 'what' property in JSON object, but none was found.",
-            exception.Message
-        );
+            exception.Message);
     }
 
     /// <summary>
@@ -84,8 +72,7 @@ public class JobEventJsonConverterTest
         var other = "other";
         var jobEvent = JsonSerializer.Deserialize<JobEvent>(
             $$"""{"what": "{{what}}", "when": {{when}}, "other": "{{other}}"}""",
-            _jsonSerializerOptions
-        );
+            _jsonSerializerOptions);
         var logEvent = Assert.IsType<LogEvent>(jobEvent);
         Assert.Equal(what, logEvent.What);
         Assert.Equal(when, logEvent.When);
@@ -108,8 +95,7 @@ public class JobEventJsonConverterTest
                 "what": "done"
             }
             """,
-            _jsonSerializerOptions
-        );
+            _jsonSerializerOptions);
         Assert.NotNull(jobEvent);
         Assert.Equal("done", jobEvent.What);
     }
@@ -124,8 +110,7 @@ public class JobEventJsonConverterTest
         var when = 123;
         var jobEvent = JsonSerializer.Deserialize<JobEvent>(
             $$"""{"what": "done", "when": {{when}}}""",
-            _jsonSerializerOptions
-        );
+            _jsonSerializerOptions);
         Assert.NotNull(jobEvent);
         Assert.Equal("done", jobEvent.What);
         Assert.Equal(when, jobEvent.When);
@@ -151,8 +136,7 @@ public class JobEventJsonConverterTest
                 "worker": "{{workerName}}"
             }
             """,
-            _jsonSerializerOptions
-        );
+            _jsonSerializerOptions);
         Assert.NotNull(jobEvent);
         Assert.Equal("failed", jobEvent.What);
         Assert.Equal(when, jobEvent.When);
@@ -178,8 +162,7 @@ public class JobEventJsonConverterTest
                 "when": {{when}}
             }
             """,
-            _jsonSerializerOptions
-        );
+            _jsonSerializerOptions);
         Assert.NotNull(jobEvent);
         Assert.Equal("failed-retries", jobEvent.What);
         Assert.Equal(when, jobEvent.When);
@@ -204,8 +187,7 @@ public class JobEventJsonConverterTest
                 "worker": "{{workerName}}"
             }
             """,
-            _jsonSerializerOptions
-        );
+            _jsonSerializerOptions);
         Assert.NotNull(jobEvent);
         Assert.Equal("popped", jobEvent.What);
         Assert.Equal(when, jobEvent.When);
@@ -230,8 +212,7 @@ public class JobEventJsonConverterTest
                 "when": {{when}}
             }
             """,
-            _jsonSerializerOptions
-        );
+            _jsonSerializerOptions);
         Assert.NotNull(jobEvent);
         Assert.Equal("put", jobEvent.What);
         Assert.Equal(when, jobEvent.When);
@@ -256,8 +237,7 @@ public class JobEventJsonConverterTest
                 "when": {{when}}
             }
             """,
-            _jsonSerializerOptions
-        );
+            _jsonSerializerOptions);
         Assert.NotNull(jobEvent);
         Assert.Equal("throttled", jobEvent.What);
         Assert.Equal(when, jobEvent.When);
@@ -275,8 +255,7 @@ public class JobEventJsonConverterTest
         var when = 123;
         var jobEvent = JsonSerializer.Deserialize<JobEvent>(
             $$"""{"what": "timed-out", "when": {{when}}}""",
-            _jsonSerializerOptions
-        );
+            _jsonSerializerOptions);
         Assert.NotNull(jobEvent);
         Assert.Equal("timed-out", jobEvent.What);
         Assert.Equal(when, jobEvent.When);
@@ -349,13 +328,9 @@ public class JobEventJsonConverterTest
         var what = "what";
         var extraJsonElement = JsonDocument.Parse(extra).RootElement;
         var logEvent = new LogEvent(
-            data: new Dictionary<string, JsonElement>
-            {
-                ["extra"] = extraJsonElement
-            },
+            data: new Dictionary<string, JsonElement> { ["extra"] = extraJsonElement },
             what: what,
-            when: when
-        );
+            when: when);
         var json = JsonSerializer.Serialize(logEvent, _jsonSerializerOptions);
         var jobEventFromJson = JsonSerializer.Deserialize<JobEvent>(json, _jsonSerializerOptions);
         var logEventFromJson = Assert.IsType<LogEvent>(jobEventFromJson);
@@ -363,8 +338,7 @@ public class JobEventJsonConverterTest
         Assert.Equal(logEvent.When, logEventFromJson.When);
         Assert.Equal(
             logEvent.Data["extra"].GetString(),
-            logEventFromJson.Data["extra"].GetString()
-        );
+            logEventFromJson.Data["extra"].GetString());
     }
 
     /// <summary>

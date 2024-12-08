@@ -15,5 +15,6 @@ public interface IJobContextFactory
     /// instance.</param>
     /// <param name="job">The <see cref="Job"/> that is actively being
     /// processed.</param>
+    /// <returns>A new instance of <see cref="IJobContext"/>.</returns>
     IJobContext Create(IServiceProvider serviceProvider, Job job);
 }

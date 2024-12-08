@@ -15,7 +15,8 @@ public class DefaultQueueNameProvider : IQueueNameProvider
     private readonly IQueueIdentifierResolver _queueIdentifierResolver;
 
     /// <summary>
-    /// Create an instance of <see cref="DefaultQueueNameProvider"/>.
+    /// Initializes a new instance of the <see cref="DefaultQueueNameProvider"/>
+    /// class.
     /// </summary>
     /// <param name="settings">The <see cref="IWorkerSettings"/> instance
     /// that should be used for retrieving queue identifiers.</param>
@@ -25,13 +26,11 @@ public class DefaultQueueNameProvider : IQueueNameProvider
     /// names.</param>
     public DefaultQueueNameProvider(
         IQueueIdentifierResolver queueIdentifierResolver,
-        IWorkerSettings settings
-    )
+        IWorkerSettings settings)
     {
         ArgumentNullException.ThrowIfNull(
             queueIdentifierResolver,
-            nameof(queueIdentifierResolver)
-        );
+            nameof(queueIdentifierResolver));
         ArgumentNullException.ThrowIfNull(settings, nameof(settings));
 
         _queueIdentifierResolver = queueIdentifierResolver;

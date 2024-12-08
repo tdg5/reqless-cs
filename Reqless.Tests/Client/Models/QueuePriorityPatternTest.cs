@@ -1,6 +1,6 @@
-using System.Text.Json;
 using Reqless.Client.Models;
 using Reqless.Tests.Common.TestHelpers;
+using System.Text.Json;
 
 namespace Reqless.Tests.Client.Models;
 
@@ -17,8 +17,7 @@ public class QueuePriorityPatternTest
     {
         Scenario.ThrowsWhenArgumentIsNull(
             () => new QueuePriorityPattern(fairly: true, pattern: null!),
-            "pattern"
-        );
+            "pattern");
     }
 
     /// <summary>
@@ -30,11 +29,8 @@ public class QueuePriorityPatternTest
     {
         Scenario.ThrowsWhenArgumentElementIsNullOrEmptyOrWhitespace(
             (invalidPattern) => new QueuePriorityPattern(
-                fairly: true,
-                pattern: ["valid", invalidPattern!, "other"]
-            ),
-            "pattern"
-        );
+                fairly: true, pattern: ["valid", invalidPattern!, "other"]),
+            "pattern");
     }
 
     /// <summary>
@@ -47,9 +43,7 @@ public class QueuePriorityPatternTest
         var fairly = true;
         List<string> pattern = ["queue1", "queue2"];
         var subject = new QueuePriorityPattern(
-            fairly: fairly,
-            pattern: pattern
-        );
+            fairly: fairly, pattern: pattern);
         Assert.Equal(fairly, subject.Fairly);
         Assert.Equal(pattern, subject.Pattern);
     }
@@ -89,9 +83,7 @@ public class QueuePriorityPatternTest
     public void SerializeToJson()
     {
         var subject = new QueuePriorityPattern(
-            fairly: true,
-            pattern: ["queue1", "queue2"]
-        );
+            fairly: true, pattern: ["queue1", "queue2"]);
         var json = JsonSerializer.Serialize(subject);
         var subjectFromJson = JsonSerializer.Deserialize<QueuePriorityPattern>(json);
         Assert.Equivalent(subject, subjectFromJson);

@@ -17,9 +17,7 @@ public class DefaultReqlessClientFactoryTest
     public void Constructor_ThrowsWhenSettingsIsNull()
     {
         Scenario.ThrowsWhenArgumentIsNull(
-            () => new DefaultReqlessClientFactory(null!),
-            "settings"
-        );
+            () => new DefaultReqlessClientFactory(null!), "settings");
     }
 
     /// <summary>
@@ -34,11 +32,11 @@ public class DefaultReqlessClientFactoryTest
         var settings = new WorkerSettings(
             connectionString: expectedConnectionString,
             queueIdentifiers: ["some-queue"],
-            workerCount: 1
-        );
+            workerCount: 1);
         var subject = new DefaultReqlessClientFactory(settings);
         var client = subject.Create();
         Assert.IsAssignableFrom<IReqlessClient>(client);
+
         // There's no way to verify the connection string is correct so settle
         // for no exception being raised when creating the client.
     }

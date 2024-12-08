@@ -12,28 +12,27 @@ public class CancelRecurringJobTest : BaseReqlessClientTest
     /// <see cref="ReqlessClient.CancelRecurringJobAsync"/> should throw if the
     /// given jid is null, empty, or whitespace.
     /// </summary>
+    /// <returns>A task denoting the completion of the test.</returns>
     [Fact]
     public async Task ThrowsIfJidIsNullOrEmptyOrWhitespace()
     {
         await Scenario.ThrowsWhenArgumentIsNullOrEmptyOrWhitespaceAsync(
             (invalidJid) => WithClientWithExecutorMockForExpectedArguments(
-                subject => subject.CancelRecurringJobAsync(jid: invalidJid!)
-            ),
-            "jid"
-        );
+                subject => subject.CancelRecurringJobAsync(jid: invalidJid!)),
+            "jid");
     }
 
     /// <summary>
     /// <see cref="ReqlessClient.CancelRecurringJobAsync"/> should call Executor
     /// with the expected arguments.
     /// </summary>
+    /// <returns>A task denoting the completion of the test.</returns>
     [Fact]
     public async Task CallsExecutorWithTheExpectedArguments()
     {
         await WithClientWithExecutorMockForExpectedArguments(
             subject => subject.CancelRecurringJobAsync(jid: ExampleJid),
             expectedArguments: ["recurringJob.cancel", 0, ExampleJid],
-            returnValue: ExampleJid
-        );
+            returnValue: ExampleJid);
     }
 }

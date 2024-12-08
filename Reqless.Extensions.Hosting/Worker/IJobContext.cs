@@ -8,7 +8,7 @@ namespace Reqless.Extensions.Hosting.Worker;
 public interface IJobContext
 {
     /// <summary>
-    /// The job that is actively being processed.
+    /// Gets the job that is actively being processed.
     /// </summary>
     Job Job { get; }
 }

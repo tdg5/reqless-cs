@@ -18,6 +18,5 @@ public interface IJobReserver
     /// null.</returns>
     Task<Job?> TryReserveJobAsync(
         string workerName,
-        CancellationToken? cancellationToken = null
-    );
+        CancellationToken? cancellationToken = null);
 }

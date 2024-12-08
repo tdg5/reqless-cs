@@ -12,7 +12,7 @@ public interface IReflectionGlobals
     /// Gets the current application domain for the current Thread. By default,
     /// a wrapper around <see cref="AppDomain.CurrentDomain"/>.
     /// </summary>
-    /// <returns>The current application domain</returns>
+    /// <returns>The current application domain.</returns>
     public AppDomain CurrentAppDomain { get; }
 
     /// <summary>

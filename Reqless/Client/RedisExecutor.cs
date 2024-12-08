@@ -10,27 +10,30 @@ public class RedisExecutor : IRedisExecutor, IDisposable
     /// <summary>
     /// The Lua script that implements the full set of reqless commands.
     /// </summary>
-    protected readonly static string _luaScript =
+    protected static readonly string LuaScript =
         ResourceHelper.ReadTextResource("LuaScripts/reqless.lua");
 
     /// <summary>
-    /// The connection to the Redis server, concretely, <see
-    /// cref="ConnectionMultiplexer"/>.
+    /// Initializes a new instance of the <see cref="RedisExecutor"/> class from a
+    /// Redis connection multiplexer. When this constructor is used, the client
+    /// will not be responsible for disposing the connection.
     /// </summary>
-    protected readonly IConnectionMultiplexer _connection;
+    /// <param name="connection">The connection to the Redis server.</param>
+    public RedisExecutor(IConnectionMultiplexer connection)
+        : this(connection, false)
+    {
+    }
 
     /// <summary>
-    /// Flag tracking whether the instance has been disposed or not. True if the
-    /// object has been disposed, false otherwise.
+    /// Initializes a new instance of the <see cref="RedisExecutor"/> class from a
+    /// connection string. When this constructor is used, the client will take
+    /// responsibility for disposing the connection.
     /// </summary>
-    protected bool _disposed = false;
-
-    /// <summary>
-    /// Flag tracking whether the client is responsible for disposing the
-    /// connection or not. True if the client is responsible for disposing the
-    /// connection, false otherwise.
-    /// </summary>
-    protected readonly bool _responsibleForConnection;
+    /// <param name="connectionString">The connection string to the Redis server.</param>
+    public RedisExecutor(string connectionString)
+        : this(ConnectionMultiplexer.Connect(connectionString), true)
+    {
+    }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="RedisExecutor"/> class. This
@@ -39,18 +42,8 @@ public class RedisExecutor : IRedisExecutor, IDisposable
     protected RedisExecutor()
     {
         // Forgive null here to silence warning about uninitialized field.
-        _connection = null!;
-        _responsibleForConnection = false;
-    }
-
-    /// <summary>
-    /// Initializes a new instance of the <see cref="RedisExecutor"/> class from a
-    /// Redis connection multiplexer. When this constructor is used, the client
-    /// will not be responsible for disposing the connection.
-    /// </summary>
-    /// <param name="connection">The connection to the Redis server.</param>
-    public RedisExecutor(IConnectionMultiplexer connection) : this(connection, false)
-    {
+        Connection = null!;
+        IsResponsibleForConnection = false;
     }
 
     /// <summary>
@@ -62,37 +55,41 @@ public class RedisExecutor : IRedisExecutor, IDisposable
     /// <param name="responsibleForConnection">True if the client is responsible
     /// for disposing the connection, false otherwise.</param>
     protected RedisExecutor(
-        IConnectionMultiplexer connection,
-        bool responsibleForConnection
-    )
+        IConnectionMultiplexer connection, bool responsibleForConnection)
     {
-        _connection = connection;
-        _responsibleForConnection = responsibleForConnection;
+        Connection = connection;
+        IsResponsibleForConnection = responsibleForConnection;
     }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="RedisExecutor"/> class from a
-    /// connection string. When this constructor is used, the client will take
-    /// responsibility for disposing the connection.
+    /// Gets the connection to the Redis server, concretely, <see
+    /// cref="ConnectionMultiplexer"/>.
     /// </summary>
-    /// <param name="connectionString">The connection string to the Redis server.</param>
-    public RedisExecutor(
-        string connectionString
-    ) : this(ConnectionMultiplexer.Connect(connectionString), true)
-    {
-    }
+    protected IConnectionMultiplexer Connection { get; }
+
+    /// <summary>
+    /// Gets a value indicating whether the instance has been disposed or not.
+    /// True if the object has been disposed, false otherwise.
+    /// </summary>
+    protected bool IsDisposed { get; private set; } = false;
+
+    /// <summary>
+    /// Gets a value indicating whether the client is responsible for disposing
+    /// the connection or not. True if the client is responsible for disposing
+    /// the connection, false otherwise.
+    /// </summary>
+    protected bool IsResponsibleForConnection { get; }
 
     /// <summary>
     /// Executes a qless command Lua script on the Redis server with the given
     /// arguments.
     /// </summary>
     /// <param name="arguments">The arguments to pass to the qless command.</param>
+    /// <returns>A task containing the result of the command.</returns>
     public virtual async Task<RedisResult> ExecuteAsync(params RedisValue[] arguments)
     {
-        RedisResult result = await _connection.GetDatabase().ScriptEvaluateAsync(
-            _luaScript,
-            values: arguments
-        );
+        RedisResult result = await Connection.GetDatabase().ScriptEvaluateAsync(
+            LuaScript, values: arguments);
         return result;
     }
 
@@ -113,10 +110,10 @@ public class RedisExecutor : IRedisExecutor, IDisposable
     {
         lock (this)
         {
-            if (!_disposed && disposing)
+            if (!IsDisposed && disposing)
             {
-                _disposed = true;
-                if (_responsibleForConnection && _connection is IDisposable connection)
+                IsDisposed = true;
+                if (IsResponsibleForConnection && Connection is IDisposable connection)
                 {
                     connection.Dispose();
                 }

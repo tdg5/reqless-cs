@@ -13,12 +13,13 @@ public class JobJsonConverter : JsonConverter<Job>
     /// <summary>
     /// The properties that are required to be present in the JSON object.
     /// </summary>
-    protected static readonly string[] RequiredProperties = {
+    protected static readonly string[] RequiredProperties =
+    [
         "data", "dependencies", "dependents", "expires", "failure",
         "history", "jid", "klass", "priority", "queue", "remaining",
         "retries", "spawned_from_jid", "state", "tags", "throttles",
         "tracked", "worker",
-    };
+    ];
 
     /// <summary>
     /// Deserialize the JSON representation of a <see cref="Job"/> object into
@@ -27,6 +28,7 @@ public class JobJsonConverter : JsonConverter<Job>
     /// <param name="reader">The JSON reader to read the object from.</param>
     /// <param name="typeToConvert">The type of object to convert.</param>
     /// <param name="options">An object that specifies serialization options to use.</param>
+    /// <returns>The deserialized Job object.</returns>
     public override Job Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
     {
         Dictionary<string, bool> encounteredProperties = [];
@@ -78,8 +80,7 @@ public class JobJsonConverter : JsonConverter<Job>
                     wasDegenerateObject = JsonConverterHelper.TryConsumeDegenerateObject(
                         "dependencies",
                         "array",
-                        ref reader
-                    );
+                        ref reader);
                     dependencies = wasDegenerateObject
                         ? []
                         : JsonSerializer.Deserialize<string[]>(ref reader);
@@ -88,8 +89,7 @@ public class JobJsonConverter : JsonConverter<Job>
                     wasDegenerateObject = JsonConverterHelper.TryConsumeDegenerateObject(
                         "dependents",
                         "array",
-                        ref reader
-                    );
+                        ref reader);
                     dependents = wasDegenerateObject
                         ? []
                         : JsonSerializer.Deserialize<string[]>(ref reader);
@@ -100,14 +100,13 @@ public class JobJsonConverter : JsonConverter<Job>
                     {
                         expires = expiresValue;
                     }
+
                     break;
                 case "failure":
                     var readerClone = reader;
                     readerClone.Read();
-                    var isEmptyObject = (
-                        reader.TokenType == JsonTokenType.StartObject &&
-                        readerClone.TokenType == JsonTokenType.EndObject
-                    );
+                    var isEmptyObject = reader.TokenType == JsonTokenType.StartObject
+                        && readerClone.TokenType == JsonTokenType.EndObject;
                     if (isEmptyObject)
                     {
                         failure = null;
@@ -117,13 +116,13 @@ public class JobJsonConverter : JsonConverter<Job>
                     {
                         failure = JsonSerializer.Deserialize<JobFailure>(ref reader);
                     }
+
                     break;
                 case "history":
                     wasDegenerateObject = JsonConverterHelper.TryConsumeDegenerateObject(
                         "history",
                         "array",
-                        ref reader
-                    );
+                        ref reader);
                     history = wasDegenerateObject
                         ? []
                         : JsonSerializer.Deserialize<JobEvent[]>(ref reader);
@@ -155,6 +154,7 @@ public class JobJsonConverter : JsonConverter<Job>
                     {
                         spawnedFromJid = reader.GetString();
                     }
+
                     break;
                 case "state":
                     state = BaseJobJsonHelper.ReadState(ref reader);
@@ -174,6 +174,7 @@ public class JobJsonConverter : JsonConverter<Job>
                     {
                         worker = null;
                     }
+
                     break;
                 default:
                     Console.WriteLine($"Unknown property: {propertyName}");
@@ -208,8 +209,7 @@ public class JobJsonConverter : JsonConverter<Job>
             tags: tags!,
             throttles: throttles!,
             tracked: tracked!.Value,
-            workerName: worker!
-        );
+            workerName: worker!);
     }
 
     /// <summary>

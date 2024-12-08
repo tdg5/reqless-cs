@@ -1,6 +1,6 @@
-using System.Text.Json.Serialization;
 using Reqless.Client.Serialization;
 using Reqless.Common.Validation;
+using System.Text.Json.Serialization;
 
 namespace Reqless.Client.Models;
 
@@ -10,17 +10,6 @@ namespace Reqless.Client.Models;
 [JsonConverter(typeof(TrackedJobsResultJsonConverter))]
 public class TrackedJobsResult
 {
-    /// <summary>
-    /// The jobs that are currently being tracked.
-    /// </summary>
-    public Job[] Jobs { get; }
-
-    /// <summary>
-    /// The JIDs of tracked jobs that no additional information is available
-    /// for.
-    /// </summary>
-    public string[] ExpiredJids { get; }
-
     /// <summary>
     /// Initializes a new instance of the <see cref="TrackedJobsResult"/> class.
     /// </summary>
@@ -32,7 +21,18 @@ public class TrackedJobsResult
         ArgumentValidation.ThrowIfAnyNull(jobs, nameof(jobs));
         ArgumentValidation.ThrowIfAnyNullOrWhitespace(expiredJids, nameof(expiredJids));
 
-        Jobs = jobs;
         ExpiredJids = expiredJids;
+        Jobs = jobs;
     }
+
+    /// <summary>
+    /// Gets the JIDs of tracked jobs that no additional information is available
+    /// for.
+    /// </summary>
+    public string[] ExpiredJids { get; }
+
+    /// <summary>
+    /// Gets the jobs that are currently being tracked.
+    /// </summary>
+    public Job[] Jobs { get; }
 }

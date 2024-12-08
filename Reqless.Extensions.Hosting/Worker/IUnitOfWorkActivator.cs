@@ -22,6 +22,5 @@ public interface IUnitOfWorkActivator
     /// <returns>An instance of <paramref name="instanceType"/>.</returns>
     IUnitOfWork CreateInstance(
         IServiceProvider serviceProvider,
-        Type instanceType
-    );
+        Type instanceType);
 }

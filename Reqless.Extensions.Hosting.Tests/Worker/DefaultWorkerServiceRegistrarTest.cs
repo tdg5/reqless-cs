@@ -28,8 +28,7 @@ public class DefaultWorkerServiceRegistrarTest
             {
                 Assert.Equal(
                     typeof(DefaultWorkerService),
-                    serviceDescriptor.ImplementationType
-                );
+                    serviceDescriptor.ImplementationType);
             }
         }
     }

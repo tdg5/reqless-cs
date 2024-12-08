@@ -19,8 +19,7 @@ public class DelegatingReqlessClientFactoryTest
     {
         Scenario.ThrowsWhenArgumentIsNull(
             () => new DelegatingReqlessClientFactory(null!),
-            "clientFactory"
-        );
+            "clientFactory");
     }
 
     /// <summary>
@@ -31,8 +30,8 @@ public class DelegatingReqlessClientFactoryTest
     public void Create_CallsTheDelegateAndReturnsTheResult()
     {
         var client = Mock.Of<IReqlessClient>();
-        IReqlessClient factory() => client;
-        DelegatingReqlessClientFactory subject = new(factory);
+        IReqlessClient Factory() => client;
+        DelegatingReqlessClientFactory subject = new(Factory);
         var actualClient = subject.Create();
         Assert.Same(client, actualClient);
     }

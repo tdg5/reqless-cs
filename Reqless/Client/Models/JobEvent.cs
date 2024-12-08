@@ -11,18 +11,6 @@ namespace Reqless.Client.Models;
 public class JobEvent
 {
     /// <summary>
-    /// The type of event that occurred.
-    /// </summary>
-    [JsonPropertyName("what")]
-    public string What { get; }
-
-    /// <summary>
-    /// The time at which the event occurred.
-    /// </summary>
-    [JsonPropertyName("when")]
-    public long When { get; }
-
-    /// <summary>
     /// Initializes a new instance of the <see cref="JobEvent"/> class.
     /// </summary>
     /// <param name="what">The type of event that occurred.</param>
@@ -39,4 +27,16 @@ public class JobEvent
         What = what;
         When = when;
     }
+
+    /// <summary>
+    /// Gets the type of event that occurred.
+    /// </summary>
+    [JsonPropertyName("what")]
+    public string What { get; }
+
+    /// <summary>
+    /// Gets the time at which the event occurred.
+    /// </summary>
+    [JsonPropertyName("when")]
+    public long When { get; }
 }

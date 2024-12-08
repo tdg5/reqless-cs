@@ -10,7 +10,7 @@ namespace Reqless.Client.Serialization;
 public class JobEventJsonConverter : JsonConverter<JobEvent>
 {
     /// <summary>
-    /// A dictionary mapping event names to their corresponding types.
+    /// Gets the dictionary mapping event names to their corresponding types.
     /// </summary>
     protected static Dictionary<string, Type> EventTypesByName { get; } = new()
     {
@@ -20,7 +20,7 @@ public class JobEventJsonConverter : JsonConverter<JobEvent>
         { "popped", typeof(PoppedEvent) },
         { "put", typeof(PutEvent) },
         { "throttled", typeof(ThrottledEvent) },
-        { "timed-out", typeof(TimedOutEvent) }
+        { "timed-out", typeof(TimedOutEvent) },
     };
 
     /// <inheritdoc/>
@@ -53,23 +53,23 @@ public class JobEventJsonConverter : JsonConverter<JobEvent>
         {
             if (
                 reader.TokenType == JsonTokenType.PropertyName
-                && reader.GetString() == "what"
-            )
+                && reader.GetString() == "what")
             {
                 reader.Read();
                 var what = reader.GetString()
                     ?? throw new JsonException(
-                        "Expected a string value for the 'what' property, got null."
-                    );
+                        "Expected a string value for the 'what' property, got null.");
                 if (EventTypesByName.TryGetValue(what, out Type? value))
                 {
                     return value;
                 }
+
                 return typeof(LogEvent);
             }
 
             reader.Skip();
         }
+
         throw new JsonException("Expected 'what' property in JSON object, but none was found.");
     }
 }

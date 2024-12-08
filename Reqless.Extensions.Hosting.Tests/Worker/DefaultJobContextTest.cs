@@ -18,8 +18,7 @@ public class DefaultJobContextTest
     {
         Scenario.ThrowsWhenArgumentIsNull(
             () => new DefaultJobContext(null!),
-            "job"
-        );
+            "job");
     }
 
     /// <summary>

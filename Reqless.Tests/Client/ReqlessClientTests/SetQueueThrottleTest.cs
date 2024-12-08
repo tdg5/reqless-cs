@@ -12,57 +12,49 @@ public class SetQueueThrottleTest : BaseReqlessClientTest
     /// <see cref="ReqlessClient.SetQueueThrottleAsync"/> should throw if queue
     /// name is null, empty, or only whitespace.
     /// </summary>
+    /// <returns>A task denoting the completion of the test.</returns>
     [Fact]
     public async Task ThrowsIfQueueNameIsNullOrEmptyOrOnlyWhitespace()
     {
         await Scenario.ThrowsWhenArgumentIsNullOrEmptyOrWhitespaceAsync(
             (invalidQueueName) => WithClientWithExecutorMockForExpectedArguments(
                 subject => subject.SetQueueThrottleAsync(
-                    queueName: invalidQueueName!,
-                    maximum: 21
-                )
-            ),
-            "queueName"
-        );
+                    maximum: 21, queueName: invalidQueueName!)),
+            "queueName");
     }
 
     /// <summary>
     /// <see cref="ReqlessClient.SetQueueThrottleAsync"/> should throw if
     /// maximum is negative.
     /// </summary>
+    /// <returns>A task denoting the completion of the test.</returns>
     [Fact]
     public async Task ThrowsIfMaximumIsLessThanZero()
     {
         await Scenario.ThrowsWhenArgumentIsNegativeAsync(
             (invalidMaximum) => WithClientWithExecutorMockForExpectedArguments(
                 subject => subject.SetQueueThrottleAsync(
-                    queueName: ExampleQueueName,
-                    maximum: invalidMaximum
-                )
-            ),
-            "maximum"
-        );
+                    maximum: invalidMaximum, queueName: ExampleQueueName)),
+            "maximum");
     }
 
     /// <summary>
     /// <see cref="ReqlessClient.SetQueueThrottleAsync"/> should call Executor
     /// with the expected arguments.
     /// </summary>
+    /// <returns>A task denoting the completion of the test.</returns>
     [Fact]
     public async Task CallsExecutorWithExpectedArguments()
     {
         var newMaximum = 42;
         await WithClientWithExecutorMockForExpectedArguments(
             subject => subject.SetQueueThrottleAsync(
-                queueName: ExampleQueueName,
-                maximum: newMaximum
-            ),
+                maximum: newMaximum, queueName: ExampleQueueName),
             expectedArguments: [
                 "queue.throttle.set",
                 0,
                 ExampleQueueName,
                 newMaximum,
-            ]
-        );
+            ]);
     }
 }

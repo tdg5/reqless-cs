@@ -62,22 +62,21 @@ public class LogEventJsonConverter : JsonConverter<LogEvent>
         if (!whatEncountered)
         {
             throw new JsonException(
-                "Expected 'what' property in JSON object, but none was found."
-            );
+                "Expected 'what' property in JSON object, but none was found.");
         }
 
         if (!whenEncountered)
         {
             throw new JsonException(
-                "Expected 'when' property in JSON object, but none was found."
-            );
+                "Expected 'when' property in JSON object, but none was found.");
         }
+
         if (what is null)
         {
             throw new JsonException(
-                "Expected a string value for the 'what' property, got null."
-            );
+                "Expected a string value for the 'what' property, got null.");
         }
+
         // We can forgive null here for when because an error would have
         // occurred if when were omitted or invalid.
         return new LogEvent(what, when!.Value, data);
@@ -94,6 +93,7 @@ public class LogEventJsonConverter : JsonConverter<LogEvent>
             writer.WritePropertyName(key);
             dataValue.WriteTo(writer);
         }
+
         writer.WriteEndObject();
     }
 }

@@ -6,7 +6,7 @@ namespace Reqless.Extensions.Hosting.Worker;
 public interface IWorker
 {
     /// <summary>
-    /// The name that the worker should use when communicating with Reqless.
+    /// Gets the name that the worker should use when communicating with Reqless.
     /// </summary>
     public string Name { get; }
 

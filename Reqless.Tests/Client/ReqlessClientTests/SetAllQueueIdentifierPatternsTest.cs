@@ -9,26 +9,25 @@ namespace Reqless.Tests.Client.ReqlessClientTests;
 /// </summary>
 public class SetAllQueueIdentifierPatternsTest : BaseReqlessClientTest
 {
-
     /// <summary>
     /// <see cref="ReqlessClient.SetAllQueueIdentifierPatternsAsync"/> should
     /// throw if identifier patterns argument is null.
     /// </summary>
+    /// <returns>A task denoting the completion of the test.</returns>
     [Fact]
     public async Task ThrowsIfIdentifierPatternsIsNull()
     {
         await Scenario.ThrowsWhenArgumentIsNullAsync(
             () => WithClientWithExecutorMockForExpectedArguments(
-                subject => subject.SetAllQueueIdentifierPatternsAsync(null!)
-            ),
-            "identifierPatterns"
-        );
+                subject => subject.SetAllQueueIdentifierPatternsAsync(null!)),
+            "identifierPatterns");
     }
 
     /// <summary>
     /// <see cref="ReqlessClient.SetAllQueueIdentifierPatternsAsync"/> should
     /// throw if any identifier is null, empty, or only whitespace.
     /// </summary>
+    /// <returns>A task denoting the completion of the test.</returns>
     [Fact]
     public async Task ThrowsIfIdentifierIsNullEmptyOrOnlyWhitespace()
     {
@@ -40,17 +39,15 @@ public class SetAllQueueIdentifierPatternsTest : BaseReqlessClientTest
                     new Dictionary<string, IEnumerable<string>>()
                     {
                         [invalidIdentifier!] = ["something"],
-                    }
-                )
-            ),
-            "identifierPatterns.key"
-        );
+                    })),
+            "identifierPatterns.key");
     }
 
     /// <summary>
     /// <see cref="ReqlessClient.SetAllQueueIdentifierPatternsAsync"/> should
     /// throw if patterns is null.
     /// </summary>
+    /// <returns>A task denoting the completion of the test.</returns>
     [Fact]
     public async Task ThrowsIfPatternsIsNull()
     {
@@ -60,17 +57,15 @@ public class SetAllQueueIdentifierPatternsTest : BaseReqlessClientTest
                     new Dictionary<string, IEnumerable<string>>()
                     {
                         ["identifier"] = null!,
-                    }
-                )
-            ),
-            "identifierPatterns.value"
-        );
+                    })),
+            "identifierPatterns.value");
     }
 
     /// <summary>
     /// <see cref="ReqlessClient.SetAllQueueIdentifierPatternsAsync"/> should
     /// throw if any pattern is null, empty, or only whitespace.
     /// </summary>
+    /// <returns>A task denoting the completion of the test.</returns>
     [Fact]
     public async Task ThrowsIfIAnyPatternsListIsNullEmptyOrOnlyWhitespace()
     {
@@ -80,17 +75,15 @@ public class SetAllQueueIdentifierPatternsTest : BaseReqlessClientTest
                     new Dictionary<string, IEnumerable<string>>()
                     {
                         ["identifier"] = [invalidPattern!],
-                    }
-                )
-            ),
-            "identifierPatterns.value"
-        );
+                    })),
+            "identifierPatterns.value");
     }
 
     /// <summary>
     /// <see cref="ReqlessClient.SetAllQueueIdentifierPatternsAsync"/> should
     /// not include identifiers with empty patterns when calling the executor.
     /// </summary>
+    /// <returns>A task denoting the completion of the test.</returns>
     [Fact]
     public async Task DoesNotCallExecutorWithEmptyPatterns()
     {
@@ -104,21 +97,20 @@ public class SetAllQueueIdentifierPatternsTest : BaseReqlessClientTest
                 {
                     [identifier] = patterns,
                     [otherIdentifier] = otherPatterns,
-                }
-            ),
+                }),
             expectedArguments: [
                 "queueIdentifierPatterns.setAll",
                 0,
                 identifier,
                 JsonSerializer.Serialize(patterns),
-            ]
-        );
+            ]);
     }
 
     /// <summary>
     /// <see cref="ReqlessClient.SetAllQueueIdentifierPatternsAsync"/> should
     /// call the executor with the expected arguments.
     /// </summary>
+    /// <returns>A task denoting the completion of the test.</returns>
     [Fact]
     public async Task CallsExecutorWithExpectedArguments()
     {
@@ -132,8 +124,7 @@ public class SetAllQueueIdentifierPatternsTest : BaseReqlessClientTest
                 {
                     [identifier] = patterns,
                     [otherIdentifier] = otherPatterns,
-                }
-            ),
+                }),
             expectedArguments: [
                 "queueIdentifierPatterns.setAll",
                 0,
@@ -141,7 +132,6 @@ public class SetAllQueueIdentifierPatternsTest : BaseReqlessClientTest
                 JsonSerializer.Serialize(patterns),
                 otherIdentifier,
                 JsonSerializer.Serialize(otherPatterns),
-            ]
-        );
+            ]);
     }
 }

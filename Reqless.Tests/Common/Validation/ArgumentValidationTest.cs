@@ -17,12 +17,9 @@ public class ArgumentValidationTest
     {
         var paramName = "param";
         var exception = Assert.Throws<ArgumentNullException>(
-            () => ArgumentValidation.ThrowIfNullOrEmpty<string>(null!, paramName)
-        );
+            () => ArgumentValidation.ThrowIfNullOrEmpty<string>(null!, paramName));
         Assert.Equal(
-            $"Value cannot be null. (Parameter '{paramName}')",
-            exception.Message
-        );
+            $"Value cannot be null. (Parameter '{paramName}')", exception.Message);
         Assert.Equal(paramName, exception.ParamName);
     }
 
@@ -35,12 +32,9 @@ public class ArgumentValidationTest
     {
         var paramName = "param";
         var exception = Assert.Throws<ArgumentException>(
-            () => ArgumentValidation.ThrowIfNullOrEmpty<string>([], paramName)
-        );
+            () => ArgumentValidation.ThrowIfNullOrEmpty<string>([], paramName));
         Assert.Equal(
-            $"Value cannot be empty. (Parameter '{paramName}')",
-            exception.Message
-        );
+            $"Value cannot be empty. (Parameter '{paramName}')", exception.Message);
         Assert.Equal(paramName, exception.ParamName);
     }
 
@@ -51,7 +45,7 @@ public class ArgumentValidationTest
     [Fact]
     public void ThrowIfNullOrEmpty_DoesNotThrowIfCollectionIsNotEmpty()
     {
-        ArgumentValidation.ThrowIfNullOrEmpty([""], "param");
+        ArgumentValidation.ThrowIfNullOrEmpty([string.Empty], "param");
     }
 
     /// <summary>
@@ -63,12 +57,9 @@ public class ArgumentValidationTest
     {
         var paramName = "param";
         var exception = Assert.Throws<ArgumentNullException>(
-            () => ArgumentValidation.ThrowIfAnyNull<string>(null!, paramName)
-        );
+            () => ArgumentValidation.ThrowIfAnyNull<string>(null!, paramName));
         Assert.Equal(
-            $"Value cannot be null. (Parameter '{paramName}')",
-            exception.Message
-        );
+            $"Value cannot be null. (Parameter '{paramName}')", exception.Message);
         Assert.Equal(paramName, exception.ParamName);
     }
 
@@ -83,12 +74,9 @@ public class ArgumentValidationTest
         var paramName = "values";
 
         var exception = Assert.Throws<ArgumentException>(
-            () => ArgumentValidation.ThrowIfAnyNull(values, paramName)
-        );
+            () => ArgumentValidation.ThrowIfAnyNull(values, paramName));
         Assert.Equal(
-            $"Value cannot include null. (Parameter '{paramName}')",
-            exception.Message
-        );
+            $"Value cannot include null. (Parameter '{paramName}')", exception.Message);
         Assert.Equal(paramName, exception.ParamName);
     }
 
@@ -111,12 +99,9 @@ public class ArgumentValidationTest
     {
         var paramName = "param";
         var exception = Assert.Throws<ArgumentNullException>(
-            () => ArgumentValidation.ThrowIfAnyNullOrWhitespace(null!, paramName)
-        );
+            () => ArgumentValidation.ThrowIfAnyNullOrWhitespace(null!, paramName));
         Assert.Equal(
-            $"Value cannot be null. (Parameter '{paramName}')",
-            exception.Message
-        );
+            $"Value cannot be null. (Parameter '{paramName}')", exception.Message);
         Assert.Equal(paramName, exception.ParamName);
     }
 
@@ -130,11 +115,8 @@ public class ArgumentValidationTest
         var paramName = "values";
         Scenario.ThrowsWhenArgumentElementIsNullOrEmptyOrWhitespace(
             (invalidValue) => ArgumentValidation.ThrowIfAnyNullOrWhitespace(
-                ["a", invalidValue!, "c"],
-                paramName
-            ),
-            paramName
-        );
+                ["a", invalidValue!, "c"], paramName),
+            paramName);
     }
 
     /// <summary>
@@ -167,11 +149,8 @@ public class ArgumentValidationTest
         var paramName = "param";
         Scenario.ThrowsWhenArgumentIsEmptyOrWhitespace(
             (invalidValue) => ArgumentValidation.ThrowIfNotNullAndEmptyOrWhitespace(
-                invalidValue,
-                paramName
-            ),
-            paramName
-        );
+                invalidValue, paramName),
+            paramName);
     }
 
     /// <summary>
@@ -195,11 +174,8 @@ public class ArgumentValidationTest
         ArgumentValidation.ThrowIfNegative(0, paramName);
         Scenario.ThrowsWhenArgumentIsNegative(
             (int invalidValue) => ArgumentValidation.ThrowIfNegative(
-                invalidValue,
-                paramName
-            ),
-            paramName
-        );
+                invalidValue, paramName),
+            paramName);
     }
 
     /// <summary>
@@ -213,10 +189,7 @@ public class ArgumentValidationTest
         ArgumentValidation.ThrowIfNegative(0L, paramName);
         Scenario.ThrowsWhenArgumentIsNegative(
             (long invalidValue) => ArgumentValidation.ThrowIfNegative(
-                invalidValue,
-                paramName
-            ),
-            paramName
-        );
+                invalidValue, paramName),
+            paramName);
     }
 }

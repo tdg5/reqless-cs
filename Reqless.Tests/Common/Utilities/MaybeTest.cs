@@ -44,18 +44,16 @@ public class MaybeTest
     {
         // The cast appears to succeed, but it's not really a Maybe<object?>
         // instance. It's just null.
-        var notAReferenceMaybe = ((Maybe<object?>)null!);
+        var notAReferenceMaybe = (Maybe<object?>)null!;
         Assert.Throws<NullReferenceException>(
-            () => notAReferenceMaybe.GetOrDefault(null!)
-        );
+            () => notAReferenceMaybe.GetOrDefault(null!));
         Assert.Null(notAReferenceMaybe);
 
         // The cast appears to succeed, but it's not really a Maybe<int?>
         // instance. It's just null.
-        var notAValueMaybe = ((Maybe<int?>)null!);
+        var notAValueMaybe = (Maybe<int?>)null!;
         Assert.Throws<NullReferenceException>(
-            () => notAValueMaybe.GetOrDefault(null!)
-        );
+            () => notAValueMaybe.GetOrDefault(null!));
         Assert.Null(notAValueMaybe);
 
         // The generic implementation hides this but, user-defined conversions
@@ -115,7 +113,7 @@ public class MaybeTest
     }
 
     /// <summary>
-    /// Maybe{T}.Some.HasValue should return true;
+    /// Maybe{T}.Some.HasValue should return true.
     /// </summary>
     [Fact]
     public void Some_HasValue_ReturnsTrue()
@@ -125,7 +123,7 @@ public class MaybeTest
     }
 
     /// <summary>
-    /// Maybe{T}.Some.IsEmpty should return false;
+    /// Maybe{T}.Some.IsEmpty should return false.
     /// </summary>
     [Fact]
     public void Some_IsEmpty_ReturnsTrue()
@@ -158,8 +156,7 @@ public class MaybeTest
             {
                 noneFuncCalled = true;
                 return "not_expected";
-            }
-        );
+            });
         Assert.True(someFuncCalled);
         Assert.False(noneFuncCalled);
         Assert.Equal(expectedValue, actualValue);
@@ -177,12 +174,11 @@ public class MaybeTest
         string actualValue = "not_expected";
         var expectedResult = 42;
         var subject = Maybe<string>.Some(expectedValue);
-        var result = subject.Map<int>(value =>
+        var result = subject.Map(value =>
         {
             actualValue = value;
             return expectedResult;
-        }
-        );
+        });
         Assert.Equal(expectedValue, actualValue);
         Assert.Equal(expectedResult, result.GetOrDefault(0));
     }
@@ -199,7 +195,7 @@ public class MaybeTest
     }
 
     /// <summary>
-    /// Maybe{T}.None.HasValue should return false;
+    /// Maybe{T}.None.HasValue should return false.
     /// </summary>
     [Fact]
     public void None_HasValue_ReturnsFalse()
@@ -209,7 +205,7 @@ public class MaybeTest
     }
 
     /// <summary>
-    /// Maybe{T}.None.IsEmpty should return true;
+    /// Maybe{T}.None.IsEmpty should return true.
     /// </summary>
     [Fact]
     public void None_IsEmpty_ReturnsTrue()
@@ -238,8 +234,7 @@ public class MaybeTest
             {
                 noneFuncCalled = true;
                 return expectedResult;
-            }
-        );
+            });
         Assert.False(someFuncCalled);
         Assert.True(noneFuncCalled);
         Assert.Equal(expectedResult, result);
@@ -254,12 +249,11 @@ public class MaybeTest
     {
         var mapFunctionCalled = false;
         var subject = Maybe<string>.None;
-        var result = subject.Map<int>(value =>
+        var result = subject.Map(value =>
         {
             mapFunctionCalled = true;
             return 42;
-        }
-        );
+        });
         Assert.False(mapFunctionCalled);
         Assert.Equal(Maybe<int>.None, result);
     }

@@ -1,5 +1,5 @@
-using Reqless.Client.Models;
 using Reqless.Client;
+using Reqless.Client.Models;
 using Reqless.Common.Utilities;
 using Reqless.Tests.Common.Client.Models;
 using Reqless.Tests.Common.TestHelpers;
@@ -16,24 +16,22 @@ public class PopJobTest : BaseReqlessClientTest
     /// <see cref="ReqlessClient.PopJobAsync"/> should throw if the
     /// given queue name is null, empty, or only whitespace.
     /// </summary>
+    /// <returns>A task denoting the completion of the test.</returns>
     [Fact]
     public async Task ThrowsIfQueueNameIsNullOrEmptyOrWhitespace()
     {
         await Scenario.ThrowsWhenArgumentIsNullOrEmptyOrWhitespaceAsync(
             (invalidQueueName) => WithClientWithExecutorMockForExpectedArguments(
                 subject => subject.PopJobAsync(
-                    queueName: invalidQueueName!,
-                    workerName: ExampleWorkerName
-                )
-            ),
-            "queueName"
-        );
+                    queueName: invalidQueueName!, workerName: ExampleWorkerName)),
+            "queueName");
     }
 
     /// <summary>
     /// <see cref="ReqlessClient.PopJobAsync"/> should throw if the
     /// given worker name is null, empty, or only whitespace.
     /// </summary>
+    /// <returns>A task denoting the completion of the test.</returns>
     [Fact]
     public async Task ThrowsIfWorkerNameIsNullOrEmptyOrWhitespace()
     {
@@ -41,17 +39,15 @@ public class PopJobTest : BaseReqlessClientTest
             (invalidWorkerName) => WithClientWithExecutorMockForExpectedArguments(
                 subject => subject.PopJobAsync(
                     queueName: ExampleQueueName,
-                    workerName: invalidWorkerName!
-                )
-            ),
-            "workerName"
-        );
+                    workerName: invalidWorkerName!)),
+            "workerName");
     }
 
     /// <summary>
     /// <see cref="ReqlessClient.PopJobAsync"/> should call Executor with
     /// the expected arguments.
     /// </summary>
+    /// <returns>A task denoting the completion of the test.</returns>
     [Fact]
     public async Task CallsExecutorWithTheExpectedArguments()
     {
@@ -59,9 +55,7 @@ public class PopJobTest : BaseReqlessClientTest
         var jobsJson = $"[{jobJson}]";
         Job? job = await WithClientWithExecutorMockForExpectedArguments(
             subject => subject.PopJobAsync(
-                queueName: ExampleQueueName,
-                workerName: ExampleWorkerName
-            ),
+                queueName: ExampleQueueName, workerName: ExampleWorkerName),
             expectedArguments: [
                 "queue.pop",
                 0,
@@ -70,8 +64,7 @@ public class PopJobTest : BaseReqlessClientTest
                 1,
 
             ],
-            returnValue: jobsJson
-        );
+            returnValue: jobsJson);
         Assert.NotNull(job);
         Assert.IsType<Job>(job);
         Assert.Equal(ExampleJid, job.Jid);
@@ -81,6 +74,7 @@ public class PopJobTest : BaseReqlessClientTest
     /// <see cref="ReqlessClient.PopJobAsync"/> should returns null if the
     /// server returns no jobs.
     /// </summary>
+    /// <returns>A task denoting the completion of the test.</returns>
     [Fact]
     public async Task ReturnsNullIfTheServerReturnsNoJobs()
     {
@@ -88,9 +82,7 @@ public class PopJobTest : BaseReqlessClientTest
         {
             Job? job = await WithClientWithExecutorMockForExpectedArguments(
                 subject => subject.PopJobAsync(
-                    queueName: ExampleQueueName,
-                    workerName: ExampleWorkerName
-                ),
+                    queueName: ExampleQueueName, workerName: ExampleWorkerName),
                 expectedArguments: [
                     "queue.pop",
                     0,
@@ -98,8 +90,7 @@ public class PopJobTest : BaseReqlessClientTest
                     ExampleWorkerName,
                     1,
                 ],
-                returnValue: emptyResult
-            );
+                returnValue: emptyResult);
             Assert.Null(job);
         }
     }
@@ -107,15 +98,14 @@ public class PopJobTest : BaseReqlessClientTest
     /// <summary>
     /// <see cref="ReqlessClient.PopJobAsync"/> throws if the server returns null.
     /// </summary>
+    /// <returns>A task denoting the completion of the test.</returns>
     [Fact]
     public async Task ThrowsIfTheServerReturnsNull()
     {
         await Scenario.ThrowsWhenServerRespondsWithNullAsync(
             () => WithClientWithExecutorMockForExpectedArguments(
                 subject => subject.PopJobAsync(
-                    queueName: ExampleQueueName,
-                    workerName: ExampleWorkerName
-                ),
+                    queueName: ExampleQueueName, workerName: ExampleWorkerName),
                 expectedArguments: [
                     "queue.pop",
                     0,
@@ -123,24 +113,21 @@ public class PopJobTest : BaseReqlessClientTest
                     ExampleWorkerName,
                     1,
                 ],
-                returnValue: null
-            )
-        );
+                returnValue: null));
     }
 
     /// <summary>
     /// <see cref="ReqlessClient.PopJobAsync"/> throws if the job JSON can't be
     /// deserialized.
     /// </summary>
+    /// <returns>A task denoting the completion of the test.</returns>
     [Fact]
     public async Task ThrowsIfJobJSONCannotBeDeserialized()
     {
         var exception = await Assert.ThrowsAsync<JsonException>(
             () => WithClientWithExecutorMockForExpectedArguments(
                 subject => subject.PopJobAsync(
-                    queueName: ExampleQueueName,
-                    workerName: ExampleWorkerName
-                ),
+                    queueName: ExampleQueueName, workerName: ExampleWorkerName),
                 expectedArguments: [
                     "queue.pop",
                     0,
@@ -148,9 +135,7 @@ public class PopJobTest : BaseReqlessClientTest
                     ExampleWorkerName,
                     1,
                 ],
-                returnValue: "null"
-            )
-        );
+                returnValue: "null"));
         Assert.Equal("Failed to deserialize jobs JSON: null", exception.Message);
     }
 }

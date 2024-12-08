@@ -13,6 +13,7 @@ public class CompleteAndRequeueJobTest : BaseReqlessClientTest
     /// <see cref="ReqlessClient.CompleteAndRequeueJobAsync"/> should throw if
     /// data is null, empty, or whitespace.
     /// </summary>
+    /// <returns>A task denoting the completion of the test.</returns>
     [Fact]
     public async Task ThrowsIfDataIsNullOrEmptyOrWhitespace()
     {
@@ -23,17 +24,15 @@ public class CompleteAndRequeueJobTest : BaseReqlessClientTest
                     jid: ExampleJid,
                     nextQueueName: ExampleQueueName,
                     queueName: ExampleQueueName,
-                    workerName: ExampleWorkerName
-                )
-            ),
-            "data"
-        );
+                    workerName: ExampleWorkerName)),
+            "data");
     }
 
     /// <summary>
     /// <see cref="ReqlessClient.CompleteAndRequeueJobAsync"/> should throw if
     /// jid is null, empty, or whitespace.
     /// </summary>
+    /// <returns>A task denoting the completion of the test.</returns>
     [Fact]
     public async Task ThrowsIfJidIsNullOrEmptyOrWhitespace()
     {
@@ -44,17 +43,15 @@ public class CompleteAndRequeueJobTest : BaseReqlessClientTest
                     jid: invalidJid!,
                     nextQueueName: ExampleQueueName,
                     queueName: ExampleQueueName,
-                    workerName: ExampleWorkerName
-                )
-            ),
-            "jid"
-        );
+                    workerName: ExampleWorkerName)),
+            "jid");
     }
 
     /// <summary>
     /// <see cref="ReqlessClient.CompleteAndRequeueJobAsync"/> should throw if
     /// queue name is null, empty, or whitespace.
     /// </summary>
+    /// <returns>A task denoting the completion of the test.</returns>
     [Fact]
     public async Task ThrowsIfQueueNameIsNullOrEmptyOrWhitespace()
     {
@@ -65,17 +62,15 @@ public class CompleteAndRequeueJobTest : BaseReqlessClientTest
                     jid: ExampleJid,
                     nextQueueName: ExampleQueueName,
                     queueName: invalidQueueName!,
-                    workerName: ExampleWorkerName
-                )
-            ),
-            "queueName"
-        );
+                    workerName: ExampleWorkerName)),
+            "queueName");
     }
 
     /// <summary>
     /// <see cref="ReqlessClient.CompleteAndRequeueJobAsync"/> should throw if
     /// worker name is null, empty, or whitespace.
     /// </summary>
+    /// <returns>A task denoting the completion of the test.</returns>
     [Fact]
     public async Task ThrowsIfWorkerNameIsNullOrEmptyOrOnlyWhitespace()
     {
@@ -86,17 +81,15 @@ public class CompleteAndRequeueJobTest : BaseReqlessClientTest
                     jid: ExampleJid,
                     nextQueueName: ExampleQueueName,
                     queueName: ExampleQueueName,
-                    workerName: invalidWorkerName!
-                )
-            ),
-            "workerName"
-        );
+                    workerName: invalidWorkerName!)),
+            "workerName");
     }
 
     /// <summary>
     /// <see cref="ReqlessClient.CompleteAndRequeueJobAsync"/> should call
     /// Executor with the expected arguments.
     /// </summary>
+    /// <returns>A task denoting the completion of the test.</returns>
     [Fact]
     public async Task CallsExecutorWithTheExpectedArguments()
     {
@@ -105,17 +98,16 @@ public class CompleteAndRequeueJobTest : BaseReqlessClientTest
         var nextQueueName = "nextQueueName";
         foreach (var includeDependencies in new bool[] { true, false })
         {
-            var _dependencies = includeDependencies ? dependencies : null;
+            var dependenciesOrDefault = includeDependencies ? dependencies : null;
             bool completedSuccessfully = await WithClientWithExecutorMockForExpectedArguments(
                 subject => subject.CompleteAndRequeueJobAsync(
                     data: ExampleData,
-                    dependencies: _dependencies,
+                    dependencies: dependenciesOrDefault,
                     delay: delay,
                     jid: ExampleJid,
                     nextQueueName: nextQueueName,
                     queueName: ExampleQueueName,
-                    workerName: ExampleWorkerName
-                ),
+                    workerName: ExampleWorkerName),
                 expectedArguments: [
                     "job.completeAndRequeue",
                     0,
@@ -127,10 +119,9 @@ public class CompleteAndRequeueJobTest : BaseReqlessClientTest
                     "delay",
                     delay,
                     "depends",
-                    JsonSerializer.Serialize(_dependencies ?? []),
+                    JsonSerializer.Serialize(dependenciesOrDefault ?? []),
                 ],
-                returnValue: includeDependencies ? "depends" : "scheduled"
-            );
+                returnValue: includeDependencies ? "depends" : "scheduled");
             Assert.True(completedSuccessfully);
         }
     }

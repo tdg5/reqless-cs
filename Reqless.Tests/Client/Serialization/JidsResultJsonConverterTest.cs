@@ -9,9 +9,9 @@ namespace Reqless.Tests.Client.Serialization;
 /// </summary>
 public class JidsResultJsonConverterTest
 {
-    readonly JsonSerializerOptions _jsonSerializerOptions = new()
+    private static readonly JsonSerializerOptions _jsonSerializerOptions = new()
     {
-        Converters = { new JidsResultJsonConverter() }
+        Converters = { new JidsResultJsonConverter() },
     };
 
     /// <summary>
@@ -24,13 +24,9 @@ public class JidsResultJsonConverterTest
         var exception = Assert.Throws<JsonException>(
             () => JsonSerializer.Deserialize<JidsResult>(
                 "[]",
-                _jsonSerializerOptions
-            )
-        );
+                _jsonSerializerOptions));
         Assert.Equal(
-            "Expected reader to begin with start of object.",
-            exception.Message
-        );
+            "Expected reader to begin with start of object.", exception.Message);
     }
 
     /// <summary>
@@ -42,14 +38,10 @@ public class JidsResultJsonConverterTest
     {
         var exception = Assert.Throws<JsonException>(
             () => JsonSerializer.Deserialize<JidsResult>(
-                """{"jobs": {"key": "boom"}, "total": 4}""",
-                _jsonSerializerOptions
-            )
-        );
+                """{"jobs": {"key": "boom"}, "total": 4}""", _jsonSerializerOptions));
         Assert.Equal(
             "Expected 'jobs' to be array or empty object but encountered object with 1 properties.",
-            exception.Message
-        );
+            exception.Message);
     }
 
     /// <summary>
@@ -61,14 +53,10 @@ public class JidsResultJsonConverterTest
     {
         var exception = Assert.Throws<JsonException>(
             () => JsonSerializer.Deserialize<JidsResult>(
-                """{"jobs": null, "total": 4}""",
-                _jsonSerializerOptions
-            )
-        );
+                """{"jobs": null, "total": 4}""", _jsonSerializerOptions));
         Assert.Equal(
             "Failed to deserialize 'jobs' property into a string[].",
-            exception.Message
-        );
+            exception.Message);
     }
 
     /// <summary>
@@ -80,14 +68,10 @@ public class JidsResultJsonConverterTest
     {
         var exception = Assert.Throws<JsonException>(
             () => JsonSerializer.Deserialize<JidsResult>(
-                """{"total": 0}""",
-                _jsonSerializerOptions
-            )
-        );
+                """{"total": 0}""", _jsonSerializerOptions));
         Assert.Equal(
             "Expected 'jobs' property in JSON object, but none was found.",
-            exception.Message
-        );
+            exception.Message);
     }
 
     /// <summary>
@@ -99,14 +83,10 @@ public class JidsResultJsonConverterTest
     {
         var exception = Assert.Throws<JsonException>(
             () => JsonSerializer.Deserialize<JidsResult>(
-                """{"jobs": []}""",
-                _jsonSerializerOptions
-            )
-        );
+                """{"jobs": []}""", _jsonSerializerOptions));
         Assert.Equal(
             "Expected 'total' property in JSON object, but none was found.",
-            exception.Message
-        );
+            exception.Message);
     }
 
     /// <summary>
@@ -119,9 +99,7 @@ public class JidsResultJsonConverterTest
         var jid = "jid1";
         var total = 1;
         var result = JsonSerializer.Deserialize<JidsResult>(
-            $$"""{"jobs": ["{{jid}}"], "total": {{total}}}""",
-            _jsonSerializerOptions
-        );
+            $$"""{"jobs": ["{{jid}}"], "total": {{total}}}""", _jsonSerializerOptions);
         Assert.NotNull(result);
         Assert.Single(result.Jids);
         Assert.Equal(jid, result.Jids[0]);
@@ -136,9 +114,7 @@ public class JidsResultJsonConverterTest
     public void Read_HandlesJobsPropertyWithEmptyObjectLikeEmptyArray()
     {
         var result = JsonSerializer.Deserialize<JidsResult>(
-            """{"jobs": {}, "total": 0}""",
-            _jsonSerializerOptions
-        );
+            """{"jobs": {}, "total": 0}""", _jsonSerializerOptions);
         Assert.NotNull(result);
         Assert.Empty(result.Jids);
         Assert.Equal(0, result.Total);
@@ -156,9 +132,7 @@ public class JidsResultJsonConverterTest
         var subject = new JidsResult(jids, total);
         var json = JsonSerializer.Serialize(subject, _jsonSerializerOptions);
         var subjectFromJson = JsonSerializer.Deserialize<JidsResult>(
-            json,
-            _jsonSerializerOptions
-        );
+            json, _jsonSerializerOptions);
         Assert.NotNull(subjectFromJson);
         Assert.Equal(subject.Jids, subjectFromJson.Jids);
         Assert.Equal(subject.Total, subjectFromJson.Total);

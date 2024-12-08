@@ -1,6 +1,6 @@
 using Reqless.Client.Serialization;
-using System.Text.Json.Serialization;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace Reqless.Client.Models;
 
@@ -12,11 +12,6 @@ namespace Reqless.Client.Models;
 public class LogEvent : JobEvent
 {
     /// <summary>
-    /// Adhoc data associated with the event.
-    /// </summary>
-    public Dictionary<string, JsonElement> Data { get; }
-
-    /// <summary>
     /// Initializes a new instance of the <see cref="LogEvent"/> class.
     /// </summary>
     /// <param name="what">The name of the event that occurred.</param>
@@ -25,11 +20,16 @@ public class LogEvent : JobEvent
     public LogEvent(
        string what,
        long when,
-       Dictionary<string, JsonElement>? data = null
-   ) : base(what, when)
+       Dictionary<string, JsonElement>? data = null)
+       : base(what, when)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(what, nameof(what));
 
         Data = data ?? [];
     }
+
+    /// <summary>
+    /// Gets the collection of adhoc data associated with the event.
+    /// </summary>
+    public Dictionary<string, JsonElement> Data { get; }
 }

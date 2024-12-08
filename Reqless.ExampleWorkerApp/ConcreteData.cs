@@ -6,7 +6,7 @@ namespace Reqless.ExampleWorkerApp;
 public class ConcreteData
 {
     /// <summary>
-    /// Arbitrary string data.
+    /// Gets or sets arbitrary string data.
     /// </summary>
     public string? Thing { get; set; }
 }

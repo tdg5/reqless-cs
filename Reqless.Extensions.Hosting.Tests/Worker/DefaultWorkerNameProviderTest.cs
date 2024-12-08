@@ -17,8 +17,7 @@ public class DefaultWorkerNameProviderTest
     {
         Scenario.ThrowsWhenArgumentIsEmptyOrWhitespace(
             (invalidPrefix) => new DefaultWorkerNameProvider(invalidPrefix),
-            "prefix"
-        );
+            "prefix");
     }
 
     /// <summary>

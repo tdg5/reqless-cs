@@ -17,8 +17,7 @@ public class ConstructorsTest : BaseReqlessClientTest
     {
         var connectionString = "intentionally-bad-hostname:9999";
         var exeception = Assert.Throws<RedisConnectionException>(
-            () => new PredictableNowReqlessClient(connectionString)
-        );
+            () => new PredictableNowReqlessClient(connectionString));
         Assert.Contains("It was not possible to connect", exeception.Message);
     }
 }

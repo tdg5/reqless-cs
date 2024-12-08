@@ -25,8 +25,7 @@ public static class ResourceHelper
 
         var fullResourceName = $"{nameof(Reqless)}.{nameof(Client)}.{resourcePath.Replace("/", ".")}";
         var isKnownResource = assembly.GetManifestResourceNames().Any(
-            resourceName => resourceName == fullResourceName
-        );
+            resourceName => resourceName == fullResourceName);
 
         if (!isKnownResource)
         {

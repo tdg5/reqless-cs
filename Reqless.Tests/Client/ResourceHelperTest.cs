@@ -24,11 +24,9 @@ public class ResourceHelperTest
     public void ReadTextResource_ThrowsFileNotFoundForNonExistentResource()
     {
         var exception = Assert.Throws<FileNotFoundException>(
-            () => ResourceHelper.ReadTextResource("LuaScripts/nonexistent.lua")
-        );
+            () => ResourceHelper.ReadTextResource("LuaScripts/nonexistent.lua"));
         Assert.Equal(
             "Resource Reqless.Client.LuaScripts.nonexistent.lua not found.",
-            exception.Message
-        );
+            exception.Message);
     }
 }

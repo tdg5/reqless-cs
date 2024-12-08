@@ -12,21 +12,21 @@ public class GetConfigTest : BaseReqlessClientTest
     /// <see cref="ReqlessClient.GetConfigAsync"/> should throw if configName is
     /// null, empty, or only whitespace.
     /// </summary>
+    /// <returns>A task denoting the completion of the test.</returns>
     [Fact]
     public async Task ThrowsIfConfigNameIsNullOrEmptyOrOnlyWhitespace()
     {
         await Scenario.ThrowsWhenArgumentIsNullOrEmptyOrWhitespaceAsync(
             (invalidConfigName) => WithClientWithExecutorMockForExpectedArguments(
-                subject => subject.GetConfigAsync(invalidConfigName!)
-            ),
-            "configName"
-        );
+                subject => subject.GetConfigAsync(invalidConfigName!)),
+            "configName");
     }
 
     /// <summary>
     /// <see cref="ReqlessClient.GetConfigAsync"/> should call Executor
     /// with the expected arguments.
     /// </summary>
+    /// <returns>A task denoting the completion of the test.</returns>
     [Fact]
     public async Task CallsExecutorWithExpectedArguments()
     {
@@ -34,13 +34,8 @@ public class GetConfigTest : BaseReqlessClientTest
         var value = "config-value";
         var returnValue = await WithClientWithExecutorMockForExpectedArguments(
             subject => subject.GetConfigAsync(configName),
-            expectedArguments: [
-                "config.get",
-                0,
-                configName,
-            ],
-            returnValue: value
-        );
+            expectedArguments: ["config.get", 0, configName],
+            returnValue: value);
         Assert.Equal(value, returnValue);
     }
 }

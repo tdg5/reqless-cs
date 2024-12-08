@@ -67,8 +67,7 @@ public class JobJsonConverterTest
     {
         var json = JobFactory.JobJson(dependencies: Maybe<string[]>.Some(null!));
         var exception = Assert.Throws<ArgumentNullException>(
-            () => JsonSerializer.Deserialize<Job>(json)
-        );
+            () => JsonSerializer.Deserialize<Job>(json));
         Assert.Equal("Value cannot be null. (Parameter 'dependencies')", exception.Message);
     }
 
@@ -80,15 +79,12 @@ public class JobJsonConverterTest
     public void Read_Dependencies_ThrowsIfANonEmptyObjectIsEncountered()
     {
         var json = JobFactory.JobJsonRaw(
-            dependencies: Maybe.Some("""{"boom": "boom"}""")
-        );
+            dependencies: Maybe.Some("""{"boom": "boom"}"""));
         var exception = Assert.Throws<JsonException>(
-            () => JsonSerializer.Deserialize<Job>(json)
-        );
+            () => JsonSerializer.Deserialize<Job>(json));
         Assert.Equal(
             "Expected 'dependencies' to be array or empty object but encountered object with 1 properties.",
-            exception.Message
-        );
+            exception.Message);
     }
 
     /// <summary>
@@ -110,11 +106,13 @@ public class JobJsonConverterTest
     [Fact]
     public void Read_Dependencies_HandlesValidValues()
     {
-        foreach (var validDependencies in new string[][] {
+        var dependencySets = new string[][]
+        {
             [],
             ["1"],
             ["1", "2", "3", "4", "5"],
-        })
+        };
+        foreach (var validDependencies in dependencySets)
         {
             var json = JobFactory.JobJson(dependencies: Maybe.Some(validDependencies));
             var job = JsonSerializer.Deserialize<Job>(json);
@@ -167,15 +165,12 @@ public class JobJsonConverterTest
     public void Read_Dependents_ThrowsIfANonEmptyObjectIsEncountered()
     {
         var json = JobFactory.JobJsonRaw(
-            dependents: Maybe.Some("""{"boom": "boom"}""")
-        );
+            dependents: Maybe.Some("""{"boom": "boom"}"""));
         var exception = Assert.Throws<JsonException>(
-            () => JsonSerializer.Deserialize<Job>(json)
-        );
+            () => JsonSerializer.Deserialize<Job>(json));
         Assert.Equal(
             "Expected 'dependents' to be array or empty object but encountered object with 1 properties.",
-            exception.Message
-        );
+            exception.Message);
     }
 
     /// <summary>
@@ -184,11 +179,13 @@ public class JobJsonConverterTest
     [Fact]
     public void Read_Dependents_HandlesValidValues()
     {
-        foreach (var validDependents in new string[][] {
+        var dependentsSets = new string[][]
+        {
             [],
             ["1"],
             ["1", "2", "3", "4", "5"],
-        })
+        };
+        foreach (var validDependents in dependentsSets)
         {
             var json = JobFactory.JobJson(dependents: Maybe.Some(validDependents));
             var job = JsonSerializer.Deserialize<Job>(json);
@@ -294,15 +291,12 @@ public class JobJsonConverterTest
     public void Read_History_ThrowsIfANonEmptyObjectIsEncountered()
     {
         var json = JobFactory.JobJsonRaw(
-            history: Maybe.Some("""{"boom": "boom"}""")
-        );
+            history: Maybe.Some("""{"boom": "boom"}"""));
         var exception = Assert.Throws<JsonException>(
-            () => JsonSerializer.Deserialize<Job>(json)
-        );
+            () => JsonSerializer.Deserialize<Job>(json));
         Assert.Equal(
             "Expected 'history' to be array or empty object but encountered object with 1 properties.",
-            exception.Message
-        );
+            exception.Message);
     }
 
     /// <summary>
@@ -379,9 +373,7 @@ public class JobJsonConverterTest
     {
         foreach (var emptyString in TestConstants.EmptyStrings)
         {
-            string json = JobFactory.JobJson(
-                queueName: Maybe.Some(emptyString)
-            );
+            string json = JobFactory.JobJson(queueName: Maybe.Some(emptyString));
             Job? job = JsonSerializer.Deserialize<Job>(json);
             Assert.NotNull(job);
             Assert.Null(job.QueueName);
@@ -440,12 +432,9 @@ public class JobJsonConverterTest
     {
         var json = JobFactory.JobJson(spawnedFromJid: Maybe<string>.None);
         var exception = Assert.Throws<JsonException>(
-            () => JsonSerializer.Deserialize<Job>(json)
-        );
+            () => JsonSerializer.Deserialize<Job>(json));
         Assert.Equal(
-            "Required property 'spawned_from_jid' not found.",
-            exception.Message
-        );
+            "Required property 'spawned_from_jid' not found.", exception.Message);
     }
 
     /// <summary>
@@ -524,15 +513,12 @@ public class JobJsonConverterTest
     public void Read_Tags_ThrowsIfANonEmptyObjectIsEncountered()
     {
         var json = JobFactory.JobJsonRaw(
-            tags: Maybe.Some("""{"boom": "boom"}""")
-        );
+            tags: Maybe.Some("""{"boom": "boom"}"""));
         var exception = Assert.Throws<JsonException>(
-            () => JsonSerializer.Deserialize<Job>(json)
-        );
+            () => JsonSerializer.Deserialize<Job>(json));
         Assert.Equal(
             "Expected 'tags' to be array or empty object but encountered object with 1 properties.",
-            exception.Message
-        );
+            exception.Message);
     }
 
     /// <summary>
@@ -579,15 +565,12 @@ public class JobJsonConverterTest
     public void Read_Throttles_ThrowsIfANonEmptyObjectIsEncountered()
     {
         var json = JobFactory.JobJsonRaw(
-            throttles: Maybe.Some("""{"boom": "boom"}""")
-        );
+            throttles: Maybe.Some("""{"boom": "boom"}"""));
         var exception = Assert.Throws<JsonException>(
-            () => JsonSerializer.Deserialize<Job>(json)
-        );
+            () => JsonSerializer.Deserialize<Job>(json));
         Assert.Equal(
             "Expected 'throttles' to be array or empty object but encountered object with 1 properties.",
-            exception.Message
-        );
+            exception.Message);
     }
 
     /// <summary>
@@ -623,8 +606,7 @@ public class JobJsonConverterTest
     {
         var json = JobFactory.JobJson(tracked: Maybe<bool?>.Some(null));
         var exception = Assert.Throws<JsonException>(
-            () => JsonSerializer.Deserialize<Job>(json)
-        );
+            () => JsonSerializer.Deserialize<Job>(json));
     }
 
     /// <summary>
@@ -657,7 +639,8 @@ public class JobJsonConverterTest
     [Fact]
     public void Read_IgnoresUnknownPropertiesOfAnyType()
     {
-        foreach (var unknown in new string[] {
+        var unknownValues = new string[]
+        {
             "1",
             "3.14",
             "[]",
@@ -665,9 +648,10 @@ public class JobJsonConverterTest
             "false",
             "null",
             "{}",
-        })
+        };
+        foreach (var unknownValue in unknownValues)
         {
-            var json = JobFactory.JobJsonRaw(unknown: Maybe.Some(unknown));
+            var json = JobFactory.JobJsonRaw(unknown: Maybe.Some(unknownValue));
             var job = JsonSerializer.Deserialize<Job>(json);
             Assert.NotNull(job);
         }
@@ -688,9 +672,9 @@ public class JobJsonConverterTest
             group: "group",
             message: "message",
             when: GetNow(),
-            workerName: "workerName"
-        );
-        var history = new JobEvent[] {
+            workerName: "workerName");
+        var history = new JobEvent[]
+        {
             new PutEvent(GetNow(), "queue"),
             new DoneEvent(GetNow()),
         };
@@ -719,8 +703,7 @@ public class JobJsonConverterTest
             state: Maybe.Some(state),
             tags: Maybe.Some(tags),
             throttles: Maybe.Some(throttles),
-            workerName: Maybe.Some(workerName)
-        );
+            workerName: Maybe.Some(workerName));
 
         var job = JsonSerializer.Deserialize<Job>(json);
         Assert.NotNull(job);
@@ -757,11 +740,8 @@ public class JobJsonConverterTest
             group: "group",
             message: "message",
             when: GetNow(),
-            workerName: "workerName"
-        );
-        var history = new JobEvent[] {
-            new PutEvent(GetNow(), "queue"),
-        };
+            workerName: "workerName");
+        var history = new JobEvent[] { new PutEvent(GetNow(), "queue") };
         var jid = "jid";
         var priority = 25;
         var queueName = "queueName";
@@ -792,8 +772,7 @@ public class JobJsonConverterTest
             tags: tags,
             throttles: throttles,
             tracked: tracked,
-            workerName: workerName
-        );
+            workerName: workerName);
         var json = JsonSerializer.Serialize(job);
         var expectedJobJson = JobFactory.JobJson(
             className: Maybe.Some(className),
@@ -813,8 +792,7 @@ public class JobJsonConverterTest
             tags: Maybe.Some(tags),
             throttles: Maybe.Some(throttles),
             tracked: Maybe<bool?>.Some(tracked),
-            workerName: Maybe.Some(workerName)
-        );
+            workerName: Maybe.Some(workerName));
         Assert.Equal(expectedJobJson, json);
     }
 

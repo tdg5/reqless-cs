@@ -1,5 +1,5 @@
-using Reqless.Client.Models;
 using Reqless.Client;
+using Reqless.Client.Models;
 using Reqless.Tests.Common.TestHelpers;
 using System.Text.Json;
 
@@ -10,26 +10,25 @@ namespace Reqless.Tests.Client.ReqlessClientTests;
 /// </summary>
 public class SetAllQueuePriorityPatternsTest : BaseReqlessClientTest
 {
-
     /// <summary>
     /// <see cref="ReqlessClient.SetAllQueuePriorityPatternsAsync"/> should
     /// throw if patterns argument is null.
     /// </summary>
+    /// <returns>A task denoting the completion of the test.</returns>
     [Fact]
     public async Task ThrowsIfPriorityPatternsIsNull()
     {
         await Scenario.ThrowsWhenArgumentIsNullAsync(
             () => WithClientWithExecutorMockForExpectedArguments(
-                subject => subject.SetAllQueuePriorityPatternsAsync(null!)
-            ),
-            "priorityPatterns"
-        );
+                subject => subject.SetAllQueuePriorityPatternsAsync(null!)),
+            "priorityPatterns");
     }
 
     /// <summary>
     /// <see cref="ReqlessClient.SetAllQueuePriorityPatternsAsync"/> should
     /// throw if any pattern is empty, or only whitespace.
     /// </summary>
+    /// <returns>A task denoting the completion of the test.</returns>
     [Fact]
     public async Task ThrowsIfIAnyPatternsListIsEmptyOrOnlyWhitespace()
     {
@@ -40,18 +39,16 @@ public class SetAllQueuePriorityPatternsTest : BaseReqlessClientTest
                     QueuePriorityPattern queuePriorityPattern = new(pattern: []);
                     queuePriorityPattern.Pattern.Add(invalidPattern!);
                     await subject.SetAllQueuePriorityPatternsAsync(
-                        [queuePriorityPattern]
-                    );
-                }
-            ),
-            "priorityPatterns[].Pattern"
-        );
+                        [queuePriorityPattern]);
+                }),
+            "priorityPatterns[].Pattern");
     }
 
     /// <summary>
     /// <see cref="ReqlessClient.SetAllQueuePriorityPatternsAsync"/> should
     /// not include priorities with empty patterns when calling the executor.
     /// </summary>
+    /// <returns>A task denoting the completion of the test.</returns>
     [Fact]
     public async Task DoesNotCallExecutorWithEmptyPatterns()
     {
@@ -59,20 +56,19 @@ public class SetAllQueuePriorityPatternsTest : BaseReqlessClientTest
         var withoutPatterns = new QueuePriorityPattern(pattern: []);
         await WithClientWithExecutorMockForExpectedArguments(
             subject => subject.SetAllQueuePriorityPatternsAsync(
-                [withPatterns, withoutPatterns]
-            ),
+                [withPatterns, withoutPatterns]),
             expectedArguments: [
                 "queuePriorityPatterns.setAll",
                 0,
                 JsonSerializer.Serialize(withPatterns),
-            ]
-        );
+            ]);
     }
 
     /// <summary>
     /// <see cref="ReqlessClient.SetAllQueuePriorityPatternsAsync"/> should
     /// call the executor with the expected arguments.
     /// </summary>
+    /// <returns>A task denoting the completion of the test.</returns>
     [Fact]
     public async Task CallsExecutorWithExpectedArguments()
     {
@@ -80,14 +76,12 @@ public class SetAllQueuePriorityPatternsTest : BaseReqlessClientTest
         var alsoWithPatterns = new QueuePriorityPattern(pattern: ["yay", "fun"]);
         await WithClientWithExecutorMockForExpectedArguments(
             subject => subject.SetAllQueuePriorityPatternsAsync(
-                [withPatterns, alsoWithPatterns]
-            ),
+                [withPatterns, alsoWithPatterns]),
             expectedArguments: [
                 "queuePriorityPatterns.setAll",
                 0,
                 JsonSerializer.Serialize(withPatterns),
                 JsonSerializer.Serialize(alsoWithPatterns),
-            ]
-        );
+            ]);
     }
 }

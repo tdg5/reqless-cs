@@ -12,6 +12,7 @@ public class CompleteJobTest : BaseReqlessClientTest
     /// <see cref="ReqlessClient.CompleteJobAsync"/> should throw if data is
     /// null, empty, or whitespace.
     /// </summary>
+    /// <returns>A task denoting the completion of the test.</returns>
     [Fact]
     public async Task ThrowsIfDataIsNullOrEmptyOrWhitespace()
     {
@@ -21,17 +22,15 @@ public class CompleteJobTest : BaseReqlessClientTest
                     data: invalidData!,
                     jid: ExampleJid,
                     queueName: ExampleQueueName,
-                    workerName: ExampleWorkerName
-                )
-            ),
-            "data"
-        );
+                    workerName: ExampleWorkerName)),
+            "data");
     }
 
     /// <summary>
     /// <see cref="ReqlessClient.CompleteJobAsync"/> should throw if jid is
     /// null, empty, or whitespace.
     /// </summary>
+    /// <returns>A task denoting the completion of the test.</returns>
     [Fact]
     public async Task ThrowsIfJidIsNullOrEmptyOrWhitespace()
     {
@@ -41,17 +40,15 @@ public class CompleteJobTest : BaseReqlessClientTest
                     data: ExampleData,
                     jid: invalidJid!,
                     queueName: ExampleQueueName,
-                    workerName: ExampleWorkerName
-                )
-            ),
-            "jid"
-        );
+                    workerName: ExampleWorkerName)),
+            "jid");
     }
 
     /// <summary>
     /// <see cref="ReqlessClient.CompleteJobAsync"/> should throw if queue name
     /// is null, empty, or whitespace.
     /// </summary>
+    /// <returns>A task denoting the completion of the test.</returns>
     [Fact]
     public async Task ThrowsIfQueueNameIsNullOrEmptyOrWhitespace()
     {
@@ -61,17 +58,15 @@ public class CompleteJobTest : BaseReqlessClientTest
                     data: ExampleData,
                     jid: ExampleJid,
                     queueName: invalidQueueName!,
-                    workerName: ExampleWorkerName
-                )
-            ),
-            "queueName"
-        );
+                    workerName: ExampleWorkerName)),
+            "queueName");
     }
 
     /// <summary>
     /// <see cref="ReqlessClient.CompleteJobAsync"/> should throw if worker name
     /// is null, empty, or whitespace.
     /// </summary>
+    /// <returns>A task denoting the completion of the test.</returns>
     [Fact]
     public async Task ThrowsIfWorkerNameIsNullOrEmptyOrOnlyWhitespace()
     {
@@ -81,17 +76,15 @@ public class CompleteJobTest : BaseReqlessClientTest
                     data: ExampleData,
                     jid: ExampleJid,
                     queueName: ExampleQueueName,
-                    workerName: invalidWorkerName!
-                )
-            ),
-            "workerName"
-        );
+                    workerName: invalidWorkerName!)),
+            "workerName");
     }
 
     /// <summary>
     /// <see cref="ReqlessClient.CompleteJobAsync"/> should call Executor
     /// with the expected arguments.
     /// </summary>
+    /// <returns>A task denoting the completion of the test.</returns>
     [Fact]
     public async Task CallsExecutorWithTheExpectedArguments()
     {
@@ -100,8 +93,7 @@ public class CompleteJobTest : BaseReqlessClientTest
                 data: ExampleData,
                 jid: ExampleJid,
                 queueName: ExampleQueueName,
-                workerName: ExampleWorkerName
-            ),
+                workerName: ExampleWorkerName),
             expectedArguments: [
                 "job.complete",
                 0,
@@ -110,8 +102,7 @@ public class CompleteJobTest : BaseReqlessClientTest
                 ExampleQueueName,
                 ExampleData,
             ],
-            returnValue: "complete"
-        );
+            returnValue: "complete");
         Assert.True(completedSuccessfully);
     }
 }

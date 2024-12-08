@@ -10,30 +10,6 @@ namespace Reqless.Client.Models;
 public class JobFailure
 {
     /// <summary>
-    /// The kind of failure that occurred.
-    /// </summary>
-    [JsonPropertyName("group")]
-    public string Group { get; }
-
-    /// <summary>
-    /// The message associated with the failure.
-    /// </summary>
-    [JsonPropertyName("message")]
-    public string Message { get; }
-
-    /// <summary>
-    /// The time at which the failure occurred.
-    /// </summary>
-    [JsonPropertyName("when")]
-    public long When { get; }
-
-    /// <summary>
-    /// The name of the worker that encountered the failure.
-    /// </summary>
-    [JsonPropertyName("worker")]
-    public string WorkerName { get; }
-
-    /// <summary>
     /// Initializes a new instance of the <see cref="JobFailure"/> class.
     /// </summary>
     /// <param name="group">The kind of failure that occurred.</param>
@@ -59,4 +35,28 @@ public class JobFailure
         WorkerName = workerName;
         When = when;
     }
+
+    /// <summary>
+    /// Gets the kind of failure that occurred.
+    /// </summary>
+    [JsonPropertyName("group")]
+    public string Group { get; }
+
+    /// <summary>
+    /// Gets the message associated with the failure.
+    /// </summary>
+    [JsonPropertyName("message")]
+    public string Message { get; }
+
+    /// <summary>
+    /// Gets the time at which the failure occurred.
+    /// </summary>
+    [JsonPropertyName("when")]
+    public long When { get; }
+
+    /// <summary>
+    /// Gets the name of the worker that encountered the failure.
+    /// </summary>
+    [JsonPropertyName("worker")]
+    public string WorkerName { get; }
 }

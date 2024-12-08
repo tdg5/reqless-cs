@@ -17,15 +17,12 @@ public class DefaultJobContextAccessorTest
     {
         DefaultJobContextAccessor subject = new()
         {
-            Value = new DefaultJobContext(JobFactory.NewJob())
+            Value = new DefaultJobContext(JobFactory.NewJob()),
         };
         var exception = Assert.Throws<InvalidOperationException>(
-            () => subject.Value = new DefaultJobContext(JobFactory.NewJob())
-        );
+            () => subject.Value = new DefaultJobContext(JobFactory.NewJob()));
         Assert.Equal(
-            "The job context has already been set.",
-            exception.Message
-        );
+            "The job context has already been set.", exception.Message);
     }
 
     /// <summary>

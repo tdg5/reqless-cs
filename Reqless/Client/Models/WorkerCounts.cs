@@ -9,33 +9,33 @@ namespace Reqless.Client.Models;
 /// </summary>
 public class WorkerCounts
 {
-    private string _WorkerName;
+    private string _workerName;
 
     /// <summary>
-    /// The number of jobs that belong to the worker that have not yet expired.
+    /// Gets the number of jobs that belong to the worker that have not yet expired.
     /// </summary>
     [JsonPropertyName("jobs")]
     public required int Jobs { get; init; }
 
     /// <summary>
-    /// The number of jobs that belong to the worker and have expired.
+    /// Gets the number of jobs that belong to the worker and have expired.
     /// </summary>
     [JsonPropertyName("stalled")]
     public required int Stalled { get; init; }
 
     /// <summary>
-    /// The name of the worker.
+    /// Gets the name of the worker.
     /// </summary>
     [JsonPropertyName("name")]
     public required string WorkerName
     {
-        get => _WorkerName;
+        get => _workerName;
 
-        [MemberNotNull(nameof(_WorkerName))]
+        [MemberNotNull(nameof(_workerName))]
         init
         {
             ArgumentException.ThrowIfNullOrWhiteSpace(value, nameof(WorkerName));
-            _WorkerName = value;
+            _workerName = value;
         }
     }
 }

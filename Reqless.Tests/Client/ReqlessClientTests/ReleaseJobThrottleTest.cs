@@ -12,56 +12,48 @@ public class ReleaseJobThrottleTest : BaseReqlessClientTest
     /// <see cref="ReqlessClient.ReleaseJobThrottleAsync"/> should call the
     /// executor with the expected arguments.
     /// </summary>
+    /// <returns>A task denoting the completion of the test.</returns>
     [Fact]
     public async Task CallsTheExecutorWithTheExpectedArguments()
     {
         await WithClientWithExecutorMockForExpectedArguments(
             subject => subject.ReleaseJobThrottleAsync(
-                ExampleJid,
-                ExampleThrottleName
-            ),
+                ExampleJid, ExampleThrottleName),
             expectedArguments: [
                 "throttle.release",
                 0,
                 ExampleThrottleName,
                 ExampleJid,
-            ]
-        );
+            ]);
     }
 
     /// <summary>
     /// <see cref="ReqlessClient.ReleaseJobThrottleAsync"/> throws if the
     /// given jid argument is null, empty, or only whitespace.
     /// </summary>
+    /// <returns>A task denoting the completion of the test.</returns>
     [Fact]
     public async Task ThrowsIfJidIsNullEmptyOrOnlyWhitespace()
     {
         await Scenario.ThrowsWhenArgumentIsNullOrEmptyOrWhitespaceAsync(
             (invalidJid) => WithClientWithExecutorMockForExpectedArguments(
                 subject => subject.ReleaseJobThrottleAsync(
-                    invalidJid!,
-                    ExampleThrottleName
-                )
-            ),
-            "jid"
-        );
+                    invalidJid!, ExampleThrottleName)),
+            "jid");
     }
 
     /// <summary>
     /// <see cref="ReqlessClient.ReleaseJobThrottleAsync"/> throws if the
     /// given throttleName argument is null, empty, or only whitespace.
     /// </summary>
+    /// <returns>A task denoting the completion of the test.</returns>
     [Fact]
     public async Task ThrowsIfThrottleNameIsNullEmptyOrOnlyWhitespace()
     {
         await Scenario.ThrowsWhenArgumentIsNullOrEmptyOrWhitespaceAsync(
             (invalidThrottle) => WithClientWithExecutorMockForExpectedArguments(
                 subject => subject.ReleaseJobThrottleAsync(
-                    ExampleJid,
-                    invalidThrottle!
-                )
-            ),
-            "throttleName"
-        );
+                    ExampleJid, invalidThrottle!)),
+            "throttleName");
     }
 }

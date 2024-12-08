@@ -42,8 +42,7 @@ public class DefaultReflectionGlobalsTest
         Scenario.ThrowsWhenArgumentIsNullOrEmptyOrWhitespace(
             (invalidValue) =>
                 new DefaultReflectionGlobals().LoadAssemblyByName(invalidValue!),
-            "assemblyName"
-        );
+            "assemblyName");
     }
 
     /// <summary>
@@ -72,8 +71,7 @@ public class DefaultReflectionGlobalsTest
     {
         Scenario.ThrowsWhenArgumentIsNull(
             () => new DefaultReflectionGlobals().LoadDependencyContext(null!),
-            "assembly"
-        );
+            "assembly");
     }
 
     /// <summary>

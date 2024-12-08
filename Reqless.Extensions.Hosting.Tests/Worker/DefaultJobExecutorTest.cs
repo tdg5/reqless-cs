@@ -23,10 +23,8 @@ public class DefaultJobExecutorTest
     {
         Scenario.ThrowsWhenArgumentIsNull(
             () => MakeSubject(
-                jobContextFactory: Maybe<IJobContextFactory>.None
-            ),
-            "jobContextFactory"
-        );
+                jobContextFactory: Maybe<IJobContextFactory>.None),
+            "jobContextFactory");
     }
 
     /// <summary>
@@ -39,10 +37,8 @@ public class DefaultJobExecutorTest
     {
         Scenario.ThrowsWhenArgumentIsNull(
             () => MakeSubject(
-                serviceProvider: Maybe<ServiceProvider>.None
-            ),
-            "serviceProvider"
-        );
+                serviceProvider: Maybe<ServiceProvider>.None),
+            "serviceProvider");
     }
 
     /// <summary>
@@ -55,10 +51,8 @@ public class DefaultJobExecutorTest
     {
         Scenario.ThrowsWhenArgumentIsNull(
             () => MakeSubject(
-                unitOfWorkActivator: Maybe<IUnitOfWorkActivator>.None
-            ),
-            "unitOfWorkActivator"
-        );
+                unitOfWorkActivator: Maybe<IUnitOfWorkActivator>.None),
+            "unitOfWorkActivator");
     }
 
     /// <summary>
@@ -71,10 +65,8 @@ public class DefaultJobExecutorTest
     {
         Scenario.ThrowsWhenArgumentIsNull(
             () => MakeSubject(
-                unitOfWorkResolver: Maybe<IUnitOfWorkResolver>.None
-            ),
-            "unitOfWorkResolver"
-        );
+                unitOfWorkResolver: Maybe<IUnitOfWorkResolver>.None),
+            "unitOfWorkResolver");
     }
 
     /// <summary>
@@ -87,8 +79,7 @@ public class DefaultJobExecutorTest
         var subject = MakeSubject();
         await Scenario.ThrowsWhenArgumentIsNullAsync(
             () => subject.ExecuteAsync(null!, CancellationToken.None),
-            "job"
-        );
+            "job");
     }
 
     /// <summary>
@@ -107,15 +98,12 @@ public class DefaultJobExecutorTest
 
         var job = JobFactory.NewJob(className: Maybe.Some(expectedJobClassName));
         var subject = MakeSubject(
-            unitOfWorkResolver: Maybe.Some(unitOfWorkResolverMock.Object)
-        );
+            unitOfWorkResolver: Maybe.Some(unitOfWorkResolverMock.Object));
         var exception = await Assert.ThrowsAsync<InvalidOperationException>(
-            () => subject.ExecuteAsync(job, CancellationToken.None)
-        );
+            () => subject.ExecuteAsync(job, CancellationToken.None));
         Assert.Equal(
             $"Could not resolve IUnitOfWork type '{expectedJobClassName}'.",
-            exception.Message
-        );
+            exception.Message);
     }
 
     /// <summary>
@@ -132,8 +120,7 @@ public class DefaultJobExecutorTest
 
         var expectedCancellationToken = cancellationTokenSource.Token;
         var expectedJob = JobFactory.NewJob(
-            className: Maybe.Some(typeof(DelegateUnitOfWork).FullName!)
-        );
+            className: Maybe.Some(typeof(DelegateUnitOfWork).FullName!));
 
         Task Action(IServiceProvider serviceProvider, CancellationToken cancellationToken)
         {
@@ -171,8 +158,7 @@ public class DefaultJobExecutorTest
         services.AddSingleton<IJobContextAccessor, DefaultJobContextAccessor>();
         rootServiceProvider = services.BuildServiceProvider();
         var subject = MakeSubject(
-            serviceProvider: Maybe.Some(rootServiceProvider)
-        );
+            serviceProvider: Maybe.Some(rootServiceProvider));
         await subject.ExecuteAsync(expectedJob, expectedCancellationToken);
         Assert.True(actionExecuted);
     }
@@ -181,25 +167,22 @@ public class DefaultJobExecutorTest
         Maybe<IJobContextFactory>? jobContextFactory = null,
         Maybe<ServiceProvider>? serviceProvider = null,
         Maybe<IUnitOfWorkActivator>? unitOfWorkActivator = null,
-        Maybe<IUnitOfWorkResolver>? unitOfWorkResolver = null
-    )
+        Maybe<IUnitOfWorkResolver>? unitOfWorkResolver = null)
     {
-        Maybe<IJobContextFactory> _jobContextFactory = jobContextFactory
+        Maybe<IJobContextFactory> jobContextFactoryOrDefault = jobContextFactory
             ?? Maybe<IJobContextFactory>.Some(new DefaultJobContextFactory());
-        Maybe<ServiceProvider> _serviceProvider = serviceProvider
+        Maybe<ServiceProvider> serviceProviderOrDefault = serviceProvider
             ?? Maybe<ServiceProvider>.Some(
-                new ServiceCollection().BuildServiceProvider()
-            );
-        Maybe<IUnitOfWorkActivator> _unitOfWorkActivator = unitOfWorkActivator
+                new ServiceCollection().BuildServiceProvider());
+        Maybe<IUnitOfWorkActivator> unitOfWorkActivatorOrDefault = unitOfWorkActivator
             ?? Maybe<IUnitOfWorkActivator>.Some(new DefaultUnitOfWorkActivator());
-        Maybe<IUnitOfWorkResolver> _unitOfWorkResolver = unitOfWorkResolver
+        Maybe<IUnitOfWorkResolver> unitOfWorkResolverOrDefault = unitOfWorkResolver
             ?? Maybe<IUnitOfWorkResolver>.Some(new DefaultUnitOfWorkResolver());
 
         return new(
-            jobContextFactory: _jobContextFactory.GetOrDefault(null!),
-            serviceProvider: _serviceProvider.GetOrDefault(null!),
-            unitOfWorkActivator: _unitOfWorkActivator.GetOrDefault(null!),
-            unitOfWorkResolver: _unitOfWorkResolver.GetOrDefault(null!)
-        );
+            jobContextFactory: jobContextFactoryOrDefault.GetOrDefault(null!),
+            serviceProvider: serviceProviderOrDefault.GetOrDefault(null!),
+            unitOfWorkActivator: unitOfWorkActivatorOrDefault.GetOrDefault(null!),
+            unitOfWorkResolver: unitOfWorkResolverOrDefault.GetOrDefault(null!));
     }
 }

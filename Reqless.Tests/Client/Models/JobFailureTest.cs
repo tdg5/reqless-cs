@@ -20,10 +20,8 @@ public class JobFailureTest
                 group: invalidGroup!,
                 message: "message",
                 when: 123,
-                workerName: "workerName"
-            ),
-            "group"
-        );
+                workerName: "workerName"),
+            "group");
     }
 
     /// <summary>
@@ -38,10 +36,8 @@ public class JobFailureTest
                 group: "group",
                 message: invalidMessage!,
                 when: 123,
-                workerName: "workerName"
-            ),
-            "message"
-        );
+                workerName: "workerName"),
+            "message");
     }
 
     /// <summary>
@@ -55,10 +51,8 @@ public class JobFailureTest
                 "group",
                 "message",
                 invalidWhen,
-                "workerName"
-            ),
-            "when"
-        );
+                "workerName"),
+            "when");
     }
 
     /// <summary>
@@ -73,10 +67,8 @@ public class JobFailureTest
                 "group",
                 "message",
                 123,
-                invalidWorkerName!
-            ),
-            "workerName"
-        );
+                invalidWorkerName!),
+            "workerName");
     }
 
     /// <summary>

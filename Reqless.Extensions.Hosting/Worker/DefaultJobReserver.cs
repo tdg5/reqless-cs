@@ -13,22 +13,19 @@ public class DefaultJobReserver : IJobReserver
     private readonly IReqlessClient _reqlessClient;
 
     /// <summary>
-    /// Create an instance of <see cref="DefaultJobReserver"/>.
+    /// Initializes a new instance of the <see cref="DefaultJobReserver"/> class.
     /// </summary>
     /// <param name="queueNameProvider">The <see cref="IQueueNameProvider"/>
     /// that will provide queue names for the job reserver to use.</param>
     /// <param name="reqlessClient">The <see cref="IReqlessClient"/> to use for
     /// reserving jobs.</param>
-    /// <exception cref="ArgumentNullException"></exception>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="queueNameProvider"/>
+    /// or <paramref name="reqlessClient"/> is <see langword="null"/>.</exception>
     public DefaultJobReserver(
-        IQueueNameProvider queueNameProvider,
-        IReqlessClient reqlessClient
-    )
+        IQueueNameProvider queueNameProvider, IReqlessClient reqlessClient)
     {
         ArgumentNullException.ThrowIfNull(
-            queueNameProvider,
-            nameof(queueNameProvider)
-        );
+            queueNameProvider, nameof(queueNameProvider));
         ArgumentNullException.ThrowIfNull(reqlessClient, nameof(reqlessClient));
 
         _queueNameProvider = queueNameProvider;
@@ -38,16 +35,15 @@ public class DefaultJobReserver : IJobReserver
     /// <inheritdoc />
     public async Task<Job?> TryReserveJobAsync(
         string workerName,
-        CancellationToken? cancellationToken = null
-    )
+        CancellationToken? cancellationToken = null)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(workerName, nameof(workerName));
 
-        var _cancellationToken = cancellationToken ?? CancellationToken.None;
+        var actualCancellationToken = cancellationToken ?? CancellationToken.None;
         var queueNames = await _queueNameProvider.GetQueueNamesAsync();
         foreach (var queueName in queueNames)
         {
-            if (_cancellationToken.IsCancellationRequested)
+            if (actualCancellationToken.IsCancellationRequested)
             {
                 return null;
             }
@@ -58,6 +54,7 @@ public class DefaultJobReserver : IJobReserver
                 return job;
             }
         }
+
         return null;
     }
 }

@@ -8,7 +8,7 @@ public static class TestConstants
     /// <summary>
     /// A sample of empty strings.
     /// </summary>
-    public static readonly string[] EmptyStrings = ["", " ", "\t", "\n", "\r", "  "];
+    public static readonly string[] EmptyStrings = [string.Empty, " ", "\t", "\n", "\r", "  "];
 
     /// <summary>
     /// A sample of empty strings also including null.

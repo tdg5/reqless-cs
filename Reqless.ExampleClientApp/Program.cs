@@ -1,4 +1,4 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Reqless.Client;
 using Reqless.Framework;
@@ -20,11 +20,9 @@ public class Program
         IServiceCollection services = builder.Services;
 
         services.AddSingleton<IReqlessClientFactory>(
-            new DelegatingReqlessClientFactory(() => new ReqlessClient())
-        );
-        services.AddSingleton<IReqlessClient>(
-            provider => provider.GetRequiredService<IReqlessClientFactory>().Create()
-        );
+            new DelegatingReqlessClientFactory(() => new ReqlessClient()));
+        services.AddSingleton(
+            provider => provider.GetRequiredService<IReqlessClientFactory>().Create());
         services.AddSingleton<IHostedService, Application>();
 
         using IHost host = builder.Build();

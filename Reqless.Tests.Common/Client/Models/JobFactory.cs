@@ -1,7 +1,7 @@
 using Reqless.Client.Models;
 using Reqless.Common.Utilities;
-using System.Text.Json;
 using System.Text;
+using System.Text.Json;
 
 namespace Reqless.Tests.Common.Client.Models;
 
@@ -38,6 +38,7 @@ public static class JobFactory
     /// <param name="throttles">Maybe wrapping the throttles of the job.</param>
     /// <param name="tracked">Maybe wrapping whether the job is tracked.</param>
     /// <param name="workerName">Maybe wrapping the worker name of the job.</param>
+    /// <returns>A new <see cref="Job"/> instance.</returns>
     public static Job NewJob(
         Maybe<string>? className = null,
         Maybe<string>? data = null,
@@ -56,8 +57,7 @@ public static class JobFactory
         Maybe<string[]>? tags = null,
         Maybe<string[]>? throttles = null,
         Maybe<bool>? tracked = null,
-        Maybe<string>? workerName = null
-    )
+        Maybe<string>? workerName = null)
     {
         return new Job(
             className: (className ?? Maybe<string>.None).GetOrDefault("className"),
@@ -70,9 +70,7 @@ public static class JobFactory
                     group: "group",
                     message: "message",
                     when: GetNow(),
-                    workerName: "workerName"
-                )
-            ),
+                    workerName: "workerName")),
             history: (history ?? Maybe<JobEvent[]>.None).GetOrDefault([]),
             jid: (jid ?? Maybe<string>.None).GetOrDefault("jid"),
             priority: (priority ?? Maybe<int>.None).GetOrDefault(25),
@@ -85,8 +83,7 @@ public static class JobFactory
             tags: (tags ?? Maybe<string[]>.None).GetOrDefault([]),
             throttles: (throttles ?? Maybe<string[]>.None).GetOrDefault([]),
             tracked: (tracked ?? Maybe<bool>.None).GetOrDefault(false),
-            workerName: (workerName ?? Maybe<string>.None).GetOrDefault("workerName")
-        );
+            workerName: (workerName ?? Maybe<string>.None).GetOrDefault("workerName"));
     }
 
     /// <summary>
@@ -135,72 +132,50 @@ public static class JobFactory
         Maybe<string[]>? tags = null,
         Maybe<string[]>? throttles = null,
         Maybe<bool?>? tracked = null,
-        Maybe<string>? workerName = null
-    )
+        Maybe<string>? workerName = null)
     {
-        static string jsonSerialize<T>(T value) =>
+        static string JsonSerialize<T>(T value) =>
             JsonSerializer.Serialize(value);
 
         return JobJsonRaw(
             className: (className ?? Maybe.Some("className"))
-                .Map(jsonSerialize),
-
-            data: (data ?? Maybe.Some("{}")).Map(jsonSerialize),
-
+                .Map(JsonSerialize),
+            data: (data ?? Maybe.Some("{}")).Map(JsonSerialize),
             dependencies: (dependencies ?? Maybe<string[]>.Some([]))
-                .Map(jsonSerialize),
-
+                .Map(JsonSerialize),
             dependents: (dependents ?? Maybe<string[]>.Some([]))
-                .Map(jsonSerialize),
-
+                .Map(JsonSerialize),
             expires: (expires ?? Maybe<long?>.Some(GetNow()))
                 .Map(value => value?.ToString() ?? "null"),
-
             failure: (
                     failure ?? Maybe.Some(
                         new JobFailure(
                             group: "group",
                             message: "message",
                             when: GetNow(),
-                            workerName: "workerName"
-                        )
-                    )
-                )
-                .Map(jsonSerialize),
-
+                            workerName: "workerName")))
+                .Map(JsonSerialize),
             history: (history ?? Maybe<JobEvent[]>.Some([]))
-                .Map(jsonSerialize),
-
-            jid: (jid ?? Maybe.Some("jid")).Map(jsonSerialize),
-
+                .Map(JsonSerialize),
+            jid: (jid ?? Maybe.Some("jid")).Map(JsonSerialize),
             priority: (priority ?? Maybe<int?>.Some(25))
                 .Map(value => value?.ToString() ?? "null"),
-
             queueName: (queueName ?? Maybe.Some("queueName"))
-                .Map(jsonSerialize),
-
+                .Map(JsonSerialize),
             remaining: (remaining ?? Maybe<int?>.Some(5))
                 .Map(value => value?.ToString() ?? "null"),
-
             retries: (retries ?? Maybe<int?>.Some(6))
                 .Map(value => value?.ToString() ?? "null"),
-
             spawnedFromJid: (spawnedFromJid ?? Maybe.Some("spawnedFromJid"))
-                .Map(jsonSerialize),
-
-            state: (state ?? Maybe.Some("waiting")).Map(jsonSerialize),
-
-            tags: (tags ?? Maybe<string[]>.Some([])).Map(jsonSerialize),
-
+                .Map(JsonSerialize),
+            state: (state ?? Maybe.Some("waiting")).Map(JsonSerialize),
+            tags: (tags ?? Maybe<string[]>.Some([])).Map(JsonSerialize),
             throttles: (throttles ?? Maybe<string[]>.Some([]))
-                .Map(jsonSerialize),
-
+                .Map(JsonSerialize),
             tracked: (tracked ?? Maybe<bool?>.Some(false))
                 .Map(value => value is null ? "null" : value == true ? "true" : "false"),
-
             workerName: (workerName ?? Maybe.Some("workerName"))
-                .Map(jsonSerialize)
-        );
+                .Map(JsonSerialize));
     }
 
     /// <summary>
@@ -232,6 +207,7 @@ public static class JobFactory
     /// <param name="tracked">Maybe wrapping whether the job is tracked.</param>
     /// <param name="unknown">Maybe wrapping an unknown property of the job.</param>
     /// <param name="workerName">Maybe wrapping the worker name of the job.</param>
+    /// <returns>A JSON string representing a job.</returns>
     public static string JobJsonRaw(
         Maybe<string>? className = null,
         Maybe<string>? data = null,
@@ -251,8 +227,7 @@ public static class JobFactory
         Maybe<string>? throttles = null,
         Maybe<string>? tracked = null,
         Maybe<string>? unknown = null,
-        Maybe<string>? workerName = null
-    )
+        Maybe<string>? workerName = null)
     {
         var now = GetNow();
         var classNameMaybe = className ?? Maybe.Some("\"className\"");
@@ -266,10 +241,7 @@ public static class JobFactory
                     group: "group",
                     message: "message",
                     when: GetNow(),
-                    workerName: "workerName"
-                )
-            )
-        );
+                    workerName: "workerName")));
         var historyMaybe = history ?? Maybe.Some("[]");
         var jidMaybe = jid ?? Maybe.Some("\"jid\"");
         var priorityMaybe = priority ?? Maybe.Some("25");
@@ -291,96 +263,115 @@ public static class JobFactory
             var dataValueJson = dataMaybe.GetOrDefault("{}");
             json.Append($"\"data\":{dataValueJson},");
         }
+
         if (dependenciesMaybe.HasValue)
         {
             var dependenciesValueJson = dependenciesMaybe.GetOrDefault("[]");
             json.Append($"\"dependencies\":{dependenciesValueJson},");
         }
+
         if (dependentsMaybe.HasValue)
         {
             var dependentsValueJson = dependentsMaybe.GetOrDefault("[]");
             json.Append($"\"dependents\":{dependentsValueJson},");
         }
+
         if (expiresMaybe.HasValue)
         {
             var expiresValueJson = expiresMaybe.GetOrDefault("12345");
             json.Append($"\"expires\":{expiresValueJson},");
         }
+
         if (failureMaybe.HasValue)
         {
             var failureValueJson = failureMaybe.GetOrDefault("null");
             json.Append($"\"failure\":{failureValueJson},");
         }
+
         if (historyMaybe.HasValue)
         {
             var historyValueJson = historyMaybe.GetOrDefault("[]");
             json.Append($"\"history\":{historyValueJson},");
         }
+
         if (jidMaybe.HasValue)
         {
             var jidValueJson = jidMaybe.GetOrDefault("\"jid\"");
             json.Append($"\"jid\":{jidValueJson},");
         }
+
         if (classNameMaybe.HasValue)
         {
             var classNameValueJson = classNameMaybe.GetOrDefault("\"className\"");
             json.Append($"\"klass\":{classNameValueJson},");
         }
+
         if (priorityMaybe.HasValue)
         {
             var priorityValueJson = priorityMaybe.GetOrDefault("12345");
             json.Append($"\"priority\":{priorityValueJson},");
         }
+
         if (queueNameMaybe.HasValue)
         {
             var queueNameValueJson = queueNameMaybe.GetOrDefault("\"queueName\"");
             json.Append($"\"queue\":{queueNameValueJson},");
         }
+
         if (remainingMaybe.HasValue)
         {
             var remainingValueJson = remainingMaybe.GetOrDefault("6");
             json.Append($"\"remaining\":{remainingValueJson},");
         }
+
         if (retriesMaybe.HasValue)
         {
             var retriesValueJson = retriesMaybe.GetOrDefault("5");
             json.Append($"\"retries\":{retriesValueJson},");
         }
+
         if (spawnedFromJidMaybe.HasValue)
         {
             var spawnedFromJidValueJson = spawnedFromJidMaybe.GetOrDefault("\"spawnedFromJid\"");
             json.Append($"\"spawned_from_jid\":{spawnedFromJidValueJson},");
         }
+
         if (stateMaybe.HasValue)
         {
             var stateValueJson = stateMaybe.GetOrDefault("\"running\"");
             json.Append($"\"state\":{stateValueJson},");
         }
+
         if (tagsMaybe.HasValue)
         {
             var tagsJson = tagsMaybe.GetOrDefault("[]");
             json.Append($"\"tags\":{tagsJson},");
         }
+
         if (throttlesMaybe.HasValue)
         {
             var throttlesJson = throttlesMaybe.GetOrDefault("[]");
             json.Append($"\"throttles\":{throttlesJson},");
         }
+
         if (trackedMaybe.HasValue)
         {
             var trackedValueJson = trackedMaybe.GetOrDefault("false");
             json.Append($"\"tracked\":{trackedValueJson},");
         }
+
         if (unknownMaybe.HasValue)
         {
             var unknownValueJson = unknownMaybe.GetOrDefault("null");
             json.Append($"\"unknown\":{unknownValueJson},");
         }
+
         if (workerNameMaybe.HasValue)
         {
             var workerNameValueJson = workerNameMaybe.GetOrDefault("\"workerName\"");
             json.Append($"\"worker\":{workerNameValueJson},");
         }
+
         json.Remove(json.Length - 1, 1);
         json.Append('}');
         return json.ToString();

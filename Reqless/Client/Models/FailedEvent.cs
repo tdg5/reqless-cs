@@ -8,18 +8,6 @@ namespace Reqless.Client.Models;
 public class FailedEvent : JobEvent
 {
     /// <summary>
-    /// The kind of failure that occurred.
-    /// </summary>
-    [JsonPropertyName("group")]
-    public string Group { get; }
-
-    /// <summary>
-    /// The name of the worker that was processing the job when it failed.
-    /// </summary>
-    [JsonPropertyName("worker")]
-    public string WorkerName { get; }
-
-    /// <summary>
     /// Initializes a new instance of the <see cref="FailedEvent"/> class.
     /// </summary>
     /// <param name="when">The time at which the failure occurred.</param>
@@ -35,8 +23,8 @@ public class FailedEvent : JobEvent
     public FailedEvent(
         long when,
         string group,
-        string workerName
-    ) : base("failed", when)
+        string workerName)
+        : base("failed", when)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(group, nameof(group));
         ArgumentException.ThrowIfNullOrWhiteSpace(workerName, nameof(workerName));
@@ -44,4 +32,16 @@ public class FailedEvent : JobEvent
         Group = group;
         WorkerName = workerName;
     }
+
+    /// <summary>
+    /// Gets the kind of failure that occurred.
+    /// </summary>
+    [JsonPropertyName("group")]
+    public string Group { get; }
+
+    /// <summary>
+    /// Gets the name of the worker that was processing the job when it failed.
+    /// </summary>
+    [JsonPropertyName("worker")]
+    public string WorkerName { get; }
 }

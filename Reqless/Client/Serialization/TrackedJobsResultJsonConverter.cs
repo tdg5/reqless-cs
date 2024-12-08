@@ -13,8 +13,7 @@ public class TrackedJobsResultJsonConverter : JsonConverter<TrackedJobsResult>
     public override TrackedJobsResult Read(
         ref Utf8JsonReader reader,
         Type typeToConvert,
-        JsonSerializerOptions options
-    )
+        JsonSerializerOptions options)
     {
         if (reader.TokenType != JsonTokenType.StartObject)
         {
@@ -48,14 +47,12 @@ public class TrackedJobsResultJsonConverter : JsonConverter<TrackedJobsResult>
                 var wasDegenerateObject = JsonConverterHelper.TryConsumeDegenerateObject(
                     "jobs",
                     "array",
-                    ref reader
-                );
+                    ref reader);
                 jobs = wasDegenerateObject
                     ? []
                     : JsonSerializer.Deserialize<Job[]>(ref reader) ??
                         throw new JsonException(
-                            "Failed to deserialize 'jobs' property into a Job[]."
-                        );
+                            "Failed to deserialize 'jobs' property into a Job[].");
             }
             else if (propertyName == "expired")
             {
@@ -63,29 +60,25 @@ public class TrackedJobsResultJsonConverter : JsonConverter<TrackedJobsResult>
                 var wasDegenerateObject = JsonConverterHelper.TryConsumeDegenerateObject(
                     "expired",
                     "array",
-                    ref reader
-                );
+                    ref reader);
                 expiredJids = wasDegenerateObject
                     ? []
                     : JsonSerializer.Deserialize<string[]>(ref reader) ??
                         throw new JsonException(
-                            "Failed to deserialize 'expired' property into a string[]."
-                        );
+                            "Failed to deserialize 'expired' property into a string[].");
             }
         }
 
         if (!jobsEncountered)
         {
             throw new JsonException(
-                "Expected 'jobs' property in JSON object, but none was found."
-            );
+                "Expected 'jobs' property in JSON object, but none was found.");
         }
 
         if (!expiredEncountered)
         {
             throw new JsonException(
-                "Expected 'expired' property in JSON object, but none was found."
-            );
+                "Expected 'expired' property in JSON object, but none was found.");
         }
 
         return new TrackedJobsResult(jobs: jobs!, expiredJids: expiredJids!);
@@ -95,8 +88,7 @@ public class TrackedJobsResultJsonConverter : JsonConverter<TrackedJobsResult>
     public override void Write(
         Utf8JsonWriter writer,
         TrackedJobsResult value,
-        JsonSerializerOptions options
-    )
+        JsonSerializerOptions options)
     {
         writer.WriteStartObject();
         writer.WriteStartArray("jobs");
@@ -104,12 +96,14 @@ public class TrackedJobsResultJsonConverter : JsonConverter<TrackedJobsResult>
         {
             JsonSerializer.Serialize(writer, job, options);
         }
+
         writer.WriteEndArray();
         writer.WriteStartArray("expired");
         foreach (var expired in value.ExpiredJids)
         {
             JsonSerializer.Serialize(writer, expired, options);
         }
+
         writer.WriteEndArray();
         writer.WriteEndObject();
     }

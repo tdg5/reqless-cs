@@ -13,18 +13,16 @@ public class GetFailureGroupsCountsTest : BaseReqlessClientTest
     /// <see cref="ReqlessClient.GetFailureGroupsCountsAsync"/> should call
     /// Executor with the expected arguments.
     /// </summary>
+    /// <returns>A task denoting the completion of the test.</returns>
     [Fact]
     public async Task CallsExecutorWithTheExpectedArguments()
     {
-        var expectedResult = new Dictionary<string, int>() {
-            { ExampleGroupName, 1 },
-        };
+        var expectedResult = new Dictionary<string, int>() { { ExampleGroupName, 1 } };
         string failedCountsJson = JsonSerializer.Serialize(expectedResult);
         Dictionary<string, int> failedCounts = await WithClientWithExecutorMockForExpectedArguments(
             subject => subject.GetFailureGroupsCountsAsync(),
             expectedArguments: ["failureGroups.counts", 0],
-            returnValue: failedCountsJson
-        );
+            returnValue: failedCountsJson);
         Assert.Equivalent(expectedResult, failedCounts);
     }
 
@@ -32,6 +30,7 @@ public class GetFailureGroupsCountsTest : BaseReqlessClientTest
     /// <see cref="ReqlessClient.GetFailureGroupsCountsAsync"/> throws if the
     /// server returns null.
     /// </summary>
+    /// <returns>A task denoting the completion of the test.</returns>
     [Fact]
     public async Task ThrowsIfTheServerReturnsNull()
     {
@@ -39,15 +38,14 @@ public class GetFailureGroupsCountsTest : BaseReqlessClientTest
             () => WithClientWithExecutorMockForExpectedArguments(
                 subject => subject.GetFailureGroupsCountsAsync(),
                 expectedArguments: ["failureGroups.counts", 0],
-                returnValue: null
-            )
-        );
+                returnValue: null));
     }
 
     /// <summary>
     /// <see cref="ReqlessClient.GetFailureGroupsCountsAsync"/> throws if the JSON
     /// can't be deserialized.
     /// </summary>
+    /// <returns>A task denoting the completion of the test.</returns>
     [Fact]
     public async Task ThrowsIfJsonCannotBeDeserialized()
     {
@@ -55,12 +53,9 @@ public class GetFailureGroupsCountsTest : BaseReqlessClientTest
             () => WithClientWithExecutorMockForExpectedArguments(
                 subject => subject.GetFailureGroupsCountsAsync(),
                 expectedArguments: ["failureGroups.counts", 0],
-                returnValue: "null"
-            )
-        );
+                returnValue: "null"));
         Assert.Equal(
             "Failed to deserialize failed counts JSON: null",
-            exception.Message
-        );
+            exception.Message);
     }
 }

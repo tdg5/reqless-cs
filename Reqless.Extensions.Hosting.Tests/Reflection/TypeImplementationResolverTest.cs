@@ -21,8 +21,7 @@ public class TypeImplementationResolverTest
     {
         Scenario.ThrowsWhenArgumentIsNull(
             () => TypeImplementationResolver.GetBaseTypes(null!),
-            "type"
-        );
+            "type");
     }
 
     /// <summary>
@@ -39,8 +38,7 @@ public class TypeImplementationResolverTest
                 typeof(FirstLevelType),
                 typeof(object),
             ],
-            TypeImplementationResolver.GetBaseTypes(typeof(ThirdLevelType))
-        );
+            TypeImplementationResolver.GetBaseTypes(typeof(ThirdLevelType)));
     }
 
     /// <summary>
@@ -56,9 +54,7 @@ public class TypeImplementationResolverTest
             .Returns<Assembly>(null!);
 
         var subject = MakeSubject(reflectionGlobalsMock.Object);
-        var exception = Assert.Throws<InvalidOperationException>(
-            () => subject.GetAssemblies()
-        );
+        var exception = Assert.Throws<InvalidOperationException>(subject.GetAssemblies);
         Assert.Equal("Could not get the entry assembly.", exception.Message);
     }
 
@@ -80,13 +76,10 @@ public class TypeImplementationResolverTest
             .Returns<AppDomain>(null!);
 
         var subject = MakeSubject(reflectionGlobalsMock.Object);
-        var exception = Assert.Throws<InvalidOperationException>(
-            () => subject.GetAssemblies()
-        );
+        var exception = Assert.Throws<InvalidOperationException>(subject.GetAssemblies);
         Assert.Equal(
             "Could not load the dependency context for the entry assembly.",
-            exception.Message
-        );
+            exception.Message);
     }
 
     /// <summary>
@@ -100,8 +93,7 @@ public class TypeImplementationResolverTest
     [InlineData(typeof(FileLoadException))]
     [InlineData(typeof(ReflectionTypeLoadException))]
     public void TryLoadAssemblyByName_ReturnsFalseWhenExpectedExceptionsAreThrown(
-        Type expectedExceptionType
-    )
+        Type expectedExceptionType)
     {
         Exception expectedException =
             expectedExceptionType == typeof(ReflectionTypeLoadException)
@@ -130,10 +122,7 @@ public class TypeImplementationResolverTest
         var assemblyName = entryAssembly.FullName;
         Assert.NotNull(assemblyName);
         var subject = MakeSubject();
-        var result = subject.TryLoadAssemblyByName(
-            assemblyName,
-            out var assembly
-        );
+        var result = subject.TryLoadAssemblyByName(assemblyName, out var assembly);
         Assert.True(result);
         Assert.Equal(entryAssembly, assembly);
     }
@@ -179,8 +168,7 @@ public class TypeImplementationResolverTest
     {
         Scenario.ThrowsWhenArgumentIsNull(
             () => MakeSubject().GetAllImplementingTypes(null!),
-            "type"
-        );
+            "type");
     }
 
     /// <summary>
@@ -340,8 +328,7 @@ public class TypeImplementationResolverTest
         Type dynamicUnitOfWork = NoopUnitOfWorkTypeFactory.Create(
             "DynamicUnitOfWorkAssembly",
             "DynamicUnitOfWorkNamespace",
-            $"{nameof(TypeImplementationResolverTest)}DynamicUnitOfWork"
-        );
+            $"{nameof(TypeImplementationResolverTest)}DynamicUnitOfWork");
 
         var subject = MakeSubject();
         var actualTypes = subject.GetAllImplementingTypes(typeof(IUnitOfWork));
@@ -405,35 +392,40 @@ public class TypeImplementationResolverTest
     }
 
     private static TypeImplementationResolver MakeSubject(
-        IReflectionGlobals? reflectionGlobals = null
-    )
+        IReflectionGlobals? reflectionGlobals = null)
     {
-        var _reflectionGlobals = reflectionGlobals ?? new DefaultReflectionGlobals();
-        return new TypeImplementationResolver(_reflectionGlobals);
+        var reflectionGlobalsOrDefault =
+            reflectionGlobals ?? new DefaultReflectionGlobals();
+        return new TypeImplementationResolver(reflectionGlobalsOrDefault);
     }
 
-    private class FirstLevelType { }
+    private class FirstLevelType
+    {
+    }
 
-    private class SecondLevelType : FirstLevelType { }
+    private class SecondLevelType : FirstLevelType
+    {
+    }
 
-    private class ThirdLevelType : SecondLevelType { }
+    private class ThirdLevelType : SecondLevelType
+    {
+    }
 
     private class StaticAssembliesTypeImplementationResolver
         : TypeImplementationResolver
     {
-        private List<Assembly> _assemblies;
+        private readonly List<Assembly> assemblies;
 
         public StaticAssembliesTypeImplementationResolver(
-            List<Assembly> assemblies
-        )
+            List<Assembly> assemblies)
         {
             ArgumentNullException.ThrowIfNull(assemblies, nameof(assemblies));
-            _assemblies = assemblies;
+            this.assemblies = assemblies;
         }
 
-        internal protected override IEnumerable<Assembly> GetAssemblies()
+        protected internal override IEnumerable<Assembly> GetAssemblies()
         {
-            return _assemblies;
+            return assemblies;
         }
     }
 }

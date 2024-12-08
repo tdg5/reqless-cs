@@ -17,8 +17,7 @@ public class PoppedEventTest
     {
         Scenario.ThrowsWhenArgumentIsNegative(
             (long invalidWhen) => new PoppedEvent(invalidWhen, "WorkerName"),
-            "when"
-        );
+            "when");
     }
 
     /// <summary>
@@ -30,8 +29,7 @@ public class PoppedEventTest
     {
         Scenario.ThrowsWhenArgumentIsNullOrEmptyOrWhitespace(
             (invalidWorkerName) => new PoppedEvent(1, invalidWorkerName!),
-            "workerName"
-        );
+            "workerName");
     }
 
     /// <summary>

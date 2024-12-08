@@ -10,9 +10,9 @@ public static class MockExtensions
 {
     /// <summary>
     /// Prepare the given <paramref name="mock"/> to receive verifyable calls
-    /// via the <see cref="LoggerExtensions.LogError(ILogger, Exception?,
-    /// string?, object?[])"/> extension method was invoked with the given
-    /// exception and message.
+    /// via the <see
+    /// cref="LoggerExtensions.LogError(ILogger, Exception?, string?, object?[])"/>
+    /// extension method was invoked with the given exception and message.
     /// </summary>
     /// <typeparam name="T">The type of the logger.</typeparam>
     /// <param name="mock">The mock instance to prepare.</param>
@@ -22,8 +22,7 @@ public static class MockExtensions
     public static Mock<ILogger<T>> VerifyLogError<T>(
         this Mock<ILogger<T>> mock,
         Exception exception,
-        string message
-    )
+        string message)
     {
         mock.Setup(
             _ => _.Log(
@@ -31,12 +30,9 @@ public static class MockExtensions
                 0,
                 It.Is<It.IsAnyType>((instance, instanceType) =>
                     instance.ToString() == message
-                    && instanceType.Name == "FormattedLogValues"
-                ),
+                    && instanceType.Name == "FormattedLogValues"),
                 exception,
-                It.IsAny<Func<It.IsAnyType, Exception?, string>>()
-            )
-        )
+                It.IsAny<Func<It.IsAnyType, Exception?, string>>()))
         .Verifiable();
 
         return mock;

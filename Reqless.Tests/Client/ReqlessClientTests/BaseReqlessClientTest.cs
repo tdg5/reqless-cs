@@ -75,26 +75,24 @@ public partial class BaseReqlessClientTest
     /// Helper method for creating a ReqlessClient with a mocked RedisExecutor
     /// and running an action with the client.
     /// </summary>
-    /// <param name="action">A function that takes a ReqlessClient and tests
+    /// <typeparam name="T">The type of the result of the action.</typeparam>
+    /// <param name="action">A function that takes a ReqlessClient and tests.</param>
     /// <param name="expectedArguments">The arguments that are expected to be
     /// passed to ExecuteAsync.</param>
     /// <param name="returnValue">Singular RedisValue to return from
     /// ExecuteAsync.</param> <param name="returnValues">Array of RedisValue to
     /// return from ExecuteAsync.</param>
-    /// it.</param>
+    /// <returns>A Task that resolves to the result of the action.</returns>
     protected static async Task<T> WithClientWithExecutorMockForExpectedArguments<T>(
         Func<ReqlessClient, Task<T>> action,
         RedisValue[]? expectedArguments = null,
         RedisValue? returnValue = null,
-        RedisValue[]? returnValues = null
-    )
+        RedisValue[]? returnValues = null)
     {
         if (returnValue is not null && returnValues is not null)
         {
             throw new ArgumentException(
-                $"{nameof(returnValue)} and {nameof(returnValues)} cannot both be set."
-            );
-
+                $"{nameof(returnValue)} and {nameof(returnValues)} cannot both be set.");
         }
 
         Mock<RedisExecutor> executorMock;
@@ -110,8 +108,7 @@ public partial class BaseReqlessClientTest
 
             executorMock = ExecutorMockForExpectedArguments(
                 expectedArguments,
-                Task.FromResult(redisResult)
-            );
+                Task.FromResult(redisResult));
         }
         using var subject = new PredictableNowReqlessClient(executorMock.Object);
         T result = await action(subject);
@@ -125,20 +122,20 @@ public partial class BaseReqlessClientTest
     /// and running an action with the client.
     /// </summary>
     /// <param name="action">A function that takes a ReqlessClient and tests
+    /// it.</param>
     /// <param name="expectedArguments">The arguments that are expected to be
     /// passed to ExecuteAsync.</param>
     /// <param name="returnValue">Singular RedisValue to return from
     /// ExecuteAsync.</param> <param name="returnValues">Array of RedisValue to
     /// return from ExecuteAsync.</param>
-    /// it.</param>
+    /// <returns>A task denoting the completion of the action.</returns>
     protected static async Task WithClientWithExecutorMockForExpectedArguments(
         Func<ReqlessClient, Task> action,
         RedisValue[]? expectedArguments = null,
         RedisValue? returnValue = null,
-        RedisValue[]? returnValues = null
-    )
+        RedisValue[]? returnValues = null)
     {
-        await WithClientWithExecutorMockForExpectedArguments<int>(
+        await WithClientWithExecutorMockForExpectedArguments(
             async (ReqlessClient subject) =>
             {
                 await action(subject);
@@ -146,8 +143,7 @@ public partial class BaseReqlessClientTest
             },
             expectedArguments,
             returnValue,
-            returnValues
-        );
+            returnValues);
     }
 
     /// <summary>
@@ -158,17 +154,16 @@ public partial class BaseReqlessClientTest
     /// <param name="expectedArguments">The arguments that are expected to be
     /// passed to ExecuteAsync.</param>
     /// <param name="returnValue">The value to return from ExecuteAsync.</param>
+    /// <returns>A Mock{RedisExecutor} that verifies ExecuteAsync is called
+    /// with the expected arguments and returns the given return value.</returns>
     protected static Mock<RedisExecutor> ExecutorMockForExpectedArguments(
-        RedisValue[] expectedArguments,
-        Task<RedisResult> returnValue
-    )
+        RedisValue[] expectedArguments, Task<RedisResult> returnValue)
     {
         var executorMock = new Mock<RedisExecutor>();
         executorMock.Setup(
-            mock => mock.ExecuteAsync(It.Is<RedisValue[]>(
-                args => args.SequenceEqual(expectedArguments)
-            ))
-        ).Returns(returnValue);
+                mock => mock.ExecuteAsync(It.Is<RedisValue[]>(
+                    args => args.SequenceEqual(expectedArguments))))
+            .Returns(returnValue);
         return executorMock;
     }
 }

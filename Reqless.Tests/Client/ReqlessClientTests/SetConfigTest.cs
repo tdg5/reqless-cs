@@ -12,42 +12,37 @@ public class SetConfigTest : BaseReqlessClientTest
     /// <see cref="ReqlessClient.SetConfigAsync"/> should throw if configName is
     /// null, empty, or only whitespace.
     /// </summary>
+    /// <returns>A task denoting the completion of the test.</returns>
     [Fact]
     public async Task ThrowsIfConfigNameIsNullOrEmptyOrOnlyWhitespace()
     {
         await Scenario.ThrowsWhenArgumentIsNullOrEmptyOrWhitespaceAsync(
             (invalidConfigName) => WithClientWithExecutorMockForExpectedArguments(
                 subject => subject.SetConfigAsync(
-                    configName: invalidConfigName!,
-                    value: "some value"
-                )
-            ),
-            "configName"
-        );
+                    configName: invalidConfigName!, value: "some value")),
+            "configName");
     }
 
     /// <summary>
     /// <see cref="ReqlessClient.SetConfigAsync"/> should throw if value is
     /// null, empty, or only whitespace.
     /// </summary>
+    /// <returns>A task denoting the completion of the test.</returns>
     [Fact]
     public async Task ThrowsIfValueIsNullOrEmptyOrOnlyWhitespace()
     {
         await Scenario.ThrowsWhenArgumentIsNullOrEmptyOrWhitespaceAsync(
             (invalidValue) => WithClientWithExecutorMockForExpectedArguments(
                 subject => subject.SetConfigAsync(
-                    configName: "config-name",
-                    value: invalidValue!
-                )
-            ),
-            "value"
-        );
+                    configName: "config-name", value: invalidValue!)),
+            "value");
     }
 
     /// <summary>
     /// <see cref="ReqlessClient.SetConfigAsync"/> should call Executor
     /// with the expected arguments.
     /// </summary>
+    /// <returns>A task denoting the completion of the test.</returns>
     [Fact]
     public async Task CallsExecutorWithExpectedArguments()
     {
@@ -55,15 +50,12 @@ public class SetConfigTest : BaseReqlessClientTest
         var value = "config-value";
         await WithClientWithExecutorMockForExpectedArguments(
             subject => subject.SetConfigAsync(
-                configName: configName,
-                value: value
-            ),
+                configName: configName, value: value),
             expectedArguments: [
                 "config.set",
                 0,
                 configName,
                 value,
-            ]
-        );
+            ]);
     }
 }

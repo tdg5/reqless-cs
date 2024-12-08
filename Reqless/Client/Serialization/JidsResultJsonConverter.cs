@@ -13,8 +13,7 @@ public class JidsResultJsonConverter : JsonConverter<JidsResult>
     public override JidsResult Read(
         ref Utf8JsonReader reader,
         Type typeToConvert,
-        JsonSerializerOptions options
-    )
+        JsonSerializerOptions options)
     {
         if (reader.TokenType != JsonTokenType.StartObject)
         {
@@ -48,14 +47,12 @@ public class JidsResultJsonConverter : JsonConverter<JidsResult>
                 var wasDegenerateObject = JsonConverterHelper.TryConsumeDegenerateObject(
                     "jobs",
                     "array",
-                    ref reader
-                );
+                    ref reader);
                 jids = wasDegenerateObject
                     ? []
                     : JsonSerializer.Deserialize<string[]>(ref reader) ??
                         throw new JsonException(
-                            "Failed to deserialize 'jobs' property into a string[]."
-                        );
+                            "Failed to deserialize 'jobs' property into a string[].");
             }
             else if (propertyName == "total")
             {
@@ -71,15 +68,13 @@ public class JidsResultJsonConverter : JsonConverter<JidsResult>
         if (!jobsEncountered)
         {
             throw new JsonException(
-                "Expected 'jobs' property in JSON object, but none was found."
-            );
+                "Expected 'jobs' property in JSON object, but none was found.");
         }
 
         if (!totalEncountered)
         {
             throw new JsonException(
-                "Expected 'total' property in JSON object, but none was found."
-            );
+                "Expected 'total' property in JSON object, but none was found.");
         }
 
         // We can forgive null here parsing values would have thrown or
@@ -96,8 +91,7 @@ public class JidsResultJsonConverter : JsonConverter<JidsResult>
     public override void Write(
         Utf8JsonWriter writer,
         JidsResult value,
-        JsonSerializerOptions options
-    )
+        JsonSerializerOptions options)
     {
         writer.WriteStartObject();
         writer.WriteNumber("total", value.Total);
@@ -106,6 +100,7 @@ public class JidsResultJsonConverter : JsonConverter<JidsResult>
         {
             writer.WriteStringValue(jid);
         }
+
         writer.WriteEndArray();
         writer.WriteEndObject();
     }

@@ -11,14 +11,12 @@ namespace Reqless.Tests.Framework.QueueIdentifierResolvers;
 /// </summary>
 public class DynamicMappingQueueIdentifiersTransformerTest
 {
-    static readonly List<string> DefaultQueueMappingPattern = ["*"];
-
-    readonly List<string> ExampleQueueNames = [];
+    private readonly List<string> exampleQueueNames = [];
 
     /// <summary>
-    /// Create a new instance of <see
-    /// cref="DynamicMappingQueueIdentifiersTransformerTest"/>. This
-    /// constructor initializes the <see cref="ExampleQueueNames"/> list
+    /// Initializes a new instance of the <see
+    /// cref="DynamicMappingQueueIdentifiersTransformerTest"/> class. This
+    /// constructor initializes the <see cref="exampleQueueNames"/> list
     /// with example queue identifiers patterned like:
     /// [a1a, a2a, a3a, ...  g1g, g2g, g3g]
     /// Many queue identifiers are used to reduce the risk of shuffling a list
@@ -30,9 +28,8 @@ public class DynamicMappingQueueIdentifiersTransformerTest
         {
             foreach (var index in Enumerable.Range(1, 3))
             {
-                ExampleQueueNames.Add(
-                    $"{(char)(97 + asciiOffset)}{index}{(char)(97 + asciiOffset)}"
-                );
+                exampleQueueNames.Add(
+                    $"{(char)(97 + asciiOffset)}{index}{(char)(97 + asciiOffset)}");
             }
         }
     }
@@ -46,8 +43,7 @@ public class DynamicMappingQueueIdentifiersTransformerTest
     {
         Scenario.ThrowsWhenArgumentIsNull(
             () => new DynamicMappingQueueIdentifiersTransformer(null!),
-            "reqlessClient"
-        );
+            "reqlessClient");
     }
 
     /// <summary>
@@ -59,17 +55,15 @@ public class DynamicMappingQueueIdentifiersTransformerTest
     {
         Scenario.ThrowsWhenArgumentIsNegative(
             (invalidTtl) => new DynamicMappingQueueIdentifiersTransformer(
-                new Mock<IReqlessClient>().Object,
-                invalidTtl
-            ),
-            "cacheTtlMilliseconds"
-        );
+                new Mock<IReqlessClient>().Object, invalidTtl),
+            "cacheTtlMilliseconds");
     }
 
     /// <summary>
     /// <see cref="DynamicMappingQueueIdentifiersTransformer.TransformAsync"/>
     /// should cache queue identifier patterns for the configured duration.
     /// </summary>
+    /// <returns>A task denoting the completion of the test.</returns>
     [Fact]
     public async Task TransformAsync_CachesQueueIdentifierPatterns()
     {
@@ -90,6 +84,7 @@ public class DynamicMappingQueueIdentifiersTransformerTest
     /// <see cref="DynamicMappingQueueIdentifiersTransformer.TransformAsync"/>
     /// should fetch queue identifier patterns again after the cache expires.
     /// </summary>
+    /// <returns>A task denoting the completion of the test.</returns>
     [Fact]
     public async Task TransformAsync_FetchesQueueIdentifierPatternsWhenCacheHasExpired()
     {
@@ -112,6 +107,7 @@ public class DynamicMappingQueueIdentifiersTransformerTest
     /// be able to fetch queue identifier patterns following an exception that prevented queue
     /// identifier patterns from being fetched.
     /// </summary>
+    /// <returns>A task denoting the completion of the test.</returns>
     [Fact]
     public async Task TransformAsync_CanFetchQueueIdentifierPatternsFollowingAnException()
     {
@@ -136,6 +132,7 @@ public class DynamicMappingQueueIdentifiersTransformerTest
     /// <see cref="DynamicMappingQueueIdentifiersTransformer.TransformAsync"/> should
     /// prevent multiple cache refreshes from occurring simultaneously.
     /// </summary>
+    /// <returns>A task denoting the completion of the test.</returns>
     [Fact]
     public async Task TransformAsync_OnlyAllowsOneCacheRefreshAtATime()
     {
@@ -155,8 +152,7 @@ public class DynamicMappingQueueIdentifiersTransformerTest
         foreach (var task in new[] { queueNamesTask, otherQueueNamesTask })
         {
             await Assert.ThrowsAsync<TimeoutException>(
-                () => task.WaitAsync(TimeSpan.FromMilliseconds(100))
-            );
+                () => task.WaitAsync(TimeSpan.FromMilliseconds(100)));
             Assert.False(task.IsCompleted);
         }
 
@@ -169,90 +165,81 @@ public class DynamicMappingQueueIdentifiersTransformerTest
     /// <see cref="DynamicMappingQueueIdentifiersTransformer.TransformAsync"/>
     /// should only return queue names that match a whole pattern.
     /// </summary>
+    /// <returns>A task denoting the completion of the test.</returns>
     [Fact]
     public async Task TransformAsync_MatchesWholePatternsOnly()
     {
         await WithSubject(
-            action: async (subject) => Assert.Equal(
-                [
-                    .. ExampleQueueNames[^1..],
-                    .. ExampleQueueNames[1..^1],
-                ],
-                await subject.TransformAsync(
-                    ["g3g", "2*", "*2", "*", "!a", "!2*", "!*2", "!a2ax", "!a1a"]
-                )
-            ),
+            action: async (subject) =>
+            {
+                var result = await subject.TransformAsync(
+                    ["g3g", "2*", "*2", "*", "!a", "!2*", "!*2", "!a2ax", "!a1a"]);
+                Assert.Equal(
+                    [.. exampleQueueNames[^1..], .. exampleQueueNames[1..^1]], result);
+            },
             queueIdentifierPatterns: [],
-            knownQueueNames: ExampleQueueNames
-        );
+            knownQueueNames: exampleQueueNames);
     }
 
     /// <summary>
     /// <see cref="DynamicMappingQueueIdentifiersTransformer.TransformAsync"/>
     /// should match expected queues using inclusive wildcard patterns.
     /// </summary>
+    /// <returns>A task denoting the completion of the test.</returns>
     [Fact]
     public async Task TransformAsync_MatchesInclusiveWildcardPatterns()
     {
         await WithSubject(
             action: async (subject) => Assert.Equal(
                 [
-                    .. ExampleQueueNames.Where(_ => _.StartsWith('a')),
-                    .. ExampleQueueNames.Where(
-                        _ => _.EndsWith('b') && !_.StartsWith('a')
-                    ),
-                    .. ExampleQueueNames.Where(
-                        _ => _.Contains('2') && !_.StartsWith('a') && !_.EndsWith('b')
-                    ),
+                    .. exampleQueueNames.Where(_ => _.StartsWith('a')),
+                    .. exampleQueueNames.Where(
+                        _ => _.EndsWith('b') && !_.StartsWith('a')),
+                    .. exampleQueueNames.Where(
+                        _ => _.Contains('2') && !_.StartsWith('a') && !_.EndsWith('b')),
                 ],
-                await subject.TransformAsync(["a*", "*b", "*2*"])
-            ),
+                await subject.TransformAsync(["a*", "*b", "*2*"])),
             queueIdentifierPatterns: [],
-            knownQueueNames: ExampleQueueNames
-        );
+            knownQueueNames: exampleQueueNames);
     }
 
     /// <summary>
     /// <see cref="DynamicMappingQueueIdentifiersTransformer.TransformAsync"/>
     /// should match expected queues using exclusive wildcard patterns.
     /// </summary>
+    /// <returns>A task denoting the completion of the test.</returns>
     [Fact]
     public async Task TransformAsync_MatchesExclusiveWildcardPatterns()
     {
         await WithSubject(
             action: async (subject) => Assert.Equal(
-                ExampleQueueNames.Where(
-                    _ => !_.StartsWith('a') && !_.EndsWith('b') && !_.Contains('2')
-                ),
-                await subject.TransformAsync(["*", "!a*", "!*b", "!*2*"])
-            ),
+                exampleQueueNames.Where(
+                    _ => !_.StartsWith('a') && !_.EndsWith('b') && !_.Contains('2')),
+                await subject.TransformAsync(["*", "!a*", "!*b", "!*2*"])),
             queueIdentifierPatterns: [],
-            knownQueueNames: ExampleQueueNames
-        );
+            knownQueueNames: exampleQueueNames);
     }
 
     /// <summary>
     /// <see cref="DynamicMappingQueueIdentifiersTransformer.TransformAsync"/>
     /// should match expected queues using dynamic inclusive wildcard patterns.
     /// </summary>
+    /// <returns>A task denoting the completion of the test.</returns>
     [Fact]
     public async Task TransformAsync_MatchesDynamicInclusiveWildcardPatterns()
     {
         await WithSubject(
             action: async (subject) => Assert.Equal(
                 [
-                    .. ExampleQueueNames.Where(_ => _.StartsWith('a')),
-                    .. ExampleQueueNames.Where(
-                        _ => _.EndsWith('b') && !_.StartsWith('a') && !_.Contains('g')
-                    ),
-                    .. ExampleQueueNames.Where(
+                    .. exampleQueueNames.Where(_ => _.StartsWith('a')),
+                    .. exampleQueueNames.Where(
+                        _ => _.EndsWith('b') && !_.StartsWith('a') && !_.Contains('g')),
+                    .. exampleQueueNames.Where(
                         _ => _.Contains('2') && !_.StartsWith('a')
-                        && !_.EndsWith('b') && !_.Contains('g')
-                    ),
-                    ExampleQueueNames[^1],
+                        && !_.EndsWith('b') && !_.Contains('g')),
+                    exampleQueueNames[^1],
                 ],
-                await subject.TransformAsync(["@bar", "@baz", "@foo", "@fizz", "@buzz"])
-            ),
+                await subject.TransformAsync(["@bar", "@baz", "@foo", "@fizz", "@buzz"])),
             queueIdentifierPatterns: new Dictionary<string, List<string>>
             {
                 ["bar"] = ["a*"],
@@ -261,33 +248,33 @@ public class DynamicMappingQueueIdentifiersTransformerTest
                 ["fizz"] = ["!g*"],
                 ["foo"] = ["*2*"],
             },
-            knownQueueNames: ExampleQueueNames
-        );
+            knownQueueNames: exampleQueueNames);
     }
 
     /// <summary>
     /// <see cref="DynamicMappingQueueIdentifiersTransformer.TransformAsync"/>
     /// should match expected queues using dynamic exclusive wildcard patterns.
     /// </summary>
+    /// <returns>A task denoting the completion of the test.</returns>
     [Fact]
     public async Task TransformAsync_MatchesDynamicExclusiveWildcardPatterns()
     {
         await WithSubject(
-            action: async (subject) => Assert.Equal(
-                [
-                    .. ExampleQueueNames.Where(
-                        _ => _.StartsWith('g') && !_.Contains('2') && _ != "g3g"
-                    ),
-                    .. ExampleQueueNames.Where(
+            action: async (subject) =>
+            {
+                var result = await subject.TransformAsync(
+                    ["!@fizz", "*", "!@bar", "!@baz", "!@foo", "!@buzz", "!@bash"]);
+                Assert.Equal(
+                    [
+                        .. exampleQueueNames.Where(
+                            _ => _.StartsWith('g') && !_.Contains('2') && _ != "g3g"),
+                        .. exampleQueueNames.Where(
                         _ => !_.StartsWith('a') && !_.StartsWith('g')
-                            && !_.EndsWith('b') && !_.Contains('2')
-                    ),
-                    ExampleQueueNames[1],
-                ],
-                await subject.TransformAsync(
-                    ["!@fizz", "*", "!@bar", "!@baz", "!@foo", "!@buzz", "!@bash"]
-                )
-            ),
+                            && !_.EndsWith('b') && !_.Contains('2')),
+                        exampleQueueNames[1],
+                    ],
+                    result);
+            },
             queueIdentifierPatterns: new Dictionary<string, List<string>>
             {
                 ["bar"] = ["a*"],
@@ -297,8 +284,7 @@ public class DynamicMappingQueueIdentifiersTransformerTest
                 ["fizz"] = ["!g*"],
                 ["foo"] = ["*2*"],
             },
-            knownQueueNames: ExampleQueueNames
-        );
+            knownQueueNames: exampleQueueNames);
     }
 
     /// <summary>
@@ -306,6 +292,7 @@ public class DynamicMappingQueueIdentifiersTransformerTest
     /// should always include static queue identifiers even if they don't match
     /// a known queue.
     /// </summary>
+    /// <returns>A task denoting the completion of the test.</returns>
     [Fact]
     public async Task TransformAsync_ReturnsStaticIdentifiersNotMatchingKnownQueues()
     {
@@ -313,17 +300,16 @@ public class DynamicMappingQueueIdentifiersTransformerTest
         await WithSubject(
             action: async (subject) => Assert.Equal(
                 expectedResult,
-                await subject.TransformAsync(expectedResult)
-            ),
+                await subject.TransformAsync(expectedResult)),
             queueIdentifierPatterns: [],
-            knownQueueNames: ExampleQueueNames
-        );
+            knownQueueNames: exampleQueueNames);
     }
 
     /// <summary>
     /// <see cref="DynamicMappingQueueIdentifiersTransformer.TransformAsync"/>
     /// should not return duplicate queue names.
     /// </summary>
+    /// <returns>A task denoting the completion of the test.</returns>
     [Fact]
     public async Task TransformAsync_DoesNotReturnDuplicates()
     {
@@ -331,18 +317,15 @@ public class DynamicMappingQueueIdentifiersTransformerTest
         await WithSubject(
             action: async (subject) => Assert.Equal(
                 expectedResult[..3],
-                await subject.TransformAsync(expectedResult)
-            ),
+                await subject.TransformAsync(expectedResult)),
             queueIdentifierPatterns: [],
-            knownQueueNames: ExampleQueueNames
-        );
+            knownQueueNames: exampleQueueNames);
     }
 
-    static async Task WithSubject(
+    private static async Task WithSubject(
         Func<DynamicMappingQueueIdentifiersTransformer, Task> action,
         Dictionary<string, List<string>> queueIdentifierPatterns,
-        List<string> knownQueueNames
-    )
+        List<string> knownQueueNames)
     {
         var clientMock = new Mock<IReqlessClient>();
         clientMock.Setup(mock => mock.GetAllQueueIdentifierPatternsAsync())

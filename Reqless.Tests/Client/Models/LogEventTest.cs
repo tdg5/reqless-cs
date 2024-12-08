@@ -1,6 +1,6 @@
-using System.Text.Json;
 using Reqless.Client.Models;
 using Reqless.Tests.Common.TestHelpers;
+using System.Text.Json;
 
 namespace Reqless.Tests.Client.Models;
 
@@ -18,8 +18,7 @@ public class LogEventTest
     {
         Scenario.ThrowsWhenArgumentIsNegative(
             (long invalidWhen) => new LogEvent("what", invalidWhen),
-            "when"
-        );
+            "when");
     }
 
     /// <summary>
@@ -31,8 +30,7 @@ public class LogEventTest
     {
         Scenario.ThrowsWhenArgumentIsNullOrEmptyOrWhitespace(
             (invalidWhat) => new LogEvent(invalidWhat!, 123),
-            "what"
-        );
+            "what");
     }
 
     /// <summary>
@@ -63,7 +61,7 @@ public class LogEventTest
         var extraJsonElement = JsonDocument.Parse(extra).RootElement;
         var subject = new LogEvent(what, when, new Dictionary<string, JsonElement>
         {
-            { "extra", extraJsonElement }
+            { "extra", extraJsonElement },
         });
         Assert.Equal(what, subject.What);
         Assert.Equal(when, subject.When);

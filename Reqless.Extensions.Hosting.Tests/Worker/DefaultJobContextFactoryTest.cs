@@ -19,8 +19,7 @@ public class DefaultJobContextFactoryTest
     {
         Scenario.ThrowsWhenArgumentIsNull(
             () => new DefaultJobContextFactory().Create(null!, JobFactory.NewJob()),
-            "serviceProvider"
-        );
+            "serviceProvider");
     }
 
     /// <summary>
@@ -33,8 +32,7 @@ public class DefaultJobContextFactoryTest
         DefaultJobContextFactory subject = new();
         Scenario.ThrowsWhenArgumentIsNull(
             () => subject.Create(Mock.Of<IServiceProvider>(), null!),
-            "job"
-        );
+            "job");
     }
 
     /// <summary>

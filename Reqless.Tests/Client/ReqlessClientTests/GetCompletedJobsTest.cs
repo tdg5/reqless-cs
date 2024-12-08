@@ -13,6 +13,7 @@ public class GetCompletedJobsTest : BaseReqlessClientTest
     /// <see cref="ReqlessClient.GetCompletedJobsAsync"/> should throw if result
     /// is null.
     /// </summary>
+    /// <returns>A task denoting the completion of the test.</returns>
     [Fact]
     public async Task ThrowsWhenServerReturnsNull()
     {
@@ -20,15 +21,14 @@ public class GetCompletedJobsTest : BaseReqlessClientTest
             () => WithClientWithExecutorMockForExpectedArguments(
                 subject => subject.GetCompletedJobsAsync(),
                 expectedArguments: ["jobs.completed", 0, 0, 25],
-                returnValue: null
-            )
-        );
+                returnValue: null));
     }
 
     /// <summary>
     /// <see cref="ReqlessClient.GetCompletedJobsAsync"/> should throw if result
     /// JSON can't be deserialized.
     /// </summary>
+    /// <returns>A task denoting the completion of the test.</returns>
     [Fact]
     public async Task ThrowsIfResultJsonCannotBeDeserialized()
     {
@@ -36,19 +36,15 @@ public class GetCompletedJobsTest : BaseReqlessClientTest
             () => WithClientWithExecutorMockForExpectedArguments(
                 subject => subject.GetCompletedJobsAsync(),
                 expectedArguments: ["jobs.completed", 0, 0, 25],
-                returnValue: "null"
-            )
-        );
-        Assert.Equal(
-            "Failed to deserialize JSON: null",
-            exception.Message
-        );
+                returnValue: "null"));
+        Assert.Equal("Failed to deserialize JSON: null", exception.Message);
     }
 
     /// <summary>
     /// <see cref="ReqlessClient.GetCompletedJobsAsync"/> should throw if any
     /// jid is null.
     /// </summary>
+    /// <returns>A task denoting the completion of the test.</returns>
     [Fact]
     public async Task ThrowsIfAnyJidIsNull()
     {
@@ -56,24 +52,22 @@ public class GetCompletedJobsTest : BaseReqlessClientTest
             (invalidJid) => WithClientWithExecutorMockForExpectedArguments(
                 subject => subject.GetCompletedJobsAsync(),
                 expectedArguments: ["jobs.completed", 0, 0, 25],
-                returnValue: $"[{JsonSerializer.Serialize(invalidJid)}]"
-            ),
-            "jidsResult"
-        );
+                returnValue: $"[{JsonSerializer.Serialize(invalidJid)}]"),
+            "jidsResult");
     }
 
     /// <summary>
     /// <see cref="ReqlessClient.GetCompletedJobsAsync"/> should return an empty
     /// list when there are no completed jobs.
     /// </summary>
+    /// <returns>A task denoting the completion of the test.</returns>
     [Fact]
     public async Task ReturnsEmptyListWhenNoSuchJobs()
     {
         List<string> jobs = await WithClientWithExecutorMockForExpectedArguments(
             subject => subject.GetCompletedJobsAsync(limit: 25, offset: 0),
             expectedArguments: ["jobs.completed", 0, 0, 25],
-            returnValue: "[]"
-        );
+            returnValue: "[]");
         Assert.Empty(jobs);
     }
 
@@ -81,17 +75,14 @@ public class GetCompletedJobsTest : BaseReqlessClientTest
     /// <see cref="ReqlessClient.GetCompletedJobsAsync"/> should return jids
     /// when there are completed jobs.
     /// </summary>
+    /// <returns>A task denoting the completion of the test.</returns>
     [Fact]
     public async Task ReturnsJidsWhenThereAreCompletedJobs()
     {
         List<string> jids = await WithClientWithExecutorMockForExpectedArguments(
-            subject => subject.GetCompletedJobsAsync(
-                limit: 25,
-                offset: 0
-            ),
+            subject => subject.GetCompletedJobsAsync(limit: 25, offset: 0),
             expectedArguments: ["jobs.completed", 0, 0, 25],
-            returnValue: $"""["{ExampleJid}","{ExampleJidOther}"]"""
-        );
+            returnValue: $"""["{ExampleJid}","{ExampleJidOther}"]""");
         var expectedJids = new string[] { ExampleJid, ExampleJidOther };
         Assert.Equal(expectedJids.Length, jids.Count);
         Assert.Contains(jids[0], expectedJids);

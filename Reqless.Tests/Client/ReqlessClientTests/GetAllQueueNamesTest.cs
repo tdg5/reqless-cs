@@ -13,6 +13,7 @@ public class GetAllQueueNamesTest : BaseReqlessClientTest
     /// <see cref="ReqlessClient.GetAllQueueNamesAsync"/> should throw if server
     /// returns null.
     /// </summary>
+    /// <returns>A task denoting the completion of the test.</returns>
     [Fact]
     public async Task ThrowsIfServerReturnsNull()
     {
@@ -20,15 +21,14 @@ public class GetAllQueueNamesTest : BaseReqlessClientTest
             () => WithClientWithExecutorMockForExpectedArguments(
                 subject => subject.GetAllQueueNamesAsync(),
                 expectedArguments: ["queues.names", 0],
-                returnValue: null
-            )
-        );
+                returnValue: null));
     }
 
     /// <summary>
     /// <see cref="ReqlessClient.GetAllQueueNamesAsync"/> should throw if server
     /// retruns JSON that can't be deserialized.
     /// </summary>
+    /// <returns>A task denoting the completion of the test.</returns>
     [Fact]
     public async Task ThrowsIfServerReturnsJsonThatCannotBeDeserialized()
     {
@@ -36,9 +36,7 @@ public class GetAllQueueNamesTest : BaseReqlessClientTest
             () => WithClientWithExecutorMockForExpectedArguments(
                 subject => subject.GetAllQueueNamesAsync(),
                 expectedArguments: ["queues.names", 0],
-                returnValue: "null"
-            )
-        );
+                returnValue: "null"));
         Assert.Equal("Failed to deserialize all queue names JSON: null", exception.Message);
     }
 
@@ -46,6 +44,7 @@ public class GetAllQueueNamesTest : BaseReqlessClientTest
     /// <see cref="ReqlessClient.GetAllQueueNamesAsync"/> should return a valid
     /// result returned by the server.
     /// </summary>
+    /// <returns>A task denoting the completion of the test.</returns>
     [Fact]
     public async Task ReturnsValidResultFromTheServer()
     {
@@ -54,8 +53,7 @@ public class GetAllQueueNamesTest : BaseReqlessClientTest
         var allQueueNames = await WithClientWithExecutorMockForExpectedArguments(
             subject => subject.GetAllQueueNamesAsync(),
             expectedArguments: ["queues.names", 0],
-            returnValue: namesJson
-        );
+            returnValue: namesJson);
         Assert.Equivalent(expectedNames, allQueueNames);
     }
 }

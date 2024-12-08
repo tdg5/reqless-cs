@@ -1,4 +1,4 @@
-﻿using Reqless.Client.Models;
+using Reqless.Client.Models;
 using Reqless.Tests.Common.TestHelpers;
 
 namespace Reqless.Tests.Client.Models;
@@ -17,8 +17,7 @@ public class PutEventTest
     {
         Scenario.ThrowsWhenArgumentIsNegative(
             (long invalidWhen) => new PutEvent(invalidWhen, "QueueName"),
-            "when"
-        );
+            "when");
     }
 
     /// <summary>
@@ -27,11 +26,8 @@ public class PutEventTest
     [Fact]
     public void Constructor_ArgumentNullExceptionThrownIfQueueNameIsNull()
     {
-        var exception = Assert.Throws<ArgumentNullException>(
-            () => new PutEvent(1, null!)
-        );
-        Assert.Equal("queueName", exception.ParamName);
-        Assert.Equal("Value cannot be null. (Parameter 'queueName')", exception.Message);
+        Scenario.ThrowsWhenArgumentIsNull(
+            () => new PutEvent(1, null!), "queueName");
     }
 
     /// <summary>
@@ -41,17 +37,9 @@ public class PutEventTest
     [Fact]
     public void Constructor_ArgumentExceptionThrownIfQueueNameIsEmptyOrWhitespace()
     {
-        foreach (var invalidQueueName in new string[] { "", " ", "\t" })
-        {
-            var exception = Assert.Throws<ArgumentException>(
-                () => new PutEvent(1, invalidQueueName)
-            );
-            Assert.Equal("queueName", exception.ParamName);
-            Assert.Equal(
-                $"The value cannot be an empty string or composed entirely of whitespace. (Parameter 'queueName')",
-                exception.Message
-            );
-        }
+        Scenario.ThrowsWhenArgumentIsNullOrEmptyOrWhitespace(
+            (invalidQueueName) => new PutEvent(1, invalidQueueName!),
+            "queueName");
     }
 
     /// <summary>

@@ -19,10 +19,8 @@ public class WorkerSettingsTest
     {
         Scenario.ThrowsWhenArgumentIsNullOrEmptyOrWhitespace(
             (invalidConnectionString) => MakeSubject(
-                connectionString: Maybe.Some(invalidConnectionString!)
-            ),
-            "connectionString"
-        );
+                connectionString: Maybe.Some(invalidConnectionString!)),
+            "connectionString");
     }
 
     /// <summary>
@@ -46,13 +44,10 @@ public class WorkerSettingsTest
     {
         var exception = Assert.Throws<ArgumentNullException>(
             () => MakeSubject(
-                queueIdentifiers: Maybe<List<string>>.Some(null!)
-            )
-        );
+                queueIdentifiers: Maybe<List<string>>.Some(null!)));
         Assert.Equal(
             $"Value cannot be null. (Parameter 'queueIdentifiers')",
-            exception.Message
-        );
+            exception.Message);
     }
 
     /// <summary>
@@ -65,11 +60,8 @@ public class WorkerSettingsTest
         Scenario.ThrowsWhenArgumentIsNullOrEmpty<string>(
             (invalidQueueIdentifiers) => MakeSubject(
                 queueIdentifiers: Maybe<List<string>>.Some(
-                    invalidQueueIdentifiers
-                )
-            ),
-            "queueIdentifiers"
-        );
+                    invalidQueueIdentifiers)),
+            "queueIdentifiers");
     }
 
     /// <summary>
@@ -93,10 +85,8 @@ public class WorkerSettingsTest
     {
         Scenario.ThrowsWhenArgumentIsNotPositive(
             (invalidWorkerCount) => MakeSubject(
-                workerCount: Maybe<int>.Some(invalidWorkerCount)
-            ),
-            "workerCount"
-        );
+                workerCount: Maybe<int>.Some(invalidWorkerCount)),
+            "workerCount");
     }
 
     /// <summary>
@@ -134,9 +124,7 @@ public class WorkerSettingsTest
         var workerServiceRegistrar = new Mock<IWorkerServiceRegistrar>().Object;
         var subject = MakeSubject(
             workerServiceRegistrar: Maybe<IWorkerServiceRegistrar?>.Some(
-                workerServiceRegistrar
-            )
-        );
+                workerServiceRegistrar));
         Assert.Same(workerServiceRegistrar, subject.WorkerServiceRegistrar);
     }
 
@@ -160,25 +148,24 @@ public class WorkerSettingsTest
     /// <param name="queueIdentifiers">The queue identifiers.</param>
     /// <param name="workerCount">The number of workers.</param>
     /// <param name="workerServiceRegistrar">The worker service registrar.</param>
-    public static WorkerSettings MakeSubject(
+    /// <returns>A new instance of <see cref="WorkerSettings"/>.</returns>
+    private static WorkerSettings MakeSubject(
         Maybe<string>? connectionString = null,
         Maybe<List<string>>? queueIdentifiers = null,
         Maybe<int>? workerCount = null,
-        Maybe<IWorkerServiceRegistrar?>? workerServiceRegistrar = null
-    )
+        Maybe<IWorkerServiceRegistrar?>? workerServiceRegistrar = null)
     {
-        Maybe<string> _connectionString = connectionString
+        Maybe<string> connectionStringOrDefault = connectionString
             ?? Maybe<string>.Some("localhost:6379");
-        Maybe<List<string>> _queueIdentifiers = queueIdentifiers
+        Maybe<List<string>> queueIdentifiersOrDefault = queueIdentifiers
             ?? Maybe<List<string>>.Some(["queue1", "queue2"]);
-        Maybe<int> _workerCount = workerCount ?? Maybe<int>.Some(1);
-        Maybe<IWorkerServiceRegistrar?> _workerServiceRegistrar = workerServiceRegistrar
-            ?? Maybe<IWorkerServiceRegistrar?>.None;
+        Maybe<int> workerCountOrDefault = workerCount ?? Maybe<int>.Some(1);
+        Maybe<IWorkerServiceRegistrar?> workerServiceRegistrarOrDefault =
+            workerServiceRegistrar ?? Maybe<IWorkerServiceRegistrar?>.None;
         return new WorkerSettings(
-            connectionString: _connectionString.GetOrDefault(null!),
-            queueIdentifiers: _queueIdentifiers.GetOrDefault(null!),
-            workerCount: _workerCount.GetOrDefault(1),
-            workerServiceRegistrar: _workerServiceRegistrar.GetOrDefault(null)
-        );
+            connectionString: connectionStringOrDefault.GetOrDefault(null!),
+            queueIdentifiers: queueIdentifiersOrDefault.GetOrDefault(null!),
+            workerCount: workerCountOrDefault.GetOrDefault(1),
+            workerServiceRegistrar: workerServiceRegistrarOrDefault.GetOrDefault(null));
     }
 }

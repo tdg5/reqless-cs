@@ -13,23 +13,22 @@ public class GetThrottleLockWaitersTest : BaseReqlessClientTest
     /// <see cref="ReqlessClient.GetThrottleLockWaitersAsync"/> should throw if
     /// throttle name is null, or empty, or only whitespace.
     /// </summary>
+    /// <returns>A task denoting the completion of the test.</returns>
     [Fact]
     public async Task ThrowsIfThrottleNameIsNullOrEmptyOrOnlyWhitespace()
     {
         await Scenario.ThrowsWhenArgumentIsNullOrEmptyOrWhitespaceAsync(
             (invalidThrottleName) => WithClientWithExecutorMockForExpectedArguments(
                 subject => subject.GetThrottleLockWaitersAsync(
-                    throttleName: invalidThrottleName!
-                )
-            ),
-            "throttleName"
-        );
+                    throttleName: invalidThrottleName!)),
+            "throttleName");
     }
 
     /// <summary>
     /// <see cref="ReqlessClient.GetThrottleLockWaitersAsync"/> should throw if
     /// server returns null.
     /// </summary>
+    /// <returns>A task denoting the completion of the test.</returns>
     [Fact]
     public async Task ThrowsIfServerReturnsNull()
     {
@@ -37,15 +36,14 @@ public class GetThrottleLockWaitersTest : BaseReqlessClientTest
             () => WithClientWithExecutorMockForExpectedArguments(
                 subject => subject.GetThrottleLockWaitersAsync(ExampleThrottleName),
                 expectedArguments: ["throttle.pending", 0, ExampleThrottleName],
-                returnValue: null
-            )
-        );
+                returnValue: null));
     }
 
     /// <summary>
     /// <see cref="ReqlessClient.GetThrottleLockWaitersAsync"/> should throw if
     /// server returns JSON that can't be deserialized.
     /// </summary>
+    /// <returns>A task denoting the completion of the test.</returns>
     [Fact]
     public async Task ThrowsIfServerReturnsJsonThatCannotBeDeserialized()
     {
@@ -53,19 +51,16 @@ public class GetThrottleLockWaitersTest : BaseReqlessClientTest
             () => WithClientWithExecutorMockForExpectedArguments(
                 subject => subject.GetThrottleLockWaitersAsync(ExampleThrottleName),
                 expectedArguments: ["throttle.pending", 0, ExampleThrottleName],
-                returnValue: "null"
-            )
-        );
+                returnValue: "null"));
         Assert.Equal(
-            "Failed to deserialize throttle members JSON: null",
-            exception.Message
-        );
+            "Failed to deserialize throttle members JSON: null", exception.Message);
     }
 
     /// <summary>
     /// <see cref="ReqlessClient.GetThrottleLockWaitersAsync"/> should return a
     /// valid result returned by the server.
     /// </summary>
+    /// <returns>A task denoting the completion of the test.</returns>
     [Fact]
     public async Task ReturnsValidResultFromTheServer()
     {
@@ -73,8 +68,7 @@ public class GetThrottleLockWaitersTest : BaseReqlessClientTest
         var lockWaiters = await WithClientWithExecutorMockForExpectedArguments(
             subject => subject.GetThrottleLockWaitersAsync(ExampleThrottleName),
             expectedArguments: ["throttle.pending", 0, ExampleThrottleName],
-            returnValue: JsonSerializer.Serialize(expectedLockWaiters)
-        );
+            returnValue: JsonSerializer.Serialize(expectedLockWaiters));
         Assert.Equivalent(expectedLockWaiters, lockWaiters);
     }
 }

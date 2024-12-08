@@ -14,47 +14,44 @@ namespace Reqless.Extensions.Hosting.Tests.Worker;
 public class AsyncWorkerTest
 {
     /// <summary>
-    /// <see cref="AsyncWorker(IJobExecutor, IJobReserver, ILogger{AsyncWorker},
-    /// string)"/> should throw when the given job executor is null.
+    /// <see cref="AsyncWorker(IJobExecutor, IJobReserver, ILogger{AsyncWorker}, string)"/>
+    /// should throw when the given job executor is null.
     /// </summary>
     [Fact]
     public void Constructor_ThrowsWhenGivenJobExecutorIsNull()
     {
         Scenario.ThrowsWhenArgumentIsNull(
             () => MakeSubject(jobExecutor: Maybe<IJobExecutor>.None),
-            "jobExecutor"
-        );
+            "jobExecutor");
     }
 
     /// <summary>
-    /// <see cref="AsyncWorker(IJobExecutor, IJobReserver, ILogger{AsyncWorker},
-    /// string)"/> should throw when the given job reserver is null.
+    /// <see cref="AsyncWorker(IJobExecutor, IJobReserver, ILogger{AsyncWorker}, string)"/>
+    /// should throw when the given job reserver is null.
     /// </summary>
     [Fact]
     public void Constructor_ThrowsWhenGivenJobReserverIsNull()
     {
         Scenario.ThrowsWhenArgumentIsNull(
             () => MakeSubject(jobReserver: Maybe<IJobReserver>.None),
-            "jobReserver"
-        );
+            "jobReserver");
     }
 
     /// <summary>
-    /// <see cref="AsyncWorker(IJobExecutor, IJobReserver, ILogger{AsyncWorker},
-    /// string)"/> should throw when the given logger is null.
+    /// <see cref="AsyncWorker(IJobExecutor, IJobReserver, ILogger{AsyncWorker}, string)"/>
+    /// should throw when the given logger is null.
     /// </summary>
     [Fact]
     public void Constructor_ThrowsWhenGivenLoggerIsNull()
     {
         Scenario.ThrowsWhenArgumentIsNull(
             () => MakeSubject(logger: Maybe<ILogger<AsyncWorker>>.None),
-            "logger"
-        );
+            "logger");
     }
 
     /// <summary>
-    /// <see cref="AsyncWorker(IJobExecutor, IJobReserver, ILogger{AsyncWorker},
-    /// string)"/> should throw when the given name is null or empty or
+    /// <see cref="AsyncWorker(IJobExecutor, IJobReserver, ILogger{AsyncWorker}, string)"/>
+    /// should throw when the given name is null or empty or
     /// whitespace.
     /// </summary>
     [Fact]
@@ -62,13 +59,12 @@ public class AsyncWorkerTest
     {
         Scenario.ThrowsWhenArgumentIsNullOrEmptyOrWhitespace(
             (invalidName) => MakeSubject(name: Maybe<string>.Some(invalidName!)),
-            "name"
-        );
+            "name");
     }
 
     /// <summary>
-    /// <see cref="AsyncWorker(IJobExecutor, IJobReserver, ILogger{AsyncWorker},
-    /// string)"/> should set the <see cref="AsyncWorker.Name"/> property.
+    /// <see cref="AsyncWorker(IJobExecutor, IJobReserver, ILogger{AsyncWorker}, string)"/>
+    /// should set the <see cref="AsyncWorker.Name"/> property.
     /// </summary>
     [Fact]
     public void Constructor_SetsNameProperty()
@@ -82,6 +78,7 @@ public class AsyncWorkerTest
     /// <see cref="AsyncWorker.ExecuteAsync"/> should not try to reserve or
     /// execute a job when cancellation is requested.
     /// </summary>
+    /// <returns>A Task denoting the completion of the test.</returns>
     [Fact]
     public async Task ExecuteAsync_DoesNotReserveOrExecuteWhenCancellationIsRequested()
     {
@@ -96,7 +93,7 @@ public class AsyncWorkerTest
     /// <summary>
     /// <see cref="AsyncWorker.ExecuteAsync"/> should reserve and execute a job.
     /// </summary>
-    /// <returns></returns>
+    /// <returns>A Task denoting the completion of the test.</returns>
     [Fact]
     public async Task ExecuteAsync_ReservesAndExecutesJob()
     {
@@ -109,10 +106,8 @@ public class AsyncWorkerTest
         jobReserverMock
             .Setup(_ =>
                 _.TryReserveJobAsync(
-                    expectedWorkerName, cancellationTokenSource.Token
-                )
-            )
-            .Callback(() => cancellationTokenSource.Cancel())
+                    expectedWorkerName, cancellationTokenSource.Token))
+            .Callback(cancellationTokenSource.Cancel)
             .ReturnsAsync(job)
             .Verifiable();
 
@@ -125,8 +120,7 @@ public class AsyncWorkerTest
         var subject = MakeSubject(
             jobReserver: Maybe.Some(jobReserverMock.Object),
             jobExecutor: Maybe.Some(jobExecutorMock.Object),
-            name: Maybe.Some(expectedWorkerName)
-        );
+            name: Maybe.Some(expectedWorkerName));
         await subject.ExecuteAsync(cancellationTokenSource.Token);
 
         mockRepository.Verify();
@@ -137,6 +131,7 @@ public class AsyncWorkerTest
     /// <see cref="AsyncWorker.ExecuteAsync"/> should log an error when an
     /// exception is thrown during job execution.
     /// </summary>
+    /// <returns>A Task denoting the completion of the test.</returns>
     [Fact]
     public async Task ExecuteAsync_LogsAnErrorWhenJobExecutionThrows()
     {
@@ -149,9 +144,7 @@ public class AsyncWorkerTest
         jobReserverMock
             .Setup(_ =>
                 _.TryReserveJobAsync(
-                    expectedWorkerName, cancellationTokenSource.Token
-                )
-            )
+                    expectedWorkerName, cancellationTokenSource.Token))
             .ReturnsAsync(job)
             .Verifiable();
 
@@ -159,22 +152,19 @@ public class AsyncWorkerTest
         var jobExecutorMock = mockRepository.Create<IJobExecutor>();
         jobExecutorMock
             .Setup(_ => _.ExecuteAsync(job, It.IsAny<CancellationToken>()))
-            .Callback(() => cancellationTokenSource.Cancel())
+            .Callback(cancellationTokenSource.Cancel)
             .ThrowsAsync(expectedException)
             .Verifiable();
 
         var loggerMock = mockRepository.Create<ILogger<AsyncWorker>>();
         loggerMock.VerifyLogError(
-            expectedException,
-            "An error occurred while processing a job."
-        );
+            expectedException, "An error occurred while processing a job.");
 
         var subject = MakeSubject(
             jobReserver: Maybe.Some(jobReserverMock.Object),
             jobExecutor: Maybe.Some(jobExecutorMock.Object),
             logger: Maybe.Some(loggerMock.Object),
-            name: Maybe.Some(expectedWorkerName)
-        );
+            name: Maybe.Some(expectedWorkerName));
         await subject.ExecuteAsync(cancellationTokenSource.Token);
 
         mockRepository.Verify();
@@ -185,6 +175,7 @@ public class AsyncWorkerTest
     /// <see cref="AsyncWorker.ExecuteAsync"/> should not execute a job when
     /// <see cref="IJobReserver.TryReserveJobAsync"/> returns null.
     /// </summary>
+    /// <returns>A Task denoting the completion of the test.</returns>
     [Fact]
     public async Task ExecuteAsync_DoesNotExecuteJobWhenReserveJobReturnsNull()
     {
@@ -196,24 +187,20 @@ public class AsyncWorkerTest
         jobReserverMock
             .Setup(_ =>
                 _.TryReserveJobAsync(
-                    expectedWorkerName, cancellationTokenSource.Token
-                )
-            )
-            .Callback(() => cancellationTokenSource.Cancel())
+                    expectedWorkerName, cancellationTokenSource.Token))
+            .Callback(cancellationTokenSource.Cancel)
             .ReturnsAsync((Job?)null)
             .Verifiable();
 
         var jobExecutorMock = mockRepository.Create<IJobExecutor>();
         jobExecutorMock.Verify(
             _ => _.ExecuteAsync(It.IsAny<Job>(), It.IsAny<CancellationToken>()),
-            Times.Never()
-        );
+            Times.Never());
 
         var subject = MakeSubject(
             jobReserver: Maybe.Some(jobReserverMock.Object),
             jobExecutor: Maybe.Some(jobExecutorMock.Object),
-            name: Maybe.Some(expectedWorkerName)
-        );
+            name: Maybe.Some(expectedWorkerName));
         await subject.ExecuteAsync(cancellationTokenSource.Token);
 
         mockRepository.Verify();
@@ -224,18 +211,16 @@ public class AsyncWorkerTest
         Maybe<IJobExecutor>? jobExecutor = null,
         Maybe<IJobReserver>? jobReserver = null,
         Maybe<ILogger<AsyncWorker>>? logger = null,
-        Maybe<string>? name = null
-    )
+        Maybe<string>? name = null)
     {
-        var _jobExecutor = jobExecutor ?? Maybe.Some(Mock.Of<IJobExecutor>());
-        var _jobReserver = jobReserver ?? Maybe.Some(Mock.Of<IJobReserver>());
-        var _logger = logger ?? Maybe.Some(Mock.Of<ILogger<AsyncWorker>>());
-        var _typeName = name ?? Maybe.Some("worker-name");
+        var jobExecutorOrDefault = jobExecutor ?? Maybe.Some(Mock.Of<IJobExecutor>());
+        var jobReserverOrDefault = jobReserver ?? Maybe.Some(Mock.Of<IJobReserver>());
+        var loggerOrDefault = logger ?? Maybe.Some(Mock.Of<ILogger<AsyncWorker>>());
+        var typeNameOrDefault = name ?? Maybe.Some("worker-name");
         return new AsyncWorker(
-            jobExecutor: _jobExecutor.GetOrDefault(null!),
-            jobReserver: _jobReserver.GetOrDefault(null!),
-            logger: _logger.GetOrDefault(null!),
-            name: _typeName.GetOrDefault(null!)
-        );
+            jobExecutor: jobExecutorOrDefault.GetOrDefault(null!),
+            jobReserver: jobReserverOrDefault.GetOrDefault(null!),
+            logger: loggerOrDefault.GetOrDefault(null!),
+            name: typeNameOrDefault.GetOrDefault(null!));
     }
 }

@@ -10,5 +10,6 @@ public interface IReqlessClientFactory
     /// <summary>
     /// Creates a new instance of <see cref="IReqlessClient"/>.
     /// </summary>
+    /// <returns>A new instance of <see cref="IReqlessClient"/>.</returns>
     IReqlessClient Create();
 }

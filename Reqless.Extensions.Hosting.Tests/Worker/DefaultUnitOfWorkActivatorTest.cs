@@ -21,8 +21,7 @@ public class DefaultUnitOfWorkActivatorTest
         DefaultUnitOfWorkActivator subject = new();
         Scenario.ThrowsWhenArgumentIsNull(
             () => subject.CreateInstance(null!, typeof(Type)),
-            "serviceProvider"
-        );
+            "serviceProvider");
     }
 
     /// <summary>
@@ -36,8 +35,7 @@ public class DefaultUnitOfWorkActivatorTest
         DefaultUnitOfWorkActivator subject = new();
         Scenario.ThrowsWhenArgumentIsNull(
             () => subject.CreateInstance(serviceProvider, null!),
-            "instanceType"
-        );
+            "instanceType");
     }
 
     /// <summary>
@@ -51,12 +49,10 @@ public class DefaultUnitOfWorkActivatorTest
         IServiceProvider serviceProvider = services.BuildServiceProvider();
         DefaultUnitOfWorkActivator subject = new();
         var exception = Assert.Throws<InvalidOperationException>(
-            () => subject.CreateInstance(serviceProvider, typeof(NotUnitOfWork))
-        );
+            () => subject.CreateInstance(serviceProvider, typeof(NotUnitOfWork)));
         Assert.Equal(
             $"{typeof(NotUnitOfWork).FullName} does not implement {typeof(IUnitOfWork).FullName}.",
-            exception.Message
-        );
+            exception.Message);
     }
 
     /// <summary>

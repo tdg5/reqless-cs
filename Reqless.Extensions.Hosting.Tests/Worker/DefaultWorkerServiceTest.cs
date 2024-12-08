@@ -19,8 +19,7 @@ public class DefaultWorkerServiceTest
         IWorkerFactory workerFactory = Mock.Of<IWorkerFactory>();
         Scenario.ThrowsWhenArgumentIsNull(
             () => new DefaultWorkerService(null!, workerFactory),
-            "serviceProvider"
-        );
+            "serviceProvider");
     }
 
     /// <summary>
@@ -33,8 +32,7 @@ public class DefaultWorkerServiceTest
         IServiceProvider serviceProvider = Mock.Of<IServiceProvider>();
         Scenario.ThrowsWhenArgumentIsNull(
             () => new DefaultWorkerService(serviceProvider, null!),
-            "workerFactory"
-        );
+            "workerFactory");
     }
 
     /// <summary>
@@ -42,6 +40,7 @@ public class DefaultWorkerServiceTest
     /// creates a worker and calls <see
     /// cref="IWorker.ExecuteAsync(CancellationToken)"/>.
     /// </summary>
+    /// <returns>A Task denoting the completion of the test.</returns>
     [Fact]
     public async Task ExecuteAsync_CreatesWorkerAndCallsExecuteAsync()
     {
@@ -58,7 +57,7 @@ public class DefaultWorkerServiceTest
             .Returns(workerMock.Object)
             .Verifiable();
         DefaultWorkerService subject = new(serviceProvider, factoryMock.Object);
-        CancellationToken cancellationToken = new();
+        CancellationToken cancellationToken = default;
         await subject.StartAsync(cancellationToken);
         await (subject.ExecuteTask ?? Task.CompletedTask);
         await subject.StopAsync(cancellationToken);

@@ -15,13 +15,12 @@ public class DefaultQueueIdentifierResolver : IQueueIdentifierResolver
     private readonly TransformingQueueIdentifierResolver _innerResolver;
 
     /// <summary>
-    /// Create an instance of <see cref="DefaultQueueIdentifierResolver"/>.
+    /// Initializes a new instance of the <see
+    /// cref="DefaultQueueIdentifierResolver"/> class.
     /// </summary>
     /// <param name="reqlessClient">The <see cref="IReqlessClient"/> instance to
     /// use for making requests to Reqless.</param>
-    public DefaultQueueIdentifierResolver(
-        IReqlessClient reqlessClient
-    )
+    public DefaultQueueIdentifierResolver(IReqlessClient reqlessClient)
     {
         ArgumentNullException.ThrowIfNull(reqlessClient, nameof(reqlessClient));
 
@@ -35,9 +34,7 @@ public class DefaultQueueIdentifierResolver : IQueueIdentifierResolver
     public Task<List<string>> ResolveQueueNamesAsync(params string[] queueIdentifiers)
     {
         ArgumentValidation.ThrowIfAnyNullOrWhitespace(
-            queueIdentifiers,
-            nameof(queueIdentifiers)
-        );
+            queueIdentifiers, nameof(queueIdentifiers));
 
         return _innerResolver.ResolveQueueNamesAsync(queueIdentifiers);
     }

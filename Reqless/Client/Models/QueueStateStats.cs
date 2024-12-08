@@ -9,14 +9,14 @@ namespace Reqless.Client.Models;
 public class QueueStateStats
 {
     /// <summary>
-    /// The number of jobs that exited the queue state and were able to report
+    /// Gets the number of jobs that exited the queue state and were able to report
     /// metrics on their time spent in that state.
     /// </summary>
     [JsonPropertyName("count")]
     public required int Count { get; init; }
 
     /// <summary>
-    /// A histogram of durations that jobs have spent in the queue state.
+    /// Gets a histogram of durations that jobs have spent in the queue state.
     /// </summary>
     /// <remarks>
     /// The histogram's data points are at the second resolution for the first
@@ -28,13 +28,13 @@ public class QueueStateStats
     public required int[] Histogram { get; init; }
 
     /// <summary>
-    /// The average time that jobs have spent in the queue state.
+    /// Gets the average time that jobs have spent in the queue state.
     /// </summary>
     [JsonPropertyName("mean")]
     public required int Mean { get; init; }
 
     /// <summary>
-    /// The standard deviation of the time that jobs have spent in the queue state.
+    /// Gets the standard deviation of the time that jobs have spent in the queue state.
     /// </summary>
     [JsonPropertyName("std")]
     public required int StandardDeviation { get; init; }

@@ -7,7 +7,7 @@ namespace Reqless.Framework;
 /// </summary>
 public class DelegatingReqlessClientFactory : IReqlessClientFactory
 {
-    readonly Func<IReqlessClient> _clientFactory;
+    private readonly Func<IReqlessClient> _clientFactory;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="DelegatingReqlessClientFactory"/> class.

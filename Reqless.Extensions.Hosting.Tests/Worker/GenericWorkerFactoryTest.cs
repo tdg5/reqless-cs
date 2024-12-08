@@ -17,11 +17,8 @@ public class GenericWorkerFactoryTest
     public void Constructor_ThrowsWhenWorkerNameProviderIsNull()
     {
         Scenario.ThrowsWhenArgumentIsNull(
-            () => new GenericWorkerFactory<NoopWorker>(
-                null!
-            ),
-            "workerNameProvider"
-        );
+            () => new GenericWorkerFactory<NoopWorker>(null!),
+            "workerNameProvider");
     }
 
     /// <summary>
@@ -34,9 +31,7 @@ public class GenericWorkerFactoryTest
         var workerNameProvider = new DefaultWorkerNameProvider();
         var subject = new GenericWorkerFactory<NoopWorker>(workerNameProvider);
         Scenario.ThrowsWhenArgumentIsNull(
-            () => subject.Create(null!),
-            "serviceProvider"
-        );
+            () => subject.Create(null!), "serviceProvider");
     }
 
     /// <summary>
@@ -59,19 +54,40 @@ public class GenericWorkerFactoryTest
         Assert.Same(workerNameProvider, ((NoopWorker)worker).WorkerNameProvider);
     }
 
+    /// <summary>
+    /// An implementation of <see cref="IWorker"/> that does nothing.
+    /// </summary>
     internal class NoopWorker : IWorker
     {
-        public string Name { get; }
-
-        public IWorkerNameProvider WorkerNameProvider { get; }
-
-        // Takes a workerNameProvider for testing dependency injection.
+        /// <summary>
+        /// Initializes a new instance of the <see cref="NoopWorker"/> class.
+        /// </summary>
+        /// <param name="name">The name of the worker.</param>
+        /// <param name="workerNameProvider">The worker name provider.</param>
+        /// <remarks>
+        /// Takes a workerNameProvider for testing dependency injection.
+        /// </remarks>
         public NoopWorker(string name, IWorkerNameProvider workerNameProvider)
         {
             Name = name;
             WorkerNameProvider = workerNameProvider;
         }
 
+        /// <summary>
+        /// Gets the name of the worker.
+        /// </summary>
+        public string Name { get; }
+
+        /// <summary>
+        /// Gets the worker name provider.
+        /// </summary>
+        public IWorkerNameProvider WorkerNameProvider { get; }
+
+        /// <summary>
+        /// Executes the worker.
+        /// </summary>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns>A task representing the asynchronous operation.</returns>
         public Task ExecuteAsync(CancellationToken cancellationToken) =>
             Task.CompletedTask;
     }

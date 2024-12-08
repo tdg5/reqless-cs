@@ -9,7 +9,7 @@ namespace Reqless.Client.Models;
 public class QueueStats
 {
     /// <summary>
-    /// The number of jobs that failed and never exited the failed state for the
+    /// Gets the number of jobs that failed and never exited the failed state for the
     /// respective queue and respective date.
     /// </summary>
     /// <remarks>
@@ -19,7 +19,7 @@ public class QueueStats
     public required int Failed { get; init; }
 
     /// <summary>
-    /// The total number of jobs that failed for the respective queue and
+    /// Gets the total number of jobs that failed for the respective queue and
     /// respective date.
     /// </summary>
     /// <remarks>
@@ -30,23 +30,24 @@ public class QueueStats
     public required int Failures { get; init; }
 
     /// <summary>
-    /// The total number of retries that occurred for the respective queue and
+    /// Gets the total number of retries that occurred for the respective queue and
     /// respective date.
     /// </summary>
     [JsonPropertyName("retries")]
     public required int Retries { get; init; }
 
     /// <summary>
-    /// More granular statistics related to the duration of time that jobs spent
-    /// in the running state for the respective queue and respective date.
+    /// Gets more granular statistics related to the duration of time
+    /// that jobs spent in the running state for the respective queue and
+    /// respective date.
     /// </summary>
     [JsonPropertyName("run")]
-    public required QueueStateStats Run { get; set; }
+    public required QueueStateStats Run { get; init; }
 
     /// <summary>
-    /// More granular statistics related to the duration of time that jobs spent
+    /// Gets more granular statistics related to the duration of time that jobs spent
     /// in the waiting state for the respective queue and respective date.
     /// </summary>
     [JsonPropertyName("wait")]
-    public required QueueStateStats Wait { get; set; }
+    public required QueueStateStats Wait { get; init; }
 }

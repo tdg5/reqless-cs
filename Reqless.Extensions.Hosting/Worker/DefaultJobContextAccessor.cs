@@ -16,9 +16,9 @@ public class DefaultJobContextAccessor : IJobContextAccessor
             if (_value is not null)
             {
                 throw new InvalidOperationException(
-                    "The job context has already been set."
-                );
+                    "The job context has already been set.");
             }
+
             _value = value;
         }
     }

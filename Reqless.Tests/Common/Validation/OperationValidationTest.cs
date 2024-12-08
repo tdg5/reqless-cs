@@ -18,9 +18,7 @@ public class OperationValidationTest
         string? subject = null;
         var subjectName = "subject-name";
         Scenario.ThrowsWhenOperationEncountersNull(
-            () => OperationValidation.ThrowIfNull(subject, subjectName),
-            subjectName
-        );
+            () => OperationValidation.ThrowIfNull(subject, subjectName), subjectName);
     }
 
     /// <summary>
@@ -43,8 +41,7 @@ public class OperationValidationTest
         var subjectName = "subject";
         Scenario.ThrowsWhenOperationEncountersNull(
             () => OperationValidation.ThrowIfAnyNull<string>(null!, subjectName),
-            subjectName
-        );
+            subjectName);
     }
 
     /// <summary>
@@ -59,8 +56,7 @@ public class OperationValidationTest
 
         Scenario.ThrowsWhenOperationEncountersNullElement(
             () => OperationValidation.ThrowIfAnyNull(values, subjectName),
-            subjectName
-        );
+            subjectName);
     }
 
     /// <summary>
@@ -81,8 +77,7 @@ public class OperationValidationTest
     public void ThrowIfServerResponseIsNull_ThrowsIfReferernceIsNull()
     {
         Scenario.ThrowsWhenServerRespondsWithNull(
-            () => OperationValidation.ThrowIfServerResponseIsNull<string>(null)
-        );
+            () => OperationValidation.ThrowIfServerResponseIsNull<string>(null));
     }
 
     /// <summary>
@@ -103,8 +98,7 @@ public class OperationValidationTest
     public void ThrowIfServerResponseIsNull_ThrowsIfNullableValueTypeIsNull()
     {
         Scenario.ThrowsWhenServerRespondsWithNull(
-            () => OperationValidation.ThrowIfServerResponseIsNull<int>(null)
-        );
+            () => OperationValidation.ThrowIfServerResponseIsNull<int>(null));
     }
 
     /// <summary>

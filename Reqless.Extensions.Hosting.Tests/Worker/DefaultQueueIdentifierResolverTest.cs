@@ -20,28 +20,28 @@ public class DefaultQueueIdentifierResolverTest
     {
         Scenario.ThrowsWhenArgumentIsNull(
             () => new DefaultQueueIdentifierResolver(null!),
-            "reqlessClient"
-        );
+            "reqlessClient");
     }
 
     /// <summary>
     /// <see cref="DefaultQueueIdentifierResolver.ResolveQueueNamesAsync"/> should
     /// throw when any given queue name is null.
     /// </summary>
+    /// <returns>A Task denoting the completion of the test.</returns>
     [Fact]
     public async Task ResolveQueueNamesAsync_ThrowsWhenAnyGivenQueueNameIsNullOrEmptyOrWhiteSpace()
     {
         DefaultQueueIdentifierResolver subject = new(Mock.Of<IReqlessClient>());
         await Scenario.ThrowsWhenArgumentElementIsNullOrEmptyOrWhitespaceAsync(
             invalidValue => subject.ResolveQueueNamesAsync(invalidValue!),
-            "queueIdentifiers"
-        );
+            "queueIdentifiers");
     }
 
     /// <summary>
     /// <see cref="DefaultQueueIdentifierResolver.ResolveQueueNamesAsync"/> should
     /// return the resolved queue names.
     /// </summary>
+    /// <returns>A Task denoting the completion of the test.</returns>
     [Fact]
     public async Task ResolveQueueNamesAsync_ReturnsResolvedQueueNames()
     {
@@ -58,7 +58,7 @@ public class DefaultQueueIdentifierResolverTest
             .Setup(_ => _.GetAllQueueIdentifierPatternsAsync())
             .ReturnsAsync(new Dictionary<string, List<string>>()
             {
-                ["identifier"] = ["c", "b", "a"]
+                ["identifier"] = ["c", "b", "a"],
             });
         DefaultQueueIdentifierResolver subject = new(reqlessClientMock.Object);
         List<string> expectedQueueNames = ["a", "b", "c"];

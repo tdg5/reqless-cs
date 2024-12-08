@@ -12,6 +12,7 @@ public class FailJobTest : BaseReqlessClientTest
     /// <see cref="ReqlessClient.FailJobAsync"/> should throw if data is
     /// empty or whitespace.
     /// </summary>
+    /// <returns>A task denoting the completion of the test.</returns>
     [Fact]
     public async Task ThrowsIfDataIsEmptyOrWhitespace()
     {
@@ -22,17 +23,15 @@ public class FailJobTest : BaseReqlessClientTest
                     groupName: ExampleGroupName,
                     jid: ExampleJid,
                     message: ExampleMessage,
-                    workerName: ExampleWorkerName
-                )
-            ),
-            "data"
-        );
+                    workerName: ExampleWorkerName)),
+            "data");
     }
 
     /// <summary>
     /// <see cref="ReqlessClient.FailJobAsync"/> should throw if jid is
     /// null, empty, or whitespace.
     /// </summary>
+    /// <returns>A task denoting the completion of the test.</returns>
     [Fact]
     public async Task ThrowsIfJidIsNullOrEmptyOrWhitespace()
     {
@@ -43,17 +42,15 @@ public class FailJobTest : BaseReqlessClientTest
                     groupName: ExampleGroupName,
                     jid: invalidJid!,
                     message: ExampleMessage,
-                    workerName: ExampleWorkerName
-                )
-            ),
-            "jid"
-        );
+                    workerName: ExampleWorkerName)),
+            "jid");
     }
 
     /// <summary>
     /// <see cref="ReqlessClient.FailJobAsync"/> should throw if group name
     /// is null, empty, or whitespace.
     /// </summary>
+    /// <returns>A task denoting the completion of the test.</returns>
     [Fact]
     public async Task ThrowsIfGroupNameIsNullOrEmptyOrWhitespace()
     {
@@ -64,17 +61,15 @@ public class FailJobTest : BaseReqlessClientTest
                     groupName: invalidGroupName!,
                     jid: ExampleJid,
                     message: ExampleMessage,
-                    workerName: ExampleWorkerName
-                )
-            ),
-            "groupName"
-        );
+                    workerName: ExampleWorkerName)),
+            "groupName");
     }
 
     /// <summary>
     /// <see cref="ReqlessClient.FailJobAsync"/> should throw if message is
     /// null, empty, or whitespace.
     /// </summary>
+    /// <returns>A task denoting the completion of the test.</returns>
     [Fact]
     public async Task ThrowsIfMessageIsNullOrEmptyOrOnlyWhitespace()
     {
@@ -85,17 +80,15 @@ public class FailJobTest : BaseReqlessClientTest
                     groupName: ExampleGroupName,
                     jid: ExampleJid,
                     message: invalidMessage!,
-                    workerName: ExampleWorkerName
-                )
-            ),
-            "message"
-        );
+                    workerName: ExampleWorkerName)),
+            "message");
     }
 
     /// <summary>
     /// <see cref="ReqlessClient.FailJobAsync"/> should throw if worker name
     /// is null, empty, or whitespace.
     /// </summary>
+    /// <returns>A task denoting the completion of the test.</returns>
     [Fact]
     public async Task ThrowsIfWorkerNameIsNullOrEmptyOrOnlyWhitespace()
     {
@@ -106,17 +99,15 @@ public class FailJobTest : BaseReqlessClientTest
                     groupName: ExampleGroupName,
                     jid: ExampleJid,
                     message: ExampleMessage,
-                    workerName: invalidWorkerName!
-                )
-            ),
-            "workerName"
-        );
+                    workerName: invalidWorkerName!)),
+            "workerName");
     }
 
     /// <summary>
     /// <see cref="ReqlessClient.FailJobAsync"/> should call Executor with
     /// the expected arguments when data is given.
     /// </summary>
+    /// <returns>A task denoting the completion of the test.</returns>
     [Fact]
     public async Task CallsExecutorWithTheExpectedArgumentsWhenGivenData()
     {
@@ -126,8 +117,7 @@ public class FailJobTest : BaseReqlessClientTest
                 groupName: ExampleGroupName,
                 jid: ExampleJid,
                 message: ExampleMessage,
-                workerName: ExampleWorkerName
-            ),
+                workerName: ExampleWorkerName),
             expectedArguments: [
                 "job.fail",
                 0,
@@ -137,8 +127,7 @@ public class FailJobTest : BaseReqlessClientTest
                 ExampleMessage,
                 ExampleData
             ],
-            returnValue: ExampleJid
-        );
+            returnValue: ExampleJid);
         Assert.True(failedSuccessfully);
     }
 
@@ -146,6 +135,7 @@ public class FailJobTest : BaseReqlessClientTest
     /// <see cref="ReqlessClient.FailJobAsync"/> should call Executor with
     /// the expected arguments when data is not given.
     /// </summary>
+    /// <returns>A task denoting the completion of the test.</returns>
     [Fact]
     public async Task CallsExecutorWithTheExpectedArgumentsWhenNotGivenData()
     {
@@ -154,8 +144,7 @@ public class FailJobTest : BaseReqlessClientTest
                 groupName: ExampleGroupName,
                 jid: ExampleJid,
                 message: ExampleMessage,
-                workerName: ExampleWorkerName
-            ),
+                workerName: ExampleWorkerName),
             expectedArguments: [
                 "job.fail",
                 0,
@@ -164,8 +153,7 @@ public class FailJobTest : BaseReqlessClientTest
                 ExampleGroupName,
                 ExampleMessage
             ],
-            returnValue: ExampleJid
-        );
+            returnValue: ExampleJid);
         Assert.True(failedSuccessfully);
     }
 }

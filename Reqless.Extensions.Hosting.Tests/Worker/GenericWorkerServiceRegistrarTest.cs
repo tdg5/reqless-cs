@@ -21,8 +21,7 @@ public class GenericWorkerServiceRegistrarTest
         TestWorkerServiceRegistrar subject = new();
         Scenario.ThrowsWhenArgumentIsNull(
             () => subject.RegisterWorkers(null!, 5),
-            "services"
-        );
+            "services");
     }
 
     /// <summary>
@@ -35,11 +34,8 @@ public class GenericWorkerServiceRegistrarTest
         TestWorkerServiceRegistrar subject = new();
         Scenario.ThrowsWhenArgumentIsNegative(
             (invalidWorkercount) => subject.RegisterWorkers(
-                new ServiceCollection(),
-                invalidWorkercount
-            ),
-            "count"
-        );
+                new ServiceCollection(), invalidWorkercount),
+            "count");
     }
 
     /// <summary>
@@ -58,15 +54,20 @@ public class GenericWorkerServiceRegistrarTest
             Assert.Same(serviceCollection, returnValue);
             mock.Verify(
                 _ => _.Add(It.IsAny<ServiceDescriptor>()),
-                Times.Exactly(count)
-            );
+                Times.Exactly(count));
         }
     }
 
+    /// <summary>
+    /// An implementation of <see cref="GenericWorkerServiceRegistrar{T}"/> for testing purposes.
+    /// </summary>
     internal class TestWorkerServiceRegistrar : GenericWorkerServiceRegistrar<TestWorkerService>
     {
     }
 
+    /// <summary>
+    /// An implementation of <see cref="BackgroundService"/> for testing purposes.
+    /// </summary>
     internal class TestWorkerService : BackgroundService
     {
         /// <inheritdoc/>

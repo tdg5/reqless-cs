@@ -19,21 +19,21 @@ public class GetQueueStatsTest : BaseReqlessClientTest
     /// <see cref="ReqlessClient.GetQueueStatsAsync"/> should throw if queue
     /// name is null, empty, or whitespace.
     /// </summary>
+    /// <returns>A task denoting the completion of the test.</returns>
     [Fact]
     public async Task ThrowsIfQueueNameIsNullOrEmptyOrOnlyWhitespace()
     {
         await Scenario.ThrowsWhenArgumentIsEmptyOrWhitespaceAsync(
             (invalidQueueName) => WithClientWithExecutorMockForExpectedArguments(
-                subject => subject.GetQueueStatsAsync(queueName: invalidQueueName!)
-            ),
-            "queueName"
-        );
+                subject => subject.GetQueueStatsAsync(queueName: invalidQueueName!)),
+            "queueName");
     }
 
     /// <summary>
     /// <see cref="ReqlessClient.GetQueueStatsAsync"/> should throw if server
     /// returns null.
     /// </summary>
+    /// <returns>A task denoting the completion of the test.</returns>
     [Fact]
     public async Task ThrowsIfServerReturnsNull()
     {
@@ -46,15 +46,14 @@ public class GetQueueStatsTest : BaseReqlessClientTest
                     ExampleQueueName,
                     ExampleDate.ToUnixTimeMilliseconds(),
                 ],
-                returnValue: null
-            )
-        );
+                returnValue: null));
     }
 
     /// <summary>
     /// <see cref="ReqlessClient.GetQueueStatsAsync"/> should throw if server
     /// retruns JSON that can't be deserialized.
     /// </summary>
+    /// <returns>A task denoting the completion of the test.</returns>
     [Fact]
     public async Task ThrowsIfServerReturnsJsonThatCannotBeDeserialized()
     {
@@ -67,9 +66,7 @@ public class GetQueueStatsTest : BaseReqlessClientTest
                     ExampleQueueName,
                     ExampleDate.ToUnixTimeMilliseconds(),
                 ],
-                returnValue: "null"
-            )
-        );
+                returnValue: "null"));
         Assert.Equal("Failed to deserialize queue stats JSON: null", exception.Message);
     }
 
@@ -77,6 +74,7 @@ public class GetQueueStatsTest : BaseReqlessClientTest
     /// <see cref="ReqlessClient.GetQueueStatsAsync"/> should return a valid
     /// result returned by the server.
     /// </summary>
+    /// <returns>A task denoting the completion of the test.</returns>
     [Fact]
     public async Task ReturnsValidResultFromTheServer()
     {
@@ -111,8 +109,7 @@ public class GetQueueStatsTest : BaseReqlessClientTest
                 ExampleQueueName,
                 ExampleDate.ToUnixTimeMilliseconds(),
             ],
-            returnValue: queueStatsJson
-        );
+            returnValue: queueStatsJson);
         Assert.Equivalent(expectedQueueStats, queueStats);
     }
 }

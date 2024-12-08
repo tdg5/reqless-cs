@@ -17,7 +17,8 @@ public class PredictableNowReqlessClient : ReqlessClient
     /// </summary>
     /// <param name="connectionString">The connection string to the Redis
     /// server.</param>
-    public PredictableNowReqlessClient(string connectionString) : base(connectionString)
+    public PredictableNowReqlessClient(string connectionString)
+        : base(connectionString)
     {
     }
 
@@ -27,7 +28,8 @@ public class PredictableNowReqlessClient : ReqlessClient
     /// </summary>
     /// <param name="executor">The executor to use for executing
     /// commands.</param>
-    public PredictableNowReqlessClient(IRedisExecutor executor) : base(executor)
+    public PredictableNowReqlessClient(IRedisExecutor executor)
+        : base(executor)
     {
     }
 

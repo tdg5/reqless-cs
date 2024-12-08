@@ -12,5 +12,6 @@ public interface IRedisExecutor
     /// Executes the given arguments as a Reqless command.
     /// </summary>
     /// <param name="arguments">The arguments of a Reqless command.</param>
+    /// <returns>The result of the command.</returns>
     Task<RedisResult> ExecuteAsync(params RedisValue[] arguments);
 }

@@ -12,58 +12,50 @@ public class RemoveDependencyFromJobTest : BaseReqlessClientTest
     /// <see cref="ReqlessClient.RemoveDependencyFromJobAsync"/> should throw if
     /// jid is null, empty, or only whitespace.
     /// </summary>
+    /// <returns>A task denoting the completion of the test.</returns>
     [Fact]
     public async Task ThrowsIfJidIsNullOrEmptyOrOnlyWhitespace()
     {
         await Scenario.ThrowsWhenArgumentIsNullOrEmptyOrWhitespaceAsync(
             (invalidJid) => WithClientWithExecutorMockForExpectedArguments(
                 subject => subject.RemoveDependencyFromJobAsync(
-                    dependsOnJid: ExampleJid,
-                    jid: invalidJid!
-                )
-            ),
-            "jid"
-        );
+                    dependsOnJid: ExampleJid, jid: invalidJid!)),
+            "jid");
     }
 
     /// <summary>
     /// <see cref="ReqlessClient.RemoveDependencyFromJobAsync"/> should throw if
     /// dependsOnJid is null, empty, or only whitespace.
     /// </summary>
+    /// <returns>A task denoting the completion of the test.</returns>
     [Fact]
     public async Task ThrowsIfDependsOnJidIsNullOrEmptyOrOnlyWhitespace()
     {
         await Scenario.ThrowsWhenArgumentIsNullOrEmptyOrWhitespaceAsync(
             (invalidDependsOnJid) => WithClientWithExecutorMockForExpectedArguments(
                 subject => subject.RemoveDependencyFromJobAsync(
-                    dependsOnJid: invalidDependsOnJid!,
-                    jid: ExampleJid
-                )
-            ),
-            "dependsOnJid"
-        );
+                    dependsOnJid: invalidDependsOnJid!, jid: ExampleJid)),
+            "dependsOnJid");
     }
 
     /// <summary>
     /// <see cref="ReqlessClient.RemoveDependencyFromJobAsync"/> should call
     /// Executor with the expected arguments.
     /// </summary>
+    /// <returns>A task denoting the completion of the test.</returns>
     [Fact]
     public async Task CallsExecutorWithTheExpectedArguments()
     {
         bool result = await WithClientWithExecutorMockForExpectedArguments(
             subject => subject.RemoveDependencyFromJobAsync(
-                dependsOnJid: ExampleJidOther,
-                jid: ExampleJid
-            ),
+                dependsOnJid: ExampleJidOther, jid: ExampleJid),
             expectedArguments: [
                 "job.removeDependency",
                 0,
                 ExampleJid,
                 ExampleJidOther,
             ],
-            returnValue: true
-        );
+            returnValue: true);
         Assert.True(result);
     }
 }

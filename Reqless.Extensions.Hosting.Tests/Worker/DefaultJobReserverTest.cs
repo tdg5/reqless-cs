@@ -21,8 +21,7 @@ public class DefaultJobReserverTest
     {
         Scenario.ThrowsWhenArgumentIsNull(
             () => new DefaultJobReserver(null!, Mock.Of<IReqlessClient>()),
-            "queueNameProvider"
-        );
+            "queueNameProvider");
     }
 
     /// <summary>
@@ -34,14 +33,14 @@ public class DefaultJobReserverTest
     {
         Scenario.ThrowsWhenArgumentIsNull(
             () => new DefaultJobReserver(Mock.Of<IQueueNameProvider>(), null!),
-            "reqlessClient"
-        );
+            "reqlessClient");
     }
 
     /// <summary>
     /// <see cref="DefaultJobReserver.TryReserveJobAsync(string, CancellationToken?)"/>
     /// should throw when the given worker name is null or empty or white space.
     /// </summary>
+    /// <returns>A Task denoting the completion of the test.</returns>
     [Fact]
     public async Task TryReserveJobAsync_ThrowsWhenWorkerNameIsNullOrEmptyOrWhiteSpace()
     {
@@ -49,14 +48,14 @@ public class DefaultJobReserverTest
             new(Mock.Of<IQueueNameProvider>(), Mock.Of<IReqlessClient>());
         await Scenario.ThrowsWhenArgumentIsNullOrEmptyOrWhitespaceAsync(
             (invalidValue) => subject.TryReserveJobAsync(invalidValue!),
-            "workerName"
-        );
+            "workerName");
     }
 
     /// <summary>
     /// <see cref="DefaultJobReserver.TryReserveJobAsync(string, CancellationToken?)"/>
     /// should return null when no queue names are resolved.
     /// </summary>
+    /// <returns>A Task denoting the completion of the test.</returns>
     [Fact]
     public async Task TryReserveJobAsync_ReturnsNullWhenNoQueueNamesAreResolved()
     {
@@ -68,8 +67,7 @@ public class DefaultJobReserverTest
             .Verifiable();
         DefaultJobReserver subject = new(
             queueNameProvider: queueNameProviderMock.Object,
-            reqlessClient: mockRepository.Create<IReqlessClient>().Object
-        );
+            reqlessClient: mockRepository.Create<IReqlessClient>().Object);
         var job = await subject.TryReserveJobAsync("workerName");
         Assert.Null(job);
         mockRepository.Verify();
@@ -80,6 +78,7 @@ public class DefaultJobReserverTest
     /// <see cref="DefaultJobReserver.TryReserveJobAsync(string, CancellationToken?)"/>
     /// should return null when cancellation is requested.
     /// </summary>
+    /// <returns>A Task denoting the completion of the test.</returns>
     [Fact]
     public async Task TryReserveJobAsync_ReturnsNullWhenCancellationIsRequested()
     {
@@ -91,8 +90,7 @@ public class DefaultJobReserverTest
             .Verifiable();
         DefaultJobReserver subject = new(
             queueNameProvider: queueNameProviderMock.Object,
-            reqlessClient: mockRepository.Create<IReqlessClient>().Object
-        );
+            reqlessClient: mockRepository.Create<IReqlessClient>().Object);
         var cancellationToken = new CancellationToken(canceled: true);
         var job = await subject.TryReserveJobAsync("workerName", cancellationToken);
         Assert.Null(job);
@@ -104,6 +102,7 @@ public class DefaultJobReserverTest
     /// <see cref="DefaultJobReserver.TryReserveJobAsync(string, CancellationToken?)"/>
     /// should check for cancellation before attempting to pop a job.
     /// </summary>
+    /// <returns>A Task denoting the completion of the test.</returns>
     [Fact]
     public async Task TryReserveJobAsync_ChecksForCancellationBeforeAttemptingToPopJob()
     {
@@ -119,12 +118,11 @@ public class DefaultJobReserverTest
         reqlessClientMock
             .Setup(_ => _.PopJobAsync("a", "workerName"))
             .ReturnsAsync((Job?)null)
-            .Callback(() => cancellationTokenSource.Cancel())
+            .Callback(cancellationTokenSource.Cancel)
             .Verifiable();
         DefaultJobReserver subject = new(
             queueNameProvider: queueNameProviderMock.Object,
-            reqlessClient: reqlessClientMock.Object
-        );
+            reqlessClient: reqlessClientMock.Object);
         var job = await subject.TryReserveJobAsync("workerName", cancellationToken);
         Assert.Null(job);
         mockRepository.Verify();
@@ -135,6 +133,7 @@ public class DefaultJobReserverTest
     /// <see cref="DefaultJobReserver.TryReserveJobAsync(string, CancellationToken?)"/>
     /// attempts to pop a job from each queue in order until a job is found.
     /// </summary>
+    /// <returns>A Task denoting the completion of the test.</returns>
     [Fact]
     public async Task TryReserveJobAsync_ChecksAllQueuesForAJobUntilAJobIsFound()
     {
@@ -153,10 +152,10 @@ public class DefaultJobReserverTest
                 .ReturnsAsync((Job?)null)
                 .Verifiable();
         }
+
         DefaultJobReserver subject = new(
             queueNameProvider: queueNameProviderMock.Object,
-            reqlessClient: reqlessClientMock.Object
-        );
+            reqlessClient: reqlessClientMock.Object);
         var job = await subject.TryReserveJobAsync("workerName");
         Assert.Null(job);
         mockRepository.Verify();
@@ -167,6 +166,7 @@ public class DefaultJobReserverTest
     /// <see cref="DefaultJobReserver.TryReserveJobAsync(string, CancellationToken?)"/>
     /// does not check subsequent queues after a job is found and returned.
     /// </summary>
+    /// <returns>A Task denoting the completion of the test.</returns>
     [Fact]
     public async Task TryReserveJobAsync_DoesNotCheckSubsequentQueuesAfterJobIsFound()
     {
@@ -185,8 +185,7 @@ public class DefaultJobReserverTest
             .Verifiable();
         DefaultJobReserver subject = new(
             queueNameProvider: queueNameProviderMock.Object,
-            reqlessClient: reqlessClientMock.Object
-        );
+            reqlessClient: reqlessClientMock.Object);
         var job = await subject.TryReserveJobAsync("workerName");
         Assert.Equal(expectedJob, job);
         mockRepository.Verify();

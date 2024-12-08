@@ -12,15 +12,15 @@ namespace Reqless.Tests.Framework.QueueIdentifierResolvers;
 /// </summary>
 public class DynamicPriorityQueueIdentifiersTransformerTest
 {
-    static readonly QueuePriorityPattern DefaultQueuePriorityPattern =
+    private static readonly QueuePriorityPattern DefaultQueuePriorityPattern =
         new(["default"], fairly: false);
 
-    readonly List<string> ExampleQueueIdentifiers = [];
+    private readonly List<string> exampleQueueIdentifiers = [];
 
     /// <summary>
-    /// Create a new instance of <see
-    /// cref="DynamicPriorityQueueIdentifiersTransformerTest"/>. This
-    /// constructor initializes the <see cref="ExampleQueueIdentifiers"/> list
+    /// Initializes a new instance of the <see
+    /// cref="DynamicPriorityQueueIdentifiersTransformerTest"/> class. This
+    /// constructor initializes the <see cref="exampleQueueIdentifiers"/> list
     /// with example queue identifiers patterned like:
     /// [a1a, a2a, a3a, ...  g1g, g2g, g3g]
     /// Many queue identifiers are used to reduce the risk of shuffling a list
@@ -32,9 +32,8 @@ public class DynamicPriorityQueueIdentifiersTransformerTest
         {
             foreach (var index in Enumerable.Range(1, 3))
             {
-                ExampleQueueIdentifiers.Add(
-                    $"{(char)(97 + asciiOffset)}{index}{(char)(97 + asciiOffset)}"
-                );
+                exampleQueueIdentifiers.Add(
+                    $"{(char)(97 + asciiOffset)}{index}{(char)(97 + asciiOffset)}");
             }
         }
     }
@@ -48,8 +47,7 @@ public class DynamicPriorityQueueIdentifiersTransformerTest
     {
         Scenario.ThrowsWhenArgumentIsNull(
             () => new DynamicPriorityQueueIdentifiersTransformer(null!),
-            "reqlessClient"
-        );
+            "reqlessClient");
     }
 
     /// <summary>
@@ -62,16 +60,15 @@ public class DynamicPriorityQueueIdentifiersTransformerTest
         Scenario.ThrowsWhenArgumentIsNegative(
             (invalidTtl) => new DynamicPriorityQueueIdentifiersTransformer(
                 new Mock<IReqlessClient>().Object,
-                invalidTtl
-            ),
-            "cacheTtlMilliseconds"
-        );
+                invalidTtl),
+            "cacheTtlMilliseconds");
     }
 
     /// <summary>
     /// <see cref="DynamicPriorityQueueIdentifiersTransformer.TransformAsync"/>
     /// should cache queue priority patterns for the configured duration.
     /// </summary>
+    /// <returns>A task denoting the completion of the test.</returns>
     [Fact]
     public async Task TransformAsync_CachesQueuePriorityPatterns()
     {
@@ -90,6 +87,7 @@ public class DynamicPriorityQueueIdentifiersTransformerTest
     /// <see cref="DynamicPriorityQueueIdentifiersTransformer.TransformAsync"/>
     /// should fetch queue priority patterns again after the cache expires.
     /// </summary>
+    /// <returns>A task denoting the completion of the test.</returns>
     [Fact]
     public async Task TransformAsync_FetchesQueuePriorityPatternsWhenCacheHasExpired()
     {
@@ -110,6 +108,7 @@ public class DynamicPriorityQueueIdentifiersTransformerTest
     /// be able to fetch queue priority patterns following an exception that prevented queue
     /// priority patterns from being fetched.
     /// </summary>
+    /// <returns>A task denoting the completion of the test.</returns>
     [Fact]
     public async Task TransformAsync_CanFetchQueuePriorityPatternsFollowingAnException()
     {
@@ -132,6 +131,7 @@ public class DynamicPriorityQueueIdentifiersTransformerTest
     /// <see cref="DynamicPriorityQueueIdentifiersTransformer.TransformAsync"/> should
     /// prevent multiple cache refreshes from occurring simultaneously.
     /// </summary>
+    /// <returns>A task denoting the completion of the test.</returns>
     [Fact]
     public async Task TransformAsync_OnlyAllowsOneCacheRefreshAtATime()
     {
@@ -149,8 +149,7 @@ public class DynamicPriorityQueueIdentifiersTransformerTest
         foreach (var task in new[] { queueNamesTask, otherQueueNamesTask })
         {
             await Assert.ThrowsAsync<TimeoutException>(
-                () => task.WaitAsync(TimeSpan.FromMilliseconds(100))
-            );
+                () => task.WaitAsync(TimeSpan.FromMilliseconds(100)));
             Assert.False(task.IsCompleted);
         }
 
@@ -164,32 +163,30 @@ public class DynamicPriorityQueueIdentifiersTransformerTest
     /// should not mutate sort order when no patterns are defined. This is akin
     /// to placing default queues last, unfairly.
     /// </summary>
+    /// <returns>A task denoting the completion of the test.</returns>
     [Fact]
     public async Task TransfromAsync_DoesNotMutateSortOrderWhenNoPatternsDefined()
     {
         await WithSubject(
             action: async (subject) => Assert.Equal(
-                ExampleQueueIdentifiers,
-                await subject.TransformAsync(ExampleQueueIdentifiers)
-            ),
-            queuePriorityPatterns: []
-        );
+                exampleQueueIdentifiers,
+                await subject.TransformAsync(exampleQueueIdentifiers)),
+            queuePriorityPatterns: []);
     }
 
     /// <summary>
     /// <see cref="DynamicPriorityQueueIdentifiersTransformer.TransformAsync"/>
     /// should not mutate sort order when only the default pattern is defined.
     /// </summary>
+    /// <returns>A task denoting the completion of the test.</returns>
     [Fact]
     public async Task TransfromAsync_DoesNotMutateSortOrderWhenOnlyDefaultPattern()
     {
         await WithSubject(
             action: async (subject) => Assert.Equal(
-                ExampleQueueIdentifiers,
-                await subject.TransformAsync(ExampleQueueIdentifiers)
-            ),
-            queuePriorityPatterns: [DefaultQueuePriorityPattern]
-        );
+                exampleQueueIdentifiers,
+                await subject.TransformAsync(exampleQueueIdentifiers)),
+            queuePriorityPatterns: [DefaultQueuePriorityPattern]);
     }
 
     /// <summary>
@@ -197,22 +194,21 @@ public class DynamicPriorityQueueIdentifiersTransformerTest
     /// should place unmatched queues last, unfairly when no default pattern is
     /// defined.
     /// </summary>
+    /// <returns>A task denoting the completion of the test.</returns>
     [Fact]
     public async Task TransformAsync_SortsDefaultsLastUnfairlyWhenNoDefaultPattern()
     {
         List<string> expectedQueueIdentifiers = [
             // Matched queues.
-            .. ExampleQueueIdentifiers[^3..],
+            .. exampleQueueIdentifiers[^3..],
             // Unmatched queues.
-            .. ExampleQueueIdentifiers[..^3],
+            .. exampleQueueIdentifiers[..^3],
         ];
         await WithSubject(
             action: async (subject) => Assert.Equal(
                 expectedQueueIdentifiers,
-                await subject.TransformAsync(ExampleQueueIdentifiers)
-            ),
-            queuePriorityPatterns: [new(["g*"], fairly: false)]
-        );
+                await subject.TransformAsync(exampleQueueIdentifiers)),
+            queuePriorityPatterns: [new(["g*"], fairly: false)]);
     }
 
     /// <summary>
@@ -220,84 +216,83 @@ public class DynamicPriorityQueueIdentifiersTransformerTest
     /// should place unmatched queues last, fairly when the default pattern is
     /// configured fairly.
     /// </summary>
+    /// <returns>A task denoting the completion of the test.</returns>
     [Fact]
     public async Task TransformAsync_SortsDefaultsLastFairlyWhenDefaultPatternIsFair()
     {
         await WithSubject(
             action: async (subject) =>
             {
-                var result = await subject.TransformAsync(ExampleQueueIdentifiers);
-                Assert.NotEqual(ExampleQueueIdentifiers, result);
+                var result = await subject.TransformAsync(exampleQueueIdentifiers);
+                Assert.NotEqual(exampleQueueIdentifiers, result);
                 result.Sort();
-                Assert.Equal(ExampleQueueIdentifiers, result);
+                Assert.Equal(exampleQueueIdentifiers, result);
             },
-            queuePriorityPatterns: [new(["default"], fairly: true)]
-        );
+            queuePriorityPatterns: [new(["default"], fairly: true)]);
     }
 
     /// <summary>
     /// <see cref="DynamicPriorityQueueIdentifiersTransformer.TransformAsync"/>
     /// should handle inclusive patterns with out wildcards unfairly.
     /// </summary>
+    /// <returns>A task denoting the completion of the test.</returns>
     [Fact]
     public async Task TransformAsync_HandlesSimpleInclusivePatternsUnfairly()
     {
         List<string> expectedQueueIdentifiers = [
-            .. ExampleQueueIdentifiers[^3..],
-            .. ExampleQueueIdentifiers[3..^3],
-            .. ExampleQueueIdentifiers[..3],
+            .. exampleQueueIdentifiers[^3..],
+            .. exampleQueueIdentifiers[3..^3],
+            .. exampleQueueIdentifiers[..3],
         ];
         await WithSubject(
             action: async (subject) => Assert.Equal(
                 expectedQueueIdentifiers,
-                await subject.TransformAsync(ExampleQueueIdentifiers)
-            ),
+                await subject.TransformAsync(exampleQueueIdentifiers)),
             queuePriorityPatterns: [
                 new(["g1g", "g2g", "g3g"], fairly: false),
                 DefaultQueuePriorityPattern,
                 new(["a1a", "a2a", "a3a"], fairly: false)
-            ]
-        );
+            ]);
     }
 
     /// <summary>
     /// <see cref="DynamicPriorityQueueIdentifiersTransformer.TransformAsync"/>
     /// should handle inclusive patterns with wildcards unfairly.
     /// </summary>
+    /// <returns>A task denoting the completion of the test.</returns>
     [Fact]
     public async Task TransformAsync_HandlesWildcardInclusivePatternsUnfairly()
     {
         List<string> expectedQueueIdentifiers = [
-            .. ExampleQueueIdentifiers[^3..],
-            .. ExampleQueueIdentifiers[3..^3],
-            .. ExampleQueueIdentifiers[..3],
+            .. exampleQueueIdentifiers[^3..],
+            .. exampleQueueIdentifiers[3..^3],
+            .. exampleQueueIdentifiers[..3],
         ];
         await WithSubject(
             action: async (subject) => Assert.Equal(
                 expectedQueueIdentifiers,
-                await subject.TransformAsync(ExampleQueueIdentifiers)
-            ),
+                await subject.TransformAsync(exampleQueueIdentifiers)),
             queuePriorityPatterns: [
                 new(["g*"], fairly: false),
                 DefaultQueuePriorityPattern,
                 new(["a*"], fairly: false)
-            ]
-        );
+            ]);
     }
 
     /// <summary>
     /// <see cref="DynamicPriorityQueueIdentifiersTransformer.TransformAsync"/>
     /// should handle inclusive patterns with wildcards fairly.
     /// </summary>
+    /// <returns>A task denoting the completion of the test.</returns>
     [Fact]
     public async Task TransformAsync_HandlesWildcardInclusivePatternsFairly()
     {
         await WithSubject(
             action: async (subject) =>
             {
-                var result = await subject.TransformAsync(ExampleQueueIdentifiers);
-                var expectedStartingSet = ExampleQueueIdentifiers[^9..];
-                var expectedEndingSet = ExampleQueueIdentifiers[..9];
+                var result = await subject.TransformAsync(exampleQueueIdentifiers);
+                var expectedStartingSet = exampleQueueIdentifiers[^9..];
+                var expectedEndingSet = exampleQueueIdentifiers[..9];
                 var startingSet = result[..9];
                 var endingSet = result[^9..];
 
@@ -309,169 +304,158 @@ public class DynamicPriorityQueueIdentifiersTransformerTest
                 endingSet.Sort();
                 Assert.Equal(endingSet, expectedEndingSet);
 
-                Assert.NotEqual(ExampleQueueIdentifiers, result);
+                Assert.NotEqual(exampleQueueIdentifiers, result);
                 result.Sort();
-                Assert.Equal(ExampleQueueIdentifiers, result);
+                Assert.Equal(exampleQueueIdentifiers, result);
             },
             queuePriorityPatterns: [
                 new(["e*", "f*", "g*"], fairly: true),
                 DefaultQueuePriorityPattern,
                 new(["a*", "b*", "c*"], fairly: true)
-            ]
-        );
+            ]);
     }
 
     /// <summary>
     /// <see cref="DynamicPriorityQueueIdentifiersTransformer.TransformAsync"/>
     /// should handle inclusive patterns with double wildcards unfairly.
     /// </summary>
+    /// <returns>A task denoting the completion of the test.</returns>
     [Fact]
     public async Task TransformAsync_HandlesDoubleWildcardInclusivePatternsUnfairly()
     {
         await WithSubject(
             action: async (subject) => Assert.Equal(
                 [
-                    .. ExampleQueueIdentifiers.Where(_ => _.Contains('3')),
-                    .. ExampleQueueIdentifiers.Where(
-                        _ => !_.Contains('1') && !_.Contains('3')
-                    ),
-                    .. ExampleQueueIdentifiers.Where(_ => _.Contains('1')),
+                    .. exampleQueueIdentifiers.Where(_ => _.Contains('3')),
+                    .. exampleQueueIdentifiers.Where(
+                        _ => !_.Contains('1') && !_.Contains('3')),
+                    .. exampleQueueIdentifiers.Where(_ => _.Contains('1')),
                 ],
-                await subject.TransformAsync(ExampleQueueIdentifiers)
-            ),
+                await subject.TransformAsync(exampleQueueIdentifiers)),
             queuePriorityPatterns: [
                 new(["*3*"], fairly: false),
                 DefaultQueuePriorityPattern,
                 new(["*1*"], fairly: false)
-            ]
-        );
+            ]);
     }
 
     /// <summary>
     /// <see cref="DynamicPriorityQueueIdentifiersTransformer.TransformAsync"/>
     /// should match whole patterns only.
     /// </summary>
+    /// <returns>A task denoting the completion of the test.</returns>
     [Fact]
     public async Task TransformAsync_MatchesWholePatternsOnly()
     {
         await WithSubject(
             action: async (subject) => Assert.Equal(
-                ExampleQueueIdentifiers,
-                await subject.TransformAsync(ExampleQueueIdentifiers)
-            ),
+                exampleQueueIdentifiers,
+                await subject.TransformAsync(exampleQueueIdentifiers)),
             queuePriorityPatterns: [
                 new(["g", "2*", "*2", "b2bx", "*", "!a", "!2*", "!*2"], fairly: false),
                 DefaultQueuePriorityPattern,
-            ]
-        );
+            ]);
     }
 
     /// <summary>
     /// <see cref="DynamicPriorityQueueIdentifiersTransformer.TransformAsync"/>
     /// should handle simple exclusive patterns unfairly.
     /// </summary>
+    /// <returns>A task denoting the completion of the test.</returns>
     [Fact]
     public async Task TransformAsync_HandlesSimpleExclusivePatternsUnfairly()
     {
         await WithSubject(
             action: async (subject) => Assert.Equal(
                 [
-                    .. ExampleQueueIdentifiers[1..],
-                    ExampleQueueIdentifiers[0],
+                    .. exampleQueueIdentifiers[1..],
+                    exampleQueueIdentifiers[0],
                 ],
-                await subject.TransformAsync(ExampleQueueIdentifiers)
-            ),
+                await subject.TransformAsync(exampleQueueIdentifiers)),
             queuePriorityPatterns: [
                 new(["*", "!a1a"], fairly: false),
                 DefaultQueuePriorityPattern,
-            ]
-        );
+            ]);
     }
 
     /// <summary>
     /// <see cref="DynamicPriorityQueueIdentifiersTransformer.TransformAsync"/>
     /// should handle wildcard exclusive patterns unfairly.
     /// </summary>
+    /// <returns>A task denoting the completion of the test.</returns>
     [Fact]
     public async Task TransformAsync_HandlesWildcardExclusivePatternsUnfairly()
     {
         await WithSubject(
             action: async (subject) => Assert.Equal(
                 [
-                    .. ExampleQueueIdentifiers[3..],
-                    .. ExampleQueueIdentifiers[..3],
+                    .. exampleQueueIdentifiers[3..],
+                    .. exampleQueueIdentifiers[..3],
                 ],
-                await subject.TransformAsync(ExampleQueueIdentifiers)
-            ),
+                await subject.TransformAsync(exampleQueueIdentifiers)),
             queuePriorityPatterns: [
                 new(["*", "!a*"], fairly: false),
                 DefaultQueuePriorityPattern,
-            ]
-        );
+            ]);
     }
 
     /// <summary>
     /// <see cref="DynamicPriorityQueueIdentifiersTransformer.TransformAsync"/>
     /// should handle exclusive patterns with double wildcards unfairly.
     /// </summary>
+    /// <returns>A task denoting the completion of the test.</returns>
     [Fact]
     public async Task TransformAsync_HandlesDoubleWildcardExclusivePatternsUnfairly()
     {
         await WithSubject(
             action: async (subject) => Assert.Equal(
                 [
-                    .. ExampleQueueIdentifiers.Where(
-                        _ => !_.Contains('1') && !_.Contains('3')
-                    ),
-                    .. ExampleQueueIdentifiers.Where(
-                        _ => _.Contains('1') || _.Contains('3')
-                    ),
+                    .. exampleQueueIdentifiers.Where(
+                        _ => !_.Contains('1') && !_.Contains('3')),
+                    .. exampleQueueIdentifiers.Where(
+                        _ => _.Contains('1') || _.Contains('3')),
                 ],
-                await subject.TransformAsync(ExampleQueueIdentifiers)
-            ),
+                await subject.TransformAsync(exampleQueueIdentifiers)),
             queuePriorityPatterns: [
                 new(["*", "!*1*", "!*3*"], fairly: false),
                 DefaultQueuePriorityPattern,
-            ]
-        );
+            ]);
     }
 
     /// <summary>
     /// <see cref="DynamicPriorityQueueIdentifiersTransformer.TransformAsync"/>
     /// should not be impacted by a standalone exclusive pattern.
     /// </summary>
+    /// <returns>A task denoting the completion of the test.</returns>
     [Fact]
     public async Task TransformAsync_SortOrderNotImpactedByStandaloneExclusivePattern()
     {
         await WithSubject(
             action: async (subject) => Assert.Equal(
-                ExampleQueueIdentifiers,
-                await subject.TransformAsync(ExampleQueueIdentifiers)
-            ),
+                exampleQueueIdentifiers,
+                await subject.TransformAsync(exampleQueueIdentifiers)),
             queuePriorityPatterns: [
                 new(["!a1a"], fairly: false),
                 DefaultQueuePriorityPattern,
-            ]
-        );
+            ]);
     }
 
     /// <summary>
     /// <see cref="DynamicPriorityQueueIdentifiersTransformer.TransformAsync"/>
     /// should work as expected when no queues fall in the default bucket.
     /// </summary>
+    /// <returns>A task denoting the completion of the test.</returns>
     [Fact]
     public async Task TransformAsync_WorksWhenNoQueuesLeftForDefaultBucket()
     {
         await WithSubject(
             action: async (subject) => Assert.Equal(
-                ExampleQueueIdentifiers,
-                await subject.TransformAsync(ExampleQueueIdentifiers)
-            ),
+                exampleQueueIdentifiers,
+                await subject.TransformAsync(exampleQueueIdentifiers)),
             queuePriorityPatterns: [
                 new(["*"], fairly: false),
                 DefaultQueuePriorityPattern,
-            ]
-        );
+            ]);
     }
 
     /// <summary>
@@ -479,19 +463,18 @@ public class DynamicPriorityQueueIdentifiersTransformerTest
     /// should evaluate patterns in the order they are defined, allowing later
     /// patterns to negate earlier patterns.
     /// </summary>
+    /// <returns>A task denoting the completion of the test.</returns>
     [Fact]
     public async Task TransformAsync_EvaluatesPatternsInOrder()
     {
         await WithSubject(
             action: async (subject) => Assert.Equal(
-                ExampleQueueIdentifiers,
-                await subject.TransformAsync(ExampleQueueIdentifiers)
-            ),
+                exampleQueueIdentifiers,
+                await subject.TransformAsync(exampleQueueIdentifiers)),
             queuePriorityPatterns: [
                 new(["g*", "!g*"], fairly: false),
                 DefaultQueuePriorityPattern,
-            ]
-        );
+            ]);
         // This one is kind of weird. Since starting with an exclusion pattern
         // doesn't filter anything out, we must first select everything, filter
         // something out, and then add that something back in. This changes sort
@@ -500,30 +483,28 @@ public class DynamicPriorityQueueIdentifiersTransformerTest
         await WithSubject(
             action: async (subject) => Assert.Equal(
                 [
-                    .. ExampleQueueIdentifiers[3..],
-                    .. ExampleQueueIdentifiers[..3],
+                    .. exampleQueueIdentifiers[3..],
+                    .. exampleQueueIdentifiers[..3],
                 ],
-                await subject.TransformAsync(ExampleQueueIdentifiers)
-            ),
+                await subject.TransformAsync(exampleQueueIdentifiers)),
             queuePriorityPatterns: [
                 new(["*", "!a*", "a*"], fairly: false),
                 DefaultQueuePriorityPattern,
-            ]
-        );
+            ]);
     }
 
     /// <summary>
     /// <see cref="DynamicPriorityQueueIdentifiersTransformer.TransformAsync"/>
     /// should not repeat a queue identifier that is matched by multiple patterns.
     /// </summary>
+    /// <returns>A task denoting the completion of the test.</returns>
     [Fact]
     public async Task TransformAsync_DoesNotRepeatQueueIdentifiers()
     {
         await WithSubject(
             action: async (subject) => Assert.Equal(
-                ExampleQueueIdentifiers,
-                await subject.TransformAsync(ExampleQueueIdentifiers)
-            ),
+                exampleQueueIdentifiers,
+                await subject.TransformAsync(exampleQueueIdentifiers)),
             queuePriorityPatterns: [
                 new(["a1a"], fairly: false),
                 new(["a1a*"], fairly: false),
@@ -534,24 +515,20 @@ public class DynamicPriorityQueueIdentifiersTransformerTest
                 new(["a1*"], fairly: false),
                 new(["a1a*"], fairly: false),
                 new(["a1a"], fairly: false),
-            ]
-        );
+            ]);
         await WithSubject(
             action: async (subject) => Assert.Equal(
-                ExampleQueueIdentifiers,
-                await subject.TransformAsync(ExampleQueueIdentifiers)
-            ),
+                exampleQueueIdentifiers,
+                await subject.TransformAsync(exampleQueueIdentifiers)),
             queuePriorityPatterns: [
                 new(["!a*", "a*"], fairly: false),
                 DefaultQueuePriorityPattern,
-            ]
-        );
+            ]);
     }
 
-    static async Task WithSubject(
+    private static async Task WithSubject(
         List<QueuePriorityPattern> queuePriorityPatterns,
-        Func<DynamicPriorityQueueIdentifiersTransformer, Task> action
-    )
+        Func<DynamicPriorityQueueIdentifiersTransformer, Task> action)
     {
         var clientMock = new Mock<IReqlessClient>();
         clientMock.Setup(mock => mock.GetAllQueuePriorityPatternsAsync())

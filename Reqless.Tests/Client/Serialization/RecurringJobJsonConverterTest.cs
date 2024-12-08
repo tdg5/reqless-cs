@@ -11,7 +11,7 @@ namespace Reqless.Tests.Client.Serialization;
 /// Tests for the <see cref="RecurringJobJsonConverter"/>
 /// class.
 /// </summary>
-public class RecurringRecurringJobJsonConverterTest
+public class RecurringJobJsonConverterTest
 {
     /// <summary>
     /// Read should throw an error if the JSON is missing the data property.
@@ -123,8 +123,7 @@ public class RecurringRecurringJobJsonConverterTest
         foreach (var emptyString in TestConstants.EmptyStrings)
         {
             string json = RecurringJobFactory.RecurringJobJson(
-                queueName: Maybe.Some(emptyString)
-            );
+                queueName: Maybe.Some(emptyString));
             RecurringJob? job = JsonSerializer.Deserialize<RecurringJob>(json);
             Assert.NotNull(job);
             Assert.Null(job.QueueName);
@@ -204,15 +203,12 @@ public class RecurringRecurringJobJsonConverterTest
     public void Read_Tags_ThrowsIfANonEmptyObjectIsEncountered()
     {
         var json = RecurringJobFactory.RecurringJobJsonRaw(
-            tags: Maybe.Some("""{"boom": "boom"}""")
-        );
+            tags: Maybe.Some("""{"boom": "boom"}"""));
         var exception = Assert.Throws<JsonException>(
-            () => JsonSerializer.Deserialize<RecurringJob>(json)
-        );
+            () => JsonSerializer.Deserialize<RecurringJob>(json));
         Assert.Equal(
             "Expected 'tags' to be array or empty object but encountered object with 1 properties.",
-            exception.Message
-        );
+            exception.Message);
     }
 
     /// <summary>
@@ -259,15 +255,12 @@ public class RecurringRecurringJobJsonConverterTest
     public void Read_Throttles_ThrowsIfANonEmptyObjectIsEncountered()
     {
         var json = RecurringJobFactory.RecurringJobJsonRaw(
-            throttles: Maybe.Some("""{"boom": "boom"}""")
-        );
+            throttles: Maybe.Some("""{"boom": "boom"}"""));
         var exception = Assert.Throws<JsonException>(
-            () => JsonSerializer.Deserialize<RecurringJob>(json)
-        );
+            () => JsonSerializer.Deserialize<RecurringJob>(json));
         Assert.Equal(
             "Expected 'throttles' to be array or empty object but encountered object with 1 properties.",
-            exception.Message
-        );
+            exception.Message);
     }
 
     /// <summary>
@@ -289,7 +282,8 @@ public class RecurringRecurringJobJsonConverterTest
     [Fact]
     public void Read_IgnoresUnknownPropertiesOfAnyType()
     {
-        foreach (var unknown in new string[] {
+        var unknownValues = new string[]
+        {
             "1",
             "3.14",
             "[]",
@@ -297,7 +291,8 @@ public class RecurringRecurringJobJsonConverterTest
             "false",
             "null",
             "{}",
-        })
+        };
+        foreach (var unknown in unknownValues)
         {
             var json = RecurringJobFactory.RecurringJobJsonRaw(unknown: Maybe.Some(unknown));
             var job = JsonSerializer.Deserialize<RecurringJob>(json);
@@ -329,8 +324,7 @@ public class RecurringRecurringJobJsonConverterTest
             retries: Maybe<int?>.Some(retries),
             state: Maybe.Some(state),
             tags: Maybe.Some(tags),
-            throttles: Maybe.Some(throttles)
-        );
+            throttles: Maybe.Some(throttles));
 
         var job = JsonSerializer.Deserialize<RecurringJob>(json);
         Assert.NotNull(job);
@@ -376,8 +370,7 @@ public class RecurringRecurringJobJsonConverterTest
             retries: retries,
             state: state,
             tags: tags,
-            throttles: throttles
-        );
+            throttles: throttles);
         var json = JsonSerializer.Serialize(job);
         var expectedRecurringJobJson = RecurringJobFactory.RecurringJobJson(
             className: Maybe.Some(className),
@@ -391,8 +384,7 @@ public class RecurringRecurringJobJsonConverterTest
             retries: Maybe<int?>.Some(retries),
             state: Maybe.Some(state),
             tags: Maybe.Some(tags),
-            throttles: Maybe.Some(throttles)
-        );
+            throttles: Maybe.Some(throttles));
         Assert.Equal(expectedRecurringJobJson, json);
     }
 }

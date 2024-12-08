@@ -1,5 +1,5 @@
-using Reqless.Client.Models;
 using Reqless.Client;
+using Reqless.Client.Models;
 using Reqless.Tests.Common.TestHelpers;
 using System.Text.Json;
 
@@ -14,21 +14,21 @@ public class GetJobsByTagTest : BaseReqlessClientTest
     /// <see cref="ReqlessClient.GetJobsByTagAsync"/> should throw if tag is
     /// null, empty, or only whitespace.
     /// </summary>
+    /// <returns>A task denoting the completion of the test.</returns>
     [Fact]
     public async Task ShouldThrowIfTagIsNullOrEmptyOrOnlyWhitespace()
     {
         await Scenario.ThrowsWhenArgumentIsNullOrEmptyOrWhitespaceAsync(
             (invalidTag) => WithClientWithExecutorMockForExpectedArguments(
-                subject => subject.GetJobsByTagAsync(tag: invalidTag!)
-            ),
-            "tag"
-        );
+                subject => subject.GetJobsByTagAsync(tag: invalidTag!)),
+            "tag");
     }
 
     /// <summary>
     /// <see cref="ReqlessClient.GetJobsByTagAsync"/> should throw if server
     /// returns null.
     /// </summary>
+    /// <returns>A task denoting the completion of the test.</returns>
     [Fact]
     public async Task ShouldThrowIfServerReturnsNull()
     {
@@ -37,10 +37,7 @@ public class GetJobsByTagTest : BaseReqlessClientTest
         await Scenario.ThrowsWhenServerRespondsWithNullAsync(
             () => WithClientWithExecutorMockForExpectedArguments(
                 subject => subject.GetJobsByTagAsync(
-                    tag: ExampleTag,
-                    limit: limit,
-                    offset: offset
-                ),
+                    limit: limit, offset: offset, tag: ExampleTag),
                 expectedArguments: [
                     "jobs.tagged",
                     0,
@@ -48,15 +45,14 @@ public class GetJobsByTagTest : BaseReqlessClientTest
                     offset,
                     limit
                 ],
-                returnValue: null
-            )
-        );
+                returnValue: null));
     }
 
     /// <summary>
     /// <see cref="ReqlessClient.GetJobsByTagAsync"/> should throw if JSON can't
     /// be deserialized.
     /// </summary>
+    /// <returns>A task denoting the completion of the test.</returns>
     [Fact]
     public async Task ShouldThrowIfJsonCannotBeDeserialized()
     {
@@ -65,10 +61,7 @@ public class GetJobsByTagTest : BaseReqlessClientTest
         var exception = await Assert.ThrowsAsync<JsonException>(
             () => WithClientWithExecutorMockForExpectedArguments(
                 subject => subject.GetJobsByTagAsync(
-                    tag: ExampleTag,
-                    limit: limit,
-                    offset: offset
-                ),
+                    limit: limit, offset: offset, tag: ExampleTag),
                 expectedArguments: [
                     "jobs.tagged",
                     0,
@@ -76,18 +69,16 @@ public class GetJobsByTagTest : BaseReqlessClientTest
                     offset,
                     limit
                 ],
-                returnValue: "null"
-            )
-        );
+                returnValue: "null"));
         Assert.Equal(
             "Failed to deserialize failed jobs query result JSON: null",
-            exception.Message
-        );
+            exception.Message);
     }
 
     /// <summary>
     /// <see cref="ReqlessClient.GetJobsByTagAsync"/> should return JidsResult.
     /// </summary>
+    /// <returns>A task denoting the completion of the test.</returns>
     [Fact]
     public async Task ShouldReturnJidsResult()
     {
@@ -98,10 +89,7 @@ public class GetJobsByTagTest : BaseReqlessClientTest
         var jobsJson = JsonSerializer.Serialize(jids);
         var result = await WithClientWithExecutorMockForExpectedArguments(
             subject => subject.GetJobsByTagAsync(
-                tag: ExampleTag,
-                limit: limit,
-                offset: offset
-            ),
+                limit: limit, offset: offset, tag: ExampleTag),
             expectedArguments: [
                 "jobs.tagged",
                 0,
@@ -109,8 +97,7 @@ public class GetJobsByTagTest : BaseReqlessClientTest
                 offset,
                 limit
             ],
-            returnValue: $$"""{"total":{{total}},"jobs":{{jobsJson}}}"""
-        );
+            returnValue: $$"""{"total":{{total}},"jobs":{{jobsJson}}}""");
         Assert.IsType<JidsResult>(result);
         Assert.Equal(total, result.Total);
         Assert.Equal(jids, result.Jids);

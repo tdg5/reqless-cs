@@ -8,48 +8,43 @@ namespace Reqless.Tests.Client.ReqlessClientTests;
 /// </summary>
 public class SetThrottleTest : BaseReqlessClientTest
 {
-    private readonly int ExampleTtl = 42;
+    private readonly int exampleTtl = 42;
 
     /// <summary>
     /// <see cref="ReqlessClient.SetThrottleAsync"/> should throw if throttle
     /// name is null, empty, or only whitespace.
     /// </summary>
+    /// <returns>A task denoting the completion of the test.</returns>
     [Fact]
     public async Task ThrowsIfThrottleNameIsNullOrEmptyOrOnlyWhitespace()
     {
         await Scenario.ThrowsWhenArgumentIsNullOrEmptyOrWhitespaceAsync(
             (invalidThrottleName) => WithClientWithExecutorMockForExpectedArguments(
                 subject => subject.SetThrottleAsync(
-                    maximum: 21,
-                    throttleName: invalidThrottleName!
-                )
-            ),
-            "throttleName"
-        );
+                    maximum: 21, throttleName: invalidThrottleName!)),
+            "throttleName");
     }
 
     /// <summary>
     /// <see cref="ReqlessClient.SetThrottleAsync"/> should throw if
     /// maximum is negative.
     /// </summary>
+    /// <returns>A task denoting the completion of the test.</returns>
     [Fact]
     public async Task ThrowsIfMaximumIsLessThanZero()
     {
         await Scenario.ThrowsWhenArgumentIsNegativeAsync(
             (invalidMaximum) => WithClientWithExecutorMockForExpectedArguments(
                 subject => subject.SetThrottleAsync(
-                    throttleName: ExampleThrottleName,
-                    maximum: invalidMaximum
-                )
-            ),
-            "maximum"
-        );
+                    throttleName: ExampleThrottleName, maximum: invalidMaximum)),
+            "maximum");
     }
 
     /// <summary>
     /// <see cref="ReqlessClient.SetThrottleAsync"/> should call Executor
     /// with the expected arguments.
     /// </summary>
+    /// <returns>A task denoting the completion of the test.</returns>
     [Fact]
     public async Task CallsExecutorWithExpectedArguments()
     {
@@ -58,15 +53,13 @@ public class SetThrottleTest : BaseReqlessClientTest
             subject => subject.SetThrottleAsync(
                 maximum: newMaximum,
                 throttleName: ExampleThrottleName,
-                ttl: ExampleTtl
-            ),
+                ttl: exampleTtl),
             expectedArguments: [
                 "throttle.set",
                 0,
                 ExampleThrottleName,
                 newMaximum,
-                ExampleTtl,
-            ]
-        );
+                exampleTtl,
+            ]);
     }
 }

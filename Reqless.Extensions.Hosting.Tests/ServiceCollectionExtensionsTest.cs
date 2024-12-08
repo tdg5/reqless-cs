@@ -11,11 +11,10 @@ namespace Reqless.Extensions.Hosting.Tests;
 /// </summary>
 public class ServiceCollectionExtensionsTest
 {
-    WorkerSettings ExampleSettings = new(
+    private readonly WorkerSettings _exampleSettings = new(
         connectionString: "Server=localhost;",
         queueIdentifiers: ["queue"],
-        workerCount: 1
-    );
+        workerCount: 1);
 
     /// <summary>
     /// <see cref="ServiceCollectionExtensions.AddReqlessWorkerServices"/> should add
@@ -25,7 +24,7 @@ public class ServiceCollectionExtensionsTest
     public void AddReqlessWorkerServices_AddsIUnitOfWorkActivatorIfNoneRegistered()
     {
         ServiceCollection services = new();
-        services.AddReqlessWorkerServices(ExampleSettings);
+        services.AddReqlessWorkerServices(_exampleSettings);
         var provider = services.BuildServiceProvider();
         IUnitOfWorkActivator subject = provider.GetRequiredService<IUnitOfWorkActivator>();
         Assert.IsType<DefaultUnitOfWorkActivator>(subject);
@@ -40,8 +39,8 @@ public class ServiceCollectionExtensionsTest
     {
         ServiceCollection services = new();
         var mock = Mock.Of<IUnitOfWorkActivator>();
-        services.AddSingleton<IUnitOfWorkActivator>(mock);
-        services.AddReqlessWorkerServices(ExampleSettings);
+        services.AddSingleton(mock);
+        services.AddReqlessWorkerServices(_exampleSettings);
         var provider = services.BuildServiceProvider();
         IUnitOfWorkActivator subject = provider.GetRequiredService<IUnitOfWorkActivator>();
         Assert.Same(mock, subject);
@@ -55,7 +54,7 @@ public class ServiceCollectionExtensionsTest
     public void AddReqlessWorkerServices_AddsIUnitOfWorkResolverIfNoneRegistered()
     {
         ServiceCollection services = new();
-        services.AddReqlessWorkerServices(ExampleSettings);
+        services.AddReqlessWorkerServices(_exampleSettings);
         var provider = services.BuildServiceProvider();
         IUnitOfWorkResolver subject = provider.GetRequiredService<IUnitOfWorkResolver>();
         Assert.IsType<DefaultUnitOfWorkResolver>(subject);
@@ -70,8 +69,8 @@ public class ServiceCollectionExtensionsTest
     {
         ServiceCollection services = new();
         var mock = Mock.Of<IUnitOfWorkResolver>();
-        services.AddSingleton<IUnitOfWorkResolver>(mock);
-        services.AddReqlessWorkerServices(ExampleSettings);
+        services.AddSingleton(mock);
+        services.AddReqlessWorkerServices(_exampleSettings);
         var provider = services.BuildServiceProvider();
         IUnitOfWorkResolver subject = provider.GetRequiredService<IUnitOfWorkResolver>();
         Assert.Same(mock, subject);
@@ -85,7 +84,7 @@ public class ServiceCollectionExtensionsTest
     public void AddReqlessWorkerServices_AddsIJobContextFactoryIfNoneRegistered()
     {
         ServiceCollection services = new();
-        services.AddReqlessWorkerServices(ExampleSettings);
+        services.AddReqlessWorkerServices(_exampleSettings);
         var provider = services.BuildServiceProvider();
         IJobContextFactory subject = provider.GetRequiredService<IJobContextFactory>();
         Assert.IsType<DefaultJobContextFactory>(subject);
@@ -100,8 +99,8 @@ public class ServiceCollectionExtensionsTest
     {
         ServiceCollection services = new();
         var mock = Mock.Of<IJobContextFactory>();
-        services.AddSingleton<IJobContextFactory>(mock);
-        services.AddReqlessWorkerServices(ExampleSettings);
+        services.AddSingleton(mock);
+        services.AddReqlessWorkerServices(_exampleSettings);
         var provider = services.BuildServiceProvider();
         IJobContextFactory subject = provider.GetRequiredService<IJobContextFactory>();
         Assert.Same(mock, subject);
@@ -115,7 +114,7 @@ public class ServiceCollectionExtensionsTest
     public void AddReqlessWorkerServices_AddsIJobContextAccessorIfNoneRegistered()
     {
         ServiceCollection services = new();
-        services.AddReqlessWorkerServices(ExampleSettings);
+        services.AddReqlessWorkerServices(_exampleSettings);
         var provider = services.BuildServiceProvider();
         IJobContextAccessor subject = provider.GetRequiredService<IJobContextAccessor>();
         Assert.IsType<DefaultJobContextAccessor>(subject);
@@ -130,8 +129,8 @@ public class ServiceCollectionExtensionsTest
     {
         ServiceCollection services = new();
         var mock = Mock.Of<IJobContextAccessor>();
-        services.AddSingleton<IJobContextAccessor>(mock);
-        services.AddReqlessWorkerServices(ExampleSettings);
+        services.AddSingleton(mock);
+        services.AddReqlessWorkerServices(_exampleSettings);
         var provider = services.BuildServiceProvider();
         IJobContextAccessor subject = provider.GetRequiredService<IJobContextAccessor>();
         Assert.Same(mock, subject);
@@ -149,8 +148,8 @@ public class ServiceCollectionExtensionsTest
         var expectedClient = Mock.Of<IReqlessClient>();
         var mockFactory = new Mock<IReqlessClientFactory>();
         mockFactory.Setup(_ => _.Create()).Returns(expectedClient);
-        services.AddSingleton<IReqlessClientFactory>(mockFactory.Object);
-        services.AddReqlessWorkerServices(ExampleSettings);
+        services.AddSingleton(mockFactory.Object);
+        services.AddReqlessWorkerServices(_exampleSettings);
         var provider = services.BuildServiceProvider();
         IReqlessClient subject = provider.GetRequiredService<IReqlessClient>();
         Assert.Same(expectedClient, subject);
@@ -165,8 +164,8 @@ public class ServiceCollectionExtensionsTest
     {
         ServiceCollection services = new();
         var mock = Mock.Of<IReqlessClient>();
-        services.AddSingleton<IReqlessClient>(mock);
-        services.AddReqlessWorkerServices(ExampleSettings);
+        services.AddSingleton(mock);
+        services.AddReqlessWorkerServices(_exampleSettings);
         var provider = services.BuildServiceProvider();
         IReqlessClient subject = provider.GetRequiredService<IReqlessClient>();
         Assert.Same(mock, subject);

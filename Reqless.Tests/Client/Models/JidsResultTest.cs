@@ -1,6 +1,6 @@
-using System.Text.Json;
 using Reqless.Client.Models;
 using Reqless.Tests.Common.TestHelpers;
+using System.Text.Json;
 
 namespace Reqless.Tests.Client.Models;
 
@@ -33,10 +33,8 @@ public class JidsResultTest
         Scenario.ThrowsWhenArgumentElementIsNullOrEmptyOrWhitespace(
             (invalidJid) => new JidsResult(
                 ["jid1", "jid2", invalidJid!],
-                total
-            ),
-            "jids"
-        );
+                total),
+            "jids");
     }
 
     /// <summary>
@@ -46,9 +44,7 @@ public class JidsResultTest
     public void Constructor_ThrowsIfJidsIsNull()
     {
         Scenario.ThrowsWhenArgumentIsNull(
-            () => new JidsResult(null!, 4),
-            "jids"
-        );
+            () => new JidsResult(null!, 4), "jids");
     }
 
     /// <summary>

@@ -10,76 +10,80 @@ namespace Reqless.Extensions.Hosting.Worker;
 public class DefaultJobExecutor : IJobExecutor
 {
     /// <summary>
-    /// An <see cref="IJobContextFactory"/> instance to use for making <see
-    /// cref="IJobContext"/> instances.
+    /// Initializes a new instance of the <see cref="DefaultJobExecutor"/> class.
     /// </summary>
-    protected readonly IJobContextFactory _jobContextFactory;
-
-    /// <summary>
-    /// A <see cref="IServiceProvider"/> instance that is used to create a new
-    /// scope when creating unit of work instances.
-    /// </summary>
-    protected readonly IServiceProvider _serviceProvider;
-
-    /// <summary>
-    /// An <see cref="IUnitOfWorkActivator"/> instance to use for unit of work
-    /// instantiation.
-    /// </summary>
-    protected readonly IUnitOfWorkActivator _unitOfWorkActivator;
-
-    /// <summary>
-    /// An <see cref="IUnitOfWorkResolver"/> instance to use for unit of work
-    /// resolution.
-    /// </summary>
-    protected readonly IUnitOfWorkResolver _unitOfWorkResolver;
-
-    /// <summary>
-    /// Create an instance of <see cref="DefaultJobExecutor"/>.
-    /// </summary>
+    /// <param name="jobContextFactory">An <see cref="IJobContextFactory"/> instance
+    /// to use for making <see cref="IJobContext"/> instances.</param>
+    /// <param name="serviceProvider">An <see cref="IServiceProvider"/> instance that
+    /// is used to create a new scope when creating unit of work instances.</param>
+    /// <param name="unitOfWorkActivator">An <see cref="IUnitOfWorkActivator"/> instance
+    /// to use for unit of work instantiation.</param>
+    /// <param name="unitOfWorkResolver">An <see cref="IUnitOfWorkResolver"/> instance
+    /// to use for unit of work resolution.</param>
     public DefaultJobExecutor(
         IJobContextFactory jobContextFactory,
         IServiceProvider serviceProvider,
         IUnitOfWorkActivator unitOfWorkActivator,
-        IUnitOfWorkResolver unitOfWorkResolver
-    )
+        IUnitOfWorkResolver unitOfWorkResolver)
     {
         ArgumentNullException.ThrowIfNull(jobContextFactory, nameof(jobContextFactory));
         ArgumentNullException.ThrowIfNull(serviceProvider, nameof(serviceProvider));
         ArgumentNullException.ThrowIfNull(unitOfWorkActivator, nameof(unitOfWorkActivator));
         ArgumentNullException.ThrowIfNull(unitOfWorkResolver, nameof(unitOfWorkResolver));
 
-        _jobContextFactory = jobContextFactory;
-        _serviceProvider = serviceProvider;
-        _unitOfWorkActivator = unitOfWorkActivator;
-        _unitOfWorkResolver = unitOfWorkResolver;
+        JobContextFactory = jobContextFactory;
+        ServiceProvider = serviceProvider;
+        UnitOfWorkActivator = unitOfWorkActivator;
+        UnitOfWorkResolver = unitOfWorkResolver;
     }
+
+    /// <summary>
+    /// Gets the <see cref="IJobContextFactory"/> instance to use for making
+    /// <see cref="IJobContext"/> instances.
+    /// </summary>
+    protected IJobContextFactory JobContextFactory { get; }
+
+    /// <summary>
+    /// Gets the <see cref="IServiceProvider"/> instance that is used to create
+    /// a new scope when creating unit of work instances.
+    /// </summary>
+    protected IServiceProvider ServiceProvider { get; }
+
+    /// <summary>
+    /// Gets the <see cref="IUnitOfWorkActivator"/> instance to use for unit of
+    /// work instantiation.
+    /// </summary>
+    protected IUnitOfWorkActivator UnitOfWorkActivator { get; }
+
+    /// <summary>
+    /// Gets the <see cref="IUnitOfWorkResolver"/> instance to use for unit of
+    /// work resolution.
+    /// </summary>
+    protected IUnitOfWorkResolver UnitOfWorkResolver { get; }
 
     /// <inheritdoc/>
     public async Task ExecuteAsync(Job job, CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(job, nameof(job));
 
-        Type unitOfWorkClass = _unitOfWorkResolver.Resolve(job.ClassName) ??
+        Type unitOfWorkClass = UnitOfWorkResolver.Resolve(job.ClassName) ??
             throw new InvalidOperationException(
-                $"Could not resolve {nameof(IUnitOfWork)} type '{job.ClassName}'."
-            );
+                $"Could not resolve {nameof(IUnitOfWork)} type '{job.ClassName}'.");
 
-        using var scope = _serviceProvider.CreateAsyncScope();
+        using var scope = ServiceProvider.CreateAsyncScope();
 
-        IJobContext jobContext = _jobContextFactory.Create(scope.ServiceProvider, job);
+        IJobContext jobContext =
+            JobContextFactory.Create(scope.ServiceProvider, job);
 
         if (
             scope.ServiceProvider.GetService<IJobContextAccessor>()
-                is IJobContextAccessor jobContextAccessor
-        )
+                is IJobContextAccessor jobContextAccessor)
         {
             jobContextAccessor.Value = jobContext;
         }
 
-        IUnitOfWork unitOfWork = _unitOfWorkActivator.CreateInstance(
-            scope.ServiceProvider,
-            unitOfWorkClass
-        );
+        IUnitOfWork unitOfWork = UnitOfWorkActivator.CreateInstance(
+            scope.ServiceProvider, unitOfWorkClass);
 
         await unitOfWork.PerformAsync(cancellationToken);
     }

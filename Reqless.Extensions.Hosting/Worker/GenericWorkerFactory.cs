@@ -6,22 +6,23 @@ namespace Reqless.Extensions.Hosting.Worker;
 /// Implementation of <see cref="IWorkerFactory"/> that creates <see
 /// cref="IWorker"/> instances of <typeparamref name="T"/>.
 /// </summary>
-/// <typeparam name="T"></typeparam>
-public class GenericWorkerFactory<T> : IWorkerFactory where T : IWorker
+/// <typeparam name="T">The type of <see cref="IWorker"/> that should be
+/// created.</typeparam>
+public class GenericWorkerFactory<T> : IWorkerFactory
+    where T : IWorker
 {
     private readonly IWorkerNameProvider _workerNameProvider;
 
     /// <summary>
-    /// Create an instance of <see cref="GenericWorkerFactory{T}"/>.
+    /// Initializes a new instance of the <see cref="GenericWorkerFactory{T}"/>
+    /// class.
     /// </summary>
     /// <param name="workerNameProvider">The <see cref="IWorkerNameProvider"/>
     /// instance that should be used to get a name of the worker.</param>
     public GenericWorkerFactory(IWorkerNameProvider workerNameProvider)
     {
         ArgumentNullException.ThrowIfNull(
-            workerNameProvider,
-            nameof(workerNameProvider)
-        );
+            workerNameProvider, nameof(workerNameProvider));
 
         _workerNameProvider = workerNameProvider;
     }

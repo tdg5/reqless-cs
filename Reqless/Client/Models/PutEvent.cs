@@ -9,12 +9,6 @@ namespace Reqless.Client.Models;
 public class PutEvent : JobEvent
 {
     /// <summary>
-    /// The name of the queue onto which the job was put.
-    /// </summary>
-    [JsonPropertyName("queue")]
-    public string QueueName { get; }
-
-    /// <summary>
     /// Initializes a new instance of the <see cref="PutEvent"/> class.
     /// </summary>
     /// <param name="when">The time at which the job was put onto the queue.</param>
@@ -27,11 +21,17 @@ public class PutEvent : JobEvent
     /// is empty or whitespace.</exception>
     public PutEvent(
         long when,
-        string queueName
-    ) : base("put", when)
+        string queueName)
+        : base("put", when)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(queueName, nameof(queueName));
 
         QueueName = queueName;
     }
+
+    /// <summary>
+    /// Gets the name of the queue onto which the job was put.
+    /// </summary>
+    [JsonPropertyName("queue")]
+    public string QueueName { get; }
 }

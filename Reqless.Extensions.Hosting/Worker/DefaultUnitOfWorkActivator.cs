@@ -19,13 +19,11 @@ public class DefaultUnitOfWorkActivator : IUnitOfWorkActivator
         {
             throw new InvalidOperationException(
                 $"{instanceType.FullName} does not implement"
-                    + $" {typeof(IUnitOfWork).FullName}."
-            );
+                    + $" {typeof(IUnitOfWork).FullName}.");
         }
 
         return (IUnitOfWork)ActivatorUtilities.CreateInstance(
             serviceProvider,
-            instanceType
-        );
+            instanceType);
     }
 }

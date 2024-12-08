@@ -13,17 +13,13 @@ public static class Scenario
     /// to be thrown.</param>
     /// <param name="parameterName">The name of the parameter under test.</param>
     public static void ThrowsWhenArgumentIsNull(
-        Action action,
-        string parameterName
-    )
+        Action action, string parameterName)
     {
         var nullException = Assert.Throws<ArgumentNullException>(
-            () => action()
-        );
+            () => action());
         Assert.Equal(
             $"Value cannot be null. (Parameter '{parameterName}')",
-            nullException.Message
-        );
+            nullException.Message);
         Assert.Equal(parameterName, nullException.ParamName);
     }
 
@@ -35,18 +31,15 @@ public static class Scenario
     /// thrown.</param>
     /// <param name="parameterName">The name of the parameter under
     /// test.</param>
+    /// <returns>A task denoting the completion of the assertion.</returns>
     public static async Task ThrowsWhenArgumentIsNullAsync(
-        Func<Task> action,
-        string parameterName
-    )
+        Func<Task> action, string parameterName)
     {
         var nullException = await Assert.ThrowsAsync<ArgumentNullException>(
-            () => action()
-        );
+            () => action());
         Assert.Equal(
             $"Value cannot be null. (Parameter '{parameterName}')",
-            nullException.Message
-        );
+            nullException.Message);
         Assert.Equal(parameterName, nullException.ParamName);
     }
 
@@ -55,28 +48,25 @@ public static class Scenario
     /// cref="ArgumentNullException"/> if the parameter is null and an <see
     /// cref="ArgumentException"/> if the parameter contains no items.
     /// </summary>
+    /// <typeparam name="T">The type of the list elements.</typeparam>
     /// <param name="action">An action taking a list that should be used to
     /// cause an exception to be thrown.</param>
     /// <param name="parameterName">The name of the parameter under test.</param>
     public static void ThrowsWhenArgumentIsNullOrEmpty<T>(
         Action<List<T>> action,
-        string parameterName
-    )
+        string parameterName)
     {
         var argumentNullException = Assert.Throws<ArgumentNullException>(
-            () => action(null!)
-        );
+            () => action(null!));
         Assert.Equal(
             $"Value cannot be null. (Parameter '{parameterName}')",
-            argumentNullException.Message
-        );
+            argumentNullException.Message);
         Assert.Equal(parameterName, argumentNullException.ParamName);
 
         var argumentException = Assert.Throws<ArgumentException>(() => action([]));
         Assert.Equal(
             $"Value cannot be empty. (Parameter '{parameterName}')",
-            argumentException.Message
-        );
+            argumentException.Message);
         Assert.Equal(parameterName, argumentException.ParamName);
     }
 
@@ -88,19 +78,15 @@ public static class Scenario
     /// should be used to cause an exception to be thrown.</param>
     /// <param name="parameterName">The name of the parameter under test.</param>
     public static void ThrowsWhenArgumentIsEmptyOrWhitespace(
-        Action<string> action,
-        string parameterName
-    )
+        Action<string> action, string parameterName)
     {
         foreach (var emptyString in TestConstants.EmptyStrings)
         {
             var argumentException = Assert.Throws<ArgumentException>(
-                () => action(emptyString)
-            );
+                () => action(emptyString));
             Assert.Equal(
                 $"The value cannot be an empty string or composed entirely of whitespace. (Parameter '{parameterName}')",
-                argumentException.Message
-            );
+                argumentException.Message);
             Assert.Equal(parameterName, argumentException.ParamName);
         }
     }
@@ -114,20 +100,17 @@ public static class Scenario
     /// <param name="action">An action taking a nullable string value that
     /// should be used to cause an exception to be thrown.</param>
     /// <param name="parameterName">The name of the parameter under test.</param>
+    /// <returns>A task denoting the completion of the assertion.</returns>
     public static async Task ThrowsWhenArgumentIsEmptyOrWhitespaceAsync(
-        Func<string, Task> action,
-        string parameterName
-    )
+        Func<string, Task> action, string parameterName)
     {
         foreach (var emptyString in TestConstants.EmptyStrings)
         {
             var argumentException = await Assert.ThrowsAsync<ArgumentException>(
-                () => action(emptyString)
-            );
+                () => action(emptyString));
             Assert.Equal(
                 $"The value cannot be an empty string or composed entirely of whitespace. (Parameter '{parameterName}')",
-                argumentException.Message
-            );
+                argumentException.Message);
             Assert.Equal(parameterName, argumentException.ParamName);
         }
     }
@@ -142,9 +125,7 @@ public static class Scenario
     /// should be used to cause an exception to be thrown.</param>
     /// <param name="parameterName">The name of the parameter under test.</param>
     public static void ThrowsWhenArgumentIsNullOrEmptyOrWhitespace(
-        Action<string?> action,
-        string parameterName
-    )
+        Action<string?> action, string parameterName)
     {
         ThrowsWhenArgumentIsNull(() => action(null!), parameterName);
         ThrowsWhenArgumentIsEmptyOrWhitespace(action, parameterName);
@@ -159,10 +140,9 @@ public static class Scenario
     /// <param name="action">An action taking a nullable string value that
     /// should be used to cause an exception to be thrown.</param>
     /// <param name="parameterName">The name of the parameter under test.</param>
+    /// <returns>A task denoting the completion of the assertion.</returns>
     public static async Task ThrowsWhenArgumentIsNullOrEmptyOrWhitespaceAsync(
-        Func<string?, Task> action,
-        string parameterName
-    )
+        Func<string?, Task> action, string parameterName)
     {
         await ThrowsWhenArgumentIsNullAsync(() => action(null!), parameterName);
         await ThrowsWhenArgumentIsEmptyOrWhitespaceAsync(action, parameterName);
@@ -176,19 +156,15 @@ public static class Scenario
     /// should be used to cause the appropriate exception to be thrown.</param>
     /// <param name="parameterName">The name of the parameter under test.</param>
     public static void ThrowsWhenArgumentElementIsNullOrEmptyOrWhitespace(
-        Action<string?> action,
-        string parameterName
-    )
+        Action<string?> action, string parameterName)
     {
         foreach (var invalidElement in TestConstants.EmptyStringsWithNull)
         {
             var argumentException = Assert.Throws<ArgumentException>(
-                () => action(invalidElement)
-            );
+                () => action(invalidElement));
             Assert.Equal(
                 $"Value cannot include null, empty string, or strings composed entirely of whitespace. (Parameter '{parameterName}')",
-                argumentException.Message
-            );
+                argumentException.Message);
             Assert.Equal(parameterName, argumentException.ParamName);
         }
     }
@@ -200,20 +176,17 @@ public static class Scenario
     /// <param name="action">An action taking a nullable string value that
     /// should be used to cause the appropriate exception to be thrown.</param>
     /// <param name="parameterName">The name of the parameter under test.</param>
+    /// <returns>A task denoting the completion of the assertion.</returns>
     public static async Task ThrowsWhenArgumentElementIsNullOrEmptyOrWhitespaceAsync(
-        Func<string?, Task> action,
-        string parameterName
-    )
+        Func<string?, Task> action, string parameterName)
     {
         foreach (var invalidElement in TestConstants.EmptyStringsWithNull)
         {
             var argumentException = await Assert.ThrowsAsync<ArgumentException>(
-                () => action(invalidElement)
-            );
+                () => action(invalidElement));
             Assert.Equal(
                 $"Value cannot include null, empty string, or strings composed entirely of whitespace. (Parameter '{parameterName}')",
-                argumentException.Message
-            );
+                argumentException.Message);
             Assert.Equal(parameterName, argumentException.ParamName);
         }
     }
@@ -226,20 +199,16 @@ public static class Scenario
     /// cause the appropriate exception to be thrown.</param>
     /// <param name="parameterName">The name of the parameter under test.</param>
     public static void ThrowsWhenArgumentIsNegative(
-        Action<int> action,
-        string parameterName
-    )
+        Action<int> action, string parameterName)
     {
         var negativeValues = new int[] { -1000, -100, -10, -1 };
         foreach (var negativeValue in negativeValues)
         {
             var argumentException = Assert.Throws<ArgumentOutOfRangeException>(
-                () => action(negativeValue)
-            );
+                () => action(negativeValue));
             Assert.Equal(
                 $"Value must be greater than or equal to zero. (Parameter '{parameterName}')",
-                argumentException.Message
-            );
+                argumentException.Message);
             Assert.Equal(parameterName, argumentException.ParamName);
         }
     }
@@ -251,21 +220,18 @@ public static class Scenario
     /// <param name="action">An action taking a int value that should be used to
     /// cause the appropriate exception to be thrown.</param>
     /// <param name="parameterName">The name of the parameter under test.</param>
+    /// <returns>A task denoting the completion of the assertion.</returns>
     public static async Task ThrowsWhenArgumentIsNegativeAsync(
-        Func<int, Task> action,
-        string parameterName
-    )
+        Func<int, Task> action, string parameterName)
     {
         var negativeValues = new int[] { -1000, -100, -10, -1 };
         foreach (var negativeValue in negativeValues)
         {
             var argumentException = await Assert.ThrowsAsync<ArgumentOutOfRangeException>(
-                () => action(negativeValue)
-            );
+                () => action(negativeValue));
             Assert.Equal(
                 $"Value must be greater than or equal to zero. (Parameter '{parameterName}')",
-                argumentException.Message
-            );
+                argumentException.Message);
             Assert.Equal(parameterName, argumentException.ParamName);
         }
     }
@@ -278,20 +244,16 @@ public static class Scenario
     /// cause the appropriate exception to be thrown.</param>
     /// <param name="parameterName">The name of the parameter under test.</param>
     public static void ThrowsWhenArgumentIsNegative(
-        Action<long> action,
-        string parameterName
-    )
+        Action<long> action, string parameterName)
     {
         var negativeValues = new long[] { -1000, -100, -10, -1 };
         foreach (var negativeValue in negativeValues)
         {
             var argumentException = Assert.Throws<ArgumentOutOfRangeException>(
-                () => action(negativeValue)
-            );
+                () => action(negativeValue));
             Assert.Equal(
                 $"Value must be greater than or equal to zero. (Parameter '{parameterName}')",
-                argumentException.Message
-            );
+                argumentException.Message);
             Assert.Equal(parameterName, argumentException.ParamName);
         }
     }
@@ -303,21 +265,18 @@ public static class Scenario
     /// <param name="action">An action taking a long value that should be used to
     /// cause the appropriate exception to be thrown.</param>
     /// <param name="parameterName">The name of the parameter under test.</param>
+    /// <returns>A task denoting the completion of the assertion.</returns>
     public static async Task ThrowsWhenArgumentIsNegativeAsync(
-        Func<long, Task> action,
-        string parameterName
-    )
+        Func<long, Task> action, string parameterName)
     {
         var negativeValues = new long[] { -1000, -100, -10, -1 };
         foreach (var negativeValue in negativeValues)
         {
             var argumentException = await Assert.ThrowsAsync<ArgumentOutOfRangeException>(
-                () => action(negativeValue)
-            );
+                () => action(negativeValue));
             Assert.Equal(
                 $"Value must be greater than or equal to zero. (Parameter '{parameterName}')",
-                argumentException.Message
-            );
+                argumentException.Message);
             Assert.Equal(parameterName, argumentException.ParamName);
         }
     }
@@ -330,20 +289,16 @@ public static class Scenario
     /// cause the appropriate exception to be thrown.</param>
     /// <param name="parameterName">The name of the parameter under test.</param>
     public static void ThrowsWhenArgumentIsNotPositive(
-        Action<int> action,
-        string parameterName
-    )
+        Action<int> action, string parameterName)
     {
         var invalidValues = new int[] { -1000, -100, -10, -1, 0 };
         foreach (var invalidValue in invalidValues)
         {
             var argumentException = Assert.Throws<ArgumentOutOfRangeException>(
-                () => action(invalidValue)
-            );
+                () => action(invalidValue));
             Assert.Equal(
                 $"Value must be greater than zero. (Parameter '{parameterName}')",
-                argumentException.Message
-            );
+                argumentException.Message);
             Assert.Equal(parameterName, argumentException.ParamName);
         }
     }
@@ -355,21 +310,18 @@ public static class Scenario
     /// <param name="action">An action taking a int value that should be used to
     /// cause the appropriate exception to be thrown.</param>
     /// <param name="parameterName">The name of the parameter under test.</param>
+    /// <returns>A task denoting the completion of the assertion.</returns>
     public static async Task ThrowsWhenArgumentIsNotPositiveAsync(
-        Func<int, Task> action,
-        string parameterName
-    )
+        Func<int, Task> action, string parameterName)
     {
         var invalidValues = new int[] { -1000, -100, -10, -1, 0 };
         foreach (var invalidValue in invalidValues)
         {
             var argumentException = await Assert.ThrowsAsync<ArgumentOutOfRangeException>(
-                () => action(invalidValue)
-            );
+                () => action(invalidValue));
             Assert.Equal(
                 $"Value must be greater than zero. (Parameter '{parameterName}')",
-                argumentException.Message
-            );
+                argumentException.Message);
             Assert.Equal(parameterName, argumentException.ParamName);
         }
     }
@@ -382,20 +334,16 @@ public static class Scenario
     /// cause the appropriate exception to be thrown.</param>
     /// <param name="parameterName">The name of the parameter under test.</param>
     public static void ThrowsWhenArgumentIsNotPositive(
-        Action<long> action,
-        string parameterName
-    )
+        Action<long> action, string parameterName)
     {
         var invalidValues = new long[] { -1000, -100, -10, -1, 0 };
         foreach (var invalidValue in invalidValues)
         {
             var argumentException = Assert.Throws<ArgumentOutOfRangeException>(
-                () => action(invalidValue)
-            );
+                () => action(invalidValue));
             Assert.Equal(
                 $"Value must be greater than zero. (Parameter '{parameterName}')",
-                argumentException.Message
-            );
+                argumentException.Message);
             Assert.Equal(parameterName, argumentException.ParamName);
         }
     }
@@ -407,21 +355,18 @@ public static class Scenario
     /// <param name="action">An action taking a long value that should be used to
     /// cause the appropriate exception to be thrown.</param>
     /// <param name="parameterName">The name of the parameter under test.</param>
+    /// <returns>A task denoting the completion of the assertion.</returns>
     public static async Task ThrowsWhenArgumentIsNotPositiveAsync(
-        Func<long, Task> action,
-        string parameterName
-    )
+        Func<long, Task> action, string parameterName)
     {
         var invalidValues = new long[] { -1000, -100, -10, -1, 0 };
         foreach (var invalidValue in invalidValues)
         {
             var argumentException = await Assert.ThrowsAsync<ArgumentOutOfRangeException>(
-                () => action(invalidValue)
-            );
+                () => action(invalidValue));
             Assert.Equal(
                 $"Value must be greater than zero. (Parameter '{parameterName}')",
-                argumentException.Message
-            );
+                argumentException.Message);
             Assert.Equal(parameterName, argumentException.ParamName);
         }
     }
@@ -434,17 +379,13 @@ public static class Scenario
     /// to be thrown.</param>
     /// <param name="subjectName">The name of the subject under test.</param>
     public static void ThrowsWhenOperationEncountersNull(
-        Action action,
-        string subjectName
-    )
+        Action action, string subjectName)
     {
         var exception = Assert.Throws<InvalidOperationException>(
-            () => action()
-        );
+            () => action());
         Assert.Equal(
             $"Value cannot be null. (Subject '{subjectName}')",
-            exception.Message
-        );
+            exception.Message);
     }
 
     /// <summary>
@@ -456,17 +397,13 @@ public static class Scenario
     /// to be thrown.</param>
     /// <param name="subjectName">The name of the subject under test.</param>
     public static void ThrowsWhenOperationEncountersNullElement(
-        Action action,
-        string subjectName
-    )
+        Action action, string subjectName)
     {
         var exception = Assert.Throws<InvalidOperationException>(
-            () => action()
-        );
+            () => action());
         Assert.Equal(
             $"Value cannot include null. (Subject '{subjectName}')",
-            exception.Message
-        );
+            exception.Message);
     }
 
     /// <summary>
@@ -477,16 +414,14 @@ public static class Scenario
     /// <param name="action">An action that should be used to cause an exception
     /// to be thrown.</param>
     /// <param name="subjectName">The name of the subject under test.</param>
+    /// <returns>A task denoting the completion of the assertion.</returns>
     public static async Task ThrowsWhenOperationEncountersElementThatIsNullAsync(
-        Func<Task> action,
-        string subjectName
-    )
+        Func<Task> action, string subjectName)
     {
         var exception = await Assert.ThrowsAsync<InvalidOperationException>(action);
         Assert.Equal(
             $"Value cannot include null. (Subject '{subjectName}')",
-            exception.Message
-        );
+            exception.Message);
     }
 
     /// <summary>
@@ -497,28 +432,23 @@ public static class Scenario
     /// <param name="action">An action that should be used to cause an exception
     /// to be thrown.</param>
     /// <param name="subjectName">The name of the subject under test.</param>
+    /// <returns>A task denoting the completion of the assertion.</returns>
     public static async Task ThrowsWhenOperationEncountersElementThatIsNullOrEmptyOrWhitespaceAsync(
-        Func<string, Task> action,
-        string subjectName
-    )
+        Func<string, Task> action, string subjectName)
     {
         var nullException = await Assert.ThrowsAsync<InvalidOperationException>(
-            () => action(null!)
-        );
+            () => action(null!));
         Assert.Equal(
             $"Value cannot include null. (Subject '{subjectName}')",
-            nullException.Message
-        );
+            nullException.Message);
 
         foreach (var emptyString in TestConstants.EmptyStrings)
         {
             var emptyException = await Assert.ThrowsAsync<InvalidOperationException>(
-                () => action(emptyString)
-            );
+                () => action(emptyString));
             Assert.Equal(
                 $"Value cannot include empty string or strings composed entirely of whitespace. (Subject '{subjectName}')",
-                emptyException.Message
-            );
+                emptyException.Message);
         }
     }
 
@@ -540,6 +470,7 @@ public static class Scenario
     /// </summary>
     /// <param name="action">An action that should be used to cause an exception
     /// to be thrown.</param>
+    /// <returns>A task denoting the completion of the assertion.</returns>
     public static async Task ThrowsWhenServerRespondsWithNullAsync(Func<Task> action)
     {
         var exception = await Assert.ThrowsAsync<InvalidOperationException>(action);

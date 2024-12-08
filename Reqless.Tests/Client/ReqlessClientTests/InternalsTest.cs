@@ -31,13 +31,15 @@ public class InternalsTest : BaseReqlessClientTest
         /// Initializes a new instance of the <see cref="RevealingReqlessClient"/>
         /// class using the given executor instance.
         /// </summary>
-        public RevealingReqlessClient() : base(true)
+        public RevealingReqlessClient()
+            : base(true)
         {
         }
 
         /// <summary>
         /// Exposes access to the protected Now method for testing.
         /// </summary>
+        /// <returns>The internal value of now.</returns>
         public long GetNow() => Now();
     }
 }

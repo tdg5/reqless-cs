@@ -7,18 +7,18 @@ namespace Reqless.Tests.Fixtures.UnitOfWork;
 public class DelegateUnitOfWorkAction
 {
     /// <summary>
-    /// The action to be performed.
-    /// </summary>
-    public Func<IServiceProvider, CancellationToken, Task> Action { get; }
-
-    /// <summary>
-    /// Create an instance of <see cref="DelegateUnitOfWorkAction"/>.
+    /// Initializes a new instance of the <see cref="DelegateUnitOfWorkAction"/>
+    /// class.
     /// </summary>
     /// <param name="action">The action to be performed.</param>
     public DelegateUnitOfWorkAction(
-        Func<IServiceProvider, CancellationToken, Task> action
-    )
+        Func<IServiceProvider, CancellationToken, Task> action)
     {
         Action = action;
     }
+
+    /// <summary>
+    /// Gets the action to be performed.
+    /// </summary>
+    public Func<IServiceProvider, CancellationToken, Task> Action { get; }
 }

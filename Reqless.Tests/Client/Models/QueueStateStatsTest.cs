@@ -29,9 +29,8 @@ public class QueueStateStatsTest
                 "std": {{std}}
             }
             """;
-        var queueStateStats = (
-            JsonSerializer.Deserialize<QueueStateStats>(queueStateStatsJson)
-        );
+        var queueStateStats =
+            JsonSerializer.Deserialize<QueueStateStats>(queueStateStatsJson);
         Assert.NotNull(queueStateStats);
         Assert.Equal(count, queueStateStats.Count);
         Assert.Equal(ExampleHistogramData, queueStateStats.Histogram);
@@ -54,9 +53,8 @@ public class QueueStateStatsTest
             StandardDeviation = 3,
         };
         var queueStateStatsJson = JsonSerializer.Serialize(expectedQueueStateStats);
-        var queueStateStats = (
-            JsonSerializer.Deserialize<QueueStateStats>(queueStateStatsJson)
-        );
+        var queueStateStats =
+            JsonSerializer.Deserialize<QueueStateStats>(queueStateStatsJson);
         Assert.Equivalent(expectedQueueStateStats, queueStateStats);
     }
 }

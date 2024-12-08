@@ -1,5 +1,5 @@
-using Reqless.Client.Models;
 using Reqless.Client;
+using Reqless.Client.Models;
 using Reqless.Common.Utilities;
 using Reqless.Tests.Common.Client.Models;
 using Reqless.Tests.Common.TestHelpers;
@@ -16,21 +16,21 @@ public class PeekJobsTest : BaseReqlessClientTest
     /// <see cref="ReqlessClient.PeekJobsAsync"/> should throw if the queue name
     /// is null, empty, or only whitespace.
     /// </summary>
+    /// <returns>A task denoting the completion of the test.</returns>
     [Fact]
     public async Task ThrowsIfQueueNameIsNullOrEmptyOrOnlyWhitespace()
     {
         await Scenario.ThrowsWhenArgumentIsNullOrEmptyOrWhitespaceAsync(
             (invalidQueueName) => WithClientWithExecutorMockForExpectedArguments(
-                subject => subject.PeekJobsAsync(invalidQueueName!)
-            ),
-            "queueName"
-        );
+                subject => subject.PeekJobsAsync(invalidQueueName!)),
+            "queueName");
     }
 
     /// <summary>
     /// <see cref="ReqlessClient.PeekJobsAsync"/> should return the job returned
     /// by the server.
     /// </summary>
+    /// <returns>A task denoting the completion of the test.</returns>
     [Fact]
     public async Task ReturnsTheJobReturnedByTheServer()
     {
@@ -39,8 +39,7 @@ public class PeekJobsTest : BaseReqlessClientTest
         List<Job> jobs = await WithClientWithExecutorMockForExpectedArguments(
             subject => subject.PeekJobsAsync(ExampleQueueName),
             expectedArguments: ["queue.peek", 0, ExampleQueueName, 0, 25],
-            returnValue: $"[{jobJson}, {otherJobJson}]"
-        );
+            returnValue: $"[{jobJson}, {otherJobJson}]");
         Assert.Equal(2, jobs.Count);
         var expectedJids = new string[] { ExampleJid, ExampleJidOther };
         foreach (var job in jobs)
@@ -53,15 +52,15 @@ public class PeekJobsTest : BaseReqlessClientTest
     /// <summary>
     /// <see cref="ReqlessClient.PeekJobsAsync"/> should return an empty array
     /// if the server responds with an empty array.
-    /// /// </summary>
+    /// </summary>
+    /// <returns>A task denoting the completion of the test.</returns>
     [Fact]
     public async Task ReturnsEmptyArrayIfServerRespondsWithEmptyArray()
     {
         List<Job> jobs = await WithClientWithExecutorMockForExpectedArguments(
             subject => subject.PeekJobsAsync(ExampleQueueName),
             expectedArguments: ["queue.peek", 0, ExampleQueueName, 0, 25],
-            returnValue: "[]"
-        );
+            returnValue: "[]");
         Assert.Empty(jobs);
     }
 
@@ -69,14 +68,14 @@ public class PeekJobsTest : BaseReqlessClientTest
     /// <see cref="ReqlessClient.PeekJobsAsync"/> should return an empty array
     /// if the server responds with an empty object.
     /// </summary>
+    /// <returns>A task denoting the completion of the test.</returns>
     [Fact]
     public async Task ReturnsEmptyArrayIfServerRespondsWithEmptyObject()
     {
         List<Job> jobs = await WithClientWithExecutorMockForExpectedArguments(
             subject => subject.PeekJobsAsync(ExampleQueueName),
             expectedArguments: ["queue.peek", 0, ExampleQueueName, 0, 25],
-            returnValue: "{}"
-        );
+            returnValue: "{}");
         Assert.Empty(jobs);
     }
 
@@ -84,6 +83,7 @@ public class PeekJobsTest : BaseReqlessClientTest
     /// <see cref="ReqlessClient.PeekJobsAsync"/> throws if the server returns
     /// null.
     /// </summary>
+    /// <returns>A task denoting the completion of the test.</returns>
     [Fact]
     public async Task ThrowsIfServerReturnsNull()
     {
@@ -91,15 +91,14 @@ public class PeekJobsTest : BaseReqlessClientTest
             () => WithClientWithExecutorMockForExpectedArguments(
                 subject => subject.PeekJobsAsync(ExampleQueueName),
                 expectedArguments: ["queue.peek", 0, ExampleQueueName, 0, 25],
-                returnValue: null
-            )
-        );
+                returnValue: null));
     }
 
     /// <summary>
     /// <see cref="ReqlessClient.PeekJobsAsync"/> throws if the job JSON can't be
     /// deserialized into a job.
     /// </summary>
+    /// <returns>A task denoting the completion of the test.</returns>
     [Fact]
     public async Task ThrowsIfJobJsonIsInvalid()
     {
@@ -107,9 +106,7 @@ public class PeekJobsTest : BaseReqlessClientTest
             () => WithClientWithExecutorMockForExpectedArguments(
                 subject => subject.PeekJobsAsync(ExampleQueueName),
                 expectedArguments: ["queue.peek", 0, ExampleQueueName, 0, 25],
-                returnValue: "null"
-            )
-        );
+                returnValue: "null"));
         Assert.Equal("Failed to deserialize jobs JSON: null", exception.Message);
     }
 }

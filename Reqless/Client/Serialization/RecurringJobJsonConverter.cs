@@ -13,10 +13,11 @@ public class RecurringJobJsonConverter : JsonConverter<RecurringJob>
     /// <summary>
     /// The properties that are required to be present in the JSON object.
     /// </summary>
-    protected static readonly string[] RequiredProperties = {
+    protected static readonly string[] RequiredProperties =
+    [
         "backlog", "count", "data", "interval", "jid", "klass", "priority",
         "queue", "retries", "state", "tags", "throttles",
-    };
+    ];
 
     /// <summary>
     /// Deserialize the JSON representation of a <see cref="RecurringJob"/>
@@ -25,6 +26,7 @@ public class RecurringJobJsonConverter : JsonConverter<RecurringJob>
     /// <param name="reader">The JSON reader to read the object from.</param>
     /// <param name="typeToConvert">The type of object to convert.</param>
     /// <param name="options">An object that specifies serialization options to use.</param>
+    /// <returns>The deserialized <see cref="RecurringJob"/> object.</returns>
     public override RecurringJob Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
     {
         Dictionary<string, bool> encounteredProperties = [];
@@ -124,8 +126,7 @@ public class RecurringJobJsonConverter : JsonConverter<RecurringJob>
             retries: retries!.Value,
             state: state!,
             tags: tags!,
-            throttles: throttles!
-        );
+            throttles: throttles!);
     }
 
     /// <summary>

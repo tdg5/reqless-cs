@@ -18,8 +18,7 @@ public class JobTest
     {
         Scenario.ThrowsWhenArgumentIsNullOrEmptyOrWhitespace(
             (invalidClassName) => MakeJob(className: invalidClassName),
-            "className"
-        );
+            "className");
     }
 
     /// <summary>
@@ -31,8 +30,7 @@ public class JobTest
     {
         Scenario.ThrowsWhenArgumentIsNullOrEmptyOrWhitespace(
             (invalidData) => MakeJob(data: invalidData),
-            "data"
-        );
+            "data");
     }
 
     /// <summary>
@@ -44,8 +42,7 @@ public class JobTest
     {
         Scenario.ThrowsWhenArgumentIsNull(
             () => MakeJob(dependencies: Maybe<string[]>.Some(null!)),
-            "dependencies"
-        );
+            "dependencies");
     }
 
     /// <summary>
@@ -57,10 +54,8 @@ public class JobTest
     {
         Scenario.ThrowsWhenArgumentElementIsNullOrEmptyOrWhitespace(
             (invalidDependency) => MakeJob(
-                dependencies: Maybe<string[]>.Some([invalidDependency!])
-            ),
-            "dependencies"
-        );
+                dependencies: Maybe<string[]>.Some([invalidDependency!])),
+            "dependencies");
     }
 
     /// <summary>
@@ -72,8 +67,7 @@ public class JobTest
     {
         Scenario.ThrowsWhenArgumentIsNull(
             () => MakeJob(dependents: Maybe<string[]>.Some(null!)),
-            "dependents"
-        );
+            "dependents");
     }
 
     /// <summary>
@@ -85,10 +79,8 @@ public class JobTest
     {
         Scenario.ThrowsWhenArgumentElementIsNullOrEmptyOrWhitespace(
             (invalidDependent) => MakeJob(
-                dependents: Maybe<string[]>.Some([invalidDependent!])
-            ),
-            "dependents"
-        );
+                dependents: Maybe<string[]>.Some([invalidDependent!])),
+            "dependents");
     }
 
     /// <summary>
@@ -100,10 +92,8 @@ public class JobTest
     {
         Scenario.ThrowsWhenArgumentIsNotPositive(
             (long invalidExpires) => MakeJob(
-                expires: Maybe.Some(invalidExpires)
-            ),
-            "expires"
-        );
+                expires: Maybe.Some(invalidExpires)),
+            "expires");
     }
 
     /// <summary>
@@ -115,8 +105,7 @@ public class JobTest
     {
         Scenario.ThrowsWhenArgumentIsNull(
             () => MakeJob(history: Maybe<JobEvent[]>.Some(null!)),
-            "history"
-        );
+            "history");
     }
 
     /// <summary>
@@ -127,8 +116,7 @@ public class JobTest
     public void Constructor_History_ThrowsWhenAnyValueIsNull()
     {
         var exception = Assert.Throws<ArgumentException>(
-            () => MakeJob(history: Maybe<JobEvent[]>.Some([null!]))
-        );
+            () => MakeJob(history: Maybe<JobEvent[]>.Some([null!])));
         Assert.Equal("history", exception.ParamName);
         Assert.Equal("Value cannot include null. (Parameter 'history')", exception.Message);
     }
@@ -142,8 +130,7 @@ public class JobTest
     {
         Scenario.ThrowsWhenArgumentIsNullOrEmptyOrWhitespace(
             (invalidJid) => MakeJob(jid: invalidJid),
-            "jid"
-        );
+            "jid");
     }
 
     /// <summary>
@@ -155,10 +142,8 @@ public class JobTest
     {
         Scenario.ThrowsWhenArgumentIsNegative(
             (invalidPriority) => MakeJob(
-                priority: Maybe.Some(invalidPriority)
-            ),
-            "priority"
-        );
+                priority: Maybe.Some(invalidPriority)),
+            "priority");
     }
 
     /// <summary>
@@ -180,8 +165,7 @@ public class JobTest
     {
         Scenario.ThrowsWhenArgumentIsEmptyOrWhitespace(
             (invalidQueueName) => MakeJob(queueName: invalidQueueName),
-            "queueName"
-        );
+            "queueName");
     }
 
     /// <summary>
@@ -194,16 +178,14 @@ public class JobTest
         foreach (var invalidValue in new int[] { -100, -2 })
         {
             var exception = Assert.Throws<ArgumentOutOfRangeException>(
-                () => MakeJob(remaining: Maybe.Some(invalidValue))
-            );
+                () => MakeJob(remaining: Maybe.Some(invalidValue)));
             Assert.Equal("remaining", exception.ParamName);
             Assert.Equal(
                 $"""
                 Value must be a whole number greater than or equal to -1. (Parameter 'remaining')
                 Actual value was {invalidValue}.
                 """,
-                exception.Message
-            );
+                exception.Message);
         }
     }
 
@@ -219,17 +201,14 @@ public class JobTest
         var exception = Assert.Throws<ArgumentOutOfRangeException>(
             () => MakeJob(
                 remaining: Maybe.Some(remaining),
-                retries: Maybe.Some(retries)
-            )
-        );
+                retries: Maybe.Some(retries)));
         Assert.Equal("remaining", exception.ParamName);
         Assert.Equal(
             $"""
             Value must be less than or equal to retries ({retries}). (Parameter 'remaining')
             Actual value was {remaining}.
             """,
-            exception.Message
-        );
+            exception.Message);
     }
 
     /// <summary>
@@ -241,8 +220,7 @@ public class JobTest
     {
         Scenario.ThrowsWhenArgumentIsNegative(
             (invalidRetries) => MakeJob(retries: Maybe.Some(invalidRetries)),
-            "retries"
-        );
+            "retries");
     }
 
     /// <summary>
@@ -254,8 +232,7 @@ public class JobTest
     {
         Scenario.ThrowsWhenArgumentIsEmptyOrWhitespace(
             (invalidSpawnedFromJid) => MakeJob(spawnedFromJid: invalidSpawnedFromJid),
-            "spawnedFromJid"
-        );
+            "spawnedFromJid");
     }
 
     /// <summary>
@@ -267,8 +244,7 @@ public class JobTest
     {
         Scenario.ThrowsWhenArgumentIsNullOrEmptyOrWhitespace(
             (invalidState) => MakeJob(state: invalidState),
-            "state"
-        );
+            "state");
     }
 
     /// <summary>
@@ -280,8 +256,7 @@ public class JobTest
     {
         Scenario.ThrowsWhenArgumentIsNull(
             () => MakeJob(tags: Maybe<string[]>.Some(null!)),
-            "tags"
-        );
+            "tags");
     }
 
     /// <summary>
@@ -293,8 +268,7 @@ public class JobTest
     {
         Scenario.ThrowsWhenArgumentElementIsNullOrEmptyOrWhitespace(
             (invalidTag) => MakeJob(tags: Maybe<string[]>.Some([invalidTag!])),
-            "tags"
-        );
+            "tags");
     }
 
     /// <summary>
@@ -306,8 +280,7 @@ public class JobTest
     {
         Scenario.ThrowsWhenArgumentIsNull(
             () => MakeJob(throttles: Maybe<string[]>.Some(null!)),
-            "throttles"
-        );
+            "throttles");
     }
 
     /// <summary>
@@ -319,10 +292,8 @@ public class JobTest
     {
         Scenario.ThrowsWhenArgumentElementIsNullOrEmptyOrWhitespace(
             (invalidThrottle) => MakeJob(
-                throttles: Maybe<string[]>.Some([invalidThrottle!])
-            ),
-            "throttles"
-        );
+                throttles: Maybe<string[]>.Some([invalidThrottle!])),
+            "throttles");
     }
 
     /// <summary>
@@ -344,8 +315,7 @@ public class JobTest
     {
         Scenario.ThrowsWhenArgumentIsEmptyOrWhitespace(
             (invalidWorkerName) => MakeJob(workerName: invalidWorkerName),
-            "workerName"
-        );
+            "workerName");
     }
 
     /// <summary>
@@ -376,7 +346,8 @@ public class JobTest
     /// <param name="throttles">The throttles applied to the job.</param>
     /// <param name="tracked">Whether the job is tracked.</param>
     /// <param name="workerName">The name of the worker that is currently working on the job, if any.</param>
-    public static Job MakeJob(
+    /// <returns>A new instance of <see cref="Job"/>.</returns>
+    private static Job MakeJob(
         string? className = "className",
         string? data = "{}",
         Maybe<string[]>? dependencies = null,
@@ -394,39 +365,42 @@ public class JobTest
         Maybe<string[]>? tags = null,
         Maybe<string[]>? throttles = null,
         bool tracked = false,
-        string? workerName = "workerName"
-    )
+        string? workerName = "workerName")
     {
-        string[]? _dependencies = (dependencies ?? Maybe<string[]>.None).GetOrDefault([]);
-        string[]? _dependents = (dependents ?? Maybe<string[]>.None).GetOrDefault([]);
-        long _expires = (expires ?? Maybe<long>.None)
+        string[]? dependenciesOrDefault =
+            (dependencies ?? Maybe<string[]>.None).GetOrDefault([]);
+        string[]? dependentsOrDefault =
+            (dependents ?? Maybe<string[]>.None).GetOrDefault([]);
+        long expiresOrDefault = (expires ?? Maybe<long>.None)
             .GetOrDefault(DateTimeOffset.UtcNow.ToUnixTimeMilliseconds() + 60000);
-        JobFailure? _failure = (failure ?? Maybe<JobFailure>.Some(null!)).GetOrDefault(null!);
-        JobEvent[]? _history = (history ?? Maybe<JobEvent[]>.Some([])).GetOrDefault([]);
-        int _priority = (priority ?? Maybe<int>.None).GetOrDefault(0);
-        int _remaining = (remaining ?? Maybe<int>.None).GetOrDefault(5);
-        int _retries = (retries ?? Maybe<int>.None).GetOrDefault(5);
-        string[]? _tags = (tags ?? Maybe<string[]>.None).GetOrDefault([]);
-        string[]? _throttles = (throttles ?? Maybe<string[]>.None).GetOrDefault([]);
+        JobFailure? failureOrDefault =
+            (failure ?? Maybe<JobFailure>.Some(null!)).GetOrDefault(null!);
+        JobEvent[]? historyOrDefault =
+            (history ?? Maybe<JobEvent[]>.Some([])).GetOrDefault([]);
+        int priorityOrDefault = (priority ?? Maybe<int>.None).GetOrDefault(0);
+        int remainingOrDefault = (remaining ?? Maybe<int>.None).GetOrDefault(5);
+        int retriesOrDefault = (retries ?? Maybe<int>.None).GetOrDefault(5);
+        string[]? tagsOrDefault = (tags ?? Maybe<string[]>.None).GetOrDefault([]);
+        string[]? throttlesOrDefault =
+            (throttles ?? Maybe<string[]>.None).GetOrDefault([]);
         return new Job(
             className: className!,
             data: data!,
-            dependencies: _dependencies!,
-            dependents: _dependents!,
-            expires: _expires,
-            failure: _failure,
-            history: _history!,
+            dependencies: dependenciesOrDefault!,
+            dependents: dependentsOrDefault!,
+            expires: expiresOrDefault,
+            failure: failureOrDefault,
+            history: historyOrDefault!,
             jid: jid!,
-            priority: _priority,
+            priority: priorityOrDefault,
             queueName: queueName!,
-            remaining: _remaining,
-            retries: _retries,
+            remaining: remainingOrDefault,
+            retries: retriesOrDefault,
             spawnedFromJid: spawnedFromJid,
             state: state!,
-            tags: _tags!,
-            throttles: _throttles!,
+            tags: tagsOrDefault!,
+            throttles: throttlesOrDefault!,
             tracked: tracked,
-            workerName: workerName!
-        );
+            workerName: workerName!);
     }
 }

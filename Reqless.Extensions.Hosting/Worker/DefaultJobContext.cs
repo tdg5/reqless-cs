@@ -7,9 +7,6 @@ namespace Reqless.Extensions.Hosting.Worker;
 /// </summary>
 public class DefaultJobContext : IJobContext
 {
-    /// <inheritdoc />
-    public Job Job { get; }
-
     /// <summary>
     /// Initializes a new instance of the <see cref="DefaultJobContext"/> class.
     /// </summary>
@@ -20,4 +17,7 @@ public class DefaultJobContext : IJobContext
 
         Job = job;
     }
+
+    /// <inheritdoc />
+    public Job Job { get; }
 }

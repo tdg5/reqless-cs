@@ -12,57 +12,8 @@ namespace Reqless.Client.Models;
 public class Job : BaseJob
 {
     /// <summary>
-    /// The JIDs of jobs that must complete before the job is eligible to run.
-    /// </summary>
-    public string[] Dependencies { get; }
-
-    /// <summary>
-    /// The JIDs of jobs that depend on the completion of the job before they
-    /// can run.
-    /// </summary>
-    public string[] Dependents { get; }
-
-    /// <summary>
-    /// The time at which the lease on the job will expire causing the job to
-    /// be considered lost and become eligible for scheduling again.
-    /// </summary>
-    public long? Expires { get; }
-
-    /// <summary>
-    /// Information about the last time the job failed, if any.
-    /// </summary>
-    public JobFailure? Failure { get; }
-
-    /// <summary>
-    /// A list of events that have happened to the job over the course of its
-    /// lifetime.
-    /// </summary>
-    public JobEvent[] History { get; }
-
-    /// <summary>
-    /// The number of retry attempts remaining for the job before all retries
-    /// are exhausted.
-    /// </summary>
-    public int Remaining { get; }
-
-    /// <summary>
-    /// The JID, if any, of the job that spawned the job.
-    /// </summary>
-    public string? SpawnedFromJid { get; }
-
-    /// <summary>
-    /// Flag indicating whether or not the job is being tracked.
-    /// </summary>
-    public bool Tracked { get; }
-
-    /// <summary>
-    /// The name of the worker that is currently working on the job, if any.
-    /// </summary>
-    public string? WorkerName { get; }
-
-    /// <summary>
-    /// Fully construct an instance of a job, tyically from a JSON payload given
-    /// by the server.
+    /// Initializes a new instance of the <see cref="Job"/> class, typically
+    /// from a JSON response returned by the server.
     /// </summary>
     /// <param name="className">The name of the class that will be used to
     /// perform the job.</param>
@@ -90,7 +41,7 @@ public class Job : BaseJob
     /// <param name="retries">The total number of times the job will been
     /// retried before the job is declared failed.</param>
     /// <param name="spawnedFromJid">The JID, if any, of the job that spawned
-    /// the job</param>
+    /// the job.</param>
     /// <param name="state">The current state of the job.</param>
     /// <param name="tags">A list of tags that are applied to the job for
     /// tracking purposes.</param>
@@ -119,8 +70,8 @@ public class Job : BaseJob
         string[] tags,
         string[] throttles,
         bool tracked,
-        string? workerName
-    ) : base(className, data, jid, priority, queueName, retries, state, tags, throttles)
+        string? workerName)
+        : base(className, data, jid, priority, queueName, retries, state, tags, throttles)
     {
         ArgumentValidation.ThrowIfAnyNullOrWhitespace(dependencies, nameof(dependencies));
         ArgumentValidation.ThrowIfAnyNullOrWhitespace(dependents, nameof(dependents));
@@ -131,21 +82,21 @@ public class Job : BaseJob
         {
             ArgumentValidation.ThrowIfNotPositive(expires.Value, nameof(expires));
         }
+
         if (remaining < -1)
         {
             throw new ArgumentOutOfRangeException(
                 nameof(remaining),
                 remaining,
-                "Value must be a whole number greater than or equal to -1."
-            );
+                "Value must be a whole number greater than or equal to -1.");
         }
+
         if (remaining > retries)
         {
             throw new ArgumentOutOfRangeException(
                 nameof(remaining),
                 remaining,
-                $"Value must be less than or equal to retries ({retries})."
-            );
+                $"Value must be less than or equal to retries ({retries}).");
         }
 
         Dependencies = dependencies;
@@ -158,4 +109,53 @@ public class Job : BaseJob
         Tracked = tracked;
         WorkerName = workerName;
     }
+
+    /// <summary>
+    /// Gets the JIDs of jobs that must complete before the job is eligible to run.
+    /// </summary>
+    public string[] Dependencies { get; }
+
+    /// <summary>
+    /// Gets the JIDs of jobs that depend on the completion of the job before they
+    /// can run.
+    /// </summary>
+    public string[] Dependents { get; }
+
+    /// <summary>
+    /// Gets the time at which the lease on the job will expire causing the job
+    /// to be considered lost and become eligible for scheduling again.
+    /// </summary>
+    public long? Expires { get; }
+
+    /// <summary>
+    /// Gets information about the last time the job failed, if any.
+    /// </summary>
+    public JobFailure? Failure { get; }
+
+    /// <summary>
+    /// Gets the list of events that have happened to the job over the course of
+    /// its lifetime.
+    /// </summary>
+    public JobEvent[] History { get; }
+
+    /// <summary>
+    /// Gets the number of retry attempts remaining for the job before all retries
+    /// are exhausted.
+    /// </summary>
+    public int Remaining { get; }
+
+    /// <summary>
+    /// Gets the JID, if any, of the job that spawned the job.
+    /// </summary>
+    public string? SpawnedFromJid { get; }
+
+    /// <summary>
+    /// Gets a value indicating whether or not the job is being tracked.
+    /// </summary>
+    public bool Tracked { get; }
+
+    /// <summary>
+    /// Gets the name of the worker that is currently working on the job, if any.
+    /// </summary>
+    public string? WorkerName { get; }
 }

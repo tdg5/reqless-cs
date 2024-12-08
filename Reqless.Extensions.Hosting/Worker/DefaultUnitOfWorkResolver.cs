@@ -9,19 +9,18 @@ namespace Reqless.Extensions.Hosting.Worker;
 /// </summary>
 public class DefaultUnitOfWorkResolver : IUnitOfWorkResolver
 {
-    Dictionary<string, Type>? _cache;
-
     private readonly ITypeImplementationResolver _typeImplementationResolver;
 
+    private Dictionary<string, Type>? _cache;
+
     /// <summary>
-    /// Create a new instance of <see cref="DefaultUnitOfWorkResolver"/>.
+    /// Initializes a new instance of the <see cref="DefaultUnitOfWorkResolver"/> class.
     /// </summary>
     /// <param name="typeImplementationResolver">An optional <see
     /// cref="ITypeImplementationResolver"/> instance that should be used to
     /// resolve types.</param>
     public DefaultUnitOfWorkResolver(
-        ITypeImplementationResolver? typeImplementationResolver = null
-    )
+        ITypeImplementationResolver? typeImplementationResolver = null)
     {
         _typeImplementationResolver =
             typeImplementationResolver ?? new TypeImplementationResolver();
@@ -36,17 +35,17 @@ public class DefaultUnitOfWorkResolver : IUnitOfWorkResolver
         {
             _cache = BuildTypeLookup(typeof(IUnitOfWork));
         }
+
         // Since a failed lookup invalidates the cache, throw an exception to
         // discourage further lookups with the same type name.
         var result = _cache.GetValueOrDefault(typeName)
             ?? throw new TypeLoadException(
                 $"No type implementing {typeof(IUnitOfWork)} with the full name"
-                  + $" '{typeName}' was found."
-            );
+                  + $" '{typeName}' was found.");
         return result;
     }
 
-    Dictionary<string, Type> BuildTypeLookup(Type targetType)
+    private Dictionary<string, Type> BuildTypeLookup(Type targetType)
     {
         var cache = new Dictionary<string, Type>();
         var types = _typeImplementationResolver.GetAllImplementingTypes(targetType);
@@ -61,11 +60,12 @@ public class DefaultUnitOfWorkResolver : IUnitOfWorkResolver
             {
                 throw new InvalidOperationException(
                     $"Multiple types implementing {targetType} with the"
-                      + $" full name '{fullName}' were found."
-                );
+                      + $" full name '{fullName}' were found.");
             }
+
             cache[fullName] = type;
         }
+
         return cache;
     }
 }

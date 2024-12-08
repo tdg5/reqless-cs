@@ -9,12 +9,6 @@ namespace Reqless.Client.Models;
 public class PoppedEvent : JobEvent
 {
     /// <summary>
-    /// The name of the worker that popped the job.
-    /// </summary>
-    [JsonPropertyName("worker")]
-    public string WorkerName { get; }
-
-    /// <summary>
     /// Initializes a new instance of the <see cref="PoppedEvent"/> class.
     /// </summary>
     /// <param name="when">The time at which the job was popped.</param>
@@ -27,11 +21,17 @@ public class PoppedEvent : JobEvent
     /// is empty or whitespace.</exception>
     public PoppedEvent(
         long when,
-        string workerName
-    ) : base("popped", when)
+        string workerName)
+        : base("popped", when)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(workerName, nameof(workerName));
 
         WorkerName = workerName;
     }
+
+    /// <summary>
+    /// Gets the name of the worker that popped the job.
+    /// </summary>
+    [JsonPropertyName("worker")]
+    public string WorkerName { get; }
 }

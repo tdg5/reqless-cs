@@ -1,5 +1,5 @@
-using Reqless.Client.Models;
 using Reqless.Client;
+using Reqless.Client.Models;
 using Reqless.Tests.Common.TestHelpers;
 using System.Text.Json;
 
@@ -14,6 +14,7 @@ public class GetAllQueueCountsTest : BaseReqlessClientTest
     /// <see cref="ReqlessClient.GetAllQueueCountsAsync"/> should throw if server
     /// returns null.
     /// </summary>
+    /// <returns>A task denoting the completion of the test.</returns>
     [Fact]
     public async Task ThrowsIfServerReturnsNull()
     {
@@ -21,15 +22,14 @@ public class GetAllQueueCountsTest : BaseReqlessClientTest
             () => WithClientWithExecutorMockForExpectedArguments(
                 subject => subject.GetAllQueueCountsAsync(),
                 expectedArguments: ["queues.counts", 0],
-                returnValue: null
-            )
-        );
+                returnValue: null));
     }
 
     /// <summary>
     /// <see cref="ReqlessClient.GetAllQueueCountsAsync"/> should throw if server
     /// retruns JSON that can't be deserialized.
     /// </summary>
+    /// <returns>A task denoting the completion of the test.</returns>
     [Fact]
     public async Task ThrowsIfServerReturnsJsonThatCannotBeDeserialized()
     {
@@ -37,9 +37,7 @@ public class GetAllQueueCountsTest : BaseReqlessClientTest
             () => WithClientWithExecutorMockForExpectedArguments(
                 subject => subject.GetAllQueueCountsAsync(),
                 expectedArguments: ["queues.counts", 0],
-                returnValue: "null"
-            )
-        );
+                returnValue: "null"));
         Assert.Equal("Failed to deserialize all queue counts JSON: null", exception.Message);
     }
 
@@ -47,14 +45,14 @@ public class GetAllQueueCountsTest : BaseReqlessClientTest
     /// <see cref="ReqlessClient.GetAllQueueCountsAsync"/> should return an
     /// empty array when the server returns an empty JSON object.
     /// </summary>
+    /// <returns>A task denoting the completion of the test.</returns>
     [Fact]
     public async Task ReturnsEmptyArrayWhenServerReturnsJsonObject()
     {
         var allQueueCounts = await WithClientWithExecutorMockForExpectedArguments(
             subject => subject.GetAllQueueCountsAsync(),
             expectedArguments: ["queues.counts", 0],
-            returnValue: "{}"
-        );
+            returnValue: "{}");
         Assert.Empty(allQueueCounts);
     }
 
@@ -62,6 +60,7 @@ public class GetAllQueueCountsTest : BaseReqlessClientTest
     /// <see cref="ReqlessClient.GetAllQueueCountsAsync"/> should return a valid
     /// result returned by the server.
     /// </summary>
+    /// <returns>A task denoting the completion of the test.</returns>
     [Fact]
     public async Task ReturnsValidResultFromTheServer()
     {
@@ -75,14 +74,13 @@ public class GetAllQueueCountsTest : BaseReqlessClientTest
             Scheduled = 0,
             Stalled = 0,
             Throttled = 0,
-            Waiting = 0
+            Waiting = 0,
         };
         var countsJson = JsonSerializer.Serialize<QueueCounts[]>([expectedCounts]);
         var allQueueCounts = await WithClientWithExecutorMockForExpectedArguments(
             subject => subject.GetAllQueueCountsAsync(),
             expectedArguments: ["queues.counts", 0],
-            returnValue: countsJson
-        );
+            returnValue: countsJson);
         Assert.Single(allQueueCounts);
         Assert.Equivalent(expectedCounts, allQueueCounts[0]);
     }

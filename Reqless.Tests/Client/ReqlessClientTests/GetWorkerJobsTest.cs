@@ -12,6 +12,7 @@ public class GetWorkerJobsTest : BaseReqlessClientTest
     /// <see cref="ReqlessClient.GetWorkerJobsAsync"/> should throw if the
     /// server returns null.
     /// </summary>
+    /// <returns>A task denoting the completion of the test.</returns>
     [Fact]
     public async Task ThrowsIfTheServerReturnsNull()
     {
@@ -19,43 +20,37 @@ public class GetWorkerJobsTest : BaseReqlessClientTest
             () => WithClientWithExecutorMockForExpectedArguments(
                 subject => subject.GetWorkerJobsAsync(ExampleWorkerName),
                 expectedArguments: ["worker.jobs", 0, ExampleWorkerName],
-                returnValue: null
-            )
-        );
+                returnValue: null));
         Assert.Equal(
-            "Server returned unexpected null result.",
-            exception.Message
-        );
+            "Server returned unexpected null result.", exception.Message);
     }
 
     /// <summary>
     /// <see cref="ReqlessClient.GetWorkerJobsAsync"/> should throw if the
     /// server returns JSON that can't be deserialized.
     /// </summary>
+    /// <returns>A task denoting the completion of the test.</returns>
     [Fact]
     public async Task ThrowsIfTheServerReturnsJsonThatCannotBeDeserialized()
     {
         var exception = await WithClientWithExecutorMockForExpectedArguments(
             subject => Assert.ThrowsAsync<JsonException>(
-                () => subject.GetWorkerJobsAsync(ExampleWorkerName)
-            ),
+                () => subject.GetWorkerJobsAsync(ExampleWorkerName)),
             expectedArguments: [
                 "worker.jobs",
                 0,
                 ExampleWorkerName,
             ],
-            returnValue: "null"
-        );
+            returnValue: "null");
         Assert.Equal(
-            "Failed to deserialize worker jobs JSON: null",
-            exception.Message
-        );
+            "Failed to deserialize worker jobs JSON: null", exception.Message);
     }
 
     /// <summary>
     /// <see cref="ReqlessClient.GetWorkerJobsAsync"/> should return the
     /// expected worker jobs data.
     /// </summary>
+    /// <returns>A task denoting the completion of the test.</returns>
     [Fact]
     public async Task ReturnsExpectedWorkerJobs()
     {
@@ -67,8 +62,7 @@ public class GetWorkerJobsTest : BaseReqlessClientTest
                 0,
                 ExampleWorkerName,
             ],
-            returnValue: $$"""{"jobs":["{{ExampleJid}}"], "stalled":["{{expiredJid}}"]}"""
-        );
+            returnValue: $$"""{"jobs":["{{ExampleJid}}"], "stalled":["{{expiredJid}}"]}""");
         Assert.Single(workerJobs.Stalled);
         Assert.Equal(expiredJid, workerJobs.Stalled[0]);
         Assert.Single(workerJobs.Jobs);

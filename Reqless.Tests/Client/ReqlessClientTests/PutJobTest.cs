@@ -15,6 +15,7 @@ public class PutJobTest : BaseReqlessClientTest
     /// <see cref="ReqlessClient.PutJobAsync"/> should call Executor with
     /// the expected arguments.
     /// </summary>
+    /// <returns>A task denoting the completion of the test.</returns>
     [Fact]
     public async Task CallsExecutorWithTheExpectedArguments()
     {
@@ -36,8 +37,7 @@ public class PutJobTest : BaseReqlessClientTest
                 retries,
                 dependencies,
                 tags,
-                throttles
-            ),
+                throttles),
             expectedArguments: [
                 "queue.put",
                 0,
@@ -58,8 +58,7 @@ public class PutJobTest : BaseReqlessClientTest
                 "throttles",
                 JsonSerializer.Serialize(throttles),
             ],
-            returnValue: ExampleJid
-        );
+            returnValue: ExampleJid);
         Assert.Equal(ExampleJid, jidFromPut);
     }
 
@@ -67,41 +66,35 @@ public class PutJobTest : BaseReqlessClientTest
     /// <see cref="ReqlessClient.PutJobAsync"/> should use expected defaults for
     /// optional arguments.
     /// </summary>
+    /// <returns>A task denoting the completion of the test.</returns>
     [Fact]
     public async Task CallsExecutorWithExpectedDefaults()
     {
         var executorMock = new Mock<RedisExecutor>();
         executorMock.Setup(
             mock => mock.ExecuteAsync(It.Is<RedisValue[]>(
-                args => "queue.put" == args[0] &&
-                    0 == args[1] &&
-                    ExampleWorkerName == args[2] &&
-                    ExampleQueueName == args[3] &&
+                args => args[0] == "queue.put" &&
+                    args[1] == 0 &&
+                    args[2] == ExampleWorkerName &&
+                    args[3] == ExampleQueueName &&
                     JidRegex().IsMatch(((string?)args[4])!) &&
-                    ExampleClassName == args[5] &&
-                    ExampleData == args[6] &&
-                    0 == args[7] &&
-                    "depends" == args[8] &&
-                    "[]" == args[9] &&
-                    "priority" == args[10] &&
-                    0 == args[11] &&
-                    "retries" == args[12] &&
-                    5 == args[13] &&
-                    "tags" == args[14] &&
-                    "[]" == args[15] &&
-                    "throttles" == args[16] &&
-                    "[]" == args[17]
-            ))
-        ).Returns(
-            Task.FromResult(RedisResult.Create((RedisValue)ExampleJid))
-        );
+                    args[5] == ExampleClassName &&
+                    args[6] == ExampleData &&
+                    args[7] == 0 &&
+                    args[8] == "depends" &&
+                    args[9] == "[]" &&
+                    args[10] == "priority" &&
+                    args[11] == 0 &&
+                    args[12] == "retries" &&
+                    args[13] == 5 &&
+                    args[14] == "tags" &&
+                    args[15] == "[]" &&
+                    args[16] == "throttles" &&
+                    args[17] == "[]")))
+            .Returns(Task.FromResult(RedisResult.Create((RedisValue)ExampleJid)));
         using var subject = new PredictableNowReqlessClient(executorMock.Object);
         string jidFromPut = await subject.PutJobAsync(
-            ExampleWorkerName,
-            ExampleQueueName,
-            ExampleClassName,
-            ExampleData
-        );
+            ExampleWorkerName, ExampleQueueName, ExampleClassName, ExampleData);
         executorMock.VerifyAll();
         executorMock.VerifyNoOtherCalls();
         Assert.Equal(ExampleJid, jidFromPut);
@@ -111,6 +104,7 @@ public class PutJobTest : BaseReqlessClientTest
     /// <see cref="ReqlessClient.PutJobAsync"/> throws if the server returns
     /// null instead of a jid.
     /// </summary>
+    /// <returns>A task denoting the completion of the test.</returns>
     [Fact]
     public async Task ThrowsIfNullIsReturnedInsteadOfAJid()
     {
@@ -133,8 +127,7 @@ public class PutJobTest : BaseReqlessClientTest
                     retries,
                     dependencies,
                     tags,
-                    throttles
-                ),
+                    throttles),
                 expectedArguments: [
                     "queue.put",
                     0,
@@ -155,15 +148,14 @@ public class PutJobTest : BaseReqlessClientTest
                     "throttles",
                     JsonSerializer.Serialize(throttles),
                 ],
-                returnValue: null
-            )
-        );
+                returnValue: null));
     }
 
     /// <summary>
     /// <see cref="ReqlessClient.PutJobAsync"/> should throw if workerName is
     /// null, empty, or only whitespace.
     /// </summary>
+    /// <returns>A task denoting the completion of the test.</returns>
     [Fact]
     public async Task ThrowsIfWorkerNameIsNullOrEmptyOrWhitespace()
     {
@@ -173,17 +165,15 @@ public class PutJobTest : BaseReqlessClientTest
                     className: ExampleClassName,
                     data: ExampleData,
                     queueName: ExampleQueueName,
-                    workerName: invalidWorkerName!
-                )
-            ),
-            "workerName"
-        );
+                    workerName: invalidWorkerName!)),
+            "workerName");
     }
 
     /// <summary>
     /// <see cref="ReqlessClient.PutJobAsync"/> should throw if queueName is
     /// null, empty, or only whitespace.
     /// </summary>
+    /// <returns>A task denoting the completion of the test.</returns>
     [Fact]
     public async Task ThrowsIfQueueNameIsNullOrEmptyOrOnlyWhitespace()
     {
@@ -193,17 +183,15 @@ public class PutJobTest : BaseReqlessClientTest
                     className: ExampleClassName,
                     data: ExampleData,
                     queueName: invalidQueueName!,
-                    workerName: ExampleWorkerName
-                )
-            ),
-            "queueName"
-        );
+                    workerName: ExampleWorkerName)),
+            "queueName");
     }
 
     /// <summary>
     /// <see cref="ReqlessClient.PutJobAsync"/> should throw if className is
     /// null, empty, or only whitespace.
     /// </summary>
+    /// <returns>A task denoting the completion of the test.</returns>
     [Fact]
     public async Task ThrowsIfClassNameIsNullOrEmptyOrOnlyWhitespace()
     {
@@ -213,17 +201,15 @@ public class PutJobTest : BaseReqlessClientTest
                     className: invalidClassName!,
                     data: ExampleData,
                     queueName: ExampleQueueName,
-                    workerName: ExampleWorkerName
-                )
-            ),
-            "className"
-        );
+                    workerName: ExampleWorkerName)),
+            "className");
     }
 
     /// <summary>
     /// <see cref="ReqlessClient.PutJobAsync"/> should throw if data is null,
     /// empty, or only whitespace.
     /// </summary>
+    /// <returns>A task denoting the completion of the test.</returns>
     [Fact]
     public async Task ThrowsIfDataIsNullOrEmptyOrOnlyWhitespace()
     {
@@ -233,17 +219,15 @@ public class PutJobTest : BaseReqlessClientTest
                     className: ExampleClassName,
                     data: invalidData!,
                     queueName: ExampleQueueName,
-                    workerName: ExampleWorkerName
-                )
-            ),
-            "data"
-        );
+                    workerName: ExampleWorkerName)),
+            "data");
     }
 
     /// <summary>
     /// <see cref="ReqlessClient.PutJobAsync"/> should throw if jid is empty or
     /// only whitespace.
     /// </summary>
+    /// <returns>A task denoting the completion of the test.</returns>
     [Fact]
     public async Task ThrowsIfJidIsEmptyOrOnlyWhitespace()
     {
@@ -254,10 +238,7 @@ public class PutJobTest : BaseReqlessClientTest
                     data: ExampleData,
                     jid: invalidJid,
                     queueName: ExampleQueueName,
-                    workerName: ExampleWorkerName
-                )
-            ),
-            "jid"
-        );
+                    workerName: ExampleWorkerName)),
+            "jid");
     }
 }

@@ -1,4 +1,4 @@
-﻿using Reqless.Client.Models;
+using Reqless.Client.Models;
 using Reqless.Tests.Common.TestHelpers;
 
 namespace Reqless.Tests.Client.Models;
@@ -17,8 +17,7 @@ public class ThrottledEventTest
     {
         Scenario.ThrowsWhenArgumentIsNegative(
             (long invalidWhen) => new ThrottledEvent(invalidWhen, "QueueName"),
-            "when"
-        );
+            "when");
     }
 
     /// <summary>
@@ -30,8 +29,7 @@ public class ThrottledEventTest
     {
         Scenario.ThrowsWhenArgumentIsNullOrEmptyOrWhitespace(
             (invalidQueueName) => new ThrottledEvent(1, invalidQueueName!),
-            "queueName"
-        );
+            "queueName");
     }
 
     /// <summary>

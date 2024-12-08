@@ -12,27 +12,26 @@ public class ForgetWorkerTest : BaseReqlessClientTest
     /// <see cref="ReqlessClient.ForgetWorkerAsync"/> throws if the given worker
     /// name is null, empty, or only whitespace.
     /// </summary>
+    /// <returns>A task denoting the completion of the test.</returns>
     [Fact]
     public async Task ThrowsIfWorkerNameIsNullOrEmptyOrOnlyWhitespace()
     {
         await Scenario.ThrowsWhenArgumentIsNullOrEmptyOrWhitespaceAsync(
             (invalidWorkerName) => WithClientWithExecutorMockForExpectedArguments(
-                subject => subject.ForgetWorkerAsync(invalidWorkerName!)
-            ),
-            "workerName"
-        );
+                subject => subject.ForgetWorkerAsync(invalidWorkerName!)),
+            "workerName");
     }
 
     /// <summary>
     /// <see cref="ReqlessClient.ForgetWorkerAsync"/> calls the executor with the
     /// expected arguments.
     /// </summary>
+    /// <returns>A task denoting the completion of the test.</returns>
     [Fact]
     public async Task CallsExecutorWithTheExpectedArguments()
     {
         await WithClientWithExecutorMockForExpectedArguments(
             subject => subject.ForgetWorkerAsync(ExampleWorkerName),
-            expectedArguments: ["worker.forget", 0, ExampleWorkerName]
-        );
+            expectedArguments: ["worker.forget", 0, ExampleWorkerName]);
     }
 }

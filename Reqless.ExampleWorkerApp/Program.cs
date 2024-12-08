@@ -1,4 +1,4 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Reqless.Extensions.Hosting;
 
@@ -18,9 +18,7 @@ public class Program
         HostApplicationBuilder builder = Host.CreateApplicationBuilder(args);
         builder.Services.AddSingleton<IThinger, Thinger>();
         builder.Services.AddReqlessWorkerServices(new(
-            queueIdentifiers: ["example-queue"],
-            workerCount: 2
-        ));
+            queueIdentifiers: ["example-queue"], workerCount: 2));
 
         using IHost host = builder.Build();
         host.Run();

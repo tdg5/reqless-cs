@@ -14,6 +14,7 @@ public class RequeueJobTest : BaseReqlessClientTest
     /// <see cref="ReqlessClient.RequeueJobAsync"/> should throw if workerName
     /// is null, or empty, or only whitespace.
     /// </summary>
+    /// <returns>A task denoting the completion of the test.</returns>
     [Fact]
     public async Task ThrowsIfWorkerNameIsNullOrEmptyOrWhitespace()
     {
@@ -24,17 +25,15 @@ public class RequeueJobTest : BaseReqlessClientTest
                     data: ExampleData,
                     jid: ExampleJid,
                     queueName: ExampleQueueName,
-                    workerName: invalidWorkerName!
-                )
-            ),
-            "workerName"
-        );
+                    workerName: invalidWorkerName!)),
+            "workerName");
     }
 
     /// <summary>
     /// <see cref="ReqlessClient.RequeueJobAsync"/> should throw if queueName is
     /// null, empty, or only whitespace.
     /// </summary>
+    /// <returns>A task denoting the completion of the test.</returns>
     [Fact]
     public async Task ThrowsIfQueueNameIsNullOrEmptyOrOnlyWhitespace()
     {
@@ -45,17 +44,15 @@ public class RequeueJobTest : BaseReqlessClientTest
                     data: ExampleData,
                     jid: ExampleJid,
                     queueName: invalidQueueName!,
-                    workerName: ExampleWorkerName
-                )
-            ),
-            "queueName"
-        );
+                    workerName: ExampleWorkerName)),
+            "queueName");
     }
 
     /// <summary>
     /// <see cref="ReqlessClient.RequeueJobAsync"/> should throw if jid is null,
     /// empty, or only whitespace.
     /// </summary>
+    /// <returns>A task denoting the completion of the test.</returns>
     [Fact]
     public async Task ThrowsIfJidIsNullOrEmptyOrOnlyWhitespace()
     {
@@ -66,17 +63,15 @@ public class RequeueJobTest : BaseReqlessClientTest
                     data: ExampleData,
                     jid: invalidJid!,
                     queueName: ExampleQueueName,
-                    workerName: ExampleWorkerName
-                )
-            ),
-            "jid"
-        );
+                    workerName: ExampleWorkerName)),
+            "jid");
     }
 
     /// <summary>
     /// <see cref="ReqlessClient.RequeueJobAsync"/> should throw if className is
     /// null, empty, or only whitespace.
     /// </summary>
+    /// <returns>A task denoting the completion of the test.</returns>
     [Fact]
     public async Task ThrowsIfClassNameIsNullOrEmptyOrOnlyWhitespace()
     {
@@ -87,17 +82,15 @@ public class RequeueJobTest : BaseReqlessClientTest
                     data: ExampleData,
                     jid: ExampleJid,
                     queueName: ExampleQueueName,
-                    workerName: ExampleWorkerName
-                )
-            ),
-            "className"
-        );
+                    workerName: ExampleWorkerName)),
+            "className");
     }
 
     /// <summary>
     /// <see cref="ReqlessClient.RequeueJobAsync"/> should throw if data is
     /// null, empty, or only whitespace.
     /// </summary>
+    /// <returns>A task denoting the completion of the test.</returns>
     [Fact]
     public async Task ThrowsIfDataIsNullOrEmptyOrOnlyWhitespace()
     {
@@ -108,17 +101,15 @@ public class RequeueJobTest : BaseReqlessClientTest
                     data: invalidData!,
                     jid: ExampleJid,
                     queueName: ExampleQueueName,
-                    workerName: ExampleWorkerName
-                )
-            ),
-            "data"
-        );
+                    workerName: ExampleWorkerName)),
+            "data");
     }
 
     /// <summary>
     /// <see cref="ReqlessClient.RequeueJobAsync"/> should call the executor
     /// with the expected arguments when optional arguments are omitted.
     /// </summary>
+    /// <returns>A task denoting the completion of the test.</returns>
     [Fact]
     public async Task CallsExecutorWithExpectedArgumentsWhenOptionalArgumentsAreOmitted()
     {
@@ -128,8 +119,7 @@ public class RequeueJobTest : BaseReqlessClientTest
                 data: ExampleData,
                 jid: ExampleJid,
                 queueName: ExampleQueueName,
-                workerName: ExampleWorkerName
-            ),
+                workerName: ExampleWorkerName),
             expectedArguments: [
                 "job.requeue",
                 0,
@@ -150,14 +140,14 @@ public class RequeueJobTest : BaseReqlessClientTest
                 "throttles",
                 RedisValue.Null,
             ],
-            returnValue: ExampleJid
-        );
+            returnValue: ExampleJid);
     }
 
     /// <summary>
     /// <see cref="ReqlessClient.RequeueJobAsync"/> should call the executor
     /// with the expected arguments when optional arguments are given.
     /// </summary>
+    /// <returns>A task denoting the completion of the test.</returns>
     [Fact]
     public async Task CallsExecutorWithExpectedArgumentsWhenOptionalArgumentsAreGiven()
     {
@@ -180,8 +170,7 @@ public class RequeueJobTest : BaseReqlessClientTest
                 queueName: ExampleQueueName,
                 tags: tags,
                 throttles: throttles,
-                workerName: ExampleWorkerName
-            ),
+                workerName: ExampleWorkerName),
             expectedArguments: [
                 "job.requeue",
                 0,
@@ -202,7 +191,6 @@ public class RequeueJobTest : BaseReqlessClientTest
                 "throttles",
                 JsonSerializer.Serialize(throttles),
             ],
-            returnValue: ExampleJid
-        );
+            returnValue: ExampleJid);
     }
 }

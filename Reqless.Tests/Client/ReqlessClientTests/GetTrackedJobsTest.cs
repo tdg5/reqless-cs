@@ -14,6 +14,7 @@ public class GetTrackedJobsTest : BaseReqlessClientTest
     /// <see cref="ReqlessClient.GetTrackedJobsAsync"/> should throw if the
     /// server returns null.
     /// </summary>
+    /// <returns>A task denoting the completion of the test.</returns>
     [Fact]
     public async Task ThrowsIfTheServerReturnsNull()
     {
@@ -21,38 +22,34 @@ public class GetTrackedJobsTest : BaseReqlessClientTest
             () => WithClientWithExecutorMockForExpectedArguments(
                 subject => subject.GetTrackedJobsAsync(),
                 expectedArguments: ["jobs.tracked", 0],
-                returnValue: null
-            )
-        );
+                returnValue: null));
     }
 
     /// <summary>
     /// <see cref="ReqlessClient.GetTrackedJobsAsync"/> should throw if the
     /// server returns JSON that can't be deserialized.
     /// </summary>
+    /// <returns>A task denoting the completion of the test.</returns>
     [Fact]
     public async Task ThrowsIfTheServerReturnsJsonThatCannotBeDeserialized()
     {
         var exception = await WithClientWithExecutorMockForExpectedArguments(
             subject => Assert.ThrowsAsync<JsonException>(
-                () => subject.GetTrackedJobsAsync()
-            ),
+                () => subject.GetTrackedJobsAsync()),
             expectedArguments: [
                 "jobs.tracked",
                 0
             ],
-            returnValue: "null"
-        );
+            returnValue: "null");
         Assert.Equal(
-            "Failed to deserialize tracked jobs JSON: null",
-            exception.Message
-        );
+            "Failed to deserialize tracked jobs JSON: null", exception.Message);
     }
 
     /// <summary>
     /// <see cref="ReqlessClient.GetTrackedJobsAsync"/> should return the
     /// expected tracked jobs data.
     /// </summary>
+    /// <returns>A task denoting the completion of the test.</returns>
     [Fact]
     public async Task ReturnsExpectedTrackedJobs()
     {
@@ -65,8 +62,7 @@ public class GetTrackedJobsTest : BaseReqlessClientTest
                 "jobs.tracked",
                 0
             ],
-            returnValue: $$"""{"expired":["{{expiredJid}}"],"jobs":[{{expiredJobJson}}]}"""
-        );
+            returnValue: $$"""{"expired":["{{expiredJid}}"],"jobs":[{{expiredJobJson}}]}""");
         Assert.Single(trackedJobsResult.ExpiredJids);
         Assert.Equal(expiredJid, trackedJobsResult.ExpiredJids[0]);
         Assert.Equivalent(expiredJob, trackedJobsResult.Jobs[0]);

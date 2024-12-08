@@ -12,7 +12,8 @@ public class DefaultReqlessClientFactory : IReqlessClientFactory
     private readonly IWorkerSettings _settings;
 
     /// <summary>
-    /// Create an instance of <see cref="DefaultReqlessClientFactory"/>.
+    /// Initializes a new instance of the <see cref="DefaultReqlessClientFactory"/>
+    /// class.
     /// </summary>
     /// <param name="settings">The <see cref="WorkerSettings"/> instance
     /// that should be used to configure the clients.</param>

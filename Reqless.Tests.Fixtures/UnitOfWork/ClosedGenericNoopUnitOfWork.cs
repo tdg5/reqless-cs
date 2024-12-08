@@ -1,5 +1,3 @@
-using Reqless.Framework;
-
 namespace Reqless.Tests.Fixtures.UnitOfWork;
 
 /// <summary>

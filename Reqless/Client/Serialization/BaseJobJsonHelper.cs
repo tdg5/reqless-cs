@@ -14,6 +14,7 @@ public static class BaseJobJsonHelper
     /// </summary>
     /// <param name="reader">The <see cref="Utf8JsonReader"/> containing job
     /// data.</param>
+    /// <returns>The class name of the job or null.</returns>
     public static string? ReadClassName(ref Utf8JsonReader reader)
     {
         return reader.GetString();
@@ -24,6 +25,7 @@ public static class BaseJobJsonHelper
     /// </summary>
     /// <param name="reader">The <see cref="Utf8JsonReader"/> containing job
     /// data.</param>
+    /// <returns>The data of the job or null.</returns>
     public static string? ReadData(ref Utf8JsonReader reader)
     {
         return reader.GetString();
@@ -34,6 +36,7 @@ public static class BaseJobJsonHelper
     /// </summary>
     /// <param name="reader">The <see cref="Utf8JsonReader"/> containing job
     /// data.</param>
+    /// <returns>The JID of the job or null.</returns>
     public static string? ReadJid(ref Utf8JsonReader reader)
     {
         return reader.GetString();
@@ -44,6 +47,7 @@ public static class BaseJobJsonHelper
     /// </summary>
     /// <param name="reader">The <see cref="Utf8JsonReader"/> containing job
     /// data.</param>
+    /// <returns>The priority of the job.</returns>
     public static int ReadPriority(ref Utf8JsonReader reader)
     {
         return reader.GetInt32();
@@ -54,13 +58,14 @@ public static class BaseJobJsonHelper
     /// </summary>
     /// <param name="reader">The <see cref="Utf8JsonReader"/> containing job
     /// data.</param>
+    /// <returns>The queue name of the job or null.</returns>
     public static string? ReadQueueName(ref Utf8JsonReader reader)
     {
-        string? queue = reader.GetString();
-        if (string.IsNullOrWhiteSpace(queue))
+        if (reader.GetString() is not string queue || string.IsNullOrWhiteSpace(queue))
         {
-            queue = null;
+            return null;
         }
+
         return queue;
     }
 
@@ -69,6 +74,7 @@ public static class BaseJobJsonHelper
     /// </summary>
     /// <param name="reader">The <see cref="Utf8JsonReader"/> containing job
     /// data.</param>
+    /// <returns>The number of retries for the job.</returns>
     public static int ReadRetries(ref Utf8JsonReader reader)
     {
         return reader.GetInt32();
@@ -79,6 +85,7 @@ public static class BaseJobJsonHelper
     /// </summary>
     /// <param name="reader">The <see cref="Utf8JsonReader"/> containing job
     /// data.</param>
+    /// <returns>The state of the job or null.</returns>
     public static string? ReadState(ref Utf8JsonReader reader)
     {
         return reader.GetString();
@@ -89,13 +96,13 @@ public static class BaseJobJsonHelper
     /// </summary>
     /// <param name="reader">The <see cref="Utf8JsonReader"/> containing job
     /// data.</param>
+    /// <returns>The tags of the job or null.</returns>
     public static string[]? ReadTags(ref Utf8JsonReader reader)
     {
         var wasDegenerateObject = JsonConverterHelper.TryConsumeDegenerateObject(
             "tags",
             "array",
-            ref reader
-        );
+            ref reader);
         return wasDegenerateObject
             ? []
             : JsonSerializer.Deserialize<string[]>(ref reader);
@@ -106,13 +113,13 @@ public static class BaseJobJsonHelper
     /// </summary>
     /// <param name="reader">The <see cref="Utf8JsonReader"/> containing job
     /// data.</param>
+    /// <returns>The throttles of the job or null.</returns>
     public static string[]? ReadThrottles(ref Utf8JsonReader reader)
     {
         var wasDegenerateObject = JsonConverterHelper.TryConsumeDegenerateObject(
             "throttles",
             "array",
-            ref reader
-        );
+            ref reader);
         return wasDegenerateObject
             ? []
             : JsonSerializer.Deserialize<string[]>(ref reader);
@@ -123,6 +130,7 @@ public static class BaseJobJsonHelper
     /// </summary>
     /// <param name="reader">The <see cref="Utf8JsonReader"/> containing job
     /// data.</param>
+    /// <returns>The tracked value of the job.</returns>
     public static bool ReadTracked(ref Utf8JsonReader reader)
     {
         return reader.GetBoolean();

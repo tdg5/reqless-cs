@@ -31,8 +31,7 @@ public interface IReqlessClient
     Task<bool> AddEventToJobHistoryAsync(
         string jid,
         string what,
-        string? data = null
-    );
+        string? data = null);
 
     /// <summary>
     /// Update the given job to add the given tag.
@@ -91,6 +90,8 @@ public interface IReqlessClient
     /// </summary>
     /// <param name="jid">The ID of the recurring job for which all futurue
     /// occurences should be cancelled.</param>
+    /// <returns>A task that completes when the recurring job has been
+    /// successfully cancelled.</returns>
     Task CancelRecurringJobAsync(string jid);
 
     /// <summary>
@@ -109,8 +110,7 @@ public interface IReqlessClient
         string jid,
         string workerName,
         string queueName,
-        string data
-    );
+        string data);
 
     /// <summary>
     /// Complete the job with the given jid and requeue it to the given queue.
@@ -137,14 +137,15 @@ public interface IReqlessClient
         string data,
         string nextQueueName,
         int delay = 0,
-        string[]? depends = null
-    );
+        string[]? depends = null);
 
     /// <summary>
     /// Delete the throttle with the given name.
     /// </summary>
     /// <param name="throttleName">The name of the throttle that should be
     /// deleted.</param>
+    /// <returns>A task that completes when the throttle has been successfully
+    /// deleted.</returns>
     Task DeleteThrottleAsync(string throttleName);
 
     /// <summary>
@@ -162,13 +163,14 @@ public interface IReqlessClient
         string workerName,
         string groupName,
         string message,
-        string? data = null
-    );
+        string? data = null);
 
     /// <summary>
     /// Forget the config with the given name.
     /// </summary>
     /// <param name="configName">The name of the config that should be forgotten.</param>
+    /// <returns>A task that completes when the config has been successfully
+    /// forgotten.</returns>
     Task ForgetConfigAsync(string configName);
 
     /// <summary>
@@ -176,6 +178,8 @@ public interface IReqlessClient
     /// </summary>
     /// <param name="queueName">The name of the queue that should be removed
     /// from the set of known queues.</param>
+    /// <returns>A task that completes when the queue has been successfully
+    /// forgotten.</returns>
     Task ForgetQueueAsync(string queueName);
 
     /// <summary>
@@ -183,6 +187,8 @@ public interface IReqlessClient
     /// </summary>
     /// <param name="queueNames">The names of the queue that should be removed
     /// from the set of known queues.</param>
+    /// <returns>A task that completes when the queues have been successfully
+    /// forgotten.</returns>
     Task ForgetQueuesAsync(params string[] queueNames);
 
     /// <summary>
@@ -190,6 +196,8 @@ public interface IReqlessClient
     /// </summary>
     /// <param name="workerName">The name of the worker that should be removed
     /// from the set of known worker.</param>
+    /// <returns>A task that completes when the worker has been successfully
+    /// forgotten.</returns>
     Task ForgetWorkerAsync(string workerName);
 
     /// <summary>
@@ -197,6 +205,8 @@ public interface IReqlessClient
     /// </summary>
     /// <param name="workerNames">The names of workers that should be removed
     /// from the set of known workers.</param>
+    /// <returns>A task that completes when the workers have been successfully
+    /// forgotten.</returns>
     Task ForgetWorkersAsync(params string[] workerNames);
 
     /// <summary>
@@ -252,14 +262,13 @@ public interface IReqlessClient
     /// <returns>Zero or more job IDs of completed jobs.</returns>
     Task<List<string>> GetCompletedJobsAsync(
         int limit = 25,
-        int offset = 0
-    );
+        int offset = 0);
 
     /// <summary>
     /// Retrieve the value of the config with the given name, if such a config
     /// is defined.
     /// </summary>
-    /// <param name="configName"></param>
+    /// <param name="configName">The name of the config to retrieve.</param>
     /// <returns>The config value if it is defined.</returns>
     Task<string?> GetConfigAsync(string configName);
 
@@ -276,8 +285,7 @@ public interface IReqlessClient
     Task<JidsResult> GetFailedJobsByGroupAsync(
         string groupName,
         int limit = 25,
-        int offset = 0
-    );
+        int offset = 0);
 
     /// <summary>
     /// Returns a dictionary where each key is a known failure group name and
@@ -316,8 +324,7 @@ public interface IReqlessClient
         string state,
         string queueName,
         int limit = 25,
-        int offset = 0
-    );
+        int offset = 0);
 
     /// <summary>
     /// Gets the IDs of jobs that have the given tag.
@@ -331,8 +338,7 @@ public interface IReqlessClient
     Task<JidsResult> GetJobsByTagAsync(
         string tag,
         int limit = 25,
-        int offset = 0
-    );
+        int offset = 0);
 
     /// <summary>
     /// Get the counts of the number of jobs in various states in the queue with
@@ -352,7 +358,7 @@ public interface IReqlessClient
 
     /// <summary>
     /// Get statistics on the durations that jobs spent in different states for
-    /// the queue with the given name for the given date;
+    /// the queue with the given name for the given date.
     /// </summary>
     /// <param name="queueName">The name of the queue to retrieve stats
     /// for.</param>
@@ -413,10 +419,10 @@ public interface IReqlessClient
     /// <remarks>
     /// Tags with only a single usage are ignored.
     /// </remarks>
-    /// <param name="offset">The number of tags to skip before returning
-    /// results.</param>
     /// <param name="limit">The maximum number of tags to retrieve.</param>
     /// <returns>A list of any matching tags.</returns>
+    /// <param name="offset">The number of tags to skip before returning
+    /// results.</param>
     Task<List<string>> GetTopTagsAsync(int limit = 25, int offset = 0);
 
     /// <summary>
@@ -449,14 +455,15 @@ public interface IReqlessClient
     Task<long> HeartbeatJobAsync(
         string jid,
         string workerName,
-        string? data = null
-    );
+        string? data = null);
 
     /// <summary>
     /// Pause the queue with the given name.
     /// </summary>
     /// <param name="queueName">The name of the queue that should be
     /// paused.</param>
+    /// <returns>A task that completes when the queue has been successfully
+    /// paused.</returns>
     Task PauseQueueAsync(string queueName);
 
     /// <summary>
@@ -492,8 +499,7 @@ public interface IReqlessClient
     Task<List<Job>> PopJobsAsync(
         string queueName,
         string workerName,
-        int count
-    );
+        int count);
 
     /// <summary>
     /// Puts a job on a queue.
@@ -527,8 +533,7 @@ public interface IReqlessClient
         int retries = 5,
         string[]? dependencies = null,
         string[]? tags = null,
-        string[]? throttles = null
-    );
+        string[]? throttles = null);
 
     /// <summary>
     /// Puts a job on a queue that runs repeatedly at the given interval.
@@ -564,8 +569,7 @@ public interface IReqlessClient
         int priority = 0,
         int retries = 5,
         string[]? tags = null,
-        string[]? throttles = null
-    );
+        string[]? throttles = null);
 
     /// <summary>
     /// Release any pending or owned locks for the throttle with the given name
@@ -575,6 +579,8 @@ public interface IReqlessClient
     /// locks for the given throttle.</param>
     /// <param name="throttleName">The name of the throttle that the jobs should
     /// no longer be constrained by.</param>
+    /// <returns>A task that completes when the throttle has been successfully
+    /// released.</returns>
     Task ReleaseJobThrottleAsync(string jid, string throttleName);
 
     /// <summary>
@@ -585,6 +591,8 @@ public interface IReqlessClient
     /// owned locks should be released.</param>
     /// <param name="jids">The IDs of jobs that should release any pending or
     /// owned locks for the given throttle.</param>
+    /// <returns>A task that completes when the throttle has been successfully
+    /// released from the given jobs.</returns>
     Task ReleaseThrottleForJobsAsync(string throttleName, params string[] jids);
 
     /// <summary>
@@ -595,13 +603,15 @@ public interface IReqlessClient
     /// removed from.</param>
     /// <param name="dependsOnJid">The ID of the job that the given job should
     /// not depend on.</param>
+    /// <returns>A task that contains true if the dependency was successfully
+    /// removed.</returns>
     Task<bool> RemoveDependencyFromJobAsync(string jid, string dependsOnJid);
 
     /// <summary>
     /// Update the given job to remove the given tag.
     /// </summary>
     /// <param name="jid">The ID of the job that the tag should be removed
-    /// from</param>
+    /// from.</param>
     /// <param name="tag">The tag that should be removed from the job.</param>
     /// <returns>A list of the tags that remain on the job.</returns>
     Task<List<string>> RemoveTagFromJobAsync(string jid, string tag);
@@ -618,7 +628,7 @@ public interface IReqlessClient
     /// Update the given recurring job to remove the given tag.
     /// </summary>
     /// <param name="jid">The ID of the recurring job that the tag should be
-    /// removed from</param>
+    /// removed from.</param>
     /// <param name="tag">The tag that should be removed from the recurring
     /// job.</param>
     /// <returns>A list of the tags that remain on the remaining job.</returns>
@@ -641,12 +651,12 @@ public interface IReqlessClient
     /// <param name="workerName">The name of the worker or client that's putting
     /// the job.</param>
     /// <param name="queueName">The name of the queue.</param>
+    /// <param name="jid">The ID of the job. When not provided, an ID will be
+    /// generated.</param>
     /// <param name="className">The name of the class.</param>
     /// <param name="data">The data to be processed.</param>
     /// <param name="delay">The delay in seconds before the job is
     /// processed. Defaults to no delay (0).</param>
-    /// <param name="jid">The ID of the job. When not provided, an ID will be
-    /// generated.</param>
     /// <param name="priority">The priority of the job. Defaults to 0,
     /// representing a low priority. Ignoring other factors like throttles, jobs
     /// with a higher priority value are popped before jobs with a lower
@@ -667,8 +677,7 @@ public interface IReqlessClient
         int? retries = null,
         string[]? dependencies = null,
         string[]? tags = null,
-        string[]? throttles = null
-    );
+        string[]? throttles = null);
 
     /// <summary>
     /// Enqueue a job to be retried. Similar in functionality to <see
@@ -691,8 +700,7 @@ public interface IReqlessClient
         string workerName,
         string groupName,
         string message,
-        int delay = 0
-    );
+        int delay = 0);
 
     /// <summary>
     /// Set all dynamic queue identifier patterns.
@@ -700,9 +708,10 @@ public interface IReqlessClient
     /// <param name="identifierPatterns">A dictionary where each key is a queue
     /// identifier and each value is a list of queues and patterns that should
     /// map to that identifier.</param>
+    /// <returns>A task that completes when the patterns have been successfully
+    /// set.</returns>
     Task SetAllQueueIdentifierPatternsAsync(
-        Dictionary<string, IEnumerable<string>> identifierPatterns
-    );
+        Dictionary<string, IEnumerable<string>> identifierPatterns);
 
     /// <summary>
     /// Set all dynamic queue priority patterns.
@@ -710,15 +719,18 @@ public interface IReqlessClient
     /// <param name="priorityPatterns">A collection of <see
     /// cref="QueuePriorityPattern"/> that should replace any existing
     /// records.</param>
+    /// <returns>A task that completes when the patterns have been successfully
+    /// set.</returns>
     Task SetAllQueuePriorityPatternsAsync(
-        IEnumerable<QueuePriorityPattern> priorityPatterns
-    );
+        IEnumerable<QueuePriorityPattern> priorityPatterns);
 
     /// <summary>
     /// Set the config with the given name to the given value.
     /// </summary>
     /// <param name="configName">The name that should be used to store the config.</param>
     /// <param name="value">The value that should be stored.</param>
+    /// <returns>A task that completes when the config has been successfully
+    /// set.</returns>
     Task SetConfigAsync(string configName, string value);
 
     /// <summary>
@@ -737,6 +749,8 @@ public interface IReqlessClient
     /// <param name="queueName">The name of the queue to modify the throttle
     /// for.</param>
     /// <param name="maximum">The new maximum value for the throttle.</param>
+    /// <returns>A task that completes when the queue throttle has been
+    /// successfully set.</returns>
     Task SetQueueThrottleAsync(string queueName, int maximum);
 
     /// <summary>
@@ -747,18 +761,24 @@ public interface IReqlessClient
     /// <param name="ttl">The time-to-live for the throttle. By default doesn't
     /// modify the throttle's TTL. Any value less than zero doesn't mutate the
     /// TTL.</param>
+    /// <returns>A task that completes when the throttle has been successfully
+    /// set.</returns>
     Task SetThrottleAsync(string throttleName, int maximum, int ttl = 0);
 
     /// <summary>
     /// Timeout a job by its job ID.
     /// </summary>
     /// <param name="jid">The ID of the job that should time out.</param>
+    /// <returns>A task that completes when the job has been successfully
+    /// timed out.</returns>
     Task TimeoutJobAsync(string jid);
 
     /// <summary>
     /// Time out one or more jobs by their job IDs.
     /// </summary>
     /// <param name="jids">The IDs of the jobs that should time out.</param>
+    /// <returns>A task that completes when the jobs have been successfully
+    /// timed out.</returns>
     Task TimeoutJobsAsync(params string[] jids);
 
     /// <summary>
@@ -783,14 +803,15 @@ public interface IReqlessClient
     Task<int> UnfailJobsFromFailureGroupIntoQueueAsync(
         string queueName,
         string groupName,
-        int count = 25
-    );
+        int count = 25);
 
     /// <summary>
     /// Unpause the queue with the given name.
     /// </summary>
     /// <param name="queueName">The name of the queue that should be
     /// unpaused.</param>
+    /// <returns>A task that completes when the queue has been successfully
+    /// unpaused.</returns>
     Task UnpauseQueueAsync(string queueName);
 
     /// <summary>
@@ -820,6 +841,8 @@ public interface IReqlessClient
     /// if any.</param>
     /// <param name="throttles">The new throttles for the recurring job, if
     /// any.</param>
+    /// <returns>A task that completes when the recurring job has been
+    /// successfully updated.</returns>
     Task UpdateRecurringJobAsync(
         string jid,
         string? className = null,
@@ -829,6 +852,5 @@ public interface IReqlessClient
         int? priority = null,
         string? queueName = null,
         int? retries = null,
-        string[]? throttles = null
-    );
+        string[]? throttles = null);
 }

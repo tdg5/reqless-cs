@@ -19,14 +19,11 @@ public class DefaultQueueNameProviderTest
     public void Constructor_ThrowsWhenQueueIdentifierResolverIsNull()
     {
         WorkerSettings settings = new(
-            queueIdentifiers: ["some-queue"],
-            workerCount: 1
-        );
+            queueIdentifiers: ["some-queue"], workerCount: 1);
 
         Scenario.ThrowsWhenArgumentIsNull(
             () => new DefaultQueueNameProvider(null!, settings),
-            "queueIdentifierResolver"
-        );
+            "queueIdentifierResolver");
     }
 
     /// <summary>
@@ -40,22 +37,21 @@ public class DefaultQueueNameProviderTest
 
         Scenario.ThrowsWhenArgumentIsNull(
             () => new DefaultQueueNameProvider(queueIdentifierResolver, null!),
-            "settings"
-        );
+            "settings");
     }
 
     /// <summary>
     /// <see cref="DefaultQueueNameProvider.GetQueueNamesAsync()"/> invokes the
     /// queue resolver with the expected queue identifiers.
     /// </summary>
+    /// <returns>A Task denoting the completion of the test.</returns>
     [Fact]
     public async Task GetQueueNamesAsync_InvokesTheResolverWithTheExpectedQueueIdentifiers()
     {
         string[] expectedQueueIdentifiers = ["some-queue"];
         WorkerSettings settings = new(
             queueIdentifiers: expectedQueueIdentifiers,
-            workerCount: 1
-        );
+            workerCount: 1);
         List<string> expectedQueueNames = ["final-queue"];
         var mock = new Mock<IQueueIdentifierResolver>();
         mock.Setup(_ => _.ResolveQueueNamesAsync(expectedQueueIdentifiers))

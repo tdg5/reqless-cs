@@ -8,18 +8,7 @@ namespace Reqless.Extensions.Hosting.Worker;
 public class DefaultWorkerService : BackgroundService
 {
     /// <summary>
-    /// A <see cref="IServiceProvider"/> instance that is used to create a new
-    /// scope when creating worker instances.
-    /// </summary>
-    protected readonly IServiceProvider _serviceProvider;
-
-    /// <summary>
-    /// Factory for creating instances of <see cref="IWorker"/>.
-    /// </summary>
-    protected readonly IWorkerFactory _workerFactory;
-
-    /// <summary>
-    /// Create an instance of <see cref="DefaultWorkerService"/>.
+    /// Initializes a new instance of the <see cref="DefaultWorkerService"/> class.
     /// </summary>
     /// <param name="serviceProvider">A <see cref="IServiceProvider"/> instance
     /// that is used to create a new scope when creating worker instances.</param>
@@ -27,20 +16,30 @@ public class DefaultWorkerService : BackgroundService
     /// is used to create worker instances.</param>
     public DefaultWorkerService(
         IServiceProvider serviceProvider,
-        IWorkerFactory workerFactory
-    )
+        IWorkerFactory workerFactory)
     {
         ArgumentNullException.ThrowIfNull(serviceProvider, nameof(serviceProvider));
         ArgumentNullException.ThrowIfNull(workerFactory, nameof(workerFactory));
 
-        _serviceProvider = serviceProvider;
-        _workerFactory = workerFactory;
+        ServiceProvider = serviceProvider;
+        WorkerFactory = workerFactory;
     }
+
+    /// <summary>
+    /// Gets the <see cref="IServiceProvider"/> instance that is used to create
+    /// a new scope when creating worker instances.
+    /// </summary>
+    protected IServiceProvider ServiceProvider { get; }
+
+    /// <summary>
+    /// Gets the factory for creating instances of <see cref="IWorker"/>.
+    /// </summary>
+    protected IWorkerFactory WorkerFactory { get; }
 
     /// <inheritdoc/>
     protected override Task ExecuteAsync(CancellationToken cancellationToken)
     {
-        IWorker worker = _workerFactory.Create(_serviceProvider);
+        IWorker worker = WorkerFactory.Create(ServiceProvider);
         return worker.ExecuteAsync(cancellationToken);
     }
 }

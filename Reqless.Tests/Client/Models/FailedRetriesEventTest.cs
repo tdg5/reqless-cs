@@ -17,8 +17,7 @@ public class FailedRetriesEventTest
     {
         Scenario.ThrowsWhenArgumentIsNegative(
             (long invalidWhen) => new FailedRetriesEvent(invalidWhen, "Group"),
-            "when"
-        );
+            "when");
     }
 
     /// <summary>
@@ -30,8 +29,7 @@ public class FailedRetriesEventTest
     {
         Scenario.ThrowsWhenArgumentIsNullOrEmptyOrWhitespace(
             (invalidGroup) => new FailedRetriesEvent(1, invalidGroup!),
-            "group"
-        );
+            "group");
     }
 
     /// <summary>

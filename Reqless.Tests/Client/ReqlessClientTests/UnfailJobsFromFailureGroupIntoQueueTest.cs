@@ -13,24 +13,22 @@ public class UnfailJobsFromFailureGroupIntoQueueTest : BaseReqlessClientTest
     /// <see cref="ReqlessClient.UnfailJobsFromFailureGroupIntoQueueAsync"/>
     /// should throw if queue name is null, empty, or only whitespace.
     /// </summary>
+    /// <returns>A task denoting the completion of the test.</returns>
     [Fact]
     public async Task ThrowsIfQueueNameIsNullOrEmptyOrOnlyWhitespace()
     {
         await Scenario.ThrowsWhenArgumentIsNullOrEmptyOrWhitespaceAsync(
             (invalidQueueName) => WithClientWithExecutorMockForExpectedArguments(
                 subject => subject.UnfailJobsFromFailureGroupIntoQueueAsync(
-                    groupName: ExampleGroupName,
-                    queueName: invalidQueueName!
-                )
-            ),
-            "queueName"
-        );
+                    groupName: ExampleGroupName, queueName: invalidQueueName!)),
+            "queueName");
     }
 
     /// <summary>
     /// <see cref="ReqlessClient.UnfailJobsFromFailureGroupIntoQueueAsync"/>
     /// should throw if group name is null, empty, or only whitespace.
     /// </summary>
+    /// <returns>A task denoting the completion of the test.</returns>
     [Fact]
     public async Task ThrowsIfGroupNameIsNullOrEmptyOrWhitespace()
     {
@@ -38,17 +36,15 @@ public class UnfailJobsFromFailureGroupIntoQueueTest : BaseReqlessClientTest
             (invalidGroupName) => WithClientWithExecutorMockForExpectedArguments(
                 subject => subject.UnfailJobsFromFailureGroupIntoQueueAsync(
                     groupName: invalidGroupName!,
-                    queueName: ExampleQueueName
-                )
-            ),
-            "groupName"
-        );
+                    queueName: ExampleQueueName)),
+            "groupName");
     }
 
     /// <summary>
     /// <see cref="ReqlessClient.UnfailJobsFromFailureGroupIntoQueueAsync"/>
     /// should throw if count is not a positive number.
     /// </summary>
+    /// <returns>A task denoting the completion of the test.</returns>
     [Fact]
     public async Task ThrowsIfCountIsNotAPositiveNumber()
     {
@@ -57,17 +53,15 @@ public class UnfailJobsFromFailureGroupIntoQueueTest : BaseReqlessClientTest
                 subject => subject.UnfailJobsFromFailureGroupIntoQueueAsync(
                     count: invalidCount,
                     groupName: ExampleGroupName,
-                    queueName: ExampleQueueName
-                )
-            ),
-            "count"
-        );
+                    queueName: ExampleQueueName)),
+            "count");
     }
 
     /// <summary>
     /// <see cref="ReqlessClient.UnfailJobsFromFailureGroupIntoQueueAsync"/>
     /// should throw if server returns null.
     /// </summary>
+    /// <returns>A task denoting the completion of the test.</returns>
     [Fact]
     public async Task ThrowsIfServerReturnsNull()
     {
@@ -77,28 +71,23 @@ public class UnfailJobsFromFailureGroupIntoQueueTest : BaseReqlessClientTest
                 subject => subject.UnfailJobsFromFailureGroupIntoQueueAsync(
                     count: count,
                     groupName: ExampleGroupName,
-                    queueName: ExampleQueueName
-                ),
+                    queueName: ExampleQueueName),
                 expectedArguments: ["queue.unfail", 0, ExampleQueueName, ExampleGroupName, count],
-                returnValue: null
-            )
-        );
+                returnValue: null));
     }
 
     /// <summary>
     /// <see cref="ReqlessClient.UnfailJobsFromFailureGroupIntoQueueAsync"/>
     /// should call the executor with the expected arguments.
     /// </summary>
+    /// <returns>A task denoting the completion of the test.</returns>
     [Fact]
     public async Task CallsExecutorWithExpectedArguments()
     {
         var count = 10;
         var unfailedCount = await WithClientWithExecutorMockForExpectedArguments(
             subject => subject.UnfailJobsFromFailureGroupIntoQueueAsync(
-                count: count,
-                groupName: ExampleGroupName,
-                queueName: ExampleQueueName
-            ),
+                count: count, groupName: ExampleGroupName, queueName: ExampleQueueName),
             expectedArguments: [
                 "queue.unfail",
                 0,
@@ -106,8 +95,7 @@ public class UnfailJobsFromFailureGroupIntoQueueTest : BaseReqlessClientTest
                 ExampleGroupName,
                 count
             ],
-            returnValue: count
-        );
+            returnValue: count);
         Assert.Equal(count, unfailedCount);
     }
 }

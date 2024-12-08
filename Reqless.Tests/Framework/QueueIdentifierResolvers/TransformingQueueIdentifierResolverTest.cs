@@ -17,14 +17,14 @@ public class TransformingQueueIdentifierResolverTest
     {
         Scenario.ThrowsWhenArgumentIsNull(
             () => new TransformingQueueIdentifierResolver(null!),
-            "queueIdentifiersTransformers"
-        );
+            "queueIdentifiersTransformers");
     }
 
     /// <summary>
     /// <see cref="TransformingQueueIdentifierResolver"/> constructor should set
     /// the expected properties.
     /// </summary>
+    /// <returns>A task denoting the completion of the test.</returns>
     [Fact]
     public async Task Constructor_SetsExpectedProperties()
     {
@@ -37,7 +37,7 @@ public class TransformingQueueIdentifierResolverTest
         TransformingQueueIdentifierResolver subject = new(queueIdentifiersTransformers);
 
         // Roundabout way to check that queueIdentifiersTransformers is set correctly.
-        var queueNames = await subject.ResolveQueueNamesAsync(queueIdentifiers.ToArray());
+        var queueNames = await subject.ResolveQueueNamesAsync([.. queueIdentifiers]);
         Assert.Equal(expectedResolvedQueueNames, queueNames);
     }
 
@@ -45,6 +45,7 @@ public class TransformingQueueIdentifierResolverTest
     /// <see cref="TransformingQueueIdentifierResolver.ResolveQueueNamesAsync"/>
     /// should throw if queue identifiers is null.
     /// </summary>
+    /// <returns>A task denoting the completion of the test.</returns>
     [Fact]
     public async Task ResolveQueueNamesAsync_ThrowsWhenQueueIdentifiersIsNull()
     {
@@ -52,8 +53,7 @@ public class TransformingQueueIdentifierResolverTest
         TransformingQueueIdentifierResolver subject = new([]);
 
         var exception = await Assert.ThrowsAsync<ArgumentNullException>(
-            () => subject.ResolveQueueNamesAsync(queueIdentifiers)
-        );
+            () => subject.ResolveQueueNamesAsync(queueIdentifiers));
         Assert.Equal("Value cannot be null. (Parameter 'queueIdentifiers')", exception.Message);
         Assert.Equal("queueIdentifiers", exception.ParamName);
     }
@@ -62,6 +62,7 @@ public class TransformingQueueIdentifierResolverTest
     /// <see cref="TransformingQueueIdentifierResolver.ResolveQueueNamesAsync"/>
     /// should return the transformed queue names.
     /// </summary>
+    /// <returns>A task denoting the completion of the test.</returns>
     [Fact]
     public async Task ResolveQueueNamesAsync_ReturnsTransformedQueueNames()
     {
@@ -81,7 +82,7 @@ public class TransformingQueueIdentifierResolverTest
     /// Implementation of <see cref="IQueueIdentifiersTransformer"/> that
     /// transforms queue identifiers by reversing their order.
     /// </summary>
-    class OrderReversingQueueIdentifiersTransformer : IQueueIdentifiersTransformer
+    private class OrderReversingQueueIdentifiersTransformer : IQueueIdentifiersTransformer
     {
         /// <summary>
         /// Transform the given queue identifiers by reversing their order.

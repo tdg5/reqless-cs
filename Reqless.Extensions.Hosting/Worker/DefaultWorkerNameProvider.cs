@@ -14,7 +14,8 @@ public class DefaultWorkerNameProvider : IWorkerNameProvider
     private int _counter = 0;
 
     /// <summary>
-    /// Create an instance of <see cref="DefaultWorkerNameProvider"/>.
+    /// Initializes a new instance of the <see cref="DefaultWorkerNameProvider"/>
+    /// class.
     /// </summary>
     /// <param name="prefix">The prefix that should be used for all worker
     /// names.</param>
@@ -22,8 +23,7 @@ public class DefaultWorkerNameProvider : IWorkerNameProvider
     {
         ArgumentValidation.ThrowIfNotNullAndEmptyOrWhitespace(
             prefix,
-            nameof(prefix)
-        );
+            nameof(prefix));
 
         _prefix = prefix ?? "ReqlessWorker";
     }

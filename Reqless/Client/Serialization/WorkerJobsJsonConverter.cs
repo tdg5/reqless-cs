@@ -13,8 +13,7 @@ public class WorkerJobsJsonConverter : JsonConverter<WorkerJobs>
     public override WorkerJobs Read(
         ref Utf8JsonReader reader,
         Type typeToConvert,
-        JsonSerializerOptions options
-    )
+        JsonSerializerOptions options)
     {
         if (reader.TokenType != JsonTokenType.StartObject)
         {
@@ -46,46 +45,36 @@ public class WorkerJobsJsonConverter : JsonConverter<WorkerJobs>
             {
                 jobsEncountered = true;
                 var wasDegenerateObject = JsonConverterHelper.TryConsumeDegenerateObject(
-                    "jobs",
-                    "array",
-                    ref reader
-                );
+                    "jobs", "array", ref reader);
                 jobs = wasDegenerateObject
                     ? []
                     : JsonSerializer.Deserialize<string[]>(ref reader) ??
                         throw new JsonException(
-                            "Failed to deserialize 'jobs' property into a string[]."
-                        );
+                            "Failed to deserialize 'jobs' property into a string[].");
             }
             else if (propertyName == "stalled")
             {
                 stalledEncountered = true;
                 var wasDegenerateObject = JsonConverterHelper.TryConsumeDegenerateObject(
-                    "stalled",
-                    "array",
-                    ref reader
-                );
+                    "stalled", "array", ref reader);
                 stalledJids = wasDegenerateObject
                     ? []
                     : JsonSerializer.Deserialize<string[]>(ref reader) ??
                         throw new JsonException(
-                            "Failed to deserialize 'stalled' property into a string[]."
-                        );
+                            "Failed to deserialize 'stalled' property into a string[].");
             }
         }
 
         if (!jobsEncountered)
         {
             throw new JsonException(
-                "Expected 'jobs' property in JSON object, but none was found."
-            );
+                "Expected 'jobs' property in JSON object, but none was found.");
         }
 
         if (!stalledEncountered)
         {
             throw new JsonException(
-                "Expected 'stalled' property in JSON object, but none was found."
-            );
+                "Expected 'stalled' property in JSON object, but none was found.");
         }
 
         return new WorkerJobs(jobs: jobs!, stalled: stalledJids!);
@@ -95,8 +84,7 @@ public class WorkerJobsJsonConverter : JsonConverter<WorkerJobs>
     public override void Write(
         Utf8JsonWriter writer,
         WorkerJobs value,
-        JsonSerializerOptions options
-    )
+        JsonSerializerOptions options)
     {
         writer.WriteStartObject();
         writer.WriteStartArray("jobs");
@@ -104,12 +92,14 @@ public class WorkerJobsJsonConverter : JsonConverter<WorkerJobs>
         {
             JsonSerializer.Serialize(writer, job, options);
         }
+
         writer.WriteEndArray();
         writer.WriteStartArray("stalled");
         foreach (var stalled in value.Stalled)
         {
             JsonSerializer.Serialize(writer, stalled, options);
         }
+
         writer.WriteEndArray();
         writer.WriteEndObject();
     }
